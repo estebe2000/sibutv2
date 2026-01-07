@@ -80,12 +80,9 @@ docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 turnOnPassw
 # Configure Filters (Login by UID or Email)
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapUserFilter "(|(objectclass=inetOrgPerson))"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapLoginFilter "(&(|(objectclass=inetOrgPerson))(|(uid=%uid)(mail=%uid)))"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapGroupFilter "(|(objectclass=posixGroup))"
 
 # Configure Attributes
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapUserDisplayName "displayname"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapGroupDisplayName "cn"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapGroupMemberAssocAttr "memberUid"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapEmailAttribute "mail"
 # Expert: Use UID as Internal Username (Critical for API provisioning)
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapExpertUsernameAttr "uid"
@@ -97,7 +94,7 @@ docker exec -u www-data but_tc_nextcloud php occ config:app:set files default_qu
 
 # 6. Additional Apps (ToS, Contacts, Mail, Talk, Collectives)
 echo "📦 Installing Additional Apps..."
-APPS="terms_of_service contacts mail spreed collectives"
+APPS="terms_of_service contacts mail spreed collectives integration_mattermost"
 for app in $APPS; do
     docker exec -u www-data but_tc_nextcloud php occ app:install $app --keep-disabled || echo "$app already installed"
     docker exec -u www-data but_tc_nextcloud php occ app:enable $app
@@ -118,10 +115,35 @@ docker exec -u www-data but_tc_nextcloud php occ config:system:set mail_smtpport
 docker exec -u www-data but_tc_nextcloud php occ config:system:set mail_from_address --value="admin"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set mail_domain --value="univ.fr"
 
+# 8. Mattermost Configuration & Integration
+echo "💬 Configuring Mattermost & Nextcloud Integration..."
+# Wait for Mattermost
+until docker exec but_tc_mattermost mattermost version > /dev/null 2>&1; do
+  echo "Waiting for Mattermost..."
+  sleep 5
+done
+
+# Configure Nextcloud to point to Mattermost (Using integration_mattermost settings)
+docker exec -u www-data but_tc_nextcloud php occ config:app:set integration_mattermost mattermost_url --value="http://localhost:8065"
+
+# 9. Mattermost User & Team Provisioning
+echo "👤 Provisioning Mattermost Admin & Team..."
+docker exec but_tc_mattermost mmctl user create --email admin@univ.fr --username admin --password "adminpassword" --system-admin --local || echo "Admin already exists"
+docker exec but_tc_mattermost mmctl team create --name but-tc --display-name "BUT TC" --local || echo "Team already exists"
+docker exec but_tc_mattermost mmctl team users add but-tc admin --local || echo "User already in team"
+
+# 10. Application Seeding
+echo "🌱 Seeding Application Database..."
+until docker exec but_tc_api python -m app.seed_db; do
+  echo "Waiting for API to be ready for seeding..."
+  sleep 5
+done
+
 echo "✅ Initialization Complete!"
 echo "---------------------------------------------------"
 echo "LDAP Admin:   http://localhost:8081 (admin/adminpassword)"
 echo "Nextcloud:    http://localhost:8082 (admin/adminpassword)"
+echo "Mattermost:   http://localhost:8065"
 echo "OnlyOffice:   http://localhost:8083 (Healthy)"
 echo "Mailpit UI:   http://localhost:8025 (Check Emails)"
 echo "---------------------------------------------------"

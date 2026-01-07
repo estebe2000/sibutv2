@@ -1,13 +1,16 @@
 from ldap3 import Server, Connection, ALL
 import os
 
+LDAP_URL = os.getenv("LDAP_URL", "ldap://localhost:389")
+LDAP_BASE_DN = os.getenv("LDAP_BASE_DN", "dc=univ,dc=fr")
+
 def get_ldap_connection(user_dn=None, password=None):
-    server = Server('ldap://localhost:389', get_info=ALL)
+    server = Server(LDAP_URL, get_info=ALL)
     if user_dn and password:
         return Connection(server, user_dn, password, auto_bind=True)
     else:
         # Default admin bind
-        return Connection(server, 'cn=admin,dc=univ,dc=fr', 'adminpassword', auto_bind=True)
+        return Connection(server, 'cn=admin,' + LDAP_BASE_DN, 'adminpassword', auto_bind=True)
 
 def verify_credentials(username, password):
     """
@@ -17,7 +20,7 @@ def verify_credentials(username, password):
     # 1. Find the user DN first (using admin bind)
     try:
         conn = get_ldap_connection()
-        conn.search('dc=univ,dc=fr', f'(uid={username})', attributes=['entryDN'])
+        conn.search(LDAP_BASE_DN, f'(uid={username})', attributes=['entryDN'])
         if not conn.entries:
             return False
         user_dn = conn.entries[0].entryDN
@@ -33,7 +36,7 @@ def verify_credentials(username, password):
 def get_ldap_users():
     conn = get_ldap_connection()
     # Search for people
-    conn.search('ou=people,dc=univ,dc=fr', '(objectClass=inetOrgPerson)', attributes=['uid', 'sn', 'givenName', 'mail', 'displayName'])
+    conn.search('ou=people,' + LDAP_BASE_DN, '(objectClass=inetOrgPerson)', attributes=['uid', 'sn', 'givenName', 'mail', 'displayName'])
     
     users = []
     for entry in conn.entries:

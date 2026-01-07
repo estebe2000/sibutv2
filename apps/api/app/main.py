@@ -12,6 +12,7 @@ import pandas as pd
 import io
 import json
 import subprocess
+import os
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 
@@ -156,11 +157,26 @@ def unassign_user(ldap_uid: str, session: Session = Depends(get_session), curren
 
 @app.post("/users/{ldap_uid}/quota")
 def set_user_quota(ldap_uid: str, quota: str = "100 GB", session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
-    subprocess.run(["docker", "exec", "-u", "www-data", "but_tc_nextcloud", "php", "occ", "ldap:check-user", ldap_uid], capture_output=True)
-    cmd = ["docker", "exec", "-u", "www-data", "but_tc_nextcloud", "php", "occ", "user:setting", ldap_uid, "files", "quota", quota]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0: raise HTTPException(status_code=500, detail=result.stderr)
-    return {"status": "success"}
+    # Use Nextcloud Provisioning API instead of docker exec
+    import requests
+    from requests.auth import HTTPBasicAuth
+    
+    nc_url = os.getenv("NEXTCLOUD_URL", "http://nextcloud")
+    nc_admin = os.getenv("NEXTCLOUD_ADMIN", "admin")
+    nc_pass = os.getenv("NEXTCLOUD_PASS", "adminpassword")
+    
+    url = f"{nc_url}/ocs/v1.php/cloud/users/{ldap_uid}"
+    headers = {"OCS-APIRequest": "true"}
+    data = {"key": "quota", "value": quota}
+    
+    try:
+        response = requests.put(url, data=data, headers=headers, auth=HTTPBasicAuth(nc_admin, nc_pass))
+        if response.status_code == 200:
+            return {"status": "success"}
+        else:
+            raise HTTPException(status_code=response.status_code, detail=f"Nextcloud API error: {response.text}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # --- REFERENTIEL ---
 
@@ -270,27 +286,46 @@ def get_moodle_data():
 def get_referentiel():
     try:
         with open("apps/api/app/data/referentiel.json", "r") as f: return json.load(f)
-    except: return {"parcours": ["Tronc Commun", "BSMRC", "MDEE", "MMPC", "SME", "BI"]}
+    except: return {"parcours": ["Tronc Commun", "BSMRC", "MDEE", "MMPV", "SME", "BI"]}
 
 @app.post("/import/students")
 async def import_students(file: UploadFile = File(...), session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
     contents = await file.read()
-    if file.filename.endswith('.csv'): df = pd.read_csv(io.BytesIO(contents))
-    else: df = pd.read_excel(io.BytesIO(contents))
+    try:
+        if file.filename.endswith('.csv'): df = pd.read_csv(io.BytesIO(contents))
+        else: df = pd.read_excel(io.BytesIO(contents))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Erreur de lecture du fichier: {e}")
+
     df.columns = [c.lower().strip() for c in df.columns]
+    print(f"Importing students from columns: {df.columns.tolist()}")
+    
     ldap_users = get_ldap_users()
+    count = 0
     for _, row in df.iterrows():
         email = str(row.get('mail', row.get('email', ''))).strip()
         group_name = str(row.get('groupes', row.get('promotion', ''))).strip()
-        if not email or not group_name: continue
+        if not email or not group_name: 
+            print(f"Skipping row: missing email or group ({email} / {group_name})")
+            continue
+            
         group = session.exec(select(Group).where(Group.name == group_name)).first()
         if not group:
             group = Group(name=group_name, year=1, pathway=str(row.get('parcours', 'Tronc Commun')))
             session.add(group); session.commit(); session.refresh(group)
+            
         ldap_match = next((u for u in ldap_users if u['email'].lower() == email.lower()), None)
         if ldap_match:
             existing = session.exec(select(User).where(User.ldap_uid == ldap_match['uid'])).first()
-            if existing: existing.group_id = group.id; session.add(existing)
-            else: session.add(User(ldap_uid=ldap_match['uid'], email=ldap_match['email'], full_name=ldap_match['full_name'], role=UserRole.STUDENT, group_id=group.id))
+            if existing: 
+                existing.group_id = group.id
+                existing.role = UserRole.STUDENT
+                session.add(existing)
+            else: 
+                session.add(User(ldap_uid=ldap_match['uid'], email=ldap_match['email'], full_name=ldap_match['full_name'], role=UserRole.STUDENT, group_id=group.id))
+            count += 1
+        else:
+            print(f"No LDAP match found for email: {email}")
+            
     session.commit()
-    return {"status": "success"}
+    return {"status": "success", "imported": count}

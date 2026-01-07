@@ -273,7 +273,7 @@ function App() {
                 <Stack>
                   <TextInput label="Nom du groupe" placeholder="ex: TP1, BUT1-A..." value={newGroup.name} onChange={(e) => setNewGroup({...newGroup, name: e.target.value})} required />
                   <Select label="Année" data={['1', '2', '3']} value={newGroup.year.toString()} onChange={(v) => setNewGroup({...newGroup, year: parseInt(v || '1')})} />
-                  <Select label="Parcours" data={['Tronc Commun', 'BI', 'BSMRC', 'MDEE', 'MMPC', 'SME']} value={newGroup.pathway} onChange={(v) => setNewGroup({...newGroup, pathway: v || 'Tronc Commun'})} />
+                  <Select label="Parcours" data={['Tronc Commun', 'BI', 'BSMRC', 'MDEE', 'MMPV', 'SME']} value={newGroup.pathway} onChange={(v) => setNewGroup({...newGroup, pathway: v || 'Tronc Commun'})} />
                   <Select label="Type" data={[{label: 'Initiale', value: 'FI'}, {label: 'Alternance', value: 'FA'}]} value={newGroup.formation_type} onChange={(v) => setNewGroup({...newGroup, formation_type: v || 'FI'})} />
                   <Button onClick={handleCreateGroup}>Valider</Button>
                 </Stack>
@@ -333,15 +333,19 @@ function App() {
                                     <Badge color={YEAR_COLORS[group.year]} size="xs">BUT {group.year}</Badge>
                                   </Group>
                                   <Group gap={5}>
-                                    <ActionIcon size="xs" variant="subtle" color="blue" onClick={() => {
-                                      setNewGroup(group);
-                                      setIsGroupModalOpen(true);
-                                    }}>
-                                      <IconPencil size={12} />
-                                    </ActionIcon>
-                                    <ActionIcon size="xs" variant="subtle" color="red" onClick={() => deleteGroup(group.id)}>
-                                      <IconTrash size={12} />
-                                    </ActionIcon>
+                                    {group.name !== "Enseignants" && (
+                                      <>
+                                        <ActionIcon size="xs" variant="subtle" color="blue" onClick={() => {
+                                          setNewGroup(group);
+                                          setIsGroupModalOpen(true);
+                                        }}>
+                                          <IconPencil size={12} />
+                                        </ActionIcon>
+                                        <ActionIcon size="xs" variant="subtle" color="red" onClick={() => deleteGroup(group.id)}>
+                                          <IconTrash size={12} />
+                                        </ActionIcon>
+                                      </>
+                                    )}
                                   </Group>
                                 </Group>
                               </Card.Section>
@@ -446,7 +450,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   const [infoItem, setInfoItem] = useState<any>(null);
   const [infoLoading, setInfoLoading] = useState(false);
 
-  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BSMRC', 'MDEE', 'MMPC', 'SME'];
+  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BSMRC', 'MDEE', 'MMPV', 'SME'];
   const levels = [1, 2, 3];
 
   const handleSaveComp = async () => {
@@ -644,7 +648,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                                 {c.essential_components?.map((ce: any) => (
                                     <List.Item key={ce.id}><b>{ce.code}</b> : {ce.label}</List.Item>
                                 ))}
-                                {(!c.essential_components || c.essential_components.length === 0) && <Text size="xs" c="dimmed" italic>Aucune CE</Text>}
+                                {(!c.essential_components || c.essential_components.length === 0) && <Text size="xs" c="dimmed" fs="italic">Aucune CE</Text>}
                             </List>
                           </Grid.Col>
                           <Grid.Col span={6}>
@@ -658,7 +662,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                                         </Group>
                                     </List.Item>
                                 ))}
-                                {(!c.learning_outcomes || c.learning_outcomes.length === 0) && <Text size="xs" c="dimmed" italic>Aucune AC</Text>}
+                                {(!c.learning_outcomes || c.learning_outcomes.length === 0) && <Text size="xs" c="dimmed" fs="italic">Aucune AC</Text>}
                             </List>
                           </Grid.Col>
                         </Grid>
@@ -704,7 +708,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                                             </Badge>
                                         </Group>
                                     ))}
-                                    {(!a.learning_outcomes || a.learning_outcomes.length === 0) && <Text size="xs" c="dimmed" italic>Aucun lien AC</Text>}
+                                    {(!a.learning_outcomes || a.learning_outcomes.length === 0) && <Text size="xs" c="dimmed" fs="italic">Aucun lien AC</Text>}
                                 </Stack>
                             </div>
                             {a.resources && (

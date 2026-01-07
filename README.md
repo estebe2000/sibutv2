@@ -33,31 +33,36 @@
 *   **[Brainstorming: Repeating Students Workflow](docs/brainstorming-redoublants-results.md):** Summary of decisions for capitalization.
 
 ## 🚀 Quick Start
-*(Note: Project is in initial setup phase)*
+The project is now fully containerized for a seamless development experience.
 
 ```bash
 # 1. Clone & Enter
 git clone <repo>
 cd but-tc-skills
 
-# 2. Start Infrastructure
-# Starts DB, LDAP, Nextcloud, and OnlyOffice
+# 2. Start Everything (Infra + App + Seeding)
+# This command builds the app, starts all services, and populates the DB.
 npm run infra:up
 
 # 3. Access
-# Frontend: http://localhost:3000
-# Backend Docs: http://localhost:8000/docs
+# Frontend (Web): http://localhost:3000
+# Backend API:   http://localhost:8000/docs
+# Mattermost:    http://localhost:8065
+# Nextcloud:     http://localhost:8082
+# Mailpit UI:    http://localhost:8025
 ```
 
 ## 🛠 Local Development Infrastructure
 
-The project includes a full Dockerized stack to mimic production services locally.
+The project includes a full Dockerized stack mimicking production.
 
 ### Components
-*   **PostgreSQL:** `localhost:5432`
-*   **OpenLDAP:** `localhost:389` (Seeded with test users)
-*   **Nextcloud:** `localhost:8082` (Pre-configured with Service Account)
-*   **Mailpit:** `localhost:8025` (SMTP Capture & Web UI)
+*   **Application (Web & API):** React + FastAPI containerized.
+*   **PostgreSQL:** `localhost:5432` (Main DB) & Mattermost DB.
+*   **OpenLDAP:** `localhost:389` (Seeded with test users).
+*   **Nextcloud:** `localhost:8082` (WebDAV proxy storage).
+*   **Mattermost:** `localhost:8065` (Collaborative hub).
+*   **Mailpit:** `localhost:8025` (SMTP Capture).
 
 ## 🏗 Repository Structure
 ```text

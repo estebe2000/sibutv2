@@ -104,16 +104,88 @@ services:
       - app_network
 
   # ---------------------------------------------------------------------------
-  # App Services (Placeholders for now)
+  # Database for Mattermost (PostgreSQL)
   # ---------------------------------------------------------------------------
-  # api: ... (FastAPI)
-  # web: ... (React)
+  db_mattermost:
+    image: postgres:15-alpine
+    container_name: but_tc_db_mattermost
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mmuser
+      POSTGRES_PASSWORD: mmpassword
+      POSTGRES_DB: mattermost
+    volumes:
+      - mattermost_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Mattermost Team Edition
+  # ---------------------------------------------------------------------------
+  mattermost:
+    image: mattermost/mattermost-team-edition:latest
+    container_name: but_tc_mattermost
+    restart: unless-stopped
+    depends_on:
+      - db_mattermost
+    environment:
+      - MM_SQLSETTINGS_DRIVERNAME=postgres
+      - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mmpassword@db_mattermost:5432/mattermost?sslmode=disable&connect_timeout=10
+      - MM_SERVICESETTINGS_SITEURL=http://localhost:8065
+    ports:
+      - "8065:8065"
+    volumes:
+      - mattermost_data:/mattermost/data
+      - mattermost_config:/mattermost/config
+      - mattermost_logs:/mattermost/logs
+      - mattermost_plugins:/mattermost/plugins
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Application Services
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: ./apps/api
+    container_name: but_tc_api
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://app_user:app_password@db:5432/skills_db
+      - LDAP_URL=ldap://ldap:389
+      - LDAP_BASE_DN=dc=univ,dc=fr
+      - NEXTCLOUD_URL=http://nextcloud
+      - NEXTCLOUD_ADMIN=admin
+      - NEXTCLOUD_PASS=adminpassword
+    ports:
+      - "8000:8000"
+    networks:
+      - app_network
+
+  web:
+    build:
+      context: ./apps/web
+    container_name: but_tc_web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+    networks:
+      - app_network
 
 volumes:
   postgres_data:
   ldap_data:
   ldap_config:
   nextcloud_data:
+  mattermost_db_data:
+  mattermost_data:
+  mattermost_config:
+  mattermost_logs:
+  mattermost_plugins:
 
 networks:
   app_network:

@@ -15,7 +15,11 @@ CORE_DESCS = {
 }
 
 def seed():
-    with open("../../tmp/referentiel_final.json", "r", encoding='utf-8') as f:
+    # Use relative path from this script's location
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    seed_file = os.path.join(base_dir, "data", "referentiel_final.json")
+    
+    with open(seed_file, "r", encoding='utf-8') as f:
         data = json.load(f)
 
     SQLModel.metadata.drop_all(engine)
@@ -102,8 +106,17 @@ def seed():
             )
             session.add(act); session.flush()
             for ac_code in act_data.get("ac_codes", []):
+                # Search for the AC
                 lo = session.exec(select(LearningOutcome).where(LearningOutcome.code == ac_code)).first()
-                if lo: act.learning_outcomes.append(lo)
+                if not lo:
+                    # Fallback: search for the base code (first 7 chars e.g., AC24.01)
+                    base_ac = ac_code[:7]
+                    lo = session.exec(select(LearningOutcome).where(LearningOutcome.code == base_ac)).first()
+                
+                if lo: 
+                    act.learning_outcomes.append(lo)
+                else:
+                    print(f"Warning: Could not link AC {ac_code} to activity {act.code}")
 
         session.commit()
     print("Seeding complete with robust descriptions!")
