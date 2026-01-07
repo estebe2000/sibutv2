@@ -1,0 +1,10 @@
+{
+  "name": "but-tc-skills",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "infra:up": "docker-compose up -d && sleep 10 && ./infrastructure/local/init-local.sh",
+    "infra:down": "docker-compose down",
+    "infra:reset": "docker-compose down -v && npm run infra:up"
+  }
+}

@@ -1,0 +1,120 @@
+services:
+  # ---------------------------------------------------------------------------
+  # Database (PostgreSQL)
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    container_name: but_tc_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+      POSTGRES_DB: skills_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Authentication (OpenLDAP) - Mocking University LDAP
+  # ---------------------------------------------------------------------------
+  ldap:
+    image: osixia/openldap:latest
+    container_name: but_tc_ldap
+    restart: unless-stopped
+    ports:
+      - '389:389'
+      - '636:636'
+    environment:
+      - LDAP_ADMIN_PASSWORD=adminpassword
+      - LDAP_DOMAIN=univ.fr
+      - LDAP_ORGANISATION=IUT
+      - LDAP_BASE_DN=dc=univ,dc=fr
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # LDAP Admin (phpLDAPadmin) - Visual Interface for LDAP
+  # ---------------------------------------------------------------------------
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: but_tc_ldap_admin
+    restart: unless-stopped
+    ports:
+      - '8081:80'
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=ldap
+      - PHPLDAPADMIN_HTTPS=false
+    depends_on:
+      - ldap
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # File Storage (Nextcloud) - Mocking IUT Nextcloud
+  # ---------------------------------------------------------------------------
+  nextcloud:
+    image: nextcloud:stable-apache
+    container_name: but_tc_nextcloud
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    environment:
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=adminpassword
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud
+      # Using SQLite for the dev instance
+      - SQLITE_DATABASE=nextcloud
+    volumes:
+      - nextcloud_data:/var/www/html
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # OnlyOffice Document Server
+  # ---------------------------------------------------------------------------
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    container_name: but_tc_onlyoffice
+    restart: unless-stopped
+    ports:
+      - "8083:80"
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=onlyoffice_secret
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Mail Server (Mailpit) - Mocking SMTP
+  # ---------------------------------------------------------------------------
+  mailpit:
+    image: axllent/mailpit
+    container_name: but_tc_mail
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # Web UI
+      - "1025:1025" # SMTP Port
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # App Services (Placeholders for now)
+  # ---------------------------------------------------------------------------
+  # api: ... (FastAPI)
+  # web: ... (React)
+
+volumes:
+  postgres_data:
+  ldap_data:
+  ldap_config:
+  nextcloud_data:
+
+networks:
+  app_network:
+    driver: bridge

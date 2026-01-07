@@ -1,0 +1,14 @@
+fastapi[standard]
+sqlmodel
+psycopg2-binary
+alembic
+python-multipart
+pyjwt
+passlib[bcrypt]
+ldap3
+requests
+python-dotenv
+pandas
+openpyxl
+pymupdf
+requests

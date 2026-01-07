@@ -1,0 +1,150 @@
+dn: uid=alain.dubois,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: alain.dubois
+sn: DUBOIS
+givenName: Alain
+cn: Alain DUBOIS
+displayName: Alain DUBOIS
+mail: alain.dubois@univ.fr
+userPassword: password
+uidNumber: 20010
+gidNumber: 5002
+homeDirectory: /home/alain.dubois
+
+dn: uid=beatrice.leroux,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: beatrice.leroux
+sn: LEROUX
+givenName: Beatrice
+cn: Beatrice LEROUX
+displayName: Beatrice LEROUX
+mail: beatrice.leroux@univ.fr
+userPassword: password
+uidNumber: 20011
+gidNumber: 5002
+homeDirectory: /home/beatrice.leroux
+
+dn: uid=charles.morel,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: charles.morel
+sn: MOREL
+givenName: Charles
+cn: Charles MOREL
+displayName: Charles MOREL
+mail: charles.morel@univ.fr
+userPassword: password
+uidNumber: 20012
+gidNumber: 5002
+homeDirectory: /home/charles.morel
+
+dn: uid=delphine.fournier,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: delphine.fournier
+sn: FOURNIER
+givenName: Delphine
+cn: Delphine FOURNIER
+displayName: Delphine FOURNIER
+mail: delphine.fournier@univ.fr
+userPassword: password
+uidNumber: 20013
+gidNumber: 5002
+homeDirectory: /home/delphine.fournier
+
+dn: uid=eric.girard,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: eric.girard
+sn: GIRARD
+givenName: Eric
+cn: Eric GIRARD
+displayName: Eric GIRARD
+mail: eric.girard@univ.fr
+userPassword: password
+uidNumber: 20014
+gidNumber: 5002
+homeDirectory: /home/eric.girard
+
+dn: uid=florence.bonnet,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: florence.bonnet
+sn: BONNET
+givenName: Florence
+cn: Florence BONNET
+displayName: Florence BONNET
+mail: florence.bonnet@univ.fr
+userPassword: password
+uidNumber: 20015
+gidNumber: 5002
+homeDirectory: /home/florence.bonnet
+
+dn: uid=gilles.dupuis,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: gilles.dupuis
+sn: DUPUIS
+givenName: Gilles
+cn: Gilles DUPUIS
+displayName: Gilles DUPUIS
+mail: gilles.dupuis@univ.fr
+userPassword: password
+uidNumber: 20016
+gidNumber: 5002
+homeDirectory: /home/gilles.dupuis
+
+dn: uid=helene.lambert,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: helene.lambert
+sn: LAMBERT
+givenName: Helene
+cn: Helene LAMBERT
+displayName: Helene LAMBERT
+mail: helene.lambert@univ.fr
+userPassword: password
+uidNumber: 20017
+gidNumber: 5002
+homeDirectory: /home/helene.lambert
+
+dn: uid=ivan.faure,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: ivan.faure
+sn: FAURE
+givenName: Ivan
+cn: Ivan FAURE
+displayName: Ivan FAURE
+mail: ivan.faure@univ.fr
+userPassword: password
+uidNumber: 20018
+gidNumber: 5002
+homeDirectory: /home/ivan.faure
+
+dn: uid=julie.rousseau,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: julie.rousseau
+sn: ROUSSEAU
+givenName: Julie
+cn: Julie ROUSSEAU
+displayName: Julie ROUSSEAU
+mail: julie.rousseau@univ.fr
+userPassword: password
+uidNumber: 20019
+gidNumber: 5002
+homeDirectory: /home/julie.rousseau
+

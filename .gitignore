@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
+
+# Database
+*.db
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Project specific
+tmp/
+referentiel_final.json
+parsed_competencies.json

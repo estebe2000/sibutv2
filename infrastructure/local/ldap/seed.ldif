@@ -1,0 +1,739 @@
+# Organizational Units
+dn: ou=people,dc=univ,dc=fr
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=univ,dc=fr
+objectClass: organizationalUnit
+ou: groups
+
+dn: uid=emma.dupont78,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: emma.dupont78
+sn: DUPONT
+givenName: Emma
+cn: Emma DUPONT
+displayName: Emma DUPONT
+mail: emma.dupont78@etu.univ.fr
+userPassword: password
+uidNumber: 10001
+gidNumber: 5001
+homeDirectory: /home/emma.dupont78
+
+dn: uid=marie.moreau93,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: marie.moreau93
+sn: MOREAU
+givenName: Marie
+cn: Marie MOREAU
+displayName: Marie MOREAU
+mail: marie.moreau93@etu.univ.fr
+userPassword: password
+uidNumber: 10002
+gidNumber: 5001
+homeDirectory: /home/marie.moreau93
+
+dn: uid=nicolas.dupont87,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: nicolas.dupont87
+sn: DUPONT
+givenName: Nicolas
+cn: Nicolas DUPONT
+displayName: Nicolas DUPONT
+mail: nicolas.dupont87@etu.univ.fr
+userPassword: password
+uidNumber: 10003
+gidNumber: 5001
+homeDirectory: /home/nicolas.dupont87
+
+dn: uid=emma.martin16,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: emma.martin16
+sn: MARTIN
+givenName: Emma
+cn: Emma MARTIN
+displayName: Emma MARTIN
+mail: emma.martin16@etu.univ.fr
+userPassword: password
+uidNumber: 10004
+gidNumber: 5001
+homeDirectory: /home/emma.martin16
+
+dn: uid=jean.roux79,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: jean.roux79
+sn: ROUX
+givenName: Jean
+cn: Jean ROUX
+displayName: Jean ROUX
+mail: jean.roux79@etu.univ.fr
+userPassword: password
+uidNumber: 10005
+gidNumber: 5001
+homeDirectory: /home/jean.roux79
+
+dn: uid=sophie.petit89,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: sophie.petit89
+sn: PETIT
+givenName: Sophie
+cn: Sophie PETIT
+displayName: Sophie PETIT
+mail: sophie.petit89@etu.univ.fr
+userPassword: password
+uidNumber: 10006
+gidNumber: 5001
+homeDirectory: /home/sophie.petit89
+
+dn: uid=nicolas.martin13,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: nicolas.martin13
+sn: MARTIN
+givenName: Nicolas
+cn: Nicolas MARTIN
+displayName: Nicolas MARTIN
+mail: nicolas.martin13@etu.univ.fr
+userPassword: password
+uidNumber: 10007
+gidNumber: 5001
+homeDirectory: /home/nicolas.martin13
+
+dn: uid=nicolas.lefebvre43,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: nicolas.lefebvre43
+sn: LEFEBVRE
+givenName: Nicolas
+cn: Nicolas LEFEBVRE
+displayName: Nicolas LEFEBVRE
+mail: nicolas.lefebvre43@etu.univ.fr
+userPassword: password
+uidNumber: 10008
+gidNumber: 5001
+homeDirectory: /home/nicolas.lefebvre43
+
+dn: uid=emma.roux34,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: emma.roux34
+sn: ROUX
+givenName: Emma
+cn: Emma ROUX
+displayName: Emma ROUX
+mail: emma.roux34@etu.univ.fr
+userPassword: password
+uidNumber: 10009
+gidNumber: 5001
+homeDirectory: /home/emma.roux34
+
+dn: uid=julie.durand50,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: julie.durand50
+sn: DURAND
+givenName: Julie
+cn: Julie DURAND
+displayName: Julie DURAND
+mail: julie.durand50@etu.univ.fr
+userPassword: password
+uidNumber: 10010
+gidNumber: 5001
+homeDirectory: /home/julie.durand50
+
+dn: uid=marie.simon14,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: marie.simon14
+sn: SIMON
+givenName: Marie
+cn: Marie SIMON
+displayName: Marie SIMON
+mail: marie.simon14@etu.univ.fr
+userPassword: password
+uidNumber: 10011
+gidNumber: 5001
+homeDirectory: /home/marie.simon14
+
+dn: uid=jean.dupont98,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: jean.dupont98
+sn: DUPONT
+givenName: Jean
+cn: Jean DUPONT
+displayName: Jean DUPONT
+mail: jean.dupont98@etu.univ.fr
+userPassword: password
+uidNumber: 10012
+gidNumber: 5001
+homeDirectory: /home/jean.dupont98
+
+dn: uid=emma.petit57,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: emma.petit57
+sn: PETIT
+givenName: Emma
+cn: Emma PETIT
+displayName: Emma PETIT
+mail: emma.petit57@etu.univ.fr
+userPassword: password
+uidNumber: 10013
+gidNumber: 5001
+homeDirectory: /home/emma.petit57
+
+dn: uid=antoine.dupont29,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: antoine.dupont29
+sn: DUPONT
+givenName: Antoine
+cn: Antoine DUPONT
+displayName: Antoine DUPONT
+mail: antoine.dupont29@etu.univ.fr
+userPassword: password
+uidNumber: 10014
+gidNumber: 5001
+homeDirectory: /home/antoine.dupont29
+
+dn: uid=sophie.simon48,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: sophie.simon48
+sn: SIMON
+givenName: Sophie
+cn: Sophie SIMON
+displayName: Sophie SIMON
+mail: sophie.simon48@etu.univ.fr
+userPassword: password
+uidNumber: 10015
+gidNumber: 5001
+homeDirectory: /home/sophie.simon48
+
+dn: uid=marie.leroy81,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: marie.leroy81
+sn: LEROY
+givenName: Marie
+cn: Marie LEROY
+displayName: Marie LEROY
+mail: marie.leroy81@etu.univ.fr
+userPassword: password
+uidNumber: 10016
+gidNumber: 5001
+homeDirectory: /home/marie.leroy81
+
+dn: uid=pierre.durand11,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: pierre.durand11
+sn: DURAND
+givenName: Pierre
+cn: Pierre DURAND
+displayName: Pierre DURAND
+mail: pierre.durand11@etu.univ.fr
+userPassword: password
+uidNumber: 10017
+gidNumber: 5001
+homeDirectory: /home/pierre.durand11
+
+dn: uid=marie.simon28,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: marie.simon28
+sn: SIMON
+givenName: Marie
+cn: Marie SIMON
+displayName: Marie SIMON
+mail: marie.simon28@etu.univ.fr
+userPassword: password
+uidNumber: 10018
+gidNumber: 5001
+homeDirectory: /home/marie.simon28
+
+dn: uid=antoine.durand10,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: antoine.durand10
+sn: DURAND
+givenName: Antoine
+cn: Antoine DURAND
+displayName: Antoine DURAND
+mail: antoine.durand10@etu.univ.fr
+userPassword: password
+uidNumber: 10019
+gidNumber: 5001
+homeDirectory: /home/antoine.durand10
+
+dn: uid=nicolas.garcia31,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: nicolas.garcia31
+sn: GARCIA
+givenName: Nicolas
+cn: Nicolas GARCIA
+displayName: Nicolas GARCIA
+mail: nicolas.garcia31@etu.univ.fr
+userPassword: password
+uidNumber: 10020
+gidNumber: 5001
+homeDirectory: /home/nicolas.garcia31
+
+dn: uid=marie.garcia70,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: marie.garcia70
+sn: GARCIA
+givenName: Marie
+cn: Marie GARCIA
+displayName: Marie GARCIA
+mail: marie.garcia70@etu.univ.fr
+userPassword: password
+uidNumber: 10021
+gidNumber: 5001
+homeDirectory: /home/marie.garcia70
+
+dn: uid=julie.dupont12,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: julie.dupont12
+sn: DUPONT
+givenName: Julie
+cn: Julie DUPONT
+displayName: Julie DUPONT
+mail: julie.dupont12@etu.univ.fr
+userPassword: password
+uidNumber: 10022
+gidNumber: 5001
+homeDirectory: /home/julie.dupont12
+
+dn: uid=jean.dupont30,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: jean.dupont30
+sn: DUPONT
+givenName: Jean
+cn: Jean DUPONT
+displayName: Jean DUPONT
+mail: jean.dupont30@etu.univ.fr
+userPassword: password
+uidNumber: 10023
+gidNumber: 5001
+homeDirectory: /home/jean.dupont30
+
+dn: uid=antoine.dupont82,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: antoine.dupont82
+sn: DUPONT
+givenName: Antoine
+cn: Antoine DUPONT
+displayName: Antoine DUPONT
+mail: antoine.dupont82@etu.univ.fr
+userPassword: password
+uidNumber: 10024
+gidNumber: 5001
+homeDirectory: /home/antoine.dupont82
+
+dn: uid=nicolas.simon43,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: nicolas.simon43
+sn: SIMON
+givenName: Nicolas
+cn: Nicolas SIMON
+displayName: Nicolas SIMON
+mail: nicolas.simon43@etu.univ.fr
+userPassword: password
+uidNumber: 10025
+gidNumber: 5001
+homeDirectory: /home/nicolas.simon43
+
+dn: uid=lucas.martin68,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: lucas.martin68
+sn: MARTIN
+givenName: Lucas
+cn: Lucas MARTIN
+displayName: Lucas MARTIN
+mail: lucas.martin68@etu.univ.fr
+userPassword: password
+uidNumber: 10026
+gidNumber: 5001
+homeDirectory: /home/lucas.martin68
+
+dn: uid=emma.roux10,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: emma.roux10
+sn: ROUX
+givenName: Emma
+cn: Emma ROUX
+displayName: Emma ROUX
+mail: emma.roux10@etu.univ.fr
+userPassword: password
+uidNumber: 10027
+gidNumber: 5001
+homeDirectory: /home/emma.roux10
+
+dn: uid=sophie.lefebvre61,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: sophie.lefebvre61
+sn: LEFEBVRE
+givenName: Sophie
+cn: Sophie LEFEBVRE
+displayName: Sophie LEFEBVRE
+mail: sophie.lefebvre61@etu.univ.fr
+userPassword: password
+uidNumber: 10028
+gidNumber: 5001
+homeDirectory: /home/sophie.lefebvre61
+
+dn: uid=pierre.lefebvre22,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: pierre.lefebvre22
+sn: LEFEBVRE
+givenName: Pierre
+cn: Pierre LEFEBVRE
+displayName: Pierre LEFEBVRE
+mail: pierre.lefebvre22@etu.univ.fr
+userPassword: password
+uidNumber: 10029
+gidNumber: 5001
+homeDirectory: /home/pierre.lefebvre22
+
+dn: uid=julie.lefebvre86,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: julie.lefebvre86
+sn: LEFEBVRE
+givenName: Julie
+cn: Julie LEFEBVRE
+displayName: Julie LEFEBVRE
+mail: julie.lefebvre86@etu.univ.fr
+userPassword: password
+uidNumber: 10030
+gidNumber: 5001
+homeDirectory: /home/julie.lefebvre86
+
+dn: uid=sophie.lefebvre55,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: sophie.lefebvre55
+sn: LEFEBVRE
+givenName: Sophie
+cn: Sophie LEFEBVRE
+displayName: Sophie LEFEBVRE
+mail: sophie.lefebvre55@etu.univ.fr
+userPassword: password
+uidNumber: 10031
+gidNumber: 5001
+homeDirectory: /home/sophie.lefebvre55
+
+dn: uid=thomas.moreau97,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: thomas.moreau97
+sn: MOREAU
+givenName: Thomas
+cn: Thomas MOREAU
+displayName: Thomas MOREAU
+mail: thomas.moreau97@etu.univ.fr
+userPassword: password
+uidNumber: 10032
+gidNumber: 5001
+homeDirectory: /home/thomas.moreau97
+
+dn: uid=marie.petit63,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: marie.petit63
+sn: PETIT
+givenName: Marie
+cn: Marie PETIT
+displayName: Marie PETIT
+mail: marie.petit63@etu.univ.fr
+userPassword: password
+uidNumber: 10033
+gidNumber: 5001
+homeDirectory: /home/marie.petit63
+
+dn: uid=emma.garcia95,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: emma.garcia95
+sn: GARCIA
+givenName: Emma
+cn: Emma GARCIA
+displayName: Emma GARCIA
+mail: emma.garcia95@etu.univ.fr
+userPassword: password
+uidNumber: 10034
+gidNumber: 5001
+homeDirectory: /home/emma.garcia95
+
+dn: uid=jean.dupont60,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: jean.dupont60
+sn: DUPONT
+givenName: Jean
+cn: Jean DUPONT
+displayName: Jean DUPONT
+mail: jean.dupont60@etu.univ.fr
+userPassword: password
+uidNumber: 10035
+gidNumber: 5001
+homeDirectory: /home/jean.dupont60
+
+dn: uid=alain.dubois,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: alain.dubois
+sn: DUBOIS
+givenName: Alain
+cn: Alain DUBOIS
+displayName: Alain DUBOIS
+mail: alain.dubois@univ.fr
+userPassword: password
+uidNumber: 20001
+gidNumber: 5002
+homeDirectory: /home/alain.dubois
+
+dn: uid=beatrice.leroux,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: beatrice.leroux
+sn: LEROUX
+givenName: Beatrice
+cn: Beatrice LEROUX
+displayName: Beatrice LEROUX
+mail: beatrice.leroux@univ.fr
+userPassword: password
+uidNumber: 20002
+gidNumber: 5002
+homeDirectory: /home/beatrice.leroux
+
+dn: uid=charles.morel,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: charles.morel
+sn: MOREL
+givenName: Charles
+cn: Charles MOREL
+displayName: Charles MOREL
+mail: charles.morel@univ.fr
+userPassword: password
+uidNumber: 20003
+gidNumber: 5002
+homeDirectory: /home/charles.morel
+
+dn: uid=delphine.fournier,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: delphine.fournier
+sn: FOURNIER
+givenName: Delphine
+cn: Delphine FOURNIER
+displayName: Delphine FOURNIER
+mail: delphine.fournier@univ.fr
+userPassword: password
+uidNumber: 20004
+gidNumber: 5002
+homeDirectory: /home/delphine.fournier
+
+dn: uid=eric.girard,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: eric.girard
+sn: GIRARD
+givenName: Eric
+cn: Eric GIRARD
+displayName: Eric GIRARD
+mail: eric.girard@univ.fr
+userPassword: password
+uidNumber: 20005
+gidNumber: 5002
+homeDirectory: /home/eric.girard
+
+dn: uid=florence.bonnet,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: florence.bonnet
+sn: BONNET
+givenName: Florence
+cn: Florence BONNET
+displayName: Florence BONNET
+mail: florence.bonnet@univ.fr
+userPassword: password
+uidNumber: 20006
+gidNumber: 5002
+homeDirectory: /home/florence.bonnet
+
+dn: uid=gilles.dupuis,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: gilles.dupuis
+sn: DUPUIS
+givenName: Gilles
+cn: Gilles DUPUIS
+displayName: Gilles DUPUIS
+mail: gilles.dupuis@univ.fr
+userPassword: password
+uidNumber: 20007
+gidNumber: 5002
+homeDirectory: /home/gilles.dupuis
+
+dn: uid=helene.lambert,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: helene.lambert
+sn: LAMBERT
+givenName: Helene
+cn: Helene LAMBERT
+displayName: Helene LAMBERT
+mail: helene.lambert@univ.fr
+userPassword: password
+uidNumber: 20008
+gidNumber: 5002
+homeDirectory: /home/helene.lambert
+
+dn: uid=ivan.faure,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: ivan.faure
+sn: FAURE
+givenName: Ivan
+cn: Ivan FAURE
+displayName: Ivan FAURE
+mail: ivan.faure@univ.fr
+userPassword: password
+uidNumber: 20009
+gidNumber: 5002
+homeDirectory: /home/ivan.faure
+
+dn: uid=julie.rousseau,ou=people,dc=univ,dc=fr
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: julie.rousseau
+sn: ROUSSEAU
+givenName: Julie
+cn: Julie ROUSSEAU
+displayName: Julie ROUSSEAU
+mail: julie.rousseau@univ.fr
+userPassword: password
+uidNumber: 20010
+gidNumber: 5002
+homeDirectory: /home/julie.rousseau
+
+# Groups
+dn: cn=students,ou=groups,dc=univ,dc=fr
+objectClass: posixGroup
+cn: students
+gidNumber: 5001
+memberUid: emma.dupont78
+memberUid: marie.moreau93
+memberUid: nicolas.dupont87
+memberUid: emma.martin16
+memberUid: jean.roux79
+memberUid: sophie.petit89
+memberUid: nicolas.martin13
+memberUid: nicolas.lefebvre43
+memberUid: emma.roux34
+memberUid: julie.durand50
+memberUid: marie.simon14
+memberUid: jean.dupont98
+memberUid: emma.petit57
+memberUid: antoine.dupont29
+memberUid: sophie.simon48
+memberUid: marie.leroy81
+memberUid: pierre.durand11
+memberUid: marie.simon28
+memberUid: antoine.durand10
+memberUid: nicolas.garcia31
+memberUid: marie.garcia70
+memberUid: julie.dupont12
+memberUid: jean.dupont30
+memberUid: antoine.dupont82
+memberUid: nicolas.simon43
+memberUid: lucas.martin68
+memberUid: emma.roux10
+memberUid: sophie.lefebvre61
+memberUid: pierre.lefebvre22
+memberUid: julie.lefebvre86
+memberUid: sophie.lefebvre55
+memberUid: thomas.moreau97
+memberUid: marie.petit63
+memberUid: emma.garcia95
+memberUid: jean.dupont60
+
+dn: cn=professors,ou=groups,dc=univ,dc=fr
+objectClass: posixGroup
+cn: professors
+gidNumber: 5002
+memberUid: alain.dubois
+memberUid: beatrice.leroux
+memberUid: charles.morel
+memberUid: delphine.fournier
+memberUid: eric.girard
+memberUid: florence.bonnet
+memberUid: gilles.dupuis
+memberUid: helene.lambert
+memberUid: ivan.faure
+memberUid: julie.rousseau

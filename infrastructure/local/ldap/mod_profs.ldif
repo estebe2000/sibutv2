@@ -1,0 +1,13 @@
+dn: cn=professors,ou=groups,dc=univ,dc=fr
+changetype: modify
+add: memberUid
+memberUid: alain.dubois
+memberUid: beatrice.leroux
+memberUid: charles.morel
+memberUid: delphine.fournier
+memberUid: eric.girard
+memberUid: florence.bonnet
+memberUid: gilles.dupuis
+memberUid: helene.lambert
+memberUid: ivan.faure
+memberUid: julie.rousseau
