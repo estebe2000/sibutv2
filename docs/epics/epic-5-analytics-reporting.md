@@ -36,4 +36,4 @@ L'application doit utiliser des graphiques modernes (Radar Charts) pour illustre
 *   **Critères d'Acceptation :**
     1.  Tableau croisé : Étudiants (Lignes) x Compétences (Colonnes).
     2.  Couleurs basées sur le taux d'acquisition (Rouge < 30%, Orange < 70%, Vert >= 70%).
-    3.  Filtres par groupe (TP1, TP2, etc.).
+---

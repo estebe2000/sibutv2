@@ -14,41 +14,23 @@
 *   **Streamline Evaluation:** Enable a seamless 3-way evaluation flow: Student Self-Eval -> Tutor Feedback (Magic Link) -> Professor Validation (0-100% slider).
 *   **Ensure Data Sovereignty:** Store all student evidence (multimedia) securely on the IUT Nextcloud instance via API.
 *   **Simplify External Access:** Remove authentication barriers for external tutors using a secure "Magic Link" system.
-*   **Inclusive & Multi-Device:** Deliver a responsive web interface (PC, Tablet, Smartphone) accessible via a single URL, compliant with WCAG AA standards.
-*   **Standardize Curriculum:** Allow admins to deploy and update curriculum templates for student groups.
-*   **Multi-Tenancy & White-Labeling:** Enable independent deployment per department (Docker-based) with full customization (Logo, UI colors, welcome messages, contact info).
-*   **Extensive Configuration:** Ensure 100% of external dependencies (LDAP, Nextcloud, APIs, Mattermost) are configurable per instance without code changes.
-*   **Strong Governance & RBAC:** Implement a rigid responsibility matrix (SAÉ Leads, Internship Leads) to ensure accountability in the evaluation process.
-*   **Integrated Collaboration:** Leverage Mattermost for real-time pedagogical exchanges, integrated via API and Nextcloud widgets.
-*   **Robust Development Environment:** Provide a full local Docker stack (Nextcloud, LDAP) for realistic testing.
-
-### 1.2 Background Context
-The IUT Le Havre is implementing the new BUT curriculum, which mandates a Competency-Based Approach (APC). The proposed solution, "Skills Hub," acts as an orchestration layer, bridging the gap between university infrastructure (LDAP, Nextcloud) and the pedagogical needs of various departments.
+*   **Universal Accessibility (WCAG 2.1 AA):** Deliver an inclusive interface with support for high contrast, dyslexia-friendly fonts (OpenDyslexic), screen readers, and a "Zen Mode" (distraction-free) across all roles and devices.
 
 ---
 
 ## 2. Requirements
 
 ### 2.1 Functional Requirements (FR)
-*   **FR1 - Auth & User Management:** The system must authenticate Students and Professors via university LDAP. Supports specialized roles: SuperAdmin (global), DeptAdmin (local), SAE_Lead, Internship_Lead.
-*   **FR2 - Curriculum Templates:** Admins must be able to create, version, and assign curriculum templates to specific student groups.
-*   **FR3 - Evidence Upload:** Students must be able to upload multimedia evidence which the system acts as a proxy to store securely on Nextcloud.
-*   **FR4 - 3-Way Evaluation:** The system must support a specific workflow: Student Self-Eval -> Tutor Comment/Review -> Professor Validation.
-*   **FR5 - Sliding Scale Validation:** Professors must use a 0-100% sliding scale to validate skills.
-*   **FR6 - Mobile Dashboard:** Students must have a responsive dashboard showing their progress (e.g., Radar Charts).
-*   **FR10 - Multi-Tenant Customization:** Full white-labeling and configuration of all system parameters:
-    *   **UI:** Logo, Colors, Welcome Text, Contact.
-    *   **Infrastructure:** LDAP URL/BaseDN, Nextcloud WebDAV URL/Credentials, SMTP settings.
-    *   **Collaboration:** Mattermost API keys and Channel IDs for notifications.
-*   **FR11 - Responsibility Assignment:** Ability to assign specific Professors as "Leads" for specific SAÉs or Internships. Only assigned leads can perform final validation.
-*   **FR12 - Repeating Student Management (Capitalization):** Handle students repeating a year, allowing carry-over of previously validated skills via a formal advisor-led interview process.
-*   **FR13 - Advanced Reporting:** Generate PDF/CSV reports for Students (individual progress), Groups (cohort level), and Internships.
-*   **FR14 - Real-Time Collaboration (Mattermost):** Integration of a communication layer for pedagogical exchanges.
-*   **FR15 - SAÉ Workgroups:** Ability to form student groups within a specific SAÉ or Project, allowing for collective evidence submission and shared collaborative spaces.
+...
+*   **FR16 - Accessibility Toolbox:** A global settings menu available to all users to toggle:
+    *   **Visual:** High Contrast, Greyscale mode, Font Scaling.
+    *   **Layout:** Choice of display styles (Grid/Tiles, Detailed List, or Banner/Compact views) across all data-heavy interfaces.
+    *   **Reading:** OpenDyslexic font integration, increased line spacing, text-to-speech support.
+    *   **Focus:** "Zen Mode" to hide non-essential UI elements during evaluation or proof-reading.
 
 ### 2.2 Non-Functional Requirements (NFR)
-*   **NFR1 - Data Sovereignty:** 100% of user-uploaded files on Nextcloud.
-*   **NFR2 - Accessibility:** WCAG 2.1 AA compliance.
+...
+*   **NFR2 - Accessibility Standards:** 100% compliance with WCAG 2.1 AA. All interactive elements must have clear ARIA labels and logical tab ordering.
 *   **NFR5 - Responsiveness:** Interface must be fully fluid across all screen sizes (PC, Tablet, Smartphone) with no loss of functionality.
 *   **NFR8 - Multi-Instance Deployment:** Support for isolated Docker containers sharing the same codebase but different configurations.
 *   **NFR9 - Sovereign Collaboration:** All exchange data (Mattermost) must be self-hosted.

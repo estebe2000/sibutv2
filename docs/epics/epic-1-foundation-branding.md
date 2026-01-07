@@ -51,9 +51,16 @@ Le projet possède déjà un backend FastAPI et un frontend React. L'authentific
     1.  Isolation des données par "Tenant ID" (ou par instance Docker séparée).
     2.  Droit de création de comptes `DEPT_ADMIN`.
 
----
-
-## 4. Risques et Atténuation
+### Story 1.4 : Moteur d'Affichage Flexible
+**En tant qu'** Utilisateur,
+**Je veux** choisir entre différents styles d'affichage pour les listes et les grilles,
+**Afin d'** adapter la densité d'information à mon besoin du moment.
+*   **Critères d'Acceptation :**
+    1.  Bouton de sélection de vue sur les écrans majeurs (Dispatching, Galerie, Référentiel).
+    2.  **Mode Tuiles (Grid)** : Visualisation riche avec miniatures et badges.
+    3.  **Mode Liste (Compact)** : Tableau dense pour une vue d'ensemble rapide.
+    4.  **Mode Bannières (Wide)** : Cartes larges avec aperçu du contenu/description.
+    5.  Persistance du choix de vue par interface et par utilisateur.
 *   **Risque :** Complexité de la gestion des styles dynamiques en React.
 *   **Atténuation :** Utilisation des variables CSS (CSS Variables) injectées via le thème Mantine.
 *   **Risque :** Conflit lors de l'authentification LDAP partagée.
