@@ -27,12 +27,13 @@ Le projet possède déjà un backend FastAPI et un frontend React. L'authentific
 
 ### Story 1.1 : Configuration Multi-Tenant & Branding
 **En tant qu'** Administrateur Système,
-**Je veux** configurer les éléments visuels et les contacts via des variables d'environnement,
-**Afin que** l'application affiche l'identité visuelle de mon département.
+**Je veux** configurer l'intégralité des paramètres système (Branding, LDAP, Nextcloud, SMTP, Mattermost) via des variables d'environnement ou un fichier de configuration,
+**Afin que** l'instance soit totalement autonome et isolée.
 *   **Critères d'Acceptation :**
-    1.  Support des variables `APP_LOGO_URL`, `APP_PRIMARY_COLOR`, `APP_WELCOME_MESSAGE`.
-    2.  Le frontend récupère ces réglages au démarrage via un endpoint `/api/config/branding`.
-    3.  Interface de login affichant le logo et le message personnalisé.
+    1.  Support des variables pour le branding : `APP_LOGO_URL`, `APP_PRIMARY_COLOR`, `APP_WELCOME_MESSAGE`.
+    2.  Support des paramètres infra : `LDAP_URL`, `NEXTCLOUD_URL`, `SMTP_HOST`, `MATTERMOST_URL`.
+    3.  Le frontend récupère la configuration publique via un endpoint dédié.
+    4.  Validation au démarrage du backend de la présence des variables obligatoires.
 
 ### Story 1.2 : Matrice de Rôles Étendue (RBAC)
 **En tant qu'** Administrateur Départemental,

@@ -1,12 +1,13 @@
 # BUT TC Skills Tracking Application - Project Home
 
 ## 🎯 Project Overview
-**Goal:** Create a unified platform for tracking student progress across the 3-year BUT curriculum, designed for multi-department deployment.
+**Goal:** Create a unified platform for tracking student progress across the 3-year BUT curriculum, designed for multi-department deployment and collaborative pedagogy.
 **Key Features:** 
 *   **Multi-Tenancy & Branding:** Independent deployments with custom identity (Logo, Colors).
+*   **Extensive Configuration:** 100% of external parameters configurable (LDAP, Nextcloud, Mattermost).
+*   **Multi-Device Fluidity:** Optimized for PC, Tablet, and Smartphone (Single URL access).
 *   **Strong Governance:** Responsibility matrix for SAÉ and Internship validation.
-*   **3-Way Evaluation:** Seamless flow between Students, Tutors (Magic Links), and Professors.
-*   **Data Sovereignty:** 100% secure file storage via IUT Nextcloud proxy.
+*   **Collaborative Ecosystem:** Integrated real-time communication via Mattermost.
 *   **Repeating Student Management:** Formal "Capitalization" workflow for academic progress.
 
 ## 📚 Documentation Index
@@ -24,6 +25,11 @@
 ### 📋 Planning & Execution (Epics & Stories)
 *   **Epic 1: [Foundation, Infrastructure & Branding](docs/epics/epic-1-foundation-branding.md)** ([Detailed Stories](docs/stories/epic-1-stories.md))
 *   **Epic 2: [Curriculum & Advanced Governance](docs/epics/epic-2-curriculum-governance.md)** ([Repeating Students Stories](docs/stories/epic-2-repeating-stories.md))
+*   **Epic 3: [Portfolio & Nextcloud Integration](docs/epics/epic-3-portfolio-nextcloud.md)**
+*   **Epic 4: [The Evaluation Cycle](docs/epics/epic-4-evaluation-cycle.md)**
+*   **Epic 5: [Visual Analytics & Reporting](docs/epics/epic-5-analytics-reporting.md)**
+*   **Epic 6: [PDF Import (AI)](docs/epics/epic-6-pdf-import.md)**
+*   **Epic 7: [Mattermost Integration](docs/epics/epic-7-mattermost-integration.md)**
 *   **[Brainstorming: Repeating Students Workflow](docs/brainstorming-redoublants-results.md):** Summary of decisions for capitalization.
 
 ## 🚀 Quick Start
