@@ -44,6 +44,7 @@ The IUT Le Havre is implementing the new BUT curriculum, which mandates a Compet
 *   **FR12 - Repeating Student Management (Capitalization):** Handle students repeating a year, allowing carry-over of previously validated skills via a formal advisor-led interview process.
 *   **FR13 - Advanced Reporting:** Generate PDF/CSV reports for Students (individual progress), Groups (cohort level), and Internships.
 *   **FR14 - Real-Time Collaboration (Mattermost):** Integration of a communication layer for pedagogical exchanges.
+*   **FR15 - SAÉ Workgroups:** Ability to form student groups within a specific SAÉ or Project, allowing for collective evidence submission and shared collaborative spaces.
 
 ### 2.2 Non-Functional Requirements (NFR)
 *   **NFR1 - Data Sovereignty:** 100% of user-uploaded files on Nextcloud.

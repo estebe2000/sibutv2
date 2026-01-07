@@ -52,7 +52,15 @@ Le référentiel (Compétences, SAE, Ressources) est déjà modélisé dans `mod
 
 ---
 
-## 4. Risques et Atténuation
+## Story 2.7 : Workgroup Builder (SAÉ & Projets)
+**En tant que** Professeur Responsable,
+**Je veux** organiser les étudiants en groupes de travail pour une SAÉ spécifique,
+**Afin de** permettre une évaluation et une collaboration collective.
+*   **Critères d'Acceptation :**
+    1.  Interface de sélection multiple pour regrouper des étudiants.
+    2.  Possibilité de nommer le groupe (ex: "Groupe A - Agence Marketing").
+    3.  Une preuve déposée par un membre est automatiquement visible et associée à tous les membres du groupe.
+    4.  Déclenchement de la création du canal Mattermost (lié à l'Epic 7).
 *   **Risque :** Absence de responsable (vacance de poste).
 *   **Atténuation :** Les Administrateurs Départementaux gardent un droit de validation "Master" par défaut.
 *   **Risque :** Complexité de gestion si un professeur a 50 SAÉs.

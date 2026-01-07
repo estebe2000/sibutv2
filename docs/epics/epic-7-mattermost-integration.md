@@ -19,13 +19,15 @@ L'application doit s'interfacer avec une instance Mattermost auto-hébergée. L'
     1.  Configuration de Webhooks Mattermost par département.
     2.  Message formaté contenant le nom de l'étudiant et le lien direct vers l'évaluation.
 
-### Story 7.2 : Canaux de SAÉ / Projets
-**En tant qu'** Étudiant,
-**Je veux** accéder au canal de discussion Mattermost de ma SAÉ directement depuis l'application,
-**Afin de** collaborer avec mes pairs et mes professeurs en contexte.
+### Story 7.2 : Canaux de SAÉ / Groupes de Travail
+**En tant qu'** Étudiant membre d'un groupe de projet,
+**Je veux** qu'un canal Mattermost privé soit automatiquement créé pour mon groupe,
+**Afin de** collaborer exclusivement avec mes partenaires et mon professeur tuteur.
 *   **Critères d'Acceptation :**
-    1.  Lien dynamique vers le canal Mattermost sur la fiche SAÉ/Activité.
-    2.  Utilisation de l'API Mattermost pour vérifier l'existence du canal ou le créer si nécessaire.
+    1.  Lors de la création d'un "Groupe de Travail" dans l'application, un appel API vers Mattermost crée un canal privé.
+    2.  Nommage automatique du canal : `[SAE-CODE]-[NOM-GROUPE]`.
+    3.  Ajout automatique des membres du groupe et du professeur responsable au canal.
+    4.  Lien direct vers ce canal affiché sur le Dashboard du groupe.
 
 ### Story 7.3 : Intégration Nextcloud
 **En tant qu'** Utilisateur,
