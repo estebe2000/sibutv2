@@ -16,7 +16,8 @@
 *   **Simplify External Access:** Remove authentication barriers for external tutors using a secure "Magic Link" system.
 *   **Inclusive & Mobile-First:** Deliver a mobile-responsive interface compliant with WCAG AA standards for accessibility.
 *   **Standardize Curriculum:** Allow admins to deploy and update curriculum templates for student groups.
-*   **Multi-Tenancy Readiness:** Enable future reusability by other departments via automatic curriculum ingestion from PDF (Official National Program).
+*   **Multi-Tenancy & White-Labeling:** Enable independent deployment per department (Docker-based) with full customization (Logo, UI colors, welcome messages, contact info).
+*   **Strong Governance & RBAC:** Implement a rigid responsibility matrix (SAÉ Leads, Internship Leads) to ensure accountability in the evaluation process.
 *   **Robust Development Environment:** Provide a full local Docker stack (Nextcloud, LDAP) for realistic testing.
 
 ### 1.2 Background Context
@@ -35,7 +36,7 @@ The proposed solution, "Skills Hub," addresses these issues by acting as an orch
 ## 2. Requirements
 
 ### 2.1 Functional Requirements (FR)
-*   **FR1 - Auth & User Management:** The system must authenticate Students and Professors via the university LDAP. External Tutors must authenticate via secure, time-limited "Magic Links" sent via email.
+*   **FR1 - Auth & User Management:** The system must authenticate Students and Professors via university LDAP. Supports specialized roles: SuperAdmin (global), DeptAdmin (local), SAE_Lead, Internship_Lead.
 *   **FR2 - Curriculum Templates:** Admins must be able to create, version, and assign curriculum templates (Skills, SAÉs) to specific student groups.
 *   **FR3 - Evidence Upload:** Students must be able to upload multimedia evidence (PDF, Video, Audio) which the system acts as a proxy to store securely on Nextcloud.
 *   **FR4 - 3-Way Evaluation:** The system must support a specific workflow: Student Self-Eval -> Tutor Comment/Review -> Professor Validation.
@@ -44,6 +45,10 @@ The proposed solution, "Skills Hub," addresses these issues by acting as an orch
 *   **FR7 - Group Management:** The system must allow creating custom groups/pathways that may differ from the strict LDAP hierarchy.
 *   **FR8 - Notification System:** Users should receive notifications (email/in-app) for pending evaluations or expired magic links.
 *   **FR9 - PDF Curriculum Ingestion:** Admins must be able to upload an official "Programme National" PDF, and the system must parse and extract Competencies, SAÉs, and Learning Outcomes to auto-generate a Curriculum Template.
+*   **FR10 - Multi-Tenant Customization:** Each deployment must be configurable via Environment Variables or a config file for branding (Logo, Home Page Text, Support Contact).
+*   **FR11 - Responsibility Assignment:** Ability to assign specific Professors as "Leads" for specific SAÉs or Internships. Only assigned leads (or admins) can perform the final validation for those items.
+*   **FR12 - Repeating Student Management (Capitalization):** The system must handle students repeating a year, allowing them to carry over previously validated skills while starting new attempts for others.
+*   **FR13 - Advanced Reporting:** Generate PDF/CSV reports for Students (individual progress), Groups (cohort level), and Internships (tutor/prof summary).
 
 ### 2.2 Non-Functional Requirements (NFR)
 *   **NFR1 - Data Sovereignty:** 100% of user-uploaded files must be stored on the designated IUT Nextcloud instance, not on the application server.
@@ -53,6 +58,7 @@ The proposed solution, "Skills Hub," addresses these issues by acting as an orch
 *   **NFR5 - Responsiveness:** The interface must be fully functional on mobile devices (360px width min) without horizontal scrolling.
 *   **NFR6 - Stack:** The backend must be built with Python (FastAPI), frontend with React/Vue, and database with PostgreSQL, containerized for CapRover.
 *   **NFR7 - Local Development Parity:** The local development environment must include Dockerized instances of Nextcloud and LDAP (OpenLDAP) pre-seeded with test data (2-3 students, 2-3 profs) to fully simulate the production environment offline.
+*   **NFR8 - Multi-Instance Deployment:** The application architecture must support being deployed in multiple isolated Docker containers (one per department) sharing the same codebase but different configurations.
 
 ---
 
@@ -123,11 +129,11 @@ The "Skills Hub" should feel like a modern personal fitness tracker for educatio
 
 ## 5. Epic List
 
-*   **Epic 1: Foundation & Infrastructure:** Establish project setup, authentication, and basic user management (including Local LDAP/Nextcloud).
-*   **Epic 2: Curriculum & Template Management:** Create and manage curriculum templates (Skills, SAÉs) and assign them to groups.
+*   **Epic 1: Foundation, Infrastructure & Branding:** Project setup, multi-tenant config, branding customization, and LDAP auth.
+*   **Epic 2: Curriculum & Advanced Governance:** Template management and the Responsibility Matrix (SAÉ/Internship Leads).
 *   **Epic 3: Evidence Portfolio & Nextcloud Integration:** Implement student interface for evidence upload and gallery management (Nextcloud).
 *   **Epic 4: The Evaluation Cycle (Magic Links & Sliders):** Complete the 3-way evaluation workflow (Student Self-Eval -> Tutor -> Prof).
-*   **Epic 5: Visual Analytics & Accessibility Polish:** Deliver advanced progress visualizations and full accessibility compliance.
+*   **Epic 5: Visual Analytics & Comprehensive Reporting:** Progress visualizations and specialized reports (Student/Group/Repeating).
 *   **Epic 6: Multi-Tenant Expansion (PDF Import):** Enable automated curriculum ingestion from official PDF documents to support other departments.
 
 ---
