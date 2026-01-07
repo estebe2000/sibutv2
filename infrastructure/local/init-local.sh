@@ -6,14 +6,14 @@ echo "🚀 Starting Local Infrastructure Initialization..."
 # 1. LDAP Seeding
 echo "🌱 Seeding LDAP..."
 # Wait for LDAP to be ready
-until docker exec but_tc_ldap ldapsearch -x -H ldap://localhost -b "dc=univ,dc=fr" -D "cn=admin,dc=univ,dc=fr" -w adminpassword > /dev/null 2>&1; do
+until docker exec but_tc_ldap ldapsearch -x -H ldap://localhost -b "dc=univ,dc=fr" -D "cn=admin,dc=univ,dc=fr" -w Rangetachambre76* > /dev/null 2>&1; do
   echo "Waiting for LDAP..."
   sleep 2
 done
 
 # Copy and Import Seed
 docker cp infrastructure/local/ldap/seed.ldif but_tc_ldap:/tmp/seed.ldif
-docker exec but_tc_ldap ldapadd -x -D "cn=admin,dc=univ,dc=fr" -w adminpassword -f /tmp/seed.ldif || echo "LDAP might already be seeded (ignoring error)"
+docker exec but_tc_ldap ldapadd -x -D "cn=admin,dc=univ,dc=fr" -w Rangetachambre76* -f /tmp/seed.ldif || echo "LDAP might already be seeded (ignoring error)"
 
 # 2. Nextcloud Configuration
 echo "☁️  Configuring Nextcloud & OnlyOffice..."
@@ -73,7 +73,7 @@ docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapHost "b
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapPort 389
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapBase "dc=univ,dc=fr"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapAgentName "cn=admin,dc=univ,dc=fr"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapAgentPassword "adminpassword"
+docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapAgentPassword "Rangetachambre76*"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapConfigurationActive 1
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 turnOnPasswordChange 0
 
@@ -128,7 +128,7 @@ docker exec -u www-data but_tc_nextcloud php occ config:app:set integration_matt
 
 # 9. Mattermost User & Team Provisioning
 echo "👤 Provisioning Mattermost Admin & Team..."
-docker exec but_tc_mattermost mmctl user create --email admin@univ.fr --username admin --password "adminpassword" --system-admin --local || echo "Admin already exists"
+docker exec but_tc_mattermost mmctl user create --email admin@univ.fr --username admin --password "Rangetachambre76*" --system-admin --local || echo "Admin already exists"
 docker exec but_tc_mattermost mmctl team create --name but-tc --display-name "BUT TC" --local || echo "Team already exists"
 docker exec but_tc_mattermost mmctl team users add but-tc admin --local || echo "User already in team"
 
@@ -141,8 +141,8 @@ done
 
 echo "✅ Initialization Complete!"
 echo "---------------------------------------------------"
-echo "LDAP Admin:   http://localhost:8081 (admin/adminpassword)"
-echo "Nextcloud:    http://localhost:8082 (admin/adminpassword)"
+echo "LDAP Admin:   http://localhost:8081 (admin/Rangetachambre76*)"
+echo "Nextcloud:    http://localhost:8082 (admin/Rangetachambre76*)"
 echo "Mattermost:   http://localhost:8065"
 echo "OnlyOffice:   http://localhost:8083 (Healthy)"
 echo "Mailpit UI:   http://localhost:8025 (Check Emails)"

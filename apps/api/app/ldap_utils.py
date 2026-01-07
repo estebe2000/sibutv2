@@ -10,7 +10,7 @@ def get_ldap_connection(user_dn=None, password=None):
         return Connection(server, user_dn, password, auto_bind=True)
     else:
         # Default admin bind
-        return Connection(server, 'cn=admin,' + LDAP_BASE_DN, 'adminpassword', auto_bind=True)
+        return Connection(server, 'cn=admin,' + LDAP_BASE_DN, 'Rangetachambre76*', auto_bind=True)
 
 def verify_credentials(username, password):
     """

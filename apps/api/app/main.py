@@ -42,7 +42,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 @app.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    if form_data.username == "admin" and form_data.password == "adminpassword":
+    if form_data.username == "admin" and form_data.password == "Rangetachambre76*":
         return {"access_token": create_access_token({"sub": "admin"}), "token_type": "bearer"}
     if verify_credentials(form_data.username, form_data.password):
         if form_data.username != "admin":
@@ -163,7 +163,7 @@ def set_user_quota(ldap_uid: str, quota: str = "100 GB", session: Session = Depe
     
     nc_url = os.getenv("NEXTCLOUD_URL", "http://nextcloud")
     nc_admin = os.getenv("NEXTCLOUD_ADMIN", "admin")
-    nc_pass = os.getenv("NEXTCLOUD_PASS", "adminpassword")
+    nc_pass = os.getenv("NEXTCLOUD_PASS", "Rangetachambre76*")
     
     url = f"{nc_url}/ocs/v1.php/cloud/users/{ldap_uid}"
     headers = {"OCS-APIRequest": "true"}

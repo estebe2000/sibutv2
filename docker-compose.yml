@@ -28,7 +28,7 @@ services:
       - '389:389'
       - '636:636'
     environment:
-      - LDAP_ADMIN_PASSWORD=adminpassword
+      - LDAP_ADMIN_PASSWORD=Rangetachambre76*
       - LDAP_DOMAIN=univ.fr
       - LDAP_ORGANISATION=IUT
       - LDAP_BASE_DN=dc=univ,dc=fr
@@ -66,7 +66,7 @@ services:
       - "8082:80"
     environment:
       - NEXTCLOUD_ADMIN_USER=admin
-      - NEXTCLOUD_ADMIN_PASSWORD=adminpassword
+      - NEXTCLOUD_ADMIN_PASSWORD=Rangetachambre76*
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud
       # Using SQLite for the dev instance
       - SQLITE_DATABASE=nextcloud
@@ -158,7 +158,7 @@ services:
       - LDAP_BASE_DN=dc=univ,dc=fr
       - NEXTCLOUD_URL=http://nextcloud
       - NEXTCLOUD_ADMIN=admin
-      - NEXTCLOUD_PASS=adminpassword
+      - NEXTCLOUD_PASS=Rangetachambre76*
     ports:
       - "8000:8000"
     networks:

@@ -19,7 +19,7 @@ npm run dev &
 FRONTEND_PID=$!
 
 echo "✅ Both services are starting."
-echo "Login: admin / adminpassword"
+echo "Login: admin / Rangetachambre76*"
 echo "Press Ctrl+C to stop both."
 
 trap "kill $BACKEND_PID $FRONTEND_PID" EXIT
