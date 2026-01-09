@@ -1,76 +1,54 @@
-# Development Guide
+# Guide de Développement
 
-## 1. Workflow & Standards
+## Architecture des Données (Data Model)
 
-### 1.1 Branching Strategy
-*   **Main Branch:** `main` (Production-ready).
-*   **Feature Branches:** `feature/epic-number-description` (e.g., `feature/epic1-scaffolding`).
-*   **Bug Fixes:** `fix/bug-description`.
+Le modèle de données repose sur `SQLModel` (FastAPI) et PostgreSQL.
 
-### 1.2 Commit Messages (Conventional Commits)
-*   `feat: add login endpoint`
-*   `fix: resolve nextcloud timeout`
-*   `docs: update architecture diagram`
-*   `refactor: simplify evaluation service`
+### Entités Principales
 
----
+#### 1. Competency (Compétence)
+Représente une macro-compétence (ex: C1, C4-SME).
+- **Niveaux** : 1, 2, 3 (correspondant aux années du BUT).
+- **Relation** : Contient des `LearningOutcome` (AC) et `EssentialComponent` (CE).
 
-## 2. Coding Standards (Strict)
+#### 2. Activity (SAÉ / Stage / Portfolio)
+Représente une situation d'apprentissage.
+- **Types** : `SAE`, `STAGE`, `PORTFOLIO`, `PROJET`.
+- **Champs Clés** :
+  - `pathway` : Parcours associé ("Tronc Commun", "SME", etc.).
+  - `resources` : Liste des codes ressources (ex: "R1.01, R1.02").
+  - `hours` : Volume horaire (entier).
 
-### 2.1 General
-*   **English Only:** Code, comments, commit messages.
-*   **No Magic Numbers:** Use constants or config variables.
-*   **Linting:** Pre-commit hooks must pass (`black` for Python, `eslint` for JS).
+#### 3. Resource (Ressource)
+Représente un savoir ou un cours.
+- **Champs Enrichis** :
+  - `description` : Objectifs et contexte.
+  - `content` : Contenu pédagogique détaillé.
+  - `hours` : Volume horaire total (entier).
+  - `hours_details` : Détail du volume (ex: "24h dont 10h TP").
+  - `targeted_competencies` : Liste textuelle des compétences visées (C1, C2...).
+  - `pathway` : Parcours associé (permet de distinguer R3.01 SME de R3.01 MMPV).
 
-### 2.2 Frontend (React/TypeScript)
-*   **Strict Mode:** `strict: true` in `tsconfig.json`. No `any` types allowed.
-*   **Functional Components:** Use React Hooks only. No class components.
-*   **State Management:**
-    *   Server State: `TanStack Query` (mandatory for API data).
-    *   Global UI State: `Zustand` (if needed).
-    *   Form State: `React Hook Form` + `Zod` validation.
-*   **Styling:** CSS-in-JS or Utility-first (Tailwind/Mantine). No global CSS files.
+### Processus d'Extraction et de Seeding
 
-### 2.3 Backend (FastAPI/Python)
-*   **Type Hints:** 100% coverage required. Use `Pydantic` for everything.
-*   **Service Layer Pattern:**
-    *   ❌ **Bad:** Logic in Routes (`@app.get(...)`).
-    *   ✅ **Good:** Routes call `EvaluationService.process(...)`.
-*   **Async/Await:** All I/O bound operations (DB, Nextcloud) must be `async`.
+Le fichier maître est `apps/api/app/data/referentiel_final.json`. Il est généré par des scripts Python qui parsent le PDF officiel du programme.
 
----
+1.  **Extraction** : Les scripts dans `tmp/` (`extract_*.py`) lisent le PDF et mettent à jour le JSON.
+2.  **Seeding** : Le script `apps/api/app/seed_db.py` lit ce JSON et peuple la base de données au démarrage du conteneur API.
+    *   *Note* : Si le schéma de la base change (ex: ajout de colonne), une suppression des volumes (`docker-compose down -v`) est nécessaire car nous n'utilisons pas d'outil de migration (Alembic) pour ce prototype.
 
-## 3. Testing Strategy
+## Frontend (React / Mantine)
 
-### 3.1 Requirements
-*   **Backend:** `pytest`. Min 80% coverage for business logic.
-*   **Frontend:** `vitest`. Test complex hooks and utilities. Component tests for core flows.
-*   **E2E:** `Playwright` for "Happy Paths" (Login -> Upload -> Validate).
+### Gestion du Référentiel (`CompetencyEditor` dans `App.tsx`)
+- **Onglets** : Compétences / Activités / Ressources.
+- **Filtres** :
+  - Par Niveau (BUT 1, 2, 3).
+  - Par Parcours (`pathway`). Le filtre s'applique aux Activités ET aux Ressources.
+- **Affichage** :
+  - Utilisation massive de `Accordion` pour la densité d'information.
+  - Modales "Light" pour la consultation rapide.
+  - Badges de couleur pour identifier les types et les heures.
 
-### 3.2 Running Tests
-```bash
-# Backend
-docker-compose exec api pytest
-
-# Frontend
-cd apps/web && npm test
-```
-
----
-
-## 4. Environment Setup
-
-### 4.1 Prerequisites
-*   Docker & Docker Compose
-*   Node.js 18+
-*   Python 3.11+
-
-### 4.2 Local Config (`.env`)
-Copy `.env.example` to `.env`. Required keys:
-```ini
-DATABASE_URL=postgresql://user:pass@db:5432/skills_db
-NEXTCLOUD_URL=https://ncloud.iut.fr
-NEXTCLOUD_USER=service_account
-NEXTCLOUD_PASS=secret
-LDAP_SERVER=ldap://ldap.univ.fr
-```
+## Bonnes Pratiques
+- **Toujours passer par le script `refresh-data.sh`** pour mettre à jour les données locales après une modification du JSON ou des scripts d'extraction.
+- **Respecter la nomenclature des codes** (`R3.SME.15`) pour garantir le bon fonctionnement des filtres.

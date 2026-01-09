@@ -1,80 +1,80 @@
-# BUT TC Skills Tracking Application - Project Home
+# Skills Hub - BUT Techniques de Commercialisation
 
-## 🎯 Project Overview
-**Goal:** Create a unified platform for tracking student progress across the 3-year BUT curriculum, designed for multi-department deployment and collaborative pedagogy.
-**Key Features:** 
-*   **Multi-Tenancy & Branding:** Independent deployments with custom identity (Logo, Colors).
-*   **Extensive Configuration:** 100% of external parameters configurable (LDAP, Nextcloud, Mattermost).
-*   **Multi-Device Fluidity:** Optimized for PC, Tablet, and Smartphone (Single URL access).
-*   **Strong Governance:** Responsibility matrix for SAÉ and Internship validation.
-*   **Collaborative Ecosystem:** Integrated real-time communication via Mattermost.
-*   **Repeating Student Management:** Formal "Capitalization" workflow for academic progress.
+Application de gestion des compétences et du référentiel pédagogique pour le BUT TC.
 
-## 📚 Documentation Index
+## 🚀 Fonctionnalités
 
-### 🏁 Getting Started & Strategy
-*   **[Product Requirements (PRD)](docs/prd.md):** The core "Source of Truth" for features and goals.
-*   **[Functional Roadmap](docs/functional-roadmap.md):** Strategic milestones for product delivery.
-*   **[Strategic Refactoring Plan](docs/refactoring-plan.md):** Technical plan to modularize the current codebase.
+### 📚 Référentiel Digitalisé Complet
+- **Couverture Totale** : BUT 1, BUT 2 et BUT 3 (Niveaux 1, 2, 3).
+- **Parcours Spécialisés** :
+  - Stratégie de Marque et Événementiel (SME)
+  - Marketing et Management du Point de Vente (MMPV)
+  - Marketing Digital, E-Business et Entrepreneuriat (MDEE)
+  - Business International (BI)
+  - Business Développement et Management de la Relation Client (BDMRC)
+- **Contenu Riche** :
+  - Fiches Ressources détaillées (Objectifs, Contenus pédagogiques, Mots clés).
+  - Volumes horaires précis (ex: "24h dont 20h TP").
+  - Lien direct entre Activités (SAÉ), Ressources et Compétences (AC).
 
-### 🏗 Architecture & Design
-*   **[System Architecture](docs/architecture.md):** Technical design, database schema, and component map.
-*   **[Development Guide](docs/development-guide.md):** Standards, workflows, and setup instructions.
-*   **[API Contracts](docs/api-contracts.md):** External integration specifics (LDAP, Nextcloud).
+### 🖥️ Interface Utilisateur
+- **Vue en Accordéon** : Navigation fluide par Année et par Type (Compétences, Activités, Ressources).
+- **Filtrage Dynamique** : Affichage contextuel selon le parcours sélectionné.
+- **Fiches Détails** : Modales interactives pour consulter le détail d'une ressource ou d'une activité.
 
-### 📋 Planning & Execution (Epics & Stories)
-*   **Epic 1: [Foundation, Infrastructure & Branding](docs/epics/epic-1-foundation-branding.md)** ([Detailed Stories](docs/stories/epic-1-stories.md))
-*   **Epic 2: [Curriculum & Advanced Governance](docs/epics/epic-2-curriculum-governance.md)** ([Repeating Students Stories](docs/stories/epic-2-repeating-stories.md))
-*   **Epic 3: [Portfolio & Nextcloud Integration](docs/epics/epic-3-portfolio-nextcloud.md)**
-*   **Epic 4: [The Evaluation Cycle](docs/epics/epic-4-evaluation-cycle.md)**
-*   **Epic 5: [Visual Analytics & Reporting](docs/epics/epic-5-analytics-reporting.md)**
-*   **Epic 6: [PDF Import (AI)](docs/epics/epic-6-pdf-import.md)**
-*   **Epic 7: [Mattermost Integration](docs/epics/epic-7-mattermost-integration.md)**
-*   **[Brainstorming: Repeating Students Workflow](docs/brainstorming-redoublants-results.md):** Summary of decisions for capitalization.
+### 🛠️ Outils d'Administration
+- **Extraction PDF** : Scripts Python (`tmp/extract_*.py`) pour parser le Programme National (PN) PDF.
+- **Seeding** : Peuplement automatique de la base de données PostgreSQL.
+- **Gestion des Utilisateurs** : Import LDAP, assignation aux groupes, rôles (Enseignant, Étudiant).
 
-## 🚀 Quick Start
-The project is now fully containerized for a seamless development experience.
+## 📦 Installation & Lancement
 
+### Pré-requis
+- Docker & Docker Compose
+- Node.js (pour le développement local du frontend)
+- Python 3.11+ (pour les scripts d'extraction)
+
+### Démarrage Rapide
 ```bash
-# 1. Clone & Enter
-git clone <repo>
-cd but-tc-skills
-
-# 2. Start Everything (Infra + App + Seeding)
-# This command builds the app, starts all services, and populates the DB.
+# 1. Lancer l'infrastructure (Base de données, API, Frontend, LDAP, etc.)
 npm run infra:up
 
-# 3. Access
-# Frontend (Web): http://localhost:3000
-# Backend API:   http://localhost:8000/docs
-# Mattermost:    http://localhost:8065
-# Nextcloud:     http://localhost:8082
-# Mailpit UI:    http://localhost:8025
+# 2. Accéder à l'application
+# Frontend : http://localhost:3000
+# API Doc : http://localhost:8000/docs
+# Mailpit : http://localhost:8025
 ```
 
-## 🛠 Local Development Infrastructure
+### Commandes Utiles
 
-The project includes a full Dockerized stack mimicking production.
-
-### Components
-*   **Application (Web & API):** React + FastAPI containerized.
-*   **PostgreSQL:** `localhost:5432` (Main DB) & Mattermost DB.
-*   **OpenLDAP:** `localhost:389` (Seeded with test users).
-*   **Nextcloud:** `localhost:8082` (WebDAV proxy storage).
-*   **Mattermost:** `localhost:8065` (Collaborative hub).
-*   **Mailpit:** `localhost:8025` (SMTP Capture).
-
-## 🏗 Repository Structure
-```text
-/
-├── apps/
-│   ├── api/          # FastAPI Backend (Python)
-│   └── web/          # React Frontend (TypeScript + Mantine)
-├── docs/             # Comprehensive Documentation
-├── infrastructure/   # Local & Production setup scripts
-└── docker-compose.yml
+**Rafraîchir les données (API + Seed) sans tout reconstruire :**
+```bash
+./infrastructure/local/refresh-data.sh
 ```
 
-## 🤝 Contribution
-Please refer to the [Development Guide](docs/development-guide.md) before pushing code.
-**Strict Monorepo & TypeScript policies apply.**
+**Purger et reconstruire (en cas de changement de schéma BDD) :**
+```bash
+docker-compose down -v --remove-orphans
+docker-compose build --no-cache api web
+npm run infra:up
+```
+
+## 📂 Structure du Projet
+
+- `apps/api` : Backend FastAPI (SQLModel, PostgreSQL).
+- `apps/web` : Frontend React (Mantine UI, Vite).
+- `apps/api/app/data/referentiel_final.json` : Fichier maître des données pédagogiques.
+- `infrastructure` : Configuration Docker et scripts de déploiement.
+- `docs` : Documentation technique et prompts d'extraction.
+- `tmp` : Scripts d'extraction et fichiers temporaires.
+
+## 📝 Scripts d'Extraction (Maintenance)
+
+Les scripts situés dans `tmp/` permettent de régénérer le fichier JSON à partir du PDF officiel.
+- `extract_resources.py` : Ressources BUT 1.
+- `extract_s2.py` : Activités BUT 1 (Semestre 2).
+- `extract_pathways.py` : BUT 2 & 3 complets (tous parcours).
+- `deduplicate_data.py` : Nettoyage des doublons.
+
+---
+*Projet développé avec l'assistance de Gemini CLI.*
