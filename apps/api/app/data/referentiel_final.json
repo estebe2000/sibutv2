@@ -3147,6 +3147,126 @@
         "R4.BDMRC.10"
       ],
       "ac_codes": []
+    },
+    {
+      "code": "PORTFOLIO S6 SME",
+      "nom": "Démarche portfolio (S6 SME)",
+      "type": "PORTFOLIO",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "SME",
+      "hours": 0,
+      "description": "Compétences ciblées :\n– Elaborer l’identité d’une marque\n– Manager un projet événementiel\n– Conduire les actions marketing\n– Vendre une offre commerciale\nObjectifs et problématique professionnelle :\nAu semestre 6, la démarche portfolio permettra d’évaluer l’étudiant dans son processus d’acquisition des niveaux de compé-\ntences de la troisième année du B.U.T., et dans sa capacité à en faire la démonstration par la mobilisation d’éléments de preuve\nargumentés et sélectionnés. L’étudiant devra donc engager une posture réﬂexive et de distanciation critique en cohérence avec\nle parcours suivi et le degré de complexité des niveaux de compétences ciblés, tout en s’appuyant sur l’ensemble des mises\nen situation proposées dans le cadre des SAÉ de troisième année.\nDescriptif générique :\nPrenant n’importe quelle forme, littérale, analogique ou numérique, la démarche portfolio pourra être menée dans le cadre\nd’ateliers au cours desquels l’étudiant retracera la trajectoire individuelle qui a été la sienne durant la troisième année du B.U.T.\nau prisme du référentiel de compétences et du parcours suivi, tout en adoptant une posture propice à une analyse distanciée\net intégrative de l’ensemble des SAÉ.",
+      "resources": [],
+      "ac_codes": []
+    },
+    {
+      "code": "PORTFOLIO S6 MMPV",
+      "nom": "Démarche portfolio (S6 MMPV)",
+      "type": "PORTFOLIO",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "MMPV",
+      "hours": 0,
+      "description": "Compétences ciblées :\n– Manager une équipe commerciale sur un espace de vente\n– Piloter un espace de vente\n– Conduire les actions marketing\n– Vendre une offre commerciale\nObjectifs et problématique professionnelle :\nAu semestre 6, la démarche portfolio permettra d’évaluer l’étudiant dans son processus d’acquisition des niveaux de compé-\ntences de la troisième année du B.U.T., et dans sa capacité à en faire la démonstration par la mobilisation d’éléments de preuve\nargumentés et sélectionnés. L’étudiant devra donc engager une posture réﬂexive et de distanciation critique en cohérence avec\nle parcours suivi et le degré de complexité des niveaux de compétences ciblés, tout en s’appuyant sur l’ensemble des mises\nen situation proposées dans le cadre des SAÉ de troisième année.\nDescriptif générique :\nPrenant n’importe quelle forme, littérale, analogique ou numérique, la démarche portfolio pourra être menée dans le cadre\nd’ateliers au cours desquels l’étudiant retracera la trajectoire individuelle qui a été la sienne durant la troisième année du B.U.T.\nau prisme du référentiel de compétences et du parcours suivi, tout en adoptant une posture propice à une analyse distanciée\net intégrative de l’ensemble des SAÉ.",
+      "resources": [],
+      "ac_codes": []
+    },
+    {
+      "code": "PORTFOLIO S6 MDEE",
+      "nom": "Démarche portfolio (S6 MDEE)",
+      "type": "PORTFOLIO",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "MDEE",
+      "hours": 0,
+      "description": "Compétences ciblées :\n– Gérer une activité digitale\n– Développer un projet e-business\n– Conduire les actions marketing\n– Vendre une offre commerciale\nObjectifs et problématique professionnelle :\nAu semestre 6, la démarche portfolio permettra d’évaluer l’étudiant dans son processus d’acquisition des niveaux de compé-\ntences de la troisième année du B.U.T., et dans sa capacité à en faire la démonstration par la mobilisation d’éléments de preuve\nargumentés et sélectionnés. L’étudiant devra donc engager une posture réﬂexive et de distanciation critique en cohérence avec\nle parcours suivi et le degré de complexité des niveaux de compétences ciblés, tout en s’appuyant sur l’ensemble des mises\nen situation proposées dans le cadre des SAÉ de troisième année.\nDescriptif générique :\nPrenant n’importe quelle forme, littérale, analogique ou numérique, la démarche portfolio pourra être menée dans le cadre\nd’ateliers au cours desquels l’étudiant retracera la trajectoire individuelle qui a été la sienne durant la troisième année du B.U.T.\nau prisme du référentiel de compétences et du parcours suivi, tout en adoptant une posture propice à une analyse distanciée\net intégrative de l’ensemble des SAÉ.",
+      "resources": [],
+      "ac_codes": []
+    },
+    {
+      "code": "PORTFOLIO S6 BI",
+      "nom": "Démarche portfolio (S6 BI)",
+      "type": "PORTFOLIO",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "BI",
+      "hours": 0,
+      "description": "Compétences ciblées :\n– Formuler une stratégie de commerce à l’international\n– Piloter les opérations à l’international\n– Conduire les actions marketing\n– Vendre une offre commerciale\nObjectifs et problématique professionnelle :\nAu semestre 6, la démarche portfolio permettra d’évaluer l’étudiant dans son processus d’acquisition des niveaux de compé-\ntences de la troisième année du B.U.T., et dans sa capacité à en faire la démonstration par la mobilisation d’éléments de preuve\nargumentés et sélectionnés. L’étudiant devra donc engager une posture réﬂexive et de distanciation critique en cohérence avec\nle parcours suivi et le degré de complexité des niveaux de compétences ciblés, tout en s’appuyant sur l’ensemble des mises\nen situation proposées dans le cadre des SAÉ de troisième année.\nDescriptif générique :\nPrenant n’importe quelle forme, littérale, analogique ou numérique, la démarche portfolio pourra être menée dans le cadre\nd’ateliers au cours desquels l’étudiant retracera la trajectoire individuelle qui a été la sienne durant la troisième année du B.U.T.\nau prisme du référentiel de compétences et du parcours suivi, tout en adoptant une posture propice à une analyse distanciée\net intégrative de l’ensemble des SAÉ.",
+      "resources": [],
+      "ac_codes": []
+    },
+    {
+      "code": "PORTFOLIO S6 BDMRC",
+      "nom": "Démarche portfolio (S6 BDMRC)",
+      "type": "PORTFOLIO",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "BDMRC",
+      "hours": 0,
+      "description": "Compétences ciblées :\n– Participer à la stratégie marketing et commerciale de l’organisation\n– Manager la relation client\n– Conduire les actions marketing\n– Vendre une offre commerciale\nObjectifs et problématique professionnelle :\nAu semestre 6, la démarche portfolio permettra d’évaluer l’étudiant dans son processus d’acquisition des niveaux de compé-\ntences de la troisième année du B.U.T., et dans sa capacité à en faire la démonstration par la mobilisation d’éléments de preuve\nargumentés et sélectionnés. L’étudiant devra donc engager une posture réﬂexive et de distanciation critique en cohérence avec\nle parcours suivi et le degré de complexité des niveaux de compétences ciblés, tout en s’appuyant sur l’ensemble des mises\nen situation proposées dans le cadre des SAÉ de troisième année.\nDescriptif générique :\nPrenant n’importe quelle forme, littérale, analogique ou numérique, la démarche portfolio pourra être menée dans le cadre\nd’ateliers au cours desquels l’étudiant retracera la trajectoire individuelle qui a été la sienne durant la troisième année du B.U.T.\nau prisme du référentiel de compétences et du parcours suivi, tout en adoptant une posture propice à une analyse distanciée\net intégrative de l’ensemble des SAÉ.",
+      "resources": [],
+      "ac_codes": []
+    },
+    {
+      "code": "STAGE S6 SME",
+      "nom": "Stage SME (S6)",
+      "type": "STAGE",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "SME",
+      "hours": 0,
+      "description": "Compétences ciblées :\n\n– Elaborer l’identité d’une marque\n– Manager un projet événementiel\n– Conduire les actions marketing\n– Vendre une offre commerciale\n\nObjectifs et problématique professionnelle :\nProblématique professionnelle :\nLe ou la stagiaire agit en tant que collaborateur ou collaboratrice d’un cadre intermédiaire dans un service ou une organisation\nen contribuant à l’activité de l’organisation et à ses résultats. Les travaux du ou de la stagiaire sont supervisés par un encadrant\nde l’organisme d’accueil.\n\nObjectifs :\n– Conduire une ou des missions en responsabilité\n– Participer aux projets en tant que membre de l’équipe\n– Mobiliser l’ensemble des acquis académiques et des compétences en milieu professionnel pour contribuer à l’activité et\naux résultats, proposer des solutions et en rendre compte\n– Renforcer les savoirs-faire et savoirs-être professionnels\n– Conforter le projet professionnel",
+      "ac_codes": [],
+      "resources": []
+    },
+    {
+      "code": "STAGE S6 MMPV",
+      "nom": "Stage MMPV (S6)",
+      "type": "STAGE",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "MMPV",
+      "hours": 0,
+      "description": "Compétences ciblées :\n\n– Manager une équipe commerciale sur un espace de vente\n– Piloter un espace de vente\n– Conduire les actions marketing\n– Vendre une offre commerciale\n\nObjectifs et problématique professionnelle :\nProblématique professionnelle :\nLe ou la stagiaire agit en tant que collaborateur ou collaboratrice d’un cadre intermédiaire dans un service ou une organisation\nen contribuant à l’activité de l’organisation et à ses résultats. Les travaux du ou de la stagiaire sont supervisés par un encadrant\nde l’organisme d’accueil.\n\nObjectifs :\n– Conduire une ou des missions en responsabilité\n– Participer aux projets en tant que membre de l’équipe\n– Mobiliser l’ensemble des acquis académiques et des compétences en milieu professionnel pour contribuer à l’activité et\naux résultats, proposer des solutions et en rendre compte\n– Renforcer les savoirs-faire et savoirs-être professionnels\n– Conforter le projet professionnel",
+      "ac_codes": [],
+      "resources": []
+    },
+    {
+      "code": "STAGE S6 MDEE",
+      "nom": "Stage MDEE (S6)",
+      "type": "STAGE",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "MDEE",
+      "hours": 0,
+      "description": "Compétences ciblées :\n\n– Gérer une activité digitale\n– Développer un projet e-business\n– Conduire les actions marketing\n– Vendre une offre commerciale\n\nObjectifs et problématique professionnelle :\nProblématique professionnelle :\nLe ou la stagiaire agit en tant que collaborateur ou collaboratrice d’un cadre intermédiaire dans un service ou une organisation\nen contribuant à l’activité de l’organisation et à ses résultats. Les travaux du ou de la stagiaire sont supervisés par un encadrant\nde l’organisme d’accueil.\n\nObjectifs :\n– Conduire une ou des missions en responsabilité\n– Participer aux projets en tant que membre de l’équipe\n– Mobiliser l’ensemble des acquis académiques et des compétences en milieu professionnel pour contribuer à l’activité et\naux résultats, proposer des solutions et en rendre compte\n– Renforcer les savoirs-faire et savoirs-être professionnels\n– Conforter le projet professionnel",
+      "ac_codes": [],
+      "resources": []
+    },
+    {
+      "code": "STAGE S6 BI",
+      "nom": "Stage BI (S6)",
+      "type": "STAGE",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "BI",
+      "hours": 0,
+      "description": "Compétences ciblées :\n\n– Formuler une stratégie de commerce à l’international\n– Piloter les opérations à l’international\n– Conduire les actions marketing\n– Vendre une offre commerciale\n\nObjectifs et problématique professionnelle :\nProblématique professionnelle :\nLe ou la stagiaire agit en tant que collaborateur ou collaboratrice d’un cadre intermédiaire dans un service ou une organisation\nen contribuant à l’activité de l’organisation et à ses résultats. Les travaux du ou de la stagiaire sont supervisés par un encadrant\nde l’organisme d’accueil.\n\nObjectifs :\n– Conduire une ou des missions en responsabilité\n– Participer aux projets en tant que membre de l’équipe\n– Mobiliser l’ensemble des acquis académiques et des compétences en milieu professionnel pour contribuer à l’activité et\naux résultats, proposer des solutions et en rendre compte\n– Renforcer les savoirs-faire et savoirs-être professionnels\n– Conforter le projet professionnel",
+      "ac_codes": [],
+      "resources": []
+    },
+    {
+      "code": "STAGE S6 BDMRC",
+      "nom": "Stage BDMRC (S6)",
+      "type": "STAGE",
+      "niveau": 3,
+      "semestre": 6,
+      "pathway": "BDMRC",
+      "hours": 0,
+      "description": "Compétences ciblées :\n\n– Participer à la stratégie marketing et commerciale de l’organisation\n– Manager la relation client\n– Conduire les actions marketing\n– Vendre une offre commerciale\n\nObjectifs et problématique professionnelle :\nProblématique professionnelle :\nLe ou la stagiaire agit en tant que collaborateur ou collaboratrice d’un cadre intermédiaire dans un service ou une organisation\nen contribuant à l’activité de l’organisation et à ses résultats. Les travaux du ou de la stagiaire sont supervisés par un encadrant\nde l’organisme d’accueil.\n\nObjectifs :\n– Conduire une ou des missions en responsabilité\n– Participer aux projets en tant que membre de l’équipe\n– Mobiliser l’ensemble des acquis académiques et des compétences en milieu professionnel pour contribuer à l’activité et\naux résultats, proposer des solutions et en rendre compte\n– Renforcer les savoirs-faire et savoirs-être professionnels\n– Conforter le projet professionnel",
+      "ac_codes": [],
+      "resources": []
     }
   ],
   "resources": [
