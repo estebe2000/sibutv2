@@ -273,7 +273,7 @@ function App() {
                 <Stack>
                   <TextInput label="Nom du groupe" placeholder="ex: TP1, BUT1-A..." value={newGroup.name} onChange={(e) => setNewGroup({...newGroup, name: e.target.value})} required />
                   <Select label="Année" data={['1', '2', '3']} value={newGroup.year.toString()} onChange={(v) => setNewGroup({...newGroup, year: parseInt(v || '1')})} />
-                  <Select label="Parcours" data={['Tronc Commun', 'BI', 'BSMRC', 'MDEE', 'MMPV', 'SME']} value={newGroup.pathway} onChange={(v) => setNewGroup({...newGroup, pathway: v || 'Tronc Commun'})} />
+                  <Select label="Parcours" data={['Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME']} value={newGroup.pathway} onChange={(v) => setNewGroup({...newGroup, pathway: v || 'Tronc Commun'})} />
                   <Select label="Type" data={[{label: 'Initiale', value: 'FI'}, {label: 'Alternance', value: 'FA'}]} value={newGroup.formation_type} onChange={(v) => setNewGroup({...newGroup, formation_type: v || 'FI'})} />
                   <Button onClick={handleCreateGroup}>Valider</Button>
                 </Stack>
@@ -381,7 +381,11 @@ function App() {
               </Grid>
             </Container>
           ) : activeTab === 'curriculum' ? (
-            <CompetencyEditor curriculum={curriculum} onRefresh={fetchCurriculum} />
+            <CompetencyEditor 
+                curriculum={curriculum} 
+                onRefresh={fetchCurriculum} 
+                professors={assignedUsers.filter(u => u.role === 'PROFESSOR' || u.role === 'ADMIN' || u.role === 'SUPER_ADMIN')} 
+            />
           ) : <SettingsView config={systemConfig} onSave={handleSaveConfig} />}
         </DragDropContext>
       </AppShell.Main>
@@ -449,8 +453,30 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   
   const [infoItem, setInfoItem] = useState<any>(null);
   const [infoLoading, setInfoLoading] = useState(false);
+  
+  const [activeTab, setActiveTab] = useState<string | null>('comps');
+  const [expandedResource, setExpandedResource] = useState<string | null>(null);
 
-  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BSMRC', 'MDEE', 'MMPV', 'SME'];
+  useEffect(() => {
+    const handler = (e: any) => {
+        setActiveTab('ress');
+        // Find ID if possible or just open by code logic if we used code in value
+        // We used value={r.code + r.id}
+        const res = curriculum.resources.find((r: any) => r.code === e.detail);
+        if (res) {
+            setExpandedResource(res.code + res.id);
+            // Scroll to it? Ideally yes.
+            setTimeout(() => {
+                const el = document.getElementById(`accordion-${res.code + res.id}`);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    };
+    window.addEventListener('switch-to-resources', handler);
+    return () => window.removeEventListener('switch-to-resources', handler);
+  }, [curriculum]);
+
+  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
   const levels = [1, 2, 3];
 
   const handleSaveComp = async () => {
@@ -503,40 +529,57 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
 
   return (
     <Container size="lg">
-      {/* INFO MODAL */}
+      {/* INFO MODAL - LIGHT VERSION */}
       <Modal opened={!!infoItem} onClose={() => setInfoItem(null)} title={infoItem?.code || "Infos"} size="md">
-        {infoLoading ? <Center p="xl"><Loader /></Center> : (
+        {infoLoading ? <Center p="xl"><Loader /></Center> : infoItem && (
             <Stack>
-                <Title order={4}>{infoItem?.label || infoItem?.code}</Title>
+                <Title order={4} c="blue">{infoItem.label || infoItem.code}</Title>
+                
+                {(infoItem.hours > 0 || infoItem.hours_details) && (
+                    <Badge color="blue" variant="filled" leftSection={<IconClock size={12} />}>
+                        Volume Horaire : {infoItem.hours_details || `${infoItem.hours}h`}
+                    </Badge>
+                )}
+                
                 <Divider />
-                {infoItem?.error ? <Text color="red">{infoItem.error}</Text> : (
+                
+                {infoItem.error ? <Text color="red">{infoItem.error}</Text> : (
                     <>
-                        <Text size="sm" fw={700}>Descriptif :</Text>
-                        <Text size="sm">{infoItem?.description || "Aucun descriptif"}</Text>
-                        
-                        {infoItem?.content && (
-                            <>
-                                <Text size="sm" fw={700} mt="md">Contenu :</Text>
-                                <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>{infoItem.content}</Text>
-                            </>
+                        {infoItem.description && (
+                            <Box>
+                                <Text size="sm" fw={700} mb={4}>Résumé :</Text>
+                                <Text size="sm" lineClamp={5} style={{ whiteSpace: 'pre-wrap' }}>
+                                    {infoItem.description.includes('Mots clés :') ? infoItem.description.split('Mots clés :')[0] : infoItem.description}
+                                </Text>
+                            </Box>
                         )}
 
-                        {infoItem?.hours > 0 && (
-                            <Group mt="md">
-                                <IconClock size={16} color="gray" />
-                                <Text size="sm">{infoItem.hours} heures (National)</Text>
-                            </Group>
-                        )}
-
-                        {infoItem?.learning_outcomes?.length > 0 && (
-                            <>
-                                <Text size="sm" fw={700} mt="md">Apprentissages Critiques liés :</Text>
+                        {infoItem.learning_outcomes?.length > 0 && (
+                            <Box mt="md">
+                                <Text size="sm" fw={700} mb={4}>AC Liés :</Text>
                                 <Group gap={5}>
                                     {infoItem.learning_outcomes.map((lo: any) => (
                                         <Badge key={lo.id} size="xs" variant="outline">{lo.code}</Badge>
                                     ))}
                                 </Group>
-                            </>
+                            </Box>
+                        )}
+                        
+                        {/* Navigation Button */}
+                        {infoItem.type === 'RES' && (
+                            <Button 
+                                fullWidth 
+                                variant="light" 
+                                mt="lg" 
+                                onClick={() => {
+                                    const code = infoItem.code;
+                                    setInfoItem(null); 
+                                    setActiveTab('curriculum'); 
+                                    window.dispatchEvent(new CustomEvent('switch-to-resources', { detail: code }));
+                                }}
+                            >
+                                Voir la fiche complète (Menu Ressources)
+                            </Button>
                         )}
                     </>
                 )}
@@ -614,10 +657,19 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
               <Badge size="lg" variant="light">{pathway === 'TOUS' ? 'Tous Parcours' : currPathway}</Badge>
             </Group>
 
-            <Tabs defaultValue="comps">
+            <Tabs value={activeTab} onChange={setActiveTab}>
               <Tabs.List mb="md">
                 <Tabs.Tab value="comps" leftSection={<IconCategory size={16} />}>Compétences ({comps.length})</Tabs.Tab>
                 <Tabs.Tab value="acts" leftSection={<IconDatabase size={16} />} color="orange">Activités ({acts.length})</Tabs.Tab>
+                <Tabs.Tab value="ress" leftSection={<IconBook size={16} />} color="teal">Ressources ({curriculum.resources?.filter((r: any) => {
+                            if (!r.code) return false;
+                            const codePrefix = parseInt(r.code.replace('R', '').split('.')[0]);
+                            if (isNaN(codePrefix)) return false;
+                            if (lvl === 1) return codePrefix === 1 || codePrefix === 2;
+                            if (lvl === 2) return codePrefix === 3 || codePrefix === 4;
+                            if (lvl === 3) return codePrefix === 5 || codePrefix === 6;
+                            return false;
+                        }).length})</Tabs.Tab>
               </Tabs.List>
 
               <Tabs.Panel value="comps">
@@ -673,92 +725,171 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
               </Tabs.Panel>
 
               <Tabs.Panel value="acts">
-                <Grid>
+                <Accordion variant="separated">
                   {acts.map((a: any) => (
-                    <Grid.Col key={a.id} span={6}>
-                      <Card withBorder padding="sm">
-                        <Group justify="space-between" mb="xs">
-                          <Badge color={a.type === 'SAE' ? 'orange' : a.type === 'STAGE' ? 'teal' : (a.type === 'PORTFOLIO' ? 'cyan' : 'grape')}>{a.type}</Badge>
-                          <Text fw={700} size="sm">{a.code}</Text>
-                          <ActionIcon size="xs" variant="subtle" onClick={() => setEditingAct(a)}><IconPencil size={12} /></ActionIcon>
-                        </Group>
-                        <Text size="sm" mb="xs" fw={500}>{a.label}</Text>
-                        {a.description && (
-                            <Text size="xs" c="dimmed" mb="xs" style={{ lineHeight: 1.4 }}>
-                                {a.description}
-                            </Text>
-                        )}
-                        <Divider my="xs" />
-                        <Stack gap={8}>
-                            <div>
-                                <Text size="xs" fw={700} c="dimmed" mb={4}>COMPÉTENCES MOBILISÉES (AC)</Text>
-                                <Stack gap={4}>
-                                    {a.learning_outcomes?.map((lo: any) => (
-                                        <Group key={lo.id} justify="space-between" wrap="nowrap">
-                                            <Text size="xs" truncate style={{ flex: 1 }}>{lo.label}</Text>
-                                            <Badge 
-                                                size="xs" 
-                                                variant="light" 
-                                                color="blue" 
-                                                style={{ cursor: 'pointer' }} 
-                                                className="hover-badge"
-                                                onClick={() => setInfoItem({...lo, type: 'AC'})}
-                                            >
-                                                {lo.code}
-                                            </Badge>
-                                        </Group>
-                                    ))}
-                                    {(!a.learning_outcomes || a.learning_outcomes.length === 0) && <Text size="xs" c="dimmed" fs="italic">Aucun lien AC</Text>}
-                                </Stack>
-                            </div>
-                            {a.resources && (
-                                <div>
-                                    <Text size="xs" fw={700} c="orange" mb={4}>RESSOURCES MOBILISÉES</Text>
-                                    <Stack gap={4}>
-                                        {a.resources.split(',').map((rCode: string) => {
-                                            const code = rCode.trim();
-                                            const resInfo = curriculum.resources?.find((r: any) => r.code === code);
-                                            return (
-                                                <Group key={code} justify="space-between" wrap="nowrap">
-                                                    <Text size="xs" truncate style={{ flex: 1 }}>{resInfo?.label || 'Ressource'}</Text>
-                                                    <Badge 
-                                                        size="xs" 
-                                                        variant="light" 
-                                                        color="orange" 
-                                                        style={{ cursor: 'pointer' }} 
-                                                        className="hover-badge"
-                                                        onClick={() => showInfo(resInfo || {code}, 'RES')}
-                                                    >
-                                                        {code}
-                                                    </Badge>
-                                                </Group>
-                                            );
-                                        })}
-                                    </Stack>
-                                </div>
-                            )}
-                        </Stack>
-                        
-                        <Divider my="xs" variant="dotted" />
-                        <Group justify="space-between" align="center">
-                            <Group gap={4}>
-                                {a.owner_id && (
-                                    <Badge size="xs" color="yellow" variant="filled" leftSection={<IconCrown size={10} />}>
-                                        {professors?.find((p: any) => p.id === a.owner_id)?.full_name?.split(' ').map((n: string) => n[0]).join('') || '?'}
-                                    </Badge>
-                                )}
-                                {a.intervenants?.length > 0 && (
-                                    <Badge size="xs" color="gray" variant="light" leftSection={<IconUsers size={10} />}>
-                                        {a.intervenants.length}
-                                    </Badge>
-                                )}
+                    <Accordion.Item key={a.id} value={a.code + a.id}>
+                      <Accordion.Control>
+                        <Group justify="space-between" wrap="nowrap">
+                            <Group gap="sm" wrap="nowrap">
+                                <Badge color={a.type === 'SAE' ? 'orange' : a.type === 'STAGE' ? 'teal' : (a.type === 'PORTFOLIO' ? 'cyan' : 'grape')} size="sm" w={80} style={{ flexShrink: 0 }}>{a.type}</Badge>
+                                <Text fw={600} size="sm" truncate>{a.code} : {a.label}</Text>
                             </Group>
-                            <Text size="xs" c="dimmed">Gouvernance</Text>
+                            <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
+                                {a.hours > 0 && (
+                                    <Badge size="xs" variant="light" color="gray" leftSection={<IconClock size={10} />}>{a.hours}h</Badge>
+                                )}
+                                <ActionIcon size="xs" variant="subtle" onClick={(e) => { e.stopPropagation(); setEditingAct(a); }}><IconPencil size={12} /></ActionIcon>
+                            </Group>
                         </Group>
-                      </Card>
-                    </Grid.Col>
+                      </Accordion.Control>
+                      <Accordion.Panel>
+                        <Grid>
+                            <Grid.Col span={12}>
+                                {a.description && (
+                                    <Box mb="sm">
+                                        <Text size="xs" fw={700} c="dimmed" mb={4}>OBJECTIFS ET CONTEXTE</Text>
+                                        <Text size="sm" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>{a.description}</Text>
+                                    </Box>
+                                )}
+                            </Grid.Col>
+                            
+                            <Grid.Col span={6}>
+                                <Text size="xs" fw={700} c="orange" mb={4}>RESSOURCES MOBILISÉES</Text>
+                                <Group gap={6}>
+                                    {a.resources ? a.resources.split(',').map((rCode: string) => {
+                                        const code = rCode.trim();
+                                        const resInfo = curriculum.resources?.find((r: any) => r.code === code);
+                                        return (
+                                            <Badge 
+                                                key={code}
+                                                size="sm" 
+                                                variant="light" 
+                                                color="orange" 
+                                                style={{ cursor: 'pointer', textTransform: 'none' }} 
+                                                className="hover-badge"
+                                                onClick={() => showInfo(resInfo || {code}, 'RES')}
+                                                leftSection={<IconBook size={10} />}
+                                            >
+                                                {code}
+                                            </Badge>
+                                        );
+                                    }) : <Text size="xs" c="dimmed" fs="italic">Aucune ressource</Text>}
+                                </Group>
+                            </Grid.Col>
+
+                            <Grid.Col span={6}>
+                                <Text size="xs" fw={700} c="blue" mb={4}>COMPÉTENCES (AC)</Text>
+                                <Group gap={6}>
+                                    {a.learning_outcomes?.length > 0 ? a.learning_outcomes.map((lo: any) => (
+                                        <Badge 
+                                            key={lo.id}
+                                            size="sm" 
+                                            variant="light" 
+                                            color="blue" 
+                                            style={{ cursor: 'pointer' }} 
+                                            className="hover-badge"
+                                            onClick={() => setInfoItem({...lo, type: 'AC'})}
+                                        >
+                                            {lo.code}
+                                        </Badge>
+                                    )) : <Text size="xs" c="dimmed" fs="italic">Aucun AC lié</Text>}
+                                </Group>
+                            </Grid.Col>
+
+                            <Grid.Col span={12}>
+                                <Divider my="xs" variant="dotted" />
+                                <Group gap="xl">
+                                    <Group gap={4}>
+                                        <IconCrown size={14} color="gold" />
+                                        <Text size="xs" c="dimmed">Responsable : {professors?.find((p: any) => p.id === a.owner_id)?.full_name || 'Non assigné'}</Text>
+                                    </Group>
+                                    <Group gap={4}>
+                                        <IconUsers size={14} color="gray" />
+                                        <Text size="xs" c="dimmed">Intervenants : {a.intervenants?.length || 0}</Text>
+                                    </Group>
+                                </Group>
+                            </Grid.Col>
+                        </Grid>
+                      </Accordion.Panel>
+                    </Accordion.Item>
                   ))}
-                </Grid>
+                </Accordion>
+              </Tabs.Panel>
+
+              <Tabs.Panel value="ress">
+                <Accordion variant="separated" value={expandedResource} onChange={setExpandedResource}>
+                    {curriculum.resources
+                        ?.filter((r: any) => {
+                            if (!r.code) return false;
+                            const codePrefix = parseInt(r.code.replace('R', '').split('.')[0]);
+                            if (isNaN(codePrefix)) return false;
+                            if (lvl === 1) return codePrefix === 1 || codePrefix === 2;
+                            if (lvl === 2) return codePrefix === 3 || codePrefix === 4;
+                            if (lvl === 3) return codePrefix === 5 || codePrefix === 6;
+                            return false;
+                        })
+                        .map((r: any) => (
+                        <Accordion.Item key={r.id} value={r.code + r.id} id={`accordion-${r.code + r.id}`}>
+                            <Accordion.Control>
+                                <Group justify="space-between" wrap="nowrap">
+                                    <Group gap="sm" wrap="nowrap">
+                                        <Badge color="teal" size="sm" w={60} style={{ flexShrink: 0 }}>{r.code}</Badge>
+                                        <Text fw={600} size="sm" truncate>{r.label}</Text>
+                                    </Group>
+                                    <Group gap="xs" wrap="nowrap" style={{ flexShrink: 0 }}>
+                                        {r.hours > 0 && (
+                                            <Badge size="xs" variant="light" color="gray" leftSection={<IconClock size={10} />}>{r.hours}h</Badge>
+                                        )}
+                                        <Button size="compact-xs" variant="light" onClick={(e) => { e.stopPropagation(); showInfo(r, 'RES'); }}>Détail</Button>
+                                    </Group>
+                                </Group>
+                            </Accordion.Control>
+                            <Accordion.Panel>
+                                <Stack gap="md">
+                                    {(r.hours > 0 || r.hours_details) && (
+                                        <Group>
+                                            <Badge size="lg" color="blue" variant="filled" leftSection={<IconClock size={14} />}>Volume Horaire : {r.hours_details || `${r.hours}h`}</Badge>
+                                        </Group>
+                                    )}
+
+                                    {r.description && (
+                                        <Box>
+                                            <Text size="xs" fw={700} c="dimmed" mb={4}>DESCRIPTIF & CONTRIBUTION</Text>
+                                            <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>{r.description.includes('Mots clés :') ? r.description.split('Mots clés :')[0] : r.description}</Text>
+                                        </Box>
+                                    )}
+                                    
+                                    {r.content && (
+                                        <Box>
+                                            <Text size="xs" fw={700} c="dark" mb={4}>CONTENU PÉDAGOGIQUE</Text>
+                                            <Text size="sm" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, paddingLeft: 10, borderLeft: '2px solid #eee' }}>{r.content}</Text>
+                                        </Box>
+                                    )}
+
+                                    {r.learning_outcomes?.length > 0 && (
+                                        <Box>
+                                            <Text size="xs" fw={700} c="blue" mb={4}>APPRENTISSAGES CRITIQUES CIBLÉS</Text>
+                                            <List size="xs" spacing={2} icon={<ThemeIcon color="blue" size={6} radius="xl"><IconPlus size={4}/></ThemeIcon>}>
+                                                {r.learning_outcomes.map((lo: any) => (
+                                                    <List.Item key={lo.id}>
+                                                        <b>{lo.code}</b> : {lo.label}
+                                                    </List.Item>
+                                                ))}
+                                            </List>
+                                        </Box>
+                                    )}
+                                    
+                                    {r.description && r.description.includes('Mots clés :') && (
+                                        <Box>
+                                            <Text size="xs" fw={700} c="grape" mb={4}>MOTS CLÉS</Text>
+                                            <Text size="sm" c="dimmed">{r.description.split('Mots clés :')[1].split('Volume')[0]}</Text>
+                                        </Box>
+                                    )}
+                                </Stack>
+                            </Accordion.Panel>
+                        </Accordion.Item>
+                    ))}
+                </Accordion>
               </Tabs.Panel>
             </Tabs>
           </Paper>

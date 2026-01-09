@@ -9,9 +9,7 @@ engine = create_engine(DATABASE_URL)
 CORE_DESCS = {
     "C1": "Conduire les actions marketing\n\nSituations :\n- en situation de développement d'un produit\n- en situation de développement d'un service\n- en situation de développement d'une activité non marchande",
     "C2": "Vendre une offre commerciale\n\nSituations :\n- en situation de vente en B to C\n- en situation de vente en B to B",
-    "C3": "Communiquer l'offre commerciale\n\nSituations :\n- en situation de communication de l'offre en tant qu'annonceur\n- en situation de communication de l'offre en tant qu'agence de communication",
-    "C4": "Développer l'activité commerciale\n\nSituations :\n- en situation de développement international\n- en situation de management d'équipe\n- en situation de marketing digital",
-    "C5": "Piloter la performance commerciale\n\nSituations :\n- en situation de pilotage d'un point de vente\n- en situation de gestion de projet événementiel\n- en situation de relation client"
+    "C3": "Communiquer l'offre commerciale\n\nSituations :\n- en situation de communication de l'offre en tant qu'annonceur\n- en situation de communication de l'offre en tant qu'agence de communication"
 }
 
 def seed():
@@ -75,9 +73,10 @@ def seed():
             res = Resource(
                 code=res_data["code"],
                 label=res_data["label"],
-                description=res_data["description"],
-                content=res_data["content"],
-                hours=res_data["hours"]
+                description=res_data.get("description", ""),
+                content=res_data.get("content", ""),
+                hours=res_data.get("hours", 0),
+                hours_details=res_data.get("hours_details", "")
             )
             session.add(res); session.flush()
             for ac_code in res_data.get("ac_codes", []):
@@ -102,7 +101,8 @@ def seed():
                 level=act_data["niveau"],
                 semester=act_data.get("semestre", 1), 
                 pathway=act_data["pathway"],
-                resources=", ".join(act_data.get("resources", []))
+                resources=", ".join(act_data.get("resources", [])),
+                hours=act_data.get("hours", 0)
             )
             session.add(act); session.flush()
             for ac_code in act_data.get("ac_codes", []):

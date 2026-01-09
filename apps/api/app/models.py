@@ -102,6 +102,7 @@ class Resource(SQLModel, table=True):
     description: Optional[str] = None
     content: Optional[str] = None
     hours: Optional[int] = None
+    hours_details: Optional[str] = None
     
     learning_outcomes: List[LearningOutcome] = Relationship(back_populates="resources", link_model=ResourceACLink)
 

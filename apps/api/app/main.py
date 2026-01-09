@@ -286,7 +286,7 @@ def get_moodle_data():
 def get_referentiel():
     try:
         with open("apps/api/app/data/referentiel.json", "r") as f: return json.load(f)
-    except: return {"parcours": ["Tronc Commun", "BSMRC", "MDEE", "MMPV", "SME", "BI"]}
+    except: return {"parcours": ["Tronc Commun", "BDMRC", "MDEE", "MMPV", "SME", "BI"]}
 
 @app.post("/import/students")
 async def import_students(file: UploadFile = File(...), session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
