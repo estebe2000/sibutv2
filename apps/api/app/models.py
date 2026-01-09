@@ -103,6 +103,8 @@ class Resource(SQLModel, table=True):
     content: Optional[str] = None
     hours: Optional[int] = None
     hours_details: Optional[str] = None
+    targeted_competencies: Optional[str] = None
+    pathway: str = Field(default="Tronc Commun")
     
     learning_outcomes: List[LearningOutcome] = Relationship(back_populates="resources", link_model=ResourceACLink)
 

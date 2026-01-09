@@ -511,12 +511,15 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
     } catch (e) { notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de l\'export' }); }
   };
 
-  const showInfo = async (item: any, type: 'RES' | 'AC') => {
+  const showInfo = async (item: any, type: 'RES' | 'AC', pathway?: string) => {
     setInfoLoading(true);
     setInfoItem({ ...item, type });
     try {
         if (type === 'RES') {
-            const res = await axios.get(`${API_URL}/resources/${item.code.trim()}`);
+            const url = pathway 
+                ? `${API_URL}/resources/${item.code.trim()}?pathway=${encodeURIComponent(pathway)}` 
+                : `${API_URL}/resources/${item.code.trim()}`;
+            const res = await axios.get(url);
             setInfoItem({ ...res.data, type });
         }
     } catch (e) {
@@ -642,11 +645,23 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
             return c.pathway === currPathway || c.pathway === 'Tronc Commun';
         }) || [];
 
-        const acts = curriculum.activities?.filter((a: any) => {
+        const acts = (curriculum.activities?.filter((a: any) => {
             if (a.level !== lvl) return false;
             if (pathway === 'TOUS') return true;
             return a.pathway === currPathway || a.pathway === 'Tronc Commun';
-        }) || [];
+        }) || []).sort((a: any, b: any) => {
+            // 1. Sort by Semester
+            if (a.semester !== b.semester) return a.semester - b.semester;
+            
+            // 2. Sort by Type (SAE first, then PORTFOLIO, then STAGE)
+            const typeOrder: any = { 'SAE': 1, 'PORTFOLIO': 2, 'STAGE': 3, 'PROJET': 4 };
+            const typeA = typeOrder[a.type] || 99;
+            const typeB = typeOrder[b.type] || 99;
+            if (typeA !== typeB) return typeA - typeB;
+            
+            // 3. Sort by Code
+            return a.code.localeCompare(b.code);
+        });
 
         if (comps.length === 0 && acts.length === 0) return null;
 
@@ -665,10 +680,18 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                             if (!r.code) return false;
                             const codePrefix = parseInt(r.code.replace('R', '').split('.')[0]);
                             if (isNaN(codePrefix)) return false;
-                            if (lvl === 1) return codePrefix === 1 || codePrefix === 2;
-                            if (lvl === 2) return codePrefix === 3 || codePrefix === 4;
-                            if (lvl === 3) return codePrefix === 5 || codePrefix === 6;
-                            return false;
+                            
+                            // Level Filter
+                            let matchLevel = false;
+                            if (lvl === 1 && (codePrefix === 1 || codePrefix === 2)) matchLevel = true;
+                            if (lvl === 2 && (codePrefix === 3 || codePrefix === 4)) matchLevel = true;
+                            if (lvl === 3 && (codePrefix === 5 || codePrefix === 6)) matchLevel = true;
+                            if (!matchLevel) return false;
+
+                            // Pathway Filter
+                            const currPathway = lvl === 1 ? 'Tronc Commun' : pathway;
+                            if (pathway === 'TOUS') return true;
+                            return r.pathway === currPathway || r.pathway === 'Tronc Commun';
                         }).length})</Tabs.Tab>
               </Tabs.List>
 
@@ -767,7 +790,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                                                 color="orange" 
                                                 style={{ cursor: 'pointer', textTransform: 'none' }} 
                                                 className="hover-badge"
-                                                onClick={() => showInfo(resInfo || {code}, 'RES')}
+                                                onClick={() => showInfo(resInfo || {code}, 'RES', a.pathway)}
                                                 leftSection={<IconBook size={10} />}
                                             >
                                                 {code}
@@ -821,12 +844,37 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                     {curriculum.resources
                         ?.filter((r: any) => {
                             if (!r.code) return false;
+                            
+                            // 1. Filter by Level
                             const codePrefix = parseInt(r.code.replace('R', '').split('.')[0]);
                             if (isNaN(codePrefix)) return false;
-                            if (lvl === 1) return codePrefix === 1 || codePrefix === 2;
-                            if (lvl === 2) return codePrefix === 3 || codePrefix === 4;
-                            if (lvl === 3) return codePrefix === 5 || codePrefix === 6;
-                            return false;
+                            if (lvl === 1 && (codePrefix !== 1 && codePrefix !== 2)) return false;
+                            if (lvl === 2 && (codePrefix !== 3 && codePrefix !== 4)) return false;
+                            if (lvl === 3 && (codePrefix !== 5 && codePrefix !== 6)) return false;
+
+                            // 2. Filter by Pathway
+                            const currPathway = lvl === 1 ? 'Tronc Commun' : pathway;
+                            if (pathway === 'TOUS') return true;
+                            // Resources from BUT 1 are usually Tronc Commun
+                            // Resources from BUT 2/3 are tagged by pathway OR Tronc Commun
+                            return r.pathway === currPathway || r.pathway === 'Tronc Commun';
+                        })
+                        .sort((a: any, b: any) => {
+                            // Extract semester and index from code R{sem}.{pathway}.{index} or R{sem}.{index}
+                            // Examples: R3.01, R3.SME.15
+                            const parseResCode = (code: string) => {
+                                const parts = code.replace('R', '').split('.');
+                                const sem = parseInt(parts[0]) || 0;
+                                // Last part is usually the index
+                                const idx = parseInt(parts[parts.length - 1]) || 0;
+                                return { sem, idx };
+                            };
+                            
+                            const valA = parseResCode(a.code);
+                            const valB = parseResCode(b.code);
+                            
+                            if (valA.sem !== valB.sem) return valA.sem - valB.sem;
+                            return valA.idx - valB.idx;
                         })
                         .map((r: any) => (
                         <Accordion.Item key={r.id} value={r.code + r.id} id={`accordion-${r.code + r.id}`}>
@@ -863,6 +911,17 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                                         <Box>
                                             <Text size="xs" fw={700} c="dark" mb={4}>CONTENU PÉDAGOGIQUE</Text>
                                             <Text size="sm" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, paddingLeft: 10, borderLeft: '2px solid #eee' }}>{r.content}</Text>
+                                        </Box>
+                                    )}
+
+                                    {r.targeted_competencies && (
+                                        <Box>
+                                            <Text size="xs" fw={700} c="teal" mb={4}>COMPÉTENCES CIBLÉES</Text>
+                                            <List size="xs" spacing={2} icon={<ThemeIcon color="teal" size={6} radius="xl"><IconPlus size={4}/></ThemeIcon>}>
+                                                {r.targeted_competencies.split(',').map((comp: string, idx: number) => (
+                                                    <List.Item key={idx}>{comp.trim()}</List.Item>
+                                                ))}
+                                            </List>
                                         </Box>
                                     )}
 

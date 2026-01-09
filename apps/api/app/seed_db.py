@@ -76,7 +76,9 @@ def seed():
                 description=res_data.get("description", ""),
                 content=res_data.get("content", ""),
                 hours=res_data.get("hours", 0),
-                hours_details=res_data.get("hours_details", "")
+                hours_details=res_data.get("hours_details", ""),
+                targeted_competencies=res_data.get("targeted_competencies", ""),
+                pathway=res_data.get("pathway", "Tronc Commun")
             )
             session.add(res); session.flush()
             for ac_code in res_data.get("ac_codes", []):

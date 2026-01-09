@@ -225,13 +225,24 @@ def list_resources(session: Session = Depends(get_session)):
     return result
 
 @app.get("/resources/{code}")
-def get_resource_by_code(code: str, session: Session = Depends(get_session)):
-    from sqlalchemy.orm import selectinload
-    res = session.exec(select(Resource).where(Resource.code == code).options(selectinload(Resource.learning_outcomes))).first()
-    if not res: raise HTTPException(status_code=404, detail="Resource not found")
-    d = res.model_dump()
-    d["learning_outcomes"] = [lo.model_dump() for lo in res.learning_outcomes]
-    return d
+def read_resource(code: str, pathway: str = None, session: Session = Depends(get_session)):
+    query = select(Resource).where(Resource.code == code)
+    
+    if pathway:
+        # Try finding specific pathway first
+        specific_res = session.exec(query.where(Resource.pathway == pathway)).first()
+        if specific_res:
+            return specific_res
+        # Fallback to Tronc Commun
+        tc_res = session.exec(query.where(Resource.pathway == "Tronc Commun")).first()
+        if tc_res:
+            return tc_res
+    
+    # If no pathway specified or fallback failed, return first match (or None)
+    resource = session.exec(query).first()
+    if not resource:
+        raise HTTPException(status_code=404, detail="Resource not found")
+    return resource
 
 @app.patch("/competencies/{comp_id}")
 def update_competency(comp_id: int, comp_data: dict, session: Session = Depends(get_session)):
