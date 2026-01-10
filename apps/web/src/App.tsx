@@ -80,10 +80,16 @@ const renderRichText = (text: string, curriculum: any, showInfo: any, setActiveT
 
         // 2. Inline Content Parsing (Badges)
         const renderInline = (text: string) => {
-            return text.split(/(\b[R|S]\d+\.[\w\.]+\b|\bSAÉ?\s\d+\.[\w\.]+\b)/g).map((part: string, i: number) => {
+            if (!text) return '';
+            
+            // Regex to match badges only (R1.01, etc.)
+            const parts = text.split(/(\b[R|S]\d+\.[\w\.]+\b|\bSAÉ?\s\d+\.[\w\.]+\b)/g);
+            
+            return parts.map((part, i) => {
+                if (!part) return null;
+
+                // Handle Resource Badge
                 const resMatch = part.match(/\b(R\d+\.[\w\.]+)\b/);
-                const actMatch = part.match(/\b(SAÉ?\s\d+\.[\w\.]+)\b/);
-                
                 if (resMatch) {
                     const code = resMatch[1];
                     const resInfo = curriculum.resources?.find((r: any) => r.code === code);
@@ -97,6 +103,9 @@ const renderRichText = (text: string, curriculum: any, showInfo: any, setActiveT
                         </Badge>
                     );
                 }
+
+                // Handle Activity Badge
+                const actMatch = part.match(/\b(SAÉ?\s\d+\.[\w\.]+)\b/);
                 if (actMatch) {
                     const code = actMatch[1];
                     return (
@@ -112,6 +121,7 @@ const renderRichText = (text: string, curriculum: any, showInfo: any, setActiveT
                         </Badge>
                     );
                 }
+
                 return part;
             });
         };
@@ -689,9 +699,9 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                                 {infoItem.description && (
                                     <Box>
                                         <Text size="sm" fw={700} mb={4}>Résumé :</Text>
-                                        <Text size="sm" lineClamp={5} style={{ whiteSpace: 'pre-wrap' }}>
-                                            {infoItem.description.includes('Mots clés :') ? infoItem.description.split('Mots clés :')[0] : infoItem.description}
-                                        </Text>
+                                        <Box>
+                                            {renderRichText(infoItem.description.includes('Mots clés :') ? infoItem.description.split('Mots clés :')[0] : infoItem.description, curriculum, showInfo, setActiveTabs)}
+                                        </Box>
                                     </Box>
                                 )}
 
@@ -870,7 +880,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                             <Box>
                                 <Text size="xs" fw={700} c="blue" mb={8} tt="uppercase">Apprentissages Critiques (Détails des attentes)</Text>
                                 <Accordion variant="contained" chevronPosition="right">
-                                    {c.learning_outcomes?.map((lo: any) => (
+                                    {c.learning_outcomes?.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((lo: any) => (
                                         <Accordion.Item key={lo.id} value={lo.code}>
                                             <Accordion.Control>
                                                 <Group gap="xs">
@@ -1523,6 +1533,12 @@ function DiscoveryView({ curriculum }: any) {
     else if (focusMapping[pathway] && focusMapping[pathway][code]) focus = focusMapping[pathway][code][year];
 
     if (!comp) return null;
+    
+    // Sort ACs by code alphabetically
+    if (comp.learning_outcomes) {
+        comp.learning_outcomes.sort((a: any, b: any) => a.code.localeCompare(b.code));
+    }
+    
     return { comp, focus };
   };
 
@@ -1678,7 +1694,7 @@ function DiscoveryView({ curriculum }: any) {
                                       <Text c="white" size="xs" italic>{lvlData.focus}</Text>
                                   </Paper>
                                   <Stack p="md" gap="xs">
-                                      {lvlData.comp?.learning_outcomes?.map((lo: any) => (
+                                      {lvlData.comp?.learning_outcomes?.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((lo: any) => (
                                           <Paper key={lo.id} withBorder p="xs" bg="gray.0" style={{ cursor: 'pointer' }}
                                                  onClick={() => showInfo(lo, 'AC')}>
                                               <Group gap="xs" wrap="nowrap" align="flex-start">
@@ -1709,9 +1725,9 @@ function DiscoveryView({ curriculum }: any) {
                         ) : (
                             <Box>
                                 <Text size="sm" fw={700} mb={4}>Résumé :</Text>
-                                <Text size="sm" lineClamp={5} style={{ whiteSpace: 'pre-wrap' }}>
-                                    {infoItem.description?.includes('Mots clés :') ? infoItem.description.split('Mots clés :')[0] : infoItem.description}
-                                </Text>
+                                <Box>
+                                    {renderRichText(infoItem.description?.includes('Mots clés :') ? infoItem.description.split('Mots clés :')[0] : infoItem.description, curriculum, showInfo, () => {})}
+                                </Box>
                             </Box>
                         )}
                     </Box>

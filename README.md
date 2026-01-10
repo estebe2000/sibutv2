@@ -17,22 +17,28 @@ Application de gestion des compétences et du référentiel pédagogique pour le
   - Volumes horaires précis (ex: "24h dont 20h TP").
   - Lien direct entre Activités (SAÉ), Ressources et Compétences (AC).
 
+### 🗺️ Roadmap & Découverte
+- **Visualisation Stratégique** : Nouvelle vue Roadmap interactive présentant la progression des compétences (BUT 1 à 3) sous forme de matrice (Style Page 18).
+- **Fiches PDF Intégrées** : Accès direct aux fiches pédagogiques PDF officielles (S1 à S6) stockées au sein de l'image Docker pour un déploiement sans dépendance locale.
+- **Rendu Riche** : Moteur de rendu dynamique supportant les badges interactifs et le formatage propre pour les Apprentissages Critiques (AC).
+
 ### 🖥️ Interface Utilisateur
 - **Vue en Accordéon** : Navigation fluide par Année et par Type (Compétences, Activités, Ressources).
 - **Filtrage Dynamique** : Affichage contextuel selon le parcours sélectionné.
-- **Fiches Détails** : Modales interactives pour consulter le détail d'une ressource ou d'une activité.
+- **Fiches Détails** : Modales interactives pour consulter le détail d'une ressource, d'une activité ou d'un AC.
+- **Tri Intelligent** : Affichage automatique des AC dans l'ordre numérique (01, 02, etc.).
 
 ### 🛠️ Outils d'Administration
 - **Extraction PDF** : Scripts Python (`tmp/extract_*.py`) pour parser le Programme National (PN) PDF.
 - **Seeding** : Peuplement automatique de la base de données PostgreSQL.
-- **Gestion des Utilisateurs** : Import LDAP, assignation aux groupes, rôles (Enseignant, Étudiant).
+- **Gestion des Utilisateurs** : Import LDAP complet (45+ utilisateurs de test), assignation aux groupes, rôles.
+- **Sauvegarde de la donnée** : Scripts de dump SQL pour sécuriser les enrichissements pédagogiques.
 
 ## 📦 Installation & Lancement
 
 ### Pré-requis
 - Docker & Docker Compose
-- Node.js (pour le développement local du frontend)
-- Python 3.11+ (pour les scripts d'extraction)
+- Node.js (facultatif, pour le développement)
 
 ### Démarrage Rapide
 ```bash
@@ -42,21 +48,23 @@ npm run infra:up
 # 2. Accéder à l'application
 # Frontend : http://localhost:3000
 # API Doc : http://localhost:8000/docs
-# Mailpit : http://localhost:8025
 ```
 
 ### Commandes Utiles
 
-**Rafraîchir les données (API + Seed) sans tout reconstruire :**
+**Purger et reconstruire (Full Reset) :**
 ```bash
-./infrastructure/local/refresh-data.sh
+npm run infra:reset
 ```
 
-**Purger et reconstruire (en cas de changement de schéma BDD) :**
+**Sauvegarder les données (BDD) :**
 ```bash
-docker-compose down -v --remove-orphans
-docker-compose build --no-cache api web
-npm run infra:up
+docker exec but_tc_db pg_dump -U app_user skills_db > backup_data.sql
+```
+
+**Restaurer les données :**
+```bash
+docker exec -i but_tc_db psql -U app_user skills_db < backup_data.sql
 ```
 
 ## 📂 Structure du Projet
