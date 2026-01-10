@@ -8,6 +8,7 @@ from .database import create_db_and_tables, get_session, engine
 from .models import Group, User, UserRole, SystemConfig, Competency, EssentialComponent, LearningOutcome, Activity, ActivityType, Resource
 from .ldap_utils import get_ldap_users, verify_credentials
 from .ai_parser import extract_text_from_pdf, parse_full_curriculum
+from .pdf_generator import generate_activity_pdf, generate_resource_pdf
 from typing import List
 import pandas as pd
 import io
@@ -290,6 +291,26 @@ def update_activity(act_id: int, act_data: dict, session: Session = Depends(get_
             setattr(act, key, value)
     session.add(act); session.commit(); session.refresh(act)
     return act
+
+@app.get("/activities/{act_id}/pdf")
+def get_activity_pdf(act_id: int, session: Session = Depends(get_session)):
+    from sqlalchemy.orm import selectinload
+    statement = select(Activity).where(Activity.id == act_id).options(selectinload(Activity.learning_outcomes))
+    activity = session.exec(statement).first()
+    if not activity: raise HTTPException(status_code=404, detail="Activity not found")
+    pdf_buffer = generate_activity_pdf(activity, session)
+    filename = f"Fiche_{activity.code.replace(' ', '_')}.pdf"
+    return StreamingResponse(pdf_buffer, media_type="application/pdf", headers={"Content-Disposition": f"attachment; filename={filename}"})
+
+@app.get("/resources/{res_id}/pdf")
+def get_resource_pdf_file(res_id: int, session: Session = Depends(get_session)):
+    from sqlalchemy.orm import selectinload
+    statement = select(Resource).where(Resource.id == res_id).options(selectinload(Resource.learning_outcomes))
+    resource = session.exec(statement).first()
+    if not resource: raise HTTPException(status_code=404, detail="Resource not found")
+    pdf_buffer = generate_resource_pdf(resource, session)
+    filename = f"Ressource_{resource.code}.pdf"
+    return StreamingResponse(pdf_buffer, media_type="application/pdf", headers={"Content-Disposition": f"attachment; filename={filename}"})
 
 @app.get("/export/curriculum")
 def export_curriculum(session: Session = Depends(get_session)):
