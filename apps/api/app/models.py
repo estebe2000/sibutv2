@@ -62,6 +62,7 @@ class Competency(SQLModel, table=True):
     code: str = Field(index=True) # e.g., "C1"
     label: str
     description: Optional[str] = None
+    situations_pro: Optional[str] = None
     level: int = 1 # 1, 2, or 3 (BUT1, BUT2, BUT3)
     pathway: str = Field(default="Tronc Commun")
     

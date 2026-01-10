@@ -456,24 +456,40 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   
   const [activeTab, setActiveTab] = useState<string | null>('comps');
   const [expandedResource, setExpandedResource] = useState<string | null>(null);
+  const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
 
   useEffect(() => {
-    const handler = (e: any) => {
+    const resHandler = (e: any) => {
         setActiveTab('ress');
-        // Find ID if possible or just open by code logic if we used code in value
-        // We used value={r.code + r.id}
         const res = curriculum.resources.find((r: any) => r.code === e.detail);
         if (res) {
             setExpandedResource(res.code + res.id);
-            // Scroll to it? Ideally yes.
             setTimeout(() => {
                 const el = document.getElementById(`accordion-${res.code + res.id}`);
                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 100);
         }
     };
-    window.addEventListener('switch-to-resources', handler);
-    return () => window.removeEventListener('switch-to-resources', handler);
+    const actHandler = (e: any) => {
+        setActiveTab('acts');
+        // Normalize code: SAÉ -> SAE
+        const searchCode = e.detail.replace('SAÉ', 'SAE').trim();
+        const act = curriculum.activities.find((a: any) => a.code === searchCode);
+        if (act) {
+            const val = act.code + act.id;
+            setExpandedActivity(val);
+            setTimeout(() => {
+                const el = document.getElementById(`act-accordion-${val}`);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 200);
+        }
+    };
+    window.addEventListener('switch-to-resources', resHandler);
+    window.addEventListener('switch-to-activities', actHandler);
+    return () => {
+        window.removeEventListener('switch-to-resources', resHandler);
+        window.removeEventListener('switch-to-activities', actHandler);
+    };
   }, [curriculum]);
 
   const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
@@ -709,38 +725,123 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                         </Group>
                       </Accordion.Control>
                       <Accordion.Panel>
-                        {c.description && (
-                            <Box mb="md">
-                                <Text size="xs" fw={700} c="blue" mb={4}>CONTEXTE PROFESSIONNEL</Text>
-                                <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>{c.description}</Text>
-                                <Divider my="md" />
+                        <Stack gap="lg">
+                            {c.situations_pro && (
+                                <Box>
+                                    <Text size="xs" fw={700} c="blue" mb={4} tt="uppercase">Situations Professionnelles (Contextes)</Text>
+                                    <Paper withBorder p="sm" bg="blue.0">
+                                        <List size="sm" spacing="xs">
+                                            {c.situations_pro.split('\n').map((s: string, i: number) => (
+                                                <List.Item key={i}>{s.trim()}</List.Item>
+                                            ))}
+                                        </List>
+                                    </Paper>
+                                </Box>
+                            )}
+
+                            <Box>
+                                <Text size="xs" fw={700} c="dimmed" mb={4} tt="uppercase">Composantes Essentielles (Critères Qualité)</Text>
+                                <List size="sm" spacing="xs" withPadding>
+                                    {c.essential_components?.map((ce: any) => (
+                                        <List.Item key={ce.id}><b>{ce.code}</b> : {ce.label}</List.Item>
+                                    ))}
+                                </List>
                             </Box>
-                        )}
-                        <Grid>
-                          <Grid.Col span={6}>
-                            <Title order={6} mb="xs" c="dimmed">COMPOSANTES ESSENTIELLES (CE)</Title>
-                            <List size="xs" spacing="xs" withPadding>
-                                {c.essential_components?.map((ce: any) => (
-                                    <List.Item key={ce.id}><b>{ce.code}</b> : {ce.label}</List.Item>
-                                ))}
-                                {(!c.essential_components || c.essential_components.length === 0) && <Text size="xs" c="dimmed" fs="italic">Aucune CE</Text>}
-                            </List>
-                          </Grid.Col>
-                          <Grid.Col span={6}>
-                            <Title order={6} mb="xs" c="dimmed">APPRENTISSAGES CRITIQUES (AC)</Title>
-                            <List size="xs" spacing="xs" withPadding>
-                                {c.learning_outcomes?.map((lo: any) => (
-                                    <List.Item key={lo.id}>
-                                        <Group gap={5}>
-                                            <Text size="xs"><b>{lo.code}</b> : {lo.label}</Text>
-                                            <ActionIcon size="xs" variant="transparent" onClick={() => setInfoItem({...lo, type: 'AC'})}><IconInfoCircle size={12} /></ActionIcon>
-                                        </Group>
-                                    </List.Item>
-                                ))}
-                                {(!c.learning_outcomes || c.learning_outcomes.length === 0) && <Text size="xs" c="dimmed" fs="italic">Aucune AC</Text>}
-                            </List>
-                          </Grid.Col>
-                        </Grid>
+
+                            <Box>
+                                <Text size="xs" fw={700} c="blue" mb={8} tt="uppercase">Apprentissages Critiques (Détails des attentes)</Text>
+                                <Accordion variant="contained" chevronPosition="right">
+                                    {c.learning_outcomes?.map((lo: any) => (
+                                        <Accordion.Item key={lo.id} value={lo.code}>
+                                            <Accordion.Control>
+                                                <Group gap="xs">
+                                                    <Badge size="sm" variant="filled">{lo.code}</Badge>
+                                                    <Text size="sm" fw={500}>{lo.label}</Text>
+                                                </Group>
+                                            </Accordion.Control>
+                                            <Accordion.Panel>
+                                                <Stack gap="xs">
+                                                    {lo.description ? (
+                                                        lo.description.split('\n').map((line: string, lineIdx: number) => {
+                                                            const trimmedLine = line.trim();
+                                                            if (!trimmedLine) return <Box key={lineIdx} h={10} />;
+
+                                                            // 1. Header Handling (###)
+                                                            if (trimmedLine.startsWith('###')) {
+                                                                return (
+                                                                    <Title order={6} key={lineIdx} mt="sm" c="blue" tt="uppercase">
+                                                                        {trimmedLine.replace('###', '').trim()}
+                                                                    </Title>
+                                                                );
+                                                            }
+
+                                                            // 2. Inline Content Parsing (Badges)
+                                                            const renderInline = (text: string) => {
+                                                                return text.split(/(\b[R|S]\d+\.[\w\.]+\b|\bSAÉ?\s\d+\.[\w\.]+\b)/g).map((part: string, i: number) => {
+                                                                    const resMatch = part.match(/\b(R\d+\.[\w\.]+)\b/);
+                                                                    const actMatch = part.match(/\b(SAÉ?\s\d+\.[\w\.]+)\b/);
+                                                                    
+                                                                    if (resMatch) {
+                                                                        const code = resMatch[1];
+                                                                        const resInfo = curriculum.resources?.find((r: any) => r.code === code);
+                                                                        return (
+                                                                            <Badge 
+                                                                                key={i} size="xs" color="teal" variant="light" 
+                                                                                style={{ cursor: 'pointer', textTransform: 'none', verticalAlign: 'middle' }}
+                                                                                onClick={(e) => { e.stopPropagation(); showInfo(resInfo || {code}, 'RES'); }}
+                                                                            >
+                                                                                {code}
+                                                                            </Badge>
+                                                                        );
+                                                                    }
+                                                                    if (actMatch) {
+                                                                        const code = actMatch[1];
+                                                                        return (
+                                                                            <Badge 
+                                                                                key={i} size="xs" color="orange" variant="light" 
+                                                                                style={{ cursor: 'pointer', verticalAlign: 'middle' }}
+                                                                                onClick={(e) => { 
+                                                                                    e.stopPropagation(); 
+                                                                                    window.dispatchEvent(new CustomEvent('switch-to-activities', { detail: code }));
+                                                                                }}
+                                                                            >
+                                                                                {code}
+                                                                            </Badge>
+                                                                        );
+                                                                    }
+                                                                    return part;
+                                                                });
+                                                            };
+
+                                                            // 3. List Item Handling (•)
+                                                            if (trimmedLine.startsWith('•')) {
+                                                                return (
+                                                                    <Group key={lineIdx} gap="xs" wrap="nowrap" align="flex-start" style={{ paddingLeft: 10 }}>
+                                                                        <Text size="sm" c="blue">•</Text>
+                                                                        <Text size="sm" style={{ flex: 1 }}>
+                                                                            {renderInline(trimmedLine.substring(1).trim())}
+                                                                        </Text>
+                                                                    </Group>
+                                                                );
+                                                            }
+
+                                                            // 4. Standard Paragraph
+                                                            return (
+                                                                <Text key={lineIdx} size="sm" style={{ lineHeight: 1.6 }}>
+                                                                    {renderInline(trimmedLine)}
+                                                                </Text>
+                                                            );
+                                                        })
+                                                    ) : (
+                                                        <Text size="sm" c="dimmed" fs="italic">Détails de compréhension à venir...</Text>
+                                                    )}
+                                                </Stack>
+                                            </Accordion.Panel>
+                                        </Accordion.Item>
+                                    ))}
+                                </Accordion>
+                            </Box>
+                        </Stack>
                       </Accordion.Panel>
                     </Accordion.Item>
                   ))}
@@ -748,9 +849,9 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
               </Tabs.Panel>
 
               <Tabs.Panel value="acts">
-                <Accordion variant="separated">
+                <Accordion variant="separated" value={expandedActivity} onChange={setExpandedActivity}>
                   {acts.map((a: any) => (
-                    <Accordion.Item key={a.id} value={a.code + a.id}>
+                    <Accordion.Item key={a.id} value={a.code + a.id} id={`act-accordion-${a.code + a.id}`}>
                       <Accordion.Control>
                         <Group justify="space-between" wrap="nowrap">
                             <Group gap="sm" wrap="nowrap">

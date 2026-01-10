@@ -42,6 +42,7 @@ def seed():
                     code=c_code,
                     label=comp_data["nom"],
                     description=desc,
+                    situations_pro=comp_data.get("situations_pro", ""),
                     level=level,
                     pathway=pathway
                 )

@@ -39,22 +39,26 @@
             {
               "full_code": "AC11.01",
               "nom": "Analyser l'environnement d'une entreprise en repérant et appréciant les sources d'informations",
-              "code": "AC1"
+              "code": "AC1",
+              "description": "Au niveau 1 (niveau découverte), l'étudiant doit être capable de transformer une analyse d’environnement simple en repérant des sources d’information fiables. L'objectif est de comprendre le marché pour permettre, par la suite, de choisir une cible pertinente.\n\n### Ressources mobilisées (Cours)\n• R1.01 : Fondamentaux du marketing et comportement du consommateur.\n• R1.04 : Études marketing 1.\n• R1.05 : Environnement économique de l'entreprise.\n• R1.06 : Environnement juridique de l'entreprise.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.01 : \"Marketing : positionnement d'une offre simple sur un marché\".\n\n### Critères d'évaluation\n• Évaluer de manière adaptée les principaux acteurs de l'offre.\n• Quantifier la demande.\n• Adopter une démarche éthique et rigoureuse.\n\nEn résumé, l'AC11.01 apprend à l'étudiant à ne pas se fier à des intuitions mais à des données vérifiées."
             },
             {
               "full_code": "AC11.02",
               "nom": "Mettre en oeuvre une étude de marché dans un environnement simple",
-              "code": "AC2"
+              "code": "AC2",
+              "description": "Au niveau 1, l'étudiant apprend à collecter des données primaires et secondaires pour mesurer un marché de manière quantitative et qualitative. Il s'agit de poser les bases méthodologiques de la recherche marketing.\n\n### Ressources mobilisées (Cours)\n• R1.04 : Études marketing 1.\n• R1.07 : Techniques quantitatives et représentations 1.\n• R1.08 : Éléments financiers de l'entreprise.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.01 : \"Marketing : positionnement d'une offre simple sur un marché\".\n\n### Critères d'évaluation\n• Utilisation d'outils de recueil de données adaptés.\n• Rigueur dans le traitement des informations chiffrées.\n• Capacité à synthétiser les résultats de l'étude.\n\nEn résumé, l'AC11.02 permet de valider la réalité d'un marché par des preuves tangibles et chiffrées."
             },
             {
               "full_code": "AC11.03",
               "nom": "Choisir une cible et un positionnement en fonction de la segmentation du marché",
-              "code": "AC3"
+              "code": "AC3",
+              "description": "Au niveau 1, l'étudiant doit savoir découper un marché en segments homogènes et sélectionner celui qui offre le meilleur potentiel pour une offre simple. Il doit définir l'image que l'offre doit avoir dans l'esprit du consommateur.\n\n### Ressources mobilisées (Cours)\n• R1.01 : Fondamentaux du marketing et comportement du consommateur.\n• R1.14 : Expression, communication et culture 1.\n• R1.09 : Rôle et organisation de l'entreprise sur son marché.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.01 : \"Marketing : positionnement d'une offre simple sur un marché\".\n\n### Critères d'évaluation\n• Pertinence du choix du segment visé.\n• Cohérence entre la cible choisie et l'avantage concurrentiel proposé.\n• Clarté de la différenciation par rapport aux concurrents.\n\nEn résumé, l'AC11.03 apprend à l'étudiant à ne pas s'adresser à tout le monde mais à une cible précise avec un message clair."
             },
             {
               "full_code": "AC11.04",
               "nom": "Concevoir une offre cohérente et éthique en termes de produits, de prix, de distribution et de communication",
-              "code": "AC4"
+              "code": "AC4",
+              "description": "Au niveau 1, l'étudiant élabore son premier \"Marketing Mix\" (les 4P) pour un produit ou service simple. L'accent est mis sur la cohérence entre les quatre variables et le respect des normes éthiques et écologiques.\n\n### Ressources mobilisées (Cours)\n• R1.01 : Fondamentaux du marketing.\n• R1.02 : Fondamentaux de la vente.\n• R1.03 : Fondamentaux de la communication commerciale.\n• R1.08 : Éléments financiers de l'entreprise.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.01 : \"Marketing : positionnement d'une offre simple sur un marché\".\n\n### Critères d'évaluation\n• Cohérence globale des variables du mix.\n• Justification du prix de vente selon les coûts et le marché.\n• Intégration d'une posture citoyenne et éthique dans l'offre.\n\nEn résumé, l'AC11.04 concrétise la stratégie marketing en une offre commerciale réelle et responsable."
             }
           ]
         }
@@ -215,32 +219,38 @@
             {
               "full_code": "AC12.01",
               "nom": "Préparer un plan de découverte qui permette de profiler le client",
-              "code": "AC1"
+              "code": "AC1",
+              "description": "Au niveau 1, l'étudiant apprend à préparer la phase de découverte d'un entretien de vente. Il doit structurer ses questions pour identifier les besoins et motivations du client.\n\n### Ressources mobilisées (Cours)\n• R1.02 : Fondamentaux de la vente et négociation.\n• R1.14 : Expression, communication et culture 1.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : \"Vente : démarche de prospection\".\n\n### Critères d'évaluation\n• Qualité et pertinence du questionnement préparé.\n• Capacité à profiler le prospect de manière structurée.\n\nEn résumé, l'AC12.01 enseigne que pour bien vendre, il faut d'abord savoir écouter et comprendre."
             },
             {
               "full_code": "AC12.02",
               "nom": "Concevoir un argumentaire de vente adapté",
-              "code": "AC2"
+              "code": "AC2",
+              "description": "Au niveau 1, l'étudiant doit transformer les caractéristiques d'un produit en avantages personnalisés pour le client. L'argumentaire doit répondre directement aux besoins identifiés lors de la découverte.\n\n### Ressources mobilisées (Cours)\n• R1.02 : Fondamentaux de la vente.\n• R1.14 : Expression, communication et culture 1.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : \"Vente : démarche de prospection\".\n\n### Critères d'évaluation\n• Adaptation des arguments aux motivations du client.\n• Clarté et conviction de l'expression orale.\n\nEn résumé, l'AC12.02 apprend à l'étudiant à proposer la bonne solution au bon client au moyen d'un discours structuré."
             },
             {
               "full_code": "AC12.03",
               "nom": "Concevoir des OAV efficaces",
-              "code": "AC3"
+              "code": "AC3",
+              "description": "Au niveau 1, l'étudiant doit être capable de produire les supports physiques ou numériques nécessaires pour soutenir son argumentation lors d'une vente simple. Il s'agit de rendre l'offre tangible et compréhensible pour le prospect.\n\n### Ressources mobilisées (Cours)\n• R1.02 : Fondamentaux de la vente.\n• R1.13 : Ressources et culture numériques 1 (outils de mise en forme).\n• R1.03 : Fondamentaux de la communication commerciale.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : \"Vente : démarche de prospection\".\n\n### Critères d'évaluation\n• Élaboration de documents commerciaux adaptés à la situation.\n• Respect de la réglementation en vigueur sur les documents.\n• Clarté et aspect professionnel des supports produits.\n\nEn résumé, l'AC12.03 consiste à créer les \"armes\" du vendeur (fiches produits, visuels) pour convaincre plus facilement."
             },
             {
               "full_code": "AC12.04",
               "nom": "Évaluer la performance commerciale au moyen d'indicateurs",
-              "code": "AC4"
+              "code": "AC4",
+              "description": "L'objectif au niveau 1 est d'initier l'étudiant à la culture du résultat. Il doit être capable de mesurer l'efficacité de ses actions de prospection ou de vente en utilisant des chiffres clés.\n\n### Ressources mobilisées (Cours)\n• R1.07 : Techniques quantitatives et représentations 1 (Statistiques).\n• R1.08 : Éléments financiers de l'entreprise.\n• R1.15 : Projet Personnel et Professionnel 1.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : \"Vente : démarche de prospection\".\n\n### Critères d'évaluation\n• Utilisation efficace des indicateurs de performance fixés par l'organisation.\n• Rigueur dans le calcul des taux (ex: taux de transformation, taux de remontée).\n• Capacité à interpréter simplement les résultats obtenus.\n\nEn résumé, l'AC12.04 apprend à l'étudiant que l'efficacité commerciale se prouve par les chiffres."
             },
             {
               "full_code": "AC12.05",
               "nom": "Recourir aux techniques adaptées à la démarche de prospection",
-              "code": "AC5"
+              "code": "AC5",
+              "description": "Au niveau 1, l'étudiant apprend à identifier et contacter des clients potentiels. Il doit savoir utiliser les canaux de contact de base (téléphone, mail, face-à-face) pour obtenir un rendez-vous ou une information.\n\n### Ressources mobilisées (Cours)\n• R1.02 : Fondamentaux de la vente et négociation.\n• R1.13 : Ressources et culture numériques 1 (fichiers clients, CRM).\n• R1.10 : Initiation à la conduite de projet.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : \"Vente : démarche de prospection\".\n\n### Critères d'évaluation\n• Prospection à l'aide d'outils et de méthodes adaptés.\n• Organisation rigoureuse de la recherche de prospects.\n• Persévérance et éthique dans la prise de contact.\n\nEn résumé, l'AC12.05 est la première étape du cycle de vente : trouver le client là où il se trouve."
             },
             {
               "full_code": "AC12.06",
               "nom": "Recourir aux codes d'expression spécifiques et professionnels",
-              "code": "AC6"
+              "code": "AC6",
+              "description": "Au niveau 1, l'accent est mis sur la posture. L'étudiant doit maîtriser son langage (verbal) et son attitude (non-verbal) pour instaurer une relation de confiance avec le client.\n\n### Ressources mobilisées (Cours)\n• R1.14 : Expression, communication et culture 1.\n• R1.02 : Fondamentaux de la vente.\n• R1.15 : Projet Personnel et Professionnel 1.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : \"Vente : démarche de prospection\".\n\n### Critères d'évaluation\n• Adaptation de la communication verbale et non-verbale à la situation.\n• Maîtrise du vocabulaire professionnel du secteur.\n• Respect des codes de courtoisie et d'écoute active.\n\nEn résumé, l'AC12.06 apprend à l'étudiant à \"être\" un professionnel crédible face à un client."
             }
           ]
         }
@@ -394,22 +404,26 @@
             {
               "full_code": "AC13.01",
               "nom": "Identifier les cibles et objectifs de communication",
-              "code": "AC1"
+              "code": "AC1",
+              "description": "Au niveau 1, l'étudiant définit à qui il doit parler (cible de communication) et quel message il veut transmettre (objectif). Cette action doit être alignée avec la stratégie marketing globale.\n\n### Ressources mobilisées (Cours)\n• R1.03 : Fondamentaux de la communication commerciale.\n• R1.01 : Fondamentaux du marketing.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.03 : \"Communication commerciale : création d'un support print\".\n\n### Critères d'évaluation\n• Précision de l'identification des cibles.\n• Cohérence du message avec le positionnement du produit.\n\nEn résumé, l'AC13.01 pose les bases stratégiques de toute action de communication réussie."
             },
             {
               "full_code": "AC13.02",
               "nom": "Analyser de manière pertinente les moyens de communication",
-              "code": "AC2"
+              "code": "AC2",
+              "description": "Au niveau 1, l'étudiant doit comprendre les différents canaux disponibles pour diffuser un message et savoir pourquoi l'un est plus adapté qu'un autre pour une offre simple.\n\n### Ressources mobilisées (Cours)\n• R1.03 : Fondamentaux de la communication commerciale.\n• R1.13 : Ressources et culture numériques 1.\n• R1.06 : Environnement juridique (Droit de la publicité).\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.03 : \"Communication commerciale : création d'un support print\".\n\n### Critères d'évaluation\n• Pertinence du choix des supports par rapport à la cible.\n• Utilisation des outils adaptés à la demande et aux contraintes.\n• Capacité à justifier le mix-communication (choix des canaux).\n\nEn résumé, l'AC13.02 permet de choisir le meilleur \"haut-parleur\" pour que le message atteigne sa cible."
             },
             {
               "full_code": "AC13.03",
               "nom": "Élaborer des supports simples (ISA, affiches...)",
-              "code": "AC3"
+              "code": "AC3",
+              "description": "Au niveau 1, l'étudiant passe à la création concrète en produisant des supports de communication visuelle ou écrite de qualité. Il doit maîtriser les outils de mise en page de base.\n\n### Ressources mobilisées (Cours)\n• R1.03 : Fondamentaux de la communication commerciale.\n• R1.13 : Ressources et culture numériques 1 (PAO).\n• R1.06 : Environnement juridique (droit d'auteur).\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.03 : \"Communication commerciale : création d'un support print\".\n\n### Critères d'évaluation\n• Qualité graphique et rédactionnelle du support.\n• Respect de la réglementation en vigueur (mentions obligatoires, droits).\n\nEn résumé, l'AC13.03 apprend à traduire une idée stratégique en un objet visuel percutant et professionnel."
             },
             {
               "full_code": "AC13.04",
               "nom": "Analyser les indicateurs post campagne",
-              "code": "AC4"
+              "code": "AC4",
+              "description": "Au niveau 1, l'étudiant doit être capable de porter un regard critique sur le support de communication qu'il a produit. Il doit vérifier si le message a été reçu et s'il a eu l'effet escompté.\n\n### Ressources mobilisées (Cours)\n• R1.03 : Fondamentaux de la communication commerciale.\n• R1.07 : Techniques quantitatives (Statistiques de base).\n• R1.10 : Initiation à la conduite de projet.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.03 : \"Communication commerciale : création d'un support print\".\n\n### Critères d'évaluation\n• Pertinence de l'analyse des résultats (score de mémorisation, retours clients).\n• Rigueur dans l'utilisation des indicateurs d'efficacité.\n• Démarche réflexive sur les améliorations possibles.\n\nEn résumé, l'AC13.04 conclut l'action de communication en mesurant si l'investissement a été utile."
             }
           ]
         }
@@ -517,7 +531,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "promotion de l’identité de marque B to C\nréalisation d'un audit de marque interne et externe"
     },
     {
       "code": "C4-SME-BUT3",
@@ -568,7 +583,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "promotion de l’identité de marque B to C\nréalisation d'un audit de marque interne et externe"
     },
     {
       "code": "C5-SME-BUT2",
@@ -625,7 +641,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "développement d'un projet événementiel accueillant du public\ndéveloppement d'un projet événementiel interne\ndéveloppement d'un projet événementiel piloté en tant que prestataire"
     },
     {
       "code": "C5-SME-BUT3",
@@ -681,7 +698,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "développement d'un projet événementiel accueillant du public\ndéveloppement d'un projet événementiel interne\ndéveloppement d'un projet événementiel piloté en tant que prestataire"
     },
     {
       "code": "C4-MMPV-BUT2",
@@ -724,7 +742,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "commerce intégré\ncommerce indépendant\ndistribution de services\ndistribution de produits"
     },
     {
       "code": "C4-MMPV-BUT3",
@@ -776,7 +795,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "commerce intégré\ncommerce indépendant\ndistribution de services\ndistribution de produits"
     },
     {
       "code": "C5-MMPV-BUT2",
@@ -833,7 +853,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "commerce intégré\ncommerce indépendant\ndéploiement de l'activité d'un rayon ou d'un corner\ndéploiement de l'activité d'un magasin"
     },
     {
       "code": "C5-MMPV-BUT3",
@@ -894,7 +915,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "commerce intégré\ncommerce indépendant\ndéploiement de l'activité d'un rayon ou d'un corner\ndéploiement de l'activité d'un magasin"
     },
     {
       "code": "C4-MDEE-BUT2",
@@ -955,7 +977,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "déploiement d'une activité digitale en B to C\ndéploiement d'une activité digitale en B to B\ndéploiement d'une activité digitale tournée vers un bien\ndéploiement d'une activité digitale tournée vers un service\ncréation d'entreprise\ndéveloppement d'un projet au sein d'une organisation"
     },
     {
       "code": "C4-MDEE-BUT3",
@@ -1015,7 +1038,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "déploiement d'une activité digitale en B to C\ndéploiement d'une activité digitale en B to B\ndéploiement d'une activité digitale tournée vers un bien\ndéploiement d'une activité digitale tournée vers un service\ncréation d'entreprise\ndéveloppement d'un projet au sein d'une organisation"
     },
     {
       "code": "C5-MDEE-BUT2",
