@@ -26,7 +26,8 @@ import {
   Box,
   FileInput,
   Textarea,
-  Loader
+  Loader,
+  Table
 } from '@mantine/core';
 import {
   IconUsers,
@@ -60,6 +61,80 @@ const YEAR_COLORS: any = {
   1: 'blue',
   2: 'green',
   3: 'grape'
+};
+
+const renderRichText = (text: string, curriculum: any, showInfo: any, setActiveTab: any) => {
+    if (!text) return null;
+    return text.split('\n').map((line: string, lineIdx: number) => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) return <Box key={lineIdx} h={10} />;
+
+        // 1. Header Handling (###)
+        if (trimmedLine.startsWith('###')) {
+            return (
+                <Title order={6} key={lineIdx} mt="sm" c="blue" tt="uppercase">
+                    {trimmedLine.replace('###', '').trim()}
+                </Title>
+            );
+        }
+
+        // 2. Inline Content Parsing (Badges)
+        const renderInline = (text: string) => {
+            return text.split(/(\b[R|S]\d+\.[\w\.]+\b|\bSAÉ?\s\d+\.[\w\.]+\b)/g).map((part: string, i: number) => {
+                const resMatch = part.match(/\b(R\d+\.[\w\.]+)\b/);
+                const actMatch = part.match(/\b(SAÉ?\s\d+\.[\w\.]+)\b/);
+                
+                if (resMatch) {
+                    const code = resMatch[1];
+                    const resInfo = curriculum.resources?.find((r: any) => r.code === code);
+                    return (
+                        <Badge 
+                            key={i} size="xs" color="teal" variant="light" 
+                            style={{ cursor: 'pointer', textTransform: 'none', verticalAlign: 'middle' }}
+                            onClick={(e) => { e.stopPropagation(); showInfo(resInfo || {code}, 'RES'); }}
+                        >
+                            {code}
+                        </Badge>
+                    );
+                }
+                if (actMatch) {
+                    const code = actMatch[1];
+                    return (
+                        <Badge 
+                            key={i} size="xs" color="orange" variant="light" 
+                            style={{ cursor: 'pointer', verticalAlign: 'middle' }}
+                            onClick={(e) => { 
+                                e.stopPropagation(); 
+                                window.dispatchEvent(new CustomEvent('switch-to-activities', { detail: code }));
+                            }}
+                        >
+                            {code}
+                        </Badge>
+                    );
+                }
+                return part;
+            });
+        };
+
+        // 3. List Item Handling (•)
+        if (trimmedLine.startsWith('•')) {
+            return (
+                <Group key={lineIdx} gap="xs" wrap="nowrap" align="flex-start" style={{ paddingLeft: 10 }}>
+                    <Text size="sm" c="blue">•</Text>
+                    <Text size="sm" style={{ flex: 1 }}>
+                        {renderInline(trimmedLine.substring(1).trim())}
+                    </Text>
+                </Group>
+            );
+        }
+
+        // 4. Standard Paragraph
+        return (
+            <Text key={lineIdx} size="sm" style={{ lineHeight: 1.6 }}>
+                {renderInline(trimmedLine)}
+            </Text>
+        );
+    });
 };
 
 function App() {
@@ -262,6 +337,8 @@ function App() {
         <Stack>
           <Button variant={activeTab === 'dispatcher' ? 'light' : 'subtle'} onClick={() => setActiveTab('dispatcher')} leftSection={<IconUsers size={20} />}>Dispatching</Button>
           <Button variant={activeTab === 'curriculum' ? 'light' : 'subtle'} onClick={() => setActiveTab('curriculum')} leftSection={<IconBook size={20} />} color="grape">Référentiel</Button>
+          <Button variant={activeTab === 'discovery' ? 'light' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={20} />} color="teal">Découverte</Button>
+          <Button variant={activeTab === 'repartition' ? 'light' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={20} />} color="orange">Répartition</Button>
           <Button variant={activeTab === 'settings' ? 'light' : 'subtle'} onClick={() => setActiveTab('settings')} color="gray" leftSection={<IconSettings size={20} />}>Configuration</Button>
         </Stack>
       </AppShell.Navbar>
@@ -386,6 +463,10 @@ function App() {
                 onRefresh={fetchCurriculum} 
                 professors={assignedUsers.filter(u => u.role === 'PROFESSOR' || u.role === 'ADMIN' || u.role === 'SUPER_ADMIN')} 
             />
+          ) : activeTab === 'discovery' ? (
+            <DiscoveryView curriculum={curriculum} />
+          ) : activeTab === 'repartition' ? (
+            <RepartitionView />
           ) : <SettingsView config={systemConfig} onSave={handleSaveConfig} />}
         </DragDropContext>
       </AppShell.Main>
@@ -457,6 +538,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   const [activeTabs, setActiveTabs] = useState<Record<number, string | null>>({ 1: 'comps', 2: 'comps', 3: 'comps' });
   const [expandedResource, setExpandedResource] = useState<string | null>(null);
   const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
+  const [expandedComp, setExpandedComp] = useState<string | null>(null);
 
   const getLevelFromCode = (code: string) => {
     const m = code.match(/[R|S|SAE]\s?(\d)/);
@@ -468,6 +550,19 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   };
 
   useEffect(() => {
+    const compHandler = (e: any) => {
+        const code = e.detail;
+        const lvl = getLevelFromCode(code);
+        setActiveTabs(prev => ({ ...prev, [lvl]: 'comps' }));
+        const comp = curriculum.competences.find((c: any) => c.code === code);
+        if (comp) {
+            setExpandedComp(comp.code + comp.id);
+            setTimeout(() => {
+                const el = document.getElementById(`comp-accordion-${comp.code + comp.id}`);
+                if (el) el.scrollOfView({ behavior: 'smooth', block: 'center' });
+            }, 200);
+        }
+    };
     const resHandler = (e: any) => {
         const code = e.detail;
         const lvl = getLevelFromCode(code);
@@ -498,9 +593,11 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
             }, 200);
         }
     };
+    window.addEventListener('switch-to-comp', compHandler);
     window.addEventListener('switch-to-resources', resHandler);
     window.addEventListener('switch-to-activities', actHandler);
     return () => {
+        window.removeEventListener('switch-to-comp', compHandler);
         window.removeEventListener('switch-to-resources', resHandler);
         window.removeEventListener('switch-to-activities', actHandler);
     };
@@ -558,80 +655,6 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
     setInfoLoading(false);
   };
 
-  const renderRichText = (text: string) => {
-    if (!text) return null;
-    return text.split('\n').map((line: string, lineIdx: number) => {
-        const trimmedLine = line.trim();
-        if (!trimmedLine) return <Box key={lineIdx} h={10} />;
-
-        // 1. Header Handling (###)
-        if (trimmedLine.startsWith('###')) {
-            return (
-                <Title order={6} key={lineIdx} mt="sm" c="blue" tt="uppercase">
-                    {trimmedLine.replace('###', '').trim()}
-                </Title>
-            );
-        }
-
-        // 2. Inline Content Parsing (Badges)
-        const renderInline = (text: string) => {
-            return text.split(/(\b[R|S]\d+\.[\w\.]+\b|\bSAÉ?\s\d+\.[\w\.]+\b)/g).map((part: string, i: number) => {
-                const resMatch = part.match(/\b(R\d+\.[\w\.]+)\b/);
-                const actMatch = part.match(/\b(SAÉ?\s\d+\.[\w\.]+)\b/);
-                
-                if (resMatch) {
-                    const code = resMatch[1];
-                    const resInfo = curriculum.resources?.find((r: any) => r.code === code);
-                    return (
-                        <Badge 
-                            key={i} size="xs" color="teal" variant="light" 
-                            style={{ cursor: 'pointer', textTransform: 'none', verticalAlign: 'middle' }}
-                            onClick={(e) => { e.stopPropagation(); showInfo(resInfo || {code}, 'RES'); }}
-                        >
-                            {code}
-                        </Badge>
-                    );
-                }
-                if (actMatch) {
-                    const code = actMatch[1];
-                    return (
-                        <Badge 
-                            key={i} size="xs" color="orange" variant="light" 
-                            style={{ cursor: 'pointer', verticalAlign: 'middle' }}
-                            onClick={(e) => { 
-                                e.stopPropagation(); 
-                                window.dispatchEvent(new CustomEvent('switch-to-activities', { detail: code }));
-                            }}
-                        >
-                            {code}
-                        </Badge>
-                    );
-                }
-                return part;
-            });
-        };
-
-        // 3. List Item Handling (•)
-        if (trimmedLine.startsWith('•')) {
-            return (
-                <Group key={lineIdx} gap="xs" wrap="nowrap" align="flex-start" style={{ paddingLeft: 10 }}>
-                    <Text size="sm" c="blue">•</Text>
-                    <Text size="sm" style={{ flex: 1 }}>
-                        {renderInline(trimmedLine.substring(1).trim())}
-                    </Text>
-                </Group>
-            );
-        }
-
-        // 4. Standard Paragraph
-        return (
-            <Text key={lineIdx} size="sm" style={{ lineHeight: 1.6 }}>
-                {renderInline(trimmedLine)}
-            </Text>
-        );
-    });
-  };
-
   if (!curriculum || !curriculum.competences) return <Center p="xl"><Loader /></Center>;
 
   return (
@@ -655,7 +678,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                         {infoItem.type === 'AC' ? (
                             // FULL SHEET FOR AC
                             <Box>
-                                {renderRichText(infoItem.description)}
+                                {renderRichText(infoItem.description, curriculum, showInfo, setActiveTabs)}
                             </Box>
                         ) : (
                             // LIGHT VERSION FOR RESOURCE
@@ -805,9 +828,9 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
               </Tabs.List>
 
               <Tabs.Panel value="comps">
-                <Accordion variant="separated">
+                <Accordion variant="separated" value={expandedComp} onChange={setExpandedComp}>
                   {comps.map((c: any) => (
-                    <Accordion.Item key={c.id} value={c.code + c.id}>
+                    <Accordion.Item key={c.id} value={c.code + c.id} id={`comp-accordion-${c.code + c.id}`}>
                       <Accordion.Control>
                         <Group justify="space-between">
                           <Group><Badge color="blue">{c.code}</Badge><Text fw={600}>{c.label}</Text></Group>
@@ -1083,6 +1106,62 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   );
 }
 
+function RepartitionView() {
+  const data = [
+    { label: "Nbre d'heures d'enseignement (ressources + SAÉ)", s1: 375, s2: 375, s3: 355, s4: 225, s5: 365, s6: 105, total: 1800 },
+    { label: "Dont % d'adaptation locale (max 40%)", s1: "27 %", s2: "27 %", s3: "36 %", s4: "40 %", s5: "37 %", s6: "48 %", total: "33 %" },
+    { label: "Nbre d'heures d'enseignement définies localement", s1: 100, s2: 100, s3: 125, s4: 90, s5: 135, s6: 50, total: 600 },
+    { label: "Nbre heures d'enseignement SAÉ définies localement", s1: 60, s2: 75, s3: 100, s4: 75, s5: 100, s6: 40, total: 450 },
+    { label: "Nbre heures d'enseignement à définir localement (Res ou SAÉ)", s1: 40, s2: 25, s3: 25, s4: 15, s5: 35, s6: 10, total: 150 },
+    { label: "Nbre heures d'enseignement ressources nationales", s1: 275, s2: 275, s3: 230, s4: 135, s5: 230, s6: 55, total: 1200 },
+    { label: "Nbre heures de TP définies nationalement", s1: 86, s2: 77, s3: 61, s4: 40, s5: 72, i6: 17, total: 523 },
+    { label: "Nbre heures de TP à définir localement", s1: 35, s2: 45, s3: 35, s4: 35, s5: 15, s6: 5, total: 170 },
+    { label: "Nbre d'heures de projet tutoré", s1: 50, s2: 100, s3: 85, s4: 115, s5: 125, s6: 125, total: 600 },
+    { label: "Nbre de semaines de stage", s1: 0, s2: "2 à 4", s3: 0, s4: 8, s5: 0, s6: "14 à 16", total: "24 à 26" },
+  ];
+
+  return (
+    <Container size="xl">
+      <Title order={2} mb="xl">Structure et Répartition des Heures</Title>
+      <Paper withBorder shadow="md" radius="md" p="md">
+        <ScrollArea>
+          <Table striped highlightOnHover withBorder withColumnBorders verticalSpacing="sm">
+            <Table.Thead>
+              <Table.Tr bg="blue.7">
+                <Table.Th style={{ color: 'white' }}>Semestres</Table.Th>
+                <Table.Th style={{ color: 'white', textAlign: 'center' }}>S1</Table.Th>
+                <Table.Th style={{ color: 'white', textAlign: 'center' }}>S2</Table.Th>
+                <Table.Th style={{ color: 'white', textAlign: 'center' }}>S3</Table.Th>
+                <Table.Th style={{ color: 'white', textAlign: 'center' }}>S4</Table.Th>
+                <Table.Th style={{ color: 'white', textAlign: 'center' }}>S5</Table.Th>
+                <Table.Th style={{ color: 'white', textAlign: 'center' }}>S6</Table.Th>
+                <Table.Th style={{ color: 'white', textAlign: 'center' }}>TOTAL</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {data.map((row, idx) => (
+                <Table.Tr key={idx}>
+                  <Table.Td fw={row.label.includes('TOTAL') ? 700 : 500}>{row.label}</Table.Td>
+                  <Table.Td style={{ textAlign: 'center' }}>{row.s1}</Table.Td>
+                  <Table.Td style={{ textAlign: 'center' }}>{row.s2}</Table.Td>
+                  <Table.Td style={{ textAlign: 'center' }}>{row.s3}</Table.Td>
+                  <Table.Td style={{ textAlign: 'center' }}>{row.s4}</Table.Td>
+                  <Table.Td style={{ textAlign: 'center' }}>{row.s5}</Table.Td>
+                  <Table.Td style={{ textAlign: 'center' }}>{row.s6}</Table.Td>
+                  <Table.Td style={{ textAlign: 'center', backgroundColor: '#f8f9fa' }} fw={700}>{row.total}</Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </ScrollArea>
+      </Paper>
+      <Box mt="md">
+          <Text size="xs" c="dimmed" italic>Source : Programme National B.U.T. Techniques de Commercialisation - Page 63</Text>
+      </Box>
+    </Container>
+  );
+}
+
 function SettingsView({ config, onSave }: any) {
   const [localConfig, setLocalConfig] = useState<any[]>([]);
 
@@ -1145,4 +1224,270 @@ function SettingsView({ config, onSave }: any) {
   );
 }
 
+function DiscoveryView({ curriculum }: any) {
+  const [pathway, setPathway] = useState('SME');
+  const [selectedCompCode, setSelectedCompCode] = useState('C1');
+  const [infoItem, setInfoItem] = useState<any>(null);
+  const [infoLoading, setInfoLoading] = useState(false);
+
+  const pathways = ['BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
+  const years = [1, 2, 3];
+  const compCodes = ['C1', 'C2', 'C3', 'C4', 'C5'];
+
+  const showInfo = async (item: any, type: 'RES' | 'AC') => {
+    setInfoLoading(true);
+    setInfoItem({ ...item, type });
+    try {
+        if (type === 'RES') {
+            const res = await axios.get(`${API_URL}/resources/${item.code.trim()}`);
+            setInfoItem({ ...res.data, type });
+        }
+    } catch (e) {
+        setInfoItem({ ...item, type, error: 'Détails non trouvés' });
+    }
+    setInfoLoading(false);
+  };
+
+  const getCompInfo = (code: string, year: number) => {
+    const p = (code === 'C1' || code === 'C2' || code === 'C3' || year === 1) ? 'Tronc Commun' : pathway;
+    if (code === 'C3' && year === 3) return null;
+
+    const comp = curriculum.competences.find((c: any) => 
+        c.code.startsWith(code) && 
+        c.level === year && 
+        (c.pathway === p || (year > 1 && c.pathway === pathway && c.code.startsWith(code)))
+    );
+
+    const focusMapping: any = {
+        'C1': { 1: 'Construire une offre simple', 2: 'Offre complexe ou innovante', 3: 'Solution client étendue' },
+        'C2': { 1: 'Préparer l\'entretien de vente', 2: 'Mener un entretien simple', 3: 'Mener une vente complexe' },
+        'C3': { 1: 'Structurer un plan de com', 2: 'Élaborer un plan de com', 3: '' },
+        'SME': {
+            'C4': { 2: 'Déployer l\'image de marque', 3: 'Construire la stratégie de marque' },
+            'C5': { 2: 'Élaborer un événement simple', 3: 'Élaborer un évènement complexe' }
+        },
+        'MMPV': {
+            'C4': { 2: 'Gérer l\'équipe (opérationnel)', 3: 'Mobiliser l\'équipe (stratégique)' },
+            'C5': { 2: 'Contribuer à la dynamique', 3: 'Manager la dynamique' }
+        },
+        'MDEE': {
+            'C4': { 2: 'Participer au projet digital', 3: 'Développer le projet digital' },
+            'C5': { 2: 'Partie prenante e-business', 3: 'Responsable e-business' }
+        },
+        'BI': {
+            'C4': { 2: 'Assistant dév import/export', 3: 'Chargé de dév import/export' },
+            'C5': { 2: 'Commercialiser offre simple', 3: 'Commercialiser offre complexe' }
+        },
+        'BDMRC': {
+            'C4': { 2: 'Membre équipe commerciale', 3: 'Responsable équipe commerciale' },
+            'C5': { 2: 'Membre équipe relation client', 3: 'Responsable équipe relation client' }
+        }
+    };
+
+    let focus = "";
+    if (code === 'C1' || code === 'C2' || code === 'C3') focus = focusMapping[code][year];
+    else if (focusMapping[pathway] && focusMapping[pathway][code]) focus = focusMapping[pathway][code][year];
+
+    if (!comp) return null;
+    return { comp, focus };
+  };
+
+  const selectedData = {
+      code: selectedCompCode,
+      title: selectedCompCode === 'C1' ? 'Marketing' : 
+             selectedCompCode === 'C2' ? 'Vente' : 
+             selectedCompCode === 'C3' ? 'Communication' : 
+             selectedCompCode === 'C4' ? (pathway === 'SME' ? 'Branding' : pathway === 'MMPV' ? 'Management' : pathway === 'MDEE' ? 'Marketing Digital' : pathway === 'BI' ? 'Stratégie Inter' : 'Business Dév') :
+             (pathway === 'SME' ? 'Evénementiel' : pathway === 'MMPV' ? 'Retail' : pathway === 'MDEE' ? 'E-Business' : pathway === 'BI' ? 'Opérations Inter' : 'Relation Client'),
+      baseInfo: (getCompInfo(selectedCompCode, 2) || getCompInfo(selectedCompCode, 1))?.comp,
+      levels: [
+          getCompInfo(selectedCompCode, 1),
+          getCompInfo(selectedCompCode, 2),
+          getCompInfo(selectedCompCode, 3)
+      ].filter(l => l !== null) as any[]
+  };
+
+  return (
+    <Container size="xl">
+      <Group justify="space-between" mb="xl">
+        <Stack gap={0}>
+            <Title order={2}>Roadmap de Formation</Title>
+            <Text c="dimmed">Découvrez la progression des compétences par parcours</Text>
+        </Stack>
+        <Select 
+            label="Choisir un parcours"
+            data={pathways} 
+            value={pathway} 
+            onChange={(v) => setPathway(v || 'SME')}
+            style={{ width: 250 }}
+        />
+      </Group>
+
+      <Paper withBorder p="md" shadow="md" radius="md" bg="white">
+        <Grid gutter="md">
+            <Grid.Col span={3}></Grid.Col>
+            {years.map(y => (
+                <Grid.Col span={3} key={y}>
+                    <Paper p="xs" shadow="xs" radius="md" bg="blue.7" style={{ textAlign: 'center' }}>
+                        <Text fw={700} c="white">BUT {y}</Text>
+                    </Paper>
+                </Grid.Col>
+            ))}
+
+            {compCodes.map(code => (
+                <Grid.Col span={12} key={code}>
+                    <Grid gutter="md" align="stretch">
+                        <Grid.Col span={3}>
+                            <Paper p="sm" h="100%" withBorder shadow="xs" radius="md" 
+                                   onClick={() => setSelectedCompCode(code)}
+                                   style={{ 
+                                       display: 'flex', alignItems: 'center', cursor: 'pointer',
+                                       backgroundColor: selectedCompCode === code ? 'var(--mantine-color-blue-0)' : 'white',
+                                       borderColor: selectedCompCode === code ? 'var(--mantine-color-blue-6)' : 'var(--mantine-color-gray-3)'
+                                   }}>
+                                <Group gap="sm">
+                                    <Badge size="lg" radius="sm" variant="filled" color={code === 'C4' || code === 'C5' ? 'teal' : 'blue'}>{code}</Badge>
+                                    <Text fw={700} size="sm">
+                                        {code === 'C1' ? 'Marketing' : 
+                                         code === 'C2' ? 'Vente' : 
+                                         code === 'C3' ? 'Communication' : 
+                                         code === 'C4' ? (pathway === 'SME' ? 'Branding' : pathway === 'MMPV' ? 'Management' : pathway === 'MDEE' ? 'Marketing Digital' : pathway === 'BI' ? 'Stratégie Inter' : 'Business Dév') :
+                                         (pathway === 'SME' ? 'Evénementiel' : pathway === 'MMPV' ? 'Retail' : pathway === 'MDEE' ? 'E-Business' : pathway === 'BI' ? 'Opérations Inter' : 'Relation Client')}
+                                    </Text>
+                                </Group>
+                            </Paper>
+                        </Grid.Col>
+                        {years.map(y => {
+                            const info = getCompInfo(code, y);
+                            if (!info) return <Grid.Col span={3} key={y}></Grid.Col>;
+                            return (
+                                <Grid.Col span={3} key={y}>
+                                    <Card withBorder shadow="sm" radius="md" h="100%" padding="xs" 
+                                          onClick={() => setSelectedCompCode(code)}
+                                          style={{ 
+                                              cursor: 'pointer',
+                                              borderLeft: `4px solid var(--mantine-color-${code === 'C4' || code === 'C5' ? 'teal' : 'blue'}-6)`,
+                                              backgroundColor: selectedCompCode === code ? 'var(--mantine-color-gray-0)' : 'white'
+                                          }}>
+                                        <Stack gap={4}>
+                                            <Text size="xs" fw={700} c="dimmed">Niveau {y}</Text>
+                                            <Text size="sm" fw={600} style={{ lineHeight: 1.2 }}>{info.focus}</Text>
+                                        </Stack>
+                                    </Card>
+                                </Grid.Col>
+                            );
+                        })}
+                    </Grid>
+                </Grid.Col>
+            ))}
+        </Grid>
+      </Paper>
+
+      {/* DETAILED FICHE (PAGE 18 STYLE) */}
+      <Paper withBorder mt={50} shadow="xl" radius="lg" p={0} style={{ overflow: 'hidden' }}>
+          <Group bg={selectedCompCode === 'C4' || selectedCompCode === 'C5' ? 'teal.7' : 'blue.7'} p="xl" justify="space-between">
+              <Group gap="xl">
+                  <ThemeIcon size={60} radius="md" color="white" c={selectedCompCode === 'C4' || selectedCompCode === 'C5' ? 'teal.7' : 'blue.7'}>
+                      <Title order={2}>{selectedCompCode}</Title>
+                  </ThemeIcon>
+                  <Stack gap={0}>
+                      <Title order={2} c="white" tt="uppercase">{selectedData.title}</Title>
+                      <Text size="lg" c="white" fw={500} style={{ opacity: 0.9 }}>{selectedData.baseInfo?.description || 'Référentiel de compétences'}</Text>
+                  </Stack>
+              </Group>
+          </Group>
+
+          <Grid gutter={0}>
+              {/* Situations Pro & CE */}
+              <Grid.Col span={12} p="xl" bg="gray.0">
+                  <Grid gutter="xl">
+                      <Grid.Col span={6}>
+                          <Group mb="md">
+                              <ThemeIcon color="blue" variant="light"><IconUsers size={18} /></ThemeIcon>
+                              <Text fw={700} tt="uppercase">Situations Professionnelles</Text>
+                          </Group>
+                          <Paper withBorder p="md" radius="md" bg="white">
+                              {selectedData.baseInfo?.situations_pro ? (
+                                  <List spacing="sm" size="sm" icon={<ThemeIcon color="blue" size={6} radius="xl"><IconPlus size={4}/></ThemeIcon>}>
+                                      {selectedData.baseInfo.situations_pro.split('\n').map((s: string, i: number) => (
+                                          <List.Item key={i}>{s.trim()}</List.Item>
+                                      ))}
+                                  </List>
+                              ) : <Text c="dimmed" fs="italic">Non définies</Text>}
+                          </Paper>
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                          <Group mb="md">
+                              <ThemeIcon color="teal" variant="light"><IconShieldCheck size={18} /></ThemeIcon>
+                              <Text fw={700} tt="uppercase">Composantes Essentielles</Text>
+                          </Group>
+                          <Paper withBorder p="md" radius="md" bg="white">
+                              <List spacing="xs" size="xs">
+                                  {selectedData.baseInfo?.essential_components?.map((ce: any) => (
+                                      <List.Item key={ce.id}><b>{ce.code}</b> : {ce.label}</List.Item>
+                                  ))}
+                              </List>
+                          </Paper>
+                      </Grid.Col>
+                  </Grid>
+              </Grid.Col>
+
+              {/* Learning Outcomes Table (The heart of page 18) */}
+              <Grid.Col span={12} p="xl">
+                  <Title order={4} mb="xl" c="blue" tt="uppercase" style={{ textAlign: 'center' }}>Progression des Apprentissages Critiques (AC)</Title>
+                  <Grid gutter="md" justify="center">
+                      {selectedData.levels.map((lvlData: any, idx: number) => (
+                          <Grid.Col span={selectedData.levels.length === 2 ? 6 : 4} key={idx}>
+                              <Paper withBorder h="100%" shadow="sm" radius="md">
+                                  <Paper p="xs" bg="blue.7" style={{ borderRadius: '8px 8px 0 0', textAlign: 'center' }}>
+                                      <Text c="white" fw={700} size="sm">NIVEAU {lvlData.comp.level}</Text>
+                                      <Text c="white" size="xs" italic>{lvlData.focus}</Text>
+                                  </Paper>
+                                  <Stack p="md" gap="xs">
+                                      {lvlData.comp?.learning_outcomes?.map((lo: any) => (
+                                          <Paper key={lo.id} withBorder p="xs" bg="gray.0" style={{ cursor: 'pointer' }}
+                                                 onClick={() => showInfo(lo, 'AC')}>
+                                              <Group gap="xs" wrap="nowrap" align="flex-start">
+                                                  <Badge size="xs" variant="filled" style={{ flexShrink: 0 }}>{lo.code}</Badge>
+                                                  <Text size="xs" fw={500}>{lo.label}</Text>
+                                              </Group>
+                                          </Paper>
+                                      ))}
+                                  </Stack>
+                              </Paper>
+                          </Grid.Col>
+                      ))}
+                  </Grid>
+              </Grid.Col>
+          </Grid>
+      </Paper>
+
+      {/* MODAL FOR DISCOVERY */}
+      <Modal opened={!!infoItem} onClose={() => setInfoItem(null)} title={infoItem?.code || "Infos"} size={infoItem?.type === 'AC' ? "lg" : "md"}>
+        {infoLoading ? <Center p="xl"><Loader /></Center> : infoItem && (
+            <Stack>
+                <Title order={4} c="blue">{infoItem.label || infoItem.code}</Title>
+                <Divider />
+                {infoItem.error ? <Text color="red">{infoItem.error}</Text> : (
+                    <Box>
+                        {infoItem.type === 'AC' ? (
+                            renderRichText(infoItem.description, curriculum, showInfo, () => {})
+                        ) : (
+                            <Box>
+                                <Text size="sm" fw={700} mb={4}>Résumé :</Text>
+                                <Text size="sm" lineClamp={5} style={{ whiteSpace: 'pre-wrap' }}>
+                                    {infoItem.description?.includes('Mots clés :') ? infoItem.description.split('Mots clés :')[0] : infoItem.description}
+                                </Text>
+                            </Box>
+                        )}
+                    </Box>
+                )}
+            </Stack>
+        )}
+      </Modal>
+    </Container>
+  );
+}
+
 export default App;
+

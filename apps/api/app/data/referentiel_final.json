@@ -62,7 +62,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de développement d'un produit\nen situation de développement d'un service\nen situation de développement d'une activité non marchande"
     },
     {
       "code": "C1-BUT2",
@@ -122,7 +123,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de développement d'un produit\nen situation de développement d'un service\nen situation de développement d'une activité non marchande"
     },
     {
       "code": "C1-BUT3",
@@ -182,7 +184,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de développement d'un produit\nen situation de développement d'un service\nen situation de développement d'une activité non marchande"
     },
     {
       "code": "C2-BUT1",
@@ -254,7 +257,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de vente en B to C\nen situation de vente en B to B"
     },
     {
       "code": "C2-BUT2",
@@ -320,7 +324,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de vente en B to C\nen situation de vente en B to B"
     },
     {
       "code": "C2-BUT3",
@@ -371,7 +376,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de vente en B to C\nen situation de vente en B to B"
     },
     {
       "code": "C3-BUT1",
@@ -427,7 +433,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de communication de l'offre en tant qu'annonceur\nen situation de communication de l'offre en tant qu'agence de communication"
     },
     {
       "code": "C3-BUT2",
@@ -479,7 +486,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de communication de l'offre en tant qu'annonceur\nen situation de communication de l'offre en tant qu'agence de communication"
     },
     {
       "code": "C4-SME-BUT2",
@@ -532,7 +540,7 @@
           ]
         }
       ],
-      "situations_pro": "promotion de l’identité de marque B to C\nréalisation d'un audit de marque interne et externe"
+      "situations_pro": "en situation de promotion de l’identité de marque B to C\nen situation d'animation de l’identité de marque B to B\nen situation de réalisation d'un audit de marque interne et externe"
     },
     {
       "code": "C4-SME-BUT3",
@@ -584,7 +592,7 @@
           ]
         }
       ],
-      "situations_pro": "promotion de l’identité de marque B to C\nréalisation d'un audit de marque interne et externe"
+      "situations_pro": "en situation de promotion de l’identité de marque B to C\nen situation d'animation de l’identité de marque B to B\nen situation de réalisation d'un audit de marque interne et externe"
     },
     {
       "code": "C5-SME-BUT2",
@@ -642,7 +650,7 @@
           ]
         }
       ],
-      "situations_pro": "développement d'un projet événementiel accueillant du public\ndéveloppement d'un projet événementiel interne\ndéveloppement d'un projet événementiel piloté en tant que prestataire"
+      "situations_pro": "en situation de développement d'un projet événementiel accueillant du public\nen situation de développement d'un projet événementiel interne\nen situation de développement d'un projet événementiel piloté en tant que prestataire"
     },
     {
       "code": "C5-SME-BUT3",
@@ -699,7 +707,7 @@
           ]
         }
       ],
-      "situations_pro": "développement d'un projet événementiel accueillant du public\ndéveloppement d'un projet événementiel interne\ndéveloppement d'un projet événementiel piloté en tant que prestataire"
+      "situations_pro": "en situation de développement d'un projet événementiel accueillant du public\nen situation de développement d'un projet événementiel interne\nen situation de développement d'un projet événementiel piloté en tant que prestataire"
     },
     {
       "code": "C4-MMPV-BUT2",
@@ -743,7 +751,7 @@
           ]
         }
       ],
-      "situations_pro": "commerce intégré\ncommerce indépendant\ndistribution de services\ndistribution de produits"
+      "situations_pro": "en situation de commerce intégré\nen situation de commerce indépendant\nen situation de distribution de services\nen situation de distribution de produits"
     },
     {
       "code": "C4-MMPV-BUT3",
@@ -796,7 +804,7 @@
           ]
         }
       ],
-      "situations_pro": "commerce intégré\ncommerce indépendant\ndistribution de services\ndistribution de produits"
+      "situations_pro": "en situation de commerce intégré\nen situation de commerce indépendant\nen situation de distribution de services\nen situation de distribution de produits"
     },
     {
       "code": "C5-MMPV-BUT2",
@@ -854,7 +862,7 @@
           ]
         }
       ],
-      "situations_pro": "commerce intégré\ncommerce indépendant\ndéploiement de l'activité d'un rayon ou d'un corner\ndéploiement de l'activité d'un magasin"
+      "situations_pro": "en situation de commerce intégré\nen situation de commerce indépendant\nen situation de déploiement de l'activité d'un rayon ou d'un corner\nen situation de déploiement de l'activité d'un magasin"
     },
     {
       "code": "C5-MMPV-BUT3",
@@ -916,7 +924,7 @@
           ]
         }
       ],
-      "situations_pro": "commerce intégré\ncommerce indépendant\ndéploiement de l'activité d'un rayon ou d'un corner\ndéploiement de l'activité d'un magasin"
+      "situations_pro": "en situation de commerce intégré\nen situation de commerce indépendant\nen situation de déploiement de l'activité d'un rayon ou d'un corner\nen situation de déploiement de l'activité d'un magasin"
     },
     {
       "code": "C4-MDEE-BUT2",
@@ -978,7 +986,7 @@
           ]
         }
       ],
-      "situations_pro": "déploiement d'une activité digitale en B to C\ndéploiement d'une activité digitale en B to B\ndéploiement d'une activité digitale tournée vers un bien\ndéploiement d'une activité digitale tournée vers un service\ncréation d'entreprise\ndéveloppement d'un projet au sein d'une organisation"
+      "situations_pro": "en situation de déploiement d'une activité digitale en B to C\nen situation de déploiement d'une activité digitale en B to B\nen situation de déploiement d'une activité digitale tournée vers un bien\nen situation de déploiement d'une activité digitale tournée vers un service"
     },
     {
       "code": "C4-MDEE-BUT3",
@@ -1039,7 +1047,7 @@
           ]
         }
       ],
-      "situations_pro": "déploiement d'une activité digitale en B to C\ndéploiement d'une activité digitale en B to B\ndéploiement d'une activité digitale tournée vers un bien\ndéploiement d'une activité digitale tournée vers un service\ncréation d'entreprise\ndéveloppement d'un projet au sein d'une organisation"
+      "situations_pro": "en situation de déploiement d'une activité digitale en B to C\nen situation de déploiement d'une activité digitale en B to B\nen situation de déploiement d'une activité digitale tournée vers un bien\nen situation de déploiement d'une activité digitale tournée vers un service"
     },
     {
       "code": "C5-MDEE-BUT2",
@@ -1109,7 +1117,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de création d'entreprise\nen situation de développement d'un projet au sein d'une organisation"
     },
     {
       "code": "C5-MDEE-BUT3",
@@ -1178,7 +1187,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de création d'entreprise\nen situation de développement d'un projet au sein d'une organisation"
     },
     {
       "code": "C4-BI-BUT2",
@@ -1221,7 +1231,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de mise en oeuvre d'une stratégie dans une entreprise de taille PME/PMI\nen situation de mise en oeuvre d'une stratégie dans une grande entreprise\nen situation d'import/export sur la zone Europe\nen situation d'import/export sur la zone Grand-Export"
     },
     {
       "code": "C4-BI-BUT3",
@@ -1255,7 +1266,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de mise en oeuvre d'une stratégie dans une entreprise de taille PME/PMI\nen situation de mise en oeuvre d'une stratégie dans une grande entreprise\nen situation d'import/export sur la zone Europe\nen situation d'import/export sur la zone Grand-Export"
     },
     {
       "code": "C5-BI-BUT2",
@@ -1307,7 +1319,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de pilotage des opérations à l'international pour un bien de grande consommation\nen situation de pilotage des opérations à l'international pour un bien de grande industrie\nen situation de pilotage des opérations à l'international pour une activité de services"
     },
     {
       "code": "C5-BI-BUT3",
@@ -1346,7 +1359,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation de pilotage des opérations à l'international pour un bien de grande consommation\nen situation de pilotage des opérations à l'international pour un bien de grande industrie\nen situation de pilotage des opérations à l'international pour une activité de services"
     },
     {
       "code": "C4-BDMRC-BUT2",
@@ -1394,7 +1408,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation d'activité commerciale en B to B\nen situation d'activité commerciale en B to C"
     },
     {
       "code": "C4-BDMRC-BUT3",
@@ -1428,7 +1443,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation d'activité commerciale en B to B\nen situation d'activité commerciale en B to C"
     },
     {
       "code": "C5-BDMRC-BUT2",
@@ -1476,7 +1492,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation d'activité commerciale en B to B\nen situation d'activité commerciale en B to C"
     },
     {
       "code": "C5-BDMRC-BUT3",
@@ -1515,7 +1532,8 @@
             }
           ]
         }
-      ]
+      ],
+      "situations_pro": "en situation d'activité commerciale en B to B\nen situation d'activité commerciale en B to C"
     }
   ],
   "activities": [
