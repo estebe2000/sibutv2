@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, status
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, select, create_engine
 from .database import create_db_and_tables, get_session, engine
 from .models import Group, User, UserRole, SystemConfig, Competency, EssentialComponent, LearningOutcome, Activity, ActivityType, Resource
@@ -22,6 +23,37 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 app = FastAPI(title="BUT TC Skills Hub API")
+
+# --- STATIC FILES ---
+# Mount the fiches_pdf directory to serve them
+FICHES_PATH = "/app/fiches_pdf"
+if os.path.exists(FICHES_PATH):
+    app.mount("/static/fiches", StaticFiles(directory=FICHES_PATH), name="fiches")
+
+@app.get("/fiches/list")
+def list_fiches():
+    if not os.path.exists(FICHES_PATH):
+        return []
+    
+    fiches = []
+    for root, dirs, files in os.walk(FICHES_PATH):
+        for file in files:
+            if file.endswith(".pdf"):
+                rel_path = os.path.relpath(os.path.join(root, file), FICHES_PATH)
+                parts = rel_path.split(os.sep)
+                sem = parts[0]
+                pathway = parts[1] if len(parts) > 2 else "Tronc Commun"
+                name = parts[-1]
+                
+                fiches.append({
+                    "name": name.replace(".pdf", "").replace("_", " "),
+                    "filename": name,
+                    "semester": sem.replace("semestre_", "S"),
+                    "pathway": pathway.replace("_", " "),
+                    "url": f"/static/fiches/{rel_path}"
+                })
+    return fiches
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def create_access_token(data: dict):
@@ -157,7 +189,6 @@ def unassign_user(ldap_uid: str, session: Session = Depends(get_session), curren
 
 @app.post("/users/{ldap_uid}/quota")
 def set_user_quota(ldap_uid: str, quota: str = "100 GB", session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
-    # Use Nextcloud Provisioning API instead of docker exec
     import requests
     from requests.auth import HTTPBasicAuth
     
@@ -229,16 +260,13 @@ def read_resource(code: str, pathway: str = None, session: Session = Depends(get
     query = select(Resource).where(Resource.code == code)
     
     if pathway:
-        # Try finding specific pathway first
         specific_res = session.exec(query.where(Resource.pathway == pathway)).first()
         if specific_res:
             return specific_res
-        # Fallback to Tronc Commun
         tc_res = session.exec(query.where(Resource.pathway == "Tronc Commun")).first()
         if tc_res:
             return tc_res
     
-    # If no pathway specified or fallback failed, return first match (or None)
     resource = session.exec(query).first()
     if not resource:
         raise HTTPException(status_code=404, detail="Resource not found")
@@ -309,16 +337,13 @@ async def import_students(file: UploadFile = File(...), session: Session = Depen
         raise HTTPException(status_code=400, detail=f"Erreur de lecture du fichier: {e}")
 
     df.columns = [c.lower().strip() for c in df.columns]
-    print(f"Importing students from columns: {df.columns.tolist()}")
     
     ldap_users = get_ldap_users()
     count = 0
     for _, row in df.iterrows():
         email = str(row.get('mail', row.get('email', ''))).strip()
         group_name = str(row.get('groupes', row.get('promotion', ''))).strip()
-        if not email or not group_name: 
-            print(f"Skipping row: missing email or group ({email} / {group_name})")
-            continue
+        if not email or not group_name: continue
             
         group = session.exec(select(Group).where(Group.name == group_name)).first()
         if not group:
@@ -335,8 +360,6 @@ async def import_students(file: UploadFile = File(...), session: Session = Depen
             else: 
                 session.add(User(ldap_uid=ldap_match['uid'], email=ldap_match['email'], full_name=ldap_match['full_name'], role=UserRole.STUDENT, group_id=group.id))
             count += 1
-        else:
-            print(f"No LDAP match found for email: {email}")
             
     session.commit()
     return {"status": "success", "imported": count}
