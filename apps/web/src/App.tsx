@@ -454,26 +454,40 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   const [infoItem, setInfoItem] = useState<any>(null);
   const [infoLoading, setInfoLoading] = useState(false);
   
-  const [activeTab, setActiveTab] = useState<string | null>('comps');
+  const [activeTabs, setActiveTabs] = useState<Record<number, string | null>>({ 1: 'comps', 2: 'comps', 3: 'comps' });
   const [expandedResource, setExpandedResource] = useState<string | null>(null);
   const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
 
+  const getLevelFromCode = (code: string) => {
+    const m = code.match(/[R|S|SAE]\s?(\d)/);
+    if (!m) return 1;
+    const digit = parseInt(m[1]);
+    if (digit <= 2) return 1;
+    if (digit <= 4) return 2;
+    return 3;
+  };
+
   useEffect(() => {
     const resHandler = (e: any) => {
-        setActiveTab('ress');
-        const res = curriculum.resources.find((r: any) => r.code === e.detail);
+        const code = e.detail;
+        const lvl = getLevelFromCode(code);
+        setActiveTabs(prev => ({ ...prev, [lvl]: 'ress' }));
+        
+        const res = curriculum.resources.find((r: any) => r.code === code);
         if (res) {
             setExpandedResource(res.code + res.id);
             setTimeout(() => {
                 const el = document.getElementById(`accordion-${res.code + res.id}`);
                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
+            }, 200);
         }
     };
     const actHandler = (e: any) => {
-        setActiveTab('acts');
-        // Normalize code: SAÉ -> SAE
-        const searchCode = e.detail.replace('SAÉ', 'SAE').trim();
+        const code = e.detail;
+        const lvl = getLevelFromCode(code);
+        setActiveTabs(prev => ({ ...prev, [lvl]: 'acts' }));
+
+        const searchCode = code.replace('SAÉ', 'SAE').trim();
         const act = curriculum.activities.find((a: any) => a.code === searchCode);
         if (act) {
             const val = act.code + act.id;
@@ -544,17 +558,91 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
     setInfoLoading(false);
   };
 
+  const renderRichText = (text: string) => {
+    if (!text) return null;
+    return text.split('\n').map((line: string, lineIdx: number) => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) return <Box key={lineIdx} h={10} />;
+
+        // 1. Header Handling (###)
+        if (trimmedLine.startsWith('###')) {
+            return (
+                <Title order={6} key={lineIdx} mt="sm" c="blue" tt="uppercase">
+                    {trimmedLine.replace('###', '').trim()}
+                </Title>
+            );
+        }
+
+        // 2. Inline Content Parsing (Badges)
+        const renderInline = (text: string) => {
+            return text.split(/(\b[R|S]\d+\.[\w\.]+\b|\bSAÉ?\s\d+\.[\w\.]+\b)/g).map((part: string, i: number) => {
+                const resMatch = part.match(/\b(R\d+\.[\w\.]+)\b/);
+                const actMatch = part.match(/\b(SAÉ?\s\d+\.[\w\.]+)\b/);
+                
+                if (resMatch) {
+                    const code = resMatch[1];
+                    const resInfo = curriculum.resources?.find((r: any) => r.code === code);
+                    return (
+                        <Badge 
+                            key={i} size="xs" color="teal" variant="light" 
+                            style={{ cursor: 'pointer', textTransform: 'none', verticalAlign: 'middle' }}
+                            onClick={(e) => { e.stopPropagation(); showInfo(resInfo || {code}, 'RES'); }}
+                        >
+                            {code}
+                        </Badge>
+                    );
+                }
+                if (actMatch) {
+                    const code = actMatch[1];
+                    return (
+                        <Badge 
+                            key={i} size="xs" color="orange" variant="light" 
+                            style={{ cursor: 'pointer', verticalAlign: 'middle' }}
+                            onClick={(e) => { 
+                                e.stopPropagation(); 
+                                window.dispatchEvent(new CustomEvent('switch-to-activities', { detail: code }));
+                            }}
+                        >
+                            {code}
+                        </Badge>
+                    );
+                }
+                return part;
+            });
+        };
+
+        // 3. List Item Handling (•)
+        if (trimmedLine.startsWith('•')) {
+            return (
+                <Group key={lineIdx} gap="xs" wrap="nowrap" align="flex-start" style={{ paddingLeft: 10 }}>
+                    <Text size="sm" c="blue">•</Text>
+                    <Text size="sm" style={{ flex: 1 }}>
+                        {renderInline(trimmedLine.substring(1).trim())}
+                    </Text>
+                </Group>
+            );
+        }
+
+        // 4. Standard Paragraph
+        return (
+            <Text key={lineIdx} size="sm" style={{ lineHeight: 1.6 }}>
+                {renderInline(trimmedLine)}
+            </Text>
+        );
+    });
+  };
+
   if (!curriculum || !curriculum.competences) return <Center p="xl"><Loader /></Center>;
 
   return (
     <Container size="lg">
-      {/* INFO MODAL - LIGHT VERSION */}
-      <Modal opened={!!infoItem} onClose={() => setInfoItem(null)} title={infoItem?.code || "Infos"} size="md">
+      {/* INFO MODAL - ADAPTIVE VERSION */}
+      <Modal opened={!!infoItem} onClose={() => setInfoItem(null)} title={infoItem?.code || "Infos"} size={infoItem?.type === 'AC' ? "lg" : "md"}>
         {infoLoading ? <Center p="xl"><Loader /></Center> : infoItem && (
             <Stack>
                 <Title order={4} c="blue">{infoItem.label || infoItem.code}</Title>
                 
-                {(infoItem.hours > 0 || infoItem.hours_details) && (
+                {infoItem.type === 'RES' && (infoItem.hours > 0 || infoItem.hours_details) && (
                     <Badge color="blue" variant="filled" leftSection={<IconClock size={12} />}>
                         Volume Horaire : {infoItem.hours_details || `${infoItem.hours}h`}
                     </Badge>
@@ -564,41 +652,46 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                 
                 {infoItem.error ? <Text color="red">{infoItem.error}</Text> : (
                     <>
-                        {infoItem.description && (
+                        {infoItem.type === 'AC' ? (
+                            // FULL SHEET FOR AC
                             <Box>
-                                <Text size="sm" fw={700} mb={4}>Résumé :</Text>
-                                <Text size="sm" lineClamp={5} style={{ whiteSpace: 'pre-wrap' }}>
-                                    {infoItem.description.includes('Mots clés :') ? infoItem.description.split('Mots clés :')[0] : infoItem.description}
-                                </Text>
+                                {renderRichText(infoItem.description)}
                             </Box>
-                        )}
+                        ) : (
+                            // LIGHT VERSION FOR RESOURCE
+                            <>
+                                {infoItem.description && (
+                                    <Box>
+                                        <Text size="sm" fw={700} mb={4}>Résumé :</Text>
+                                        <Text size="sm" lineClamp={5} style={{ whiteSpace: 'pre-wrap' }}>
+                                            {infoItem.description.includes('Mots clés :') ? infoItem.description.split('Mots clés :')[0] : infoItem.description}
+                                        </Text>
+                                    </Box>
+                                )}
 
-                        {infoItem.learning_outcomes?.length > 0 && (
-                            <Box mt="md">
-                                <Text size="sm" fw={700} mb={4}>AC Liés :</Text>
-                                <Group gap={5}>
-                                    {infoItem.learning_outcomes.map((lo: any) => (
-                                        <Badge key={lo.id} size="xs" variant="outline">{lo.code}</Badge>
-                                    ))}
-                                </Group>
-                            </Box>
-                        )}
-                        
-                        {/* Navigation Button */}
-                        {infoItem.type === 'RES' && (
-                            <Button 
-                                fullWidth 
-                                variant="light" 
-                                mt="lg" 
-                                onClick={() => {
-                                    const code = infoItem.code;
-                                    setInfoItem(null); 
-                                    setActiveTab('curriculum'); 
-                                    window.dispatchEvent(new CustomEvent('switch-to-resources', { detail: code }));
-                                }}
-                            >
-                                Voir la fiche complète (Menu Ressources)
-                            </Button>
+                                {infoItem.learning_outcomes?.length > 0 && (
+                                    <Box mt="md">
+                                        <Text size="sm" fw={700} mb={4}>AC Liés :</Text>
+                                        <Group gap={5}>
+                                            {infoItem.learning_outcomes.map((lo: any) => (
+                                                <Badge key={lo.id} size="xs" variant="outline">{lo.code}</Badge>
+                                            ))}
+                                        </Group>
+                                    </Box>
+                                )}
+                                
+                                <Button 
+                                    fullWidth 
+                                    variant="light" 
+                                    mt="lg" 
+                                                                    onClick={() => {
+                                                                        const code = infoItem.code;
+                                                                        setInfoItem(null); 
+                                                                        window.dispatchEvent(new CustomEvent('switch-to-resources', { detail: code }));
+                                                                    }}                                >
+                                    Voir la fiche complète (Menu Ressources)
+                                </Button>
+                            </>
                         )}
                     </>
                 )}
@@ -688,7 +781,7 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
               <Badge size="lg" variant="light">{pathway === 'TOUS' ? 'Tous Parcours' : currPathway}</Badge>
             </Group>
 
-            <Tabs value={activeTab} onChange={setActiveTab}>
+            <Tabs value={activeTabs[lvl]} onChange={(v) => setActiveTabs(prev => ({ ...prev, [lvl]: v }))}>
               <Tabs.List mb="md">
                 <Tabs.Tab value="comps" leftSection={<IconCategory size={16} />}>Compétences ({comps.length})</Tabs.Tab>
                 <Tabs.Tab value="acts" leftSection={<IconDatabase size={16} />} color="orange">Activités ({acts.length})</Tabs.Tab>
@@ -760,82 +853,13 @@ function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                                                 </Group>
                                             </Accordion.Control>
                                             <Accordion.Panel>
-                                                <Stack gap="xs">
+                                                <Box p="xs">
                                                     {lo.description ? (
-                                                        lo.description.split('\n').map((line: string, lineIdx: number) => {
-                                                            const trimmedLine = line.trim();
-                                                            if (!trimmedLine) return <Box key={lineIdx} h={10} />;
-
-                                                            // 1. Header Handling (###)
-                                                            if (trimmedLine.startsWith('###')) {
-                                                                return (
-                                                                    <Title order={6} key={lineIdx} mt="sm" c="blue" tt="uppercase">
-                                                                        {trimmedLine.replace('###', '').trim()}
-                                                                    </Title>
-                                                                );
-                                                            }
-
-                                                            // 2. Inline Content Parsing (Badges)
-                                                            const renderInline = (text: string) => {
-                                                                return text.split(/(\b[R|S]\d+\.[\w\.]+\b|\bSAÉ?\s\d+\.[\w\.]+\b)/g).map((part: string, i: number) => {
-                                                                    const resMatch = part.match(/\b(R\d+\.[\w\.]+)\b/);
-                                                                    const actMatch = part.match(/\b(SAÉ?\s\d+\.[\w\.]+)\b/);
-                                                                    
-                                                                    if (resMatch) {
-                                                                        const code = resMatch[1];
-                                                                        const resInfo = curriculum.resources?.find((r: any) => r.code === code);
-                                                                        return (
-                                                                            <Badge 
-                                                                                key={i} size="xs" color="teal" variant="light" 
-                                                                                style={{ cursor: 'pointer', textTransform: 'none', verticalAlign: 'middle' }}
-                                                                                onClick={(e) => { e.stopPropagation(); showInfo(resInfo || {code}, 'RES'); }}
-                                                                            >
-                                                                                {code}
-                                                                            </Badge>
-                                                                        );
-                                                                    }
-                                                                    if (actMatch) {
-                                                                        const code = actMatch[1];
-                                                                        return (
-                                                                            <Badge 
-                                                                                key={i} size="xs" color="orange" variant="light" 
-                                                                                style={{ cursor: 'pointer', verticalAlign: 'middle' }}
-                                                                                onClick={(e) => { 
-                                                                                    e.stopPropagation(); 
-                                                                                    window.dispatchEvent(new CustomEvent('switch-to-activities', { detail: code }));
-                                                                                }}
-                                                                            >
-                                                                                {code}
-                                                                            </Badge>
-                                                                        );
-                                                                    }
-                                                                    return part;
-                                                                });
-                                                            };
-
-                                                            // 3. List Item Handling (•)
-                                                            if (trimmedLine.startsWith('•')) {
-                                                                return (
-                                                                    <Group key={lineIdx} gap="xs" wrap="nowrap" align="flex-start" style={{ paddingLeft: 10 }}>
-                                                                        <Text size="sm" c="blue">•</Text>
-                                                                        <Text size="sm" style={{ flex: 1 }}>
-                                                                            {renderInline(trimmedLine.substring(1).trim())}
-                                                                        </Text>
-                                                                    </Group>
-                                                                );
-                                                            }
-
-                                                            // 4. Standard Paragraph
-                                                            return (
-                                                                <Text key={lineIdx} size="sm" style={{ lineHeight: 1.6 }}>
-                                                                    {renderInline(trimmedLine)}
-                                                                </Text>
-                                                            );
-                                                        })
+                                                        renderRichText(lo.description)
                                                     ) : (
                                                         <Text size="sm" c="dimmed" fs="italic">Détails de compréhension à venir...</Text>
                                                     )}
-                                                </Stack>
+                                                </Box>
                                             </Accordion.Panel>
                                         </Accordion.Item>
                                     ))}
