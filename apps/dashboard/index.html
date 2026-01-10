@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUT TC - Skills Hub Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .service-card:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <nav class="bg-blue-700 text-white shadow-lg p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold flex items-center">
+                <i class="fas fa-graduation-cap mr-3"></i>
+                BUT TC - Skills Hub
+            </h1>
+            <span class="text-blue-100 italic">Plateforme Pédagogique Intégrée</span>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-12 px-4">
+        <header class="text-center mb-12">
+            <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Tableau de Bord des Services</h2>
+            <p class="text-xl text-gray-600">Accédez rapidement à tous les outils de votre environnement de travail</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Skills Hub Admin -->
+            <a href="http://projet-edu.eu:3000" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-600 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-blue-600">
+                    <i class="fas fa-desktop text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Skills Hub Admin</h3>
+                </div>
+                <p class="text-gray-600">Gestion du référentiel, roadmap des compétences et génération de fiches PDF.</p>
+                <div class="mt-6 text-sm font-semibold text-blue-600">Port 3000 <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+
+            <!-- Nextcloud -->
+            <a href="http://projet-edu.eu:8082" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-400 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-blue-400">
+                    <i class="fas fa-cloud text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Nextcloud</h3>
+                </div>
+                <p class="text-gray-600">Stockage de fichiers, édition collaborative via OnlyOffice et gestion de groupes.</p>
+                <div class="mt-6 text-sm font-semibold text-blue-400">Port 8082 <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+
+            <!-- Mattermost -->
+            <a href="http://projet-edu.eu:8065" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-indigo-600 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-indigo-600">
+                    <i class="fas fa-comments text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Mattermost</h3>
+                </div>
+                <p class="text-gray-600">Espace de discussion et de collaboration en temps réel pour les équipes.</p>
+                <div class="mt-6 text-sm font-semibold text-indigo-600">Port 8065 <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+
+            <!-- phpLDAPadmin -->
+            <a href="http://projet-edu.eu:8081" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-emerald-500 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-emerald-500">
+                    <i class="fas fa-user-shield text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">LDAP Admin</h3>
+                </div>
+                <p class="text-gray-600">Gestion technique des comptes utilisateurs et de la structure de l'annuaire.</p>
+                <div class="mt-6 text-sm font-semibold text-emerald-500">Port 8081 <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+
+            <!-- Mailpit -->
+            <a href="http://projet-edu.eu:8025" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-orange-500 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-orange-500">
+                    <i class="fas fa-envelope-open-text text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Serveur Mail</h3>
+                </div>
+                <p class="text-gray-600">Consultation des e-mails envoyés par la plateforme (notifications, tests).</p>
+                <div class="mt-6 text-sm font-semibold text-orange-500">Port 8025 <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+
+            <!-- API Docs -->
+            <a href="http://projet-edu.eu:8000/docs" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-gray-700 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-gray-700">
+                    <i class="fas fa-code text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">API Documentation</h3>
+                </div>
+                <p class="text-gray-600">Documentation Swagger interactive pour tester et intégrer les services du backend.</p>
+                <div class="mt-6 text-sm font-semibold text-gray-700">Port 8000 <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-8 mt-12">
+        <div class="container mx-auto text-center text-sm">
+            <p>&copy; 2026 BUT Techniques de Commercialisation - Skills Hub</p>
+            <p class="mt-2 text-gray-500">Déployé via Docker pour projet-edu.eu</p>
+        </div>
+    </footer>
+
+    <script>
+        // Detection automatique du hostname
+        const currentHost = window.location.hostname;
+        if (currentHost !== 'projet-edu.eu' && currentHost !== 'localhost') {
+            document.querySelectorAll('a').forEach(link => {
+                if (link.href.includes('projet-edu.eu')) {
+                    link.href = link.href.replace('projet-edu.eu', currentHost);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

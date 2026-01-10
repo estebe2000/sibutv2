@@ -176,6 +176,16 @@ services:
     networks:
       - app_network
 
+  dashboard:
+    build:
+      context: ./apps/dashboard
+    container_name: but_tc_dashboard
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - app_network
+
 volumes:
   postgres_data:
   ldap_data:
