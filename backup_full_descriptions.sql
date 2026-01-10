@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict DBROpjLqZ5u5teQffagrxxA4CrlsRMcg000dwHGz3h27aNbGKWHunBxY8mXK1he
+\restrict N35WVUI0FEUynw4eYRjwSfSHzaPib24cxM8JtzvfCBhLZ2fAPSbq4JVM7Y6Tgh1
 
 -- Dumped from database version 15.15
 -- Dumped by pg_dump version 15.15
@@ -1140,13 +1140,6 @@ COPY public.essentialcomponent (id, code, label, level, pathway, competency_id) 
 
 COPY public."group" (id, name, year, pathway, formation_type, academic_year) FROM stdin;
 1	Enseignants	0	Staff	N/A	2025-2026
-2	Groupe 5	1	Tronc Commun	FI	2025-2026
-3	Groupe 3	1	Tronc Commun	FI	2025-2026
-4	Groupe 2	1	Tronc Commun	FI	2025-2026
-5	Groupe 1	1	Tronc Commun	FI	2025-2026
-6	Groupe 4	1	Tronc Commun	FI	2025-2026
-7	Démission	1	Tronc Commun	FI	2025-2026
-8	nan	1	Tronc Commun	FI	2025-2026
 \.
 
 
@@ -1215,6 +1208,7 @@ COPY public.learningoutcome (id, code, label, description, level, pathway, compe
 94	AC35.06MDEE	Développer un projet de façon proactive	L'étudiant agit comme un initiateur, capable de piloter le projet avec autonomie et de s'intégrer activement dans une dynamique collective.\n\n### Ressources mobilisées\n• R5.MDEE.09 : Management de projet digital.\n\n### Mise en pratique (SAÉ)\n• Stage S6 : Mission de fin d'études.\n\n### Critères d’évaluation\n• Leadership et autonomie : Capacité à prendre des décisions rapides face aux imprévus du développement.\n• Esprit d'entreprise : Démontrer une volonté de faire aboutir le projet au-delà des simples consignes.\n\nEn résumé : cet AC forge la posture de responsable de projet e-business proactif.	3	MDEE	20
 69	AC35.03MMPV	Gérer la relation avec les fournisseurs ou le réseau	L'étudiant agit en tant qu'interface entre le point de vente et ses partenaires pour optimiser les conditions d'approvisionnement et de collaboration.\n\n### Ressources mobilisées\n• R5.MMPV.13 : Supply chain.\n• R5.MMPV.15 : Trade marketing.\n\n### Critères d’évaluation\n• Conformité aux accords de réseau : Respect rigoureux des directives de l'enseigne et des procédures de référencement fournisseurs.\n• Efficience opérationnelle : Qualité du suivi des flux et capacité à résoudre les litiges logistiques ou commerciaux avec les partenaires.\n\nEn résumé : cet AC garantit la fluidité et la conformité de la relation avec les partenaires amont.	3	MMPV	16
 83	AC25.01MDEE	Concevoir un modèle d'affaires simplifié	L'étudiant doit élaborer un document décrivant la création, la livraison et le partage de la valeur pour un projet entrepreneurial ou intrapreneurial.\n\n### Ressources mobilisées\n• R4.MDEE.11 : Business model-1.\n\n### Mise en pratique (SAÉ)\n• SAÉ 3.MDEE.02 : Démarche de création d’entreprise en contexte digital.\n\n### Critères d'évaluation\n• Cohérence de la proposition de valeur : Adéquation entre le problème identifié et la solution digitale proposée.\n• Logique du modèle : Clarté de l'articulation entre les segments de clientèle et les flux de revenus.\n\nEn résumé : cet AC permet de poser les bases économiques viables d'un projet avant son lancement technique.	2	MDEE	19
+16	AC12.04	Évaluer la performance commerciale au moyen d'indicateurs	Cette étape consiste à utiliser des outils chiffrés pour analyser les résultats d'une action commerciale, comme le taux de transformation ou le panier moyen.\n\n### Ressources mobilisées\n• R1.07 : Techniques quantitatives.\n• R1.08 : Éléments financiers.\n• R2.05 : Coûts, marges et prix.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : Analyse des résultats de prospection.\n• SAÉ 2.02 : Vente : initiation au jeu de rôle de négociation.\n\n### Critères d'évaluation\n• Exactitude des calculs et pertinence de l'analyse des résultats.\n\nEn résumé : cet AC donne à l'étudiant la capacité de mesurer l'efficacité de son travail et d'identifier des axes d'amélioration.	1	Tronc Commun	4
 1	AC11.01	Analyser l'environnement d'une entreprise en repérant et appréciant les sources d'informations	L'étudiant doit apprendre à réaliser un diagnostic externe et interne en s'appuyant sur des données vérifiées. L'accent est mis sur la capacité à distinguer les sources d'informations fiables pour comprendre le contexte du marché.\n\n### Ressources mobilisées (S1)\n• R1.01 : Fondamentaux du marketing et comportement du consommateur.\n• R1.05 : Environnement économique de l'entreprise.\n• R1.06 : Environnement juridique de l'entreprise.\n• R1.12 : Rôle et organisation de l'entreprise sur son marché.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.01 : Marketing : positionnement d'une offre simple sur un marché.\n\n### Critères d'évaluation\n• Justesse du diagnostic des forces, faiblesses, opportunités et menaces.\n• Pertinence et crédibilité des sources documentaires exploitées.\n\nEn résumé : cet AC apprend à fonder toute décision marketing sur une analyse rigoureuse et factuelle de la réalité de l'entreprise.	1	Tronc Commun	1
 3	AC11.03	Choisir une cible et un positionnement en fonction de la segmentation du marché	Sur la base de l'analyse, l'étudiant doit segmenter le marché, sélectionner le segment le plus porteur (ciblage) et définir une promesse distinctive pour le consommateur par rapport à la concurrence (positionnement).\n\n### Ressources mobilisées (S1/S2)\n• R1.01 : Fondamentaux du marketing.\n• R2.01 : Marketing mix (stratégie marketing).\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.01 : Marketing : positionnement d'une offre simple sur un marché.\n\n### Critères d'évaluation\n• Cohérence stratégique entre le segment choisi et les ressources de l'entreprise.\n• Clarté et différenciation du positionnement proposé.\n\nEn résumé : cet AC apprend à 'trancher' stratégiquement pour que l'offre soit adressée aux bons clients avec le bon message.	1	Tronc Commun	1
 99	AC34.02BI	Evaluer les marchés internationaux en prenant en compte le contexte géo-éco-politique	Il s'agit d'intégrer des variables complexes (conflits, barrières douanières, stabilité monétaire) pour juger de la viabilité d'un marché sur le long terme.\n\n### Ressources mobilisées\n• R5.03 : Financement et régulation de l’économie.\n• R5.BI.13 : Droit international.\n\n### Mise en pratique (SAÉ)\n• SAÉ 5.BI.01 : Conduite d'une mission import ou export.\n\n### Critères d’évaluation\n• Maîtrise des risques géopolitiques : Justesse de l'analyse de l'impact des tensions internationales sur le business model.\n• Pertinence de la veille : Qualité et actualité des données économiques utilisées pour l'évaluation.\n\nEn résumé : cet AC permet d'anticiper les tempêtes politiques pour protéger les intérêts de l'entreprise.	3	BI	22
@@ -1224,7 +1218,6 @@ COPY public.learningoutcome (id, code, label, description, level, pathway, compe
 86	AC25.04MDEE	Identifier les éléments pertinents nécessaires à la réalisation du projet	L'étudiant doit lister et planifier l'ensemble des moyens (humains, techniques, financiers) requis pour concrétiser l'idée en projet réel.\n\n### Ressources mobilisées\n• R4.MDEE.09 : Conduite de projet digital.\n\n### Mise en pratique (SAÉ)\n• SAÉ 3.MDEE.02 : Démarche de création d’entreprise.\n\n### Critères d'évaluation\n• Exhaustivité de l'inventaire : Prise en compte de tous les besoins, notamment les contraintes juridiques et technologiques.\n• Réalisme du cadrage : Adéquation entre les ressources identifiées et les délais impartis.\n\nEn résumé : cet AC transforme une vision abstraite en une feuille de route opérationnelle.	2	MDEE	19
 87	AC25.05MDEE	Utiliser les techniques de créativité individuelle et collective	Il s'agit de mobiliser des méthodes de génération d'idées (brainstorming, mind mapping, etc.) pour favoriser l'innovation au sein du projet.\n\n### Ressources mobilisées\n• R3.MDEE.16 : Créativité et innovation.\n\n### Mise en pratique (SAÉ)\n• SAÉ 3.MDEE.02 : Ateliers de création.\n\n### Critères d'évaluation\n• Diversité des propositions : Capacité à produire un grand nombre d'idées originales avant la phase de sélection.\n• Efficacité de la méthode : Aptitude à animer ou participer activement à une séance de créativité collective.\n\nEn résumé : cet AC permet de 'sortir du cadre' pour trouver des solutions innovantes et différenciantes.	2	MDEE	19
 4	AC11.04	Concevoir une offre cohérente et éthique en termes de produits, de prix, de distribution et de communication	L'étudiant élabore ici le mix-marketing opérationnel. L'offre doit être mutuellement cohérente entre ses 4 piliers et respecter une posture citoyenne, éthique et écologique.\n\n### Ressources mobilisées (S2)\n• R2.01 : Marketing mix - 1.\n• R2.05 : Coûts, marges et prix d'une offre simple.\n• R2.10 : Connaissance des canaux de commercialisation et distribution.\n• R2.03 : Moyens de la communication commerciale.\n\n### Mise en pratique (SAÉ)\n• SAÉ 2.01 : Marketing : marketing mix.\n\n### Critères d'évaluation\n• Adéquation opérationnelle du mix avec le positionnement cible.\n• Respect de la réglementation en vigueur et des enjeux de la RSE.\n\nEn résumé : cet AC finalise la construction concrète du produit prêt à être lancé de manière responsable sur son marché.	1	Tronc Commun	1
-16	AC12.04	Évaluer la performance commerciale au moyen d'indicateurs	Cette étape consiste à utiliser des outils chiffrés pour analyser les résultats d'une action commerciale, comme le taux de transformation ou le panier moyen.\n\n### Ressources mobilisées\n• R1.07 : Techniques quantitatives.\n• R1.08 : Éléments financiers.\n• R2.05 : Coûts, marges et prix.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : Analyse des résultats de prospection.\n• SAÉ 2.02 : Vente : initiation au jeu de rôle de négociation.\n\n### Critères d'évaluation\n• Exactitude des calculs et pertinence de l'analyse des résultats.\n\nEn résumé : cet AC donne à l'étudiant la capacité de mesurer l'efficacité de son travail et d'identifier des axes d'amélioration.	1	Tronc Commun	4
 17	AC12.05	Recourir aux techniques adaptées à la démarche de prospection	L'étudiant doit savoir qualifier un fichier de prospects, réaliser un plan d'appel (script) et maîtriser la prise de contact, notamment téléphonique.\n\n### Ressources mobilisées\n• R1.02 : Vente.\n• R1.10 : Initiation à la conduite de projet.\n• R1.13 : Ressources et culture numériques 1 (CRM).\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : Vente : démarche de prospection.\n\n### Critères d'évaluation\n• Qualité du fichier de prospects et efficacité de la prise de contact initiale.\n\nEn résumé : cet AC est crucial pour le développement commercial car il apprend à générer de nouvelles opportunités d'affaires.	1	Tronc Commun	4
 18	AC12.06	Recourir aux codes d'expression spécifiques et professionnels	Il s'agit de maîtriser la posture professionnelle : communication verbale (ton, vocabulaire) et non verbale (tenue, gestuelle) pour instaurer la confiance.\n\n### Ressources mobilisées\n• R1.14 : Expression, communication et culture 1.\n• R2.09 : Psychologie sociale.\n\n### Mise en pratique (SAÉ)\n• SAÉ 1.02 : Vente : démarche de prospection.\n• SAÉ 2.02 : Vente : initiation au jeu de rôle de négociation.\n\n### Critères d'évaluation\n• Maîtrise de l'écoute active et adéquation du comportement avec les attentes professionnelles.\n\nEn résumé : cet AC forge l'identité professionnelle de l'étudiant pour qu'il soit perçu comme un partenaire crédible.	1	Tronc Commun	4
 31	AC13.04	Analyser les indicateurs post campagne	Une fois le communication lancée, l'étudiant doit mesurer si elle a atteint ses buts en analysant des données chiffrées (taux de clic, mémorisation, retours clients).\n\n### Ressources mobilisées\n• R1.10 : Études marketing.\n• R1.07 : Techniques quantitatives et représentations.\n\n### Mise en pratique (SAÉ)\n• SAÉ 2.03 : Élaboration d’un plan de communication commerciale.\n\n### Critères d'évaluation\n• Exactitude de l'interprétation des indicateurs de performance (KPIs).\n• Capacité à proposer des mesures correctives si les objectifs n'ont pas été atteints.\n\nEn résumé : cet AC apporte la preuve par le chiffre que l'investissement en communication a été utile.	1	Tronc Commun	7
@@ -2811,43 +2804,43 @@ COPY public.systemconfig (id, key, value, category) FROM stdin;
 --
 
 COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
-1	emma.dupont78	emma.dupont78@etu.univ.fr	Emma DUPONT	STUDENT	2
-2	marie.moreau93	marie.moreau93@etu.univ.fr	Marie MOREAU	STUDENT	2
-3	nicolas.dupont87	nicolas.dupont87@etu.univ.fr	Nicolas DUPONT	STUDENT	2
-4	emma.martin16	emma.martin16@etu.univ.fr	Emma MARTIN	STUDENT	2
-5	jean.roux79	jean.roux79@etu.univ.fr	Jean ROUX	STUDENT	2
-6	sophie.petit89	sophie.petit89@etu.univ.fr	Sophie PETIT	STUDENT	3
-7	nicolas.martin13	nicolas.martin13@etu.univ.fr	Nicolas MARTIN	STUDENT	3
-8	nicolas.lefebvre43	nicolas.lefebvre43@etu.univ.fr	Nicolas LEFEBVRE	STUDENT	3
-9	emma.roux34	emma.roux34@etu.univ.fr	Emma ROUX	STUDENT	3
-10	julie.durand50	julie.durand50@etu.univ.fr	Julie DURAND	STUDENT	3
-11	marie.simon14	marie.simon14@etu.univ.fr	Marie SIMON	STUDENT	4
-12	jean.dupont98	jean.dupont98@etu.univ.fr	Jean DUPONT	STUDENT	4
-13	emma.petit57	emma.petit57@etu.univ.fr	Emma PETIT	STUDENT	4
-14	antoine.dupont29	antoine.dupont29@etu.univ.fr	Antoine DUPONT	STUDENT	4
-15	sophie.simon48	sophie.simon48@etu.univ.fr	Sophie SIMON	STUDENT	5
-16	marie.leroy81	marie.leroy81@etu.univ.fr	Marie LEROY	STUDENT	5
-17	pierre.durand11	pierre.durand11@etu.univ.fr	Pierre DURAND	STUDENT	5
-18	marie.simon28	marie.simon28@etu.univ.fr	Marie SIMON	STUDENT	5
-19	antoine.durand10	antoine.durand10@etu.univ.fr	Antoine DURAND	STUDENT	5
-20	nicolas.garcia31	nicolas.garcia31@etu.univ.fr	Nicolas GARCIA	STUDENT	6
-21	marie.garcia70	marie.garcia70@etu.univ.fr	Marie GARCIA	STUDENT	6
-22	julie.dupont12	julie.dupont12@etu.univ.fr	Julie DUPONT	STUDENT	6
-23	jean.dupont30	jean.dupont30@etu.univ.fr	Jean DUPONT	STUDENT	6
-24	antoine.dupont82	antoine.dupont82@etu.univ.fr	Antoine DUPONT	STUDENT	6
-25	nicolas.simon43	nicolas.simon43@etu.univ.fr	Nicolas SIMON	STUDENT	7
-26	lucas.martin68	lucas.martin68@etu.univ.fr	Lucas MARTIN	STUDENT	7
-27	emma.roux10	emma.roux10@etu.univ.fr	Emma ROUX	STUDENT	7
-28	sophie.lefebvre61	sophie.lefebvre61@etu.univ.fr	Sophie LEFEBVRE	STUDENT	7
-29	pierre.lefebvre22	pierre.lefebvre22@etu.univ.fr	Pierre LEFEBVRE	STUDENT	7
-30	julie.lefebvre86	julie.lefebvre86@etu.univ.fr	Julie LEFEBVRE	STUDENT	7
-31	sophie.lefebvre55	sophie.lefebvre55@etu.univ.fr	Sophie LEFEBVRE	STUDENT	8
-32	thomas.moreau97	thomas.moreau97@etu.univ.fr	Thomas MOREAU	STUDENT	8
-33	marie.petit63	marie.petit63@etu.univ.fr	Marie PETIT	STUDENT	8
-34	emma.garcia95	emma.garcia95@etu.univ.fr	Emma GARCIA	STUDENT	8
-35	jean.dupont60	jean.dupont60@etu.univ.fr	Jean DUPONT	STUDENT	8
-36	beatrice.leroux	beatrice.leroux@univ.fr	Beatrice LEROUX	PROFESSOR	1
-37	delphine.fournier	delphine.fournier@univ.fr	Delphine FOURNIER	PROFESSOR	1
+6	sophie.petit89	sophie.petit89@etu.univ.fr	Sophie PETIT	GUEST	\N
+7	nicolas.martin13	nicolas.martin13@etu.univ.fr	Nicolas MARTIN	GUEST	\N
+8	nicolas.lefebvre43	nicolas.lefebvre43@etu.univ.fr	Nicolas LEFEBVRE	GUEST	\N
+9	emma.roux34	emma.roux34@etu.univ.fr	Emma ROUX	GUEST	\N
+10	julie.durand50	julie.durand50@etu.univ.fr	Julie DURAND	GUEST	\N
+11	marie.simon14	marie.simon14@etu.univ.fr	Marie SIMON	GUEST	\N
+12	jean.dupont98	jean.dupont98@etu.univ.fr	Jean DUPONT	GUEST	\N
+13	emma.petit57	emma.petit57@etu.univ.fr	Emma PETIT	GUEST	\N
+14	antoine.dupont29	antoine.dupont29@etu.univ.fr	Antoine DUPONT	GUEST	\N
+15	sophie.simon48	sophie.simon48@etu.univ.fr	Sophie SIMON	GUEST	\N
+16	marie.leroy81	marie.leroy81@etu.univ.fr	Marie LEROY	GUEST	\N
+17	pierre.durand11	pierre.durand11@etu.univ.fr	Pierre DURAND	GUEST	\N
+18	marie.simon28	marie.simon28@etu.univ.fr	Marie SIMON	GUEST	\N
+19	antoine.durand10	antoine.durand10@etu.univ.fr	Antoine DURAND	GUEST	\N
+20	nicolas.garcia31	nicolas.garcia31@etu.univ.fr	Nicolas GARCIA	GUEST	\N
+21	marie.garcia70	marie.garcia70@etu.univ.fr	Marie GARCIA	GUEST	\N
+22	julie.dupont12	julie.dupont12@etu.univ.fr	Julie DUPONT	GUEST	\N
+23	jean.dupont30	jean.dupont30@etu.univ.fr	Jean DUPONT	GUEST	\N
+24	antoine.dupont82	antoine.dupont82@etu.univ.fr	Antoine DUPONT	GUEST	\N
+25	nicolas.simon43	nicolas.simon43@etu.univ.fr	Nicolas SIMON	GUEST	\N
+26	lucas.martin68	lucas.martin68@etu.univ.fr	Lucas MARTIN	GUEST	\N
+27	emma.roux10	emma.roux10@etu.univ.fr	Emma ROUX	GUEST	\N
+28	sophie.lefebvre61	sophie.lefebvre61@etu.univ.fr	Sophie LEFEBVRE	GUEST	\N
+29	pierre.lefebvre22	pierre.lefebvre22@etu.univ.fr	Pierre LEFEBVRE	GUEST	\N
+30	julie.lefebvre86	julie.lefebvre86@etu.univ.fr	Julie LEFEBVRE	GUEST	\N
+1	emma.dupont78	emma.dupont78@etu.univ.fr	Emma DUPONT	GUEST	\N
+2	marie.moreau93	marie.moreau93@etu.univ.fr	Marie MOREAU	GUEST	\N
+3	nicolas.dupont87	nicolas.dupont87@etu.univ.fr	Nicolas DUPONT	GUEST	\N
+4	emma.martin16	emma.martin16@etu.univ.fr	Emma MARTIN	GUEST	\N
+5	jean.roux79	jean.roux79@etu.univ.fr	Jean ROUX	GUEST	\N
+31	sophie.lefebvre55	sophie.lefebvre55@etu.univ.fr	Sophie LEFEBVRE	GUEST	\N
+32	thomas.moreau97	thomas.moreau97@etu.univ.fr	Thomas MOREAU	GUEST	\N
+33	marie.petit63	marie.petit63@etu.univ.fr	Marie PETIT	GUEST	\N
+34	emma.garcia95	emma.garcia95@etu.univ.fr	Emma GARCIA	GUEST	\N
+35	jean.dupont60	jean.dupont60@etu.univ.fr	Jean DUPONT	GUEST	\N
+36	beatrice.leroux	beatrice.leroux@univ.fr	Beatrice LEROUX	GUEST	\N
+37	delphine.fournier	delphine.fournier@univ.fr	Delphine FOURNIER	GUEST	\N
 \.
 
 
@@ -3113,5 +3106,5 @@ ALTER TABLE ONLY public."user"
 -- PostgreSQL database dump complete
 --
 
-\unrestrict DBROpjLqZ5u5teQffagrxxA4CrlsRMcg000dwHGz3h27aNbGKWHunBxY8mXK1he
+\unrestrict N35WVUI0FEUynw4eYRjwSfSHzaPib24cxM8JtzvfCBhLZ2fAPSbq4JVM7Y6Tgh1
 
