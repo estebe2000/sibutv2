@@ -132,12 +132,22 @@ docker exec but_tc_mattermost mmctl user create --email admin@univ.fr --username
 docker exec but_tc_mattermost mmctl team create --name but-tc --display-name "BUT TC" --local || echo "Team already exists"
 docker exec but_tc_mattermost mmctl team users add but-tc admin --local || echo "User already in team"
 
-# 10. Application Seeding
-echo "🌱 Seeding Application Database..."
-until docker exec but_tc_api python -m app.seed_db; do
-  echo "Waiting for API to be ready for seeding..."
+# 10. Application Seeding & Restoration
+echo "🌱 Seeding & Restoring Application Database..."
+# Wait for API to be ready
+until curl -s http://localhost:8000/ > /dev/null; do
+  echo "Waiting for API to be ready..."
   sleep 5
 done
+
+# We use the full SQL backup if it exists, otherwise fallback to seed_db
+if [ -f "backup_full_descriptions.sql" ]; then
+    echo "💾 Restoring from backup_full_descriptions.sql..."
+    docker exec -i but_tc_db psql -U app_user skills_db < backup_full_descriptions.sql
+else
+    echo "⚠️  No backup found, running basic seed_db..."
+    docker exec but_tc_api python -m app.seed_db
+fi
 
 echo "✅ Initialization Complete!"
 echo "---------------------------------------------------"
