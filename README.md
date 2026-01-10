@@ -18,37 +18,46 @@ Application de gestion des compétences et du référentiel pédagogique pour le
   - Lien direct entre Activités (SAÉ), Ressources et Compétences (AC).
 
 ### 🗺️ Roadmap & Découverte
-- **Visualisation Stratégique** : Nouvelle vue Roadmap interactive présentant la progression des compétences (BUT 1 à 3) sous forme de matrice (Style Page 18).
-- **Fiches PDF Intégrées** : Accès direct aux fiches pédagogiques PDF officielles (S1 à S6) stockées au sein de l'image Docker pour un déploiement sans dépendance locale.
-- **Rendu Riche** : Moteur de rendu dynamique supportant les badges interactifs et le formatage propre pour les Apprentissages Critiques (AC).
+- **Visualisation Stratégique** : Nouvelle vue Roadmap interactive présentant la progression des compétences (BUT 1 à 3) sous forme de matrice.
+- **Génération PDF à la volée** : Moteur dynamique (`ReportLab`) créant des fiches interactives pour les Activités et Ressources.
+  - **Sommaire Interactif** : Navigation par liens internes dans le PDF.
+  - **Grille d'Auto-évaluation** : Page dédiée en mode paysage pour une utilisation optimale à l'impression.
+- **Rendu Riche** : Support des badges interactifs et nettoyage automatique des caractères spéciaux (ligatures).
 
 ### 🖥️ Interface Utilisateur
-- **Vue en Accordéon** : Navigation fluide par Année et par Type (Compétences, Activités, Ressources).
-- **Filtrage Dynamique** : Affichage contextuel selon le parcours sélectionné.
-- **Fiches Détails** : Modales interactives pour consulter le détail d'une ressource, d'une activité ou d'un AC.
-- **Tri Intelligent** : Affichage automatique des AC dans l'ordre numérique (01, 02, etc.).
+- **Dashboard Central** : Point d'entrée unique sur le port 80 pour accéder à tous les services (Admin, Nextcloud, Mattermost, LDAP).
+- **Filtrage Avancé** : Recherche et filtres par semestre, type et parcours pour la génération de documents.
+- **Configuration d'Identité** : Gestion dynamique du logo, de l'adresse et des contacts de l'établissement.
 
-### 🛠️ Outils d'Administration
-- **Extraction PDF** : Scripts Python (`tmp/extract_*.py`) pour parser le Programme National (PN) PDF.
-- **Seeding** : Peuplement automatique de la base de données PostgreSQL.
-- **Gestion des Utilisateurs** : Import LDAP complet (45+ utilisateurs de test), assignation aux groupes, rôles.
-- **Sauvegarde de la donnée** : Scripts de dump SQL pour sécuriser les enrichissements pédagogiques.
+### 🛠️ Outils d'Administration & Sécurité
+- **Provisioning Nextcloud** : Création automatique de dossiers sécurisés en "Lecture Seule" pour les élèves via l'API.
+- **Configuration SMTP** : Support des e-mails réels (OVH ssl0.ovh.net) pour les notifications et les futurs Magic Links.
+- **Sauvegarde & Reset** : Procédure "bulletproof" pour une réinstallation complète automatisée avec restauration des données SQL et LDAP.
 
 ## 📦 Installation & Lancement
 
 ### Pré-requis
 - Docker & Docker Compose
-- Node.js (facultatif, pour le développement)
 
 ### Démarrage Rapide
 ```bash
-# 1. Lancer l'infrastructure (Base de données, API, Frontend, LDAP, etc.)
+# 1. Lancer l'infrastructure complète
 npm run infra:up
 
-# 2. Accéder à l'application
-# Frontend : http://localhost:3000
-# API Doc : http://localhost:8000/docs
+# 2. Accéder au Tableau de Bord
+# URL : http://projet-edu.eu/ (ou http://localhost)
 ```
+
+### Services Disponibles
+| Service | URL (Projet Edu) | Description |
+| :--- | :--- | :--- |
+| **Dashboard** | http://projet-edu.eu/ | Portail central (Port 80) |
+| **Skills Hub Admin** | http://projet-edu.eu:3000/ | Gestion du référentiel |
+| **Nextcloud** | http://projet-edu.eu:8082/ | Stockage & Édition |
+| **Mattermost** | http://projet-edu.eu:8065/ | Collaboration |
+| **LDAP Admin** | http://projet-edu.eu:8081/ | Gestion des comptes |
+| **Mailpit** | http://projet-edu.eu:8025/ | Test des emails |
+
 
 ### Commandes Utiles
 
