@@ -54,7 +54,10 @@ import { MultiSelect } from '@mantine/core';
 import axios from 'axios';
 
 
-const API_URL = 'http://localhost:8000';
+// Detect API URL based on current hostname
+const API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:8000' 
+  : `http://${window.location.hostname}:8000`;
 
 const YEAR_COLORS: any = {
   0: 'gray',
