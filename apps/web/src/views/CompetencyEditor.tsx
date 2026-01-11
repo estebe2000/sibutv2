@@ -20,7 +20,8 @@ import {
   Grid,
   ThemeIcon,
   Container,
-  Center
+  Center,
+  Divider
 } from '@mantine/core';
 import {
   IconPencil,

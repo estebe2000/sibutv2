@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Title, Tabs, Paper, ScrollArea, Table, Select, Group, Box, Badge, Center, Loader } from '@mantine/core';
+import { Container, Title, Tabs, Paper, ScrollArea, Table, Select, Group, Box, Badge, Center, Loader, Text } from '@mantine/core';
 import { IconClock, IconDatabase } from '@tabler/icons-react';
 
 export function RepartitionView({ curriculum }: any) {

@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { Container, Title, Paper, Grid, TextInput, Select, Text, ScrollArea, Table, Badge, Group, Button } from '@mantine/core';
 import { IconFileText } from '@tabler/icons-react';
 
-// API URL (will be passed or fetched from store/env)
-const API_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:8000'
-  : `http://${window.location.hostname}:8000`;
+// API URL (Relative for Nginx Gateway)
+const API_URL = '/api';
 
 export function FichesPDF2View({ curriculum }: any) {
   const [search, setSearch] = useState('');

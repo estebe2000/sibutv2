@@ -9,7 +9,7 @@ from .database import create_db_and_tables, engine
 from .models import Group
 from .routers import auth, users, curriculum, config, files
 
-app = FastAPI(title="BUT TC Skills Hub API")
+app = FastAPI(title="BUT TC Skills Hub API", root_path=os.getenv("ROOT_PATH", ""))
 
 # --- STATIC FILES ---
 FICHES_PATH = "/app/fiches_pdf"

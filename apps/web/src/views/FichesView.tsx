@@ -4,10 +4,8 @@ import { IconBook, IconInfoCircle, IconDownload } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
 
-// API URL (will be passed or fetched from store/env)
-const API_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:8000'
-  : `http://${window.location.hostname}:8000`;
+// API URL (Relative for Nginx Gateway)
+const API_URL = '/api';
 
 export function FichesView() {
   const [fiches, setFiches] = useState<any[]>([]);
