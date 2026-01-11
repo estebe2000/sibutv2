@@ -22,10 +22,10 @@
             </h1>
             <div id="auth-section" class="flex items-center gap-4">
                 <!-- Zone dynamique de connexion -->
-                <div id="login-form" class="flex items-center gap-2">
-                    <input type="text" id="username" placeholder="Identifiant" class="px-3 py-1 rounded text-gray-800 text-sm">
-                    <input type="password" id="password" placeholder="Mot de passe" class="px-3 py-1 rounded text-gray-800 text-sm">
-                    <button onclick="handleLogin()" id="login-btn" class="bg-blue-500 hover:bg-blue-600 px-4 py-1 rounded text-sm font-bold transition">Connexion</button>
+                <div id="login-zone">
+                    <button onclick="redirectToKeycloak()" id="login-btn" class="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2">
+                        <i class="fas fa-sign-in-alt"></i> Connexion au Portail
+                    </button>
                 </div>
                 <div id="user-info" class="hidden flex items-center gap-4">
                     <span id="user-display" class="text-sm font-medium"></span>
@@ -43,7 +43,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Skills Hub Admin -->
-            <a href="/app/" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-600 hover:shadow-xl">
+            <a href="https://home.educ-ai.fr/app/" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-600 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-blue-600">
                     <i class="fas fa-desktop text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Skills Hub Admin</h3>
@@ -53,23 +53,23 @@
             </a>
 
             <!-- Nextcloud -->
-            <a href="http://projet-edu.eu:8082" id="link-nextcloud" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-400 hover:shadow-xl">
+            <a href="https://nextcloud.educ-ai.fr" id="link-nextcloud" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-400 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-blue-400">
                     <i class="fas fa-cloud text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Nextcloud</h3>
                 </div>
                 <p class="text-gray-600">Stockage de fichiers, édition collaborative via OnlyOffice et gestion de groupes.</p>
-                <div class="mt-6 text-sm font-semibold text-blue-400">Port 8082 <i class="fas fa-external-link-alt ml-1"></i></div>
+                <div class="mt-6 text-sm font-semibold text-blue-400">Portail Unifié <i class="fas fa-external-link-alt ml-1"></i></div>
             </a>
 
             <!-- Mattermost -->
-            <a href="http://projet-edu.eu:8065" id="link-mattermost" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-indigo-600 hover:shadow-xl">
+            <a href="https://home.educ-ai.fr/mattermost/" id="link-mattermost" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-indigo-600 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-indigo-600">
                     <i class="fas fa-comments text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Mattermost</h3>
                 </div>
                 <p class="text-gray-600">Espace de discussion et de collaboration en temps réel pour les équipes.</p>
-                <div class="mt-6 text-sm font-semibold text-indigo-600">Port 8065 <i class="fas fa-external-link-alt ml-1"></i></div>
+                <div class="mt-6 text-sm font-semibold text-indigo-600">Portail Unifié <i class="fas fa-external-link-alt ml-1"></i></div>
             </a>
 
             <!-- phpLDAPadmin -->
@@ -93,7 +93,7 @@
             </a>
 
             <!-- API Docs -->
-            <a href="/api/docs" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-gray-700 hover:shadow-xl">
+            <a href="/api/docs" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-gray-700 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-gray-700">
                     <i class="fas fa-code text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">API Documentation</h3>
@@ -114,7 +114,11 @@
     <script>
         // Configuration
         const API_URL = '/api';
+        const KC_URL = 'https://keycloak.educ-ai.fr';
+        const KC_REALM = 'but-tc';
+        const KC_CLIENT_ID = 'skills-hub-app';
         const COOKIE_NAME = 'auth_token';
+        const REDIRECT_URI = window.location.origin + '/';
 
         // Helper pour les cookies
         function setCookie(name, value, days) {
@@ -124,8 +128,7 @@
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                 expires = "; expires=" + date.toUTCString();
             }
-            // IMPORTANT: path=/ et domain= window.location.hostname pour le SSO
-            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
         }
 
         function getCookie(name) {
@@ -143,47 +146,51 @@
             document.cookie = name+'=; Max-Age=-99999999; path=/;';  
         }
 
-        // Login
-        async function handleLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const btn = document.getElementById('login-btn');
+        // SSO Redirect
+        function redirectToKeycloak() {
+            const authUrl = `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/auth?client_id=${KC_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=openid`;
+            window.location.href = authUrl;
+        }
 
-            if(!user || !pass) return alert("Veuillez remplir les champs");
+        // Handle Callback from Keycloak
+        async function handleCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                // On enlève le code de l'URL pour la propreté
+                window.history.replaceState({}, document.title, "/");
 
-            btn.innerText = "Chargement...";
-            btn.disabled = true;
+                try {
+                    // On demande à notre API d'échanger le code contre un token
+                    // (Plus sécurisé que de le faire en JS pur avec le secret)
+                    const formData = new FormData();
+                    formData.append('code', code);
+                    formData.append('redirect_uri', REDIRECT_URI);
 
-            const formData = new FormData();
-            formData.append('username', user);
-            formData.append('password', pass);
+                    const res = await fetch(`${API_URL}/auth/callback`, {
+                        method: 'POST',
+                        body: formData
+                    });
 
-            try {
-                const res = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    setCookie(COOKIE_NAME, data.access_token, 1);
-                    localStorage.setItem('user_name', user);
-                    location.reload();
-                } else {
-                    alert("Identifiants incorrects");
+                    if (res.ok) {
+                        const data = await res.json();
+                        setCookie(COOKIE_NAME, data.access_token, 1);
+                        localStorage.setItem('user_name', data.username);
+                        location.reload();
+                    }
+                } catch (e) {
+                    console.error("SSO Callback Error", e);
                 }
-            } catch (e) {
-                alert("Erreur de connexion au serveur");
-            } finally {
-                btn.innerText = "Connexion";
-                btn.disabled = false;
             }
         }
 
         function handleLogout() {
             eraseCookie(COOKIE_NAME);
             localStorage.removeItem('user_name');
-            location.reload();
+            // Logout from Keycloak and redirect to Dashboard root
+            const logoutUrl = `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin + '/')}&client_id=${KC_CLIENT_ID}`;
+            window.location.href = logoutUrl;
         }
 
         function checkAuth() {
@@ -191,14 +198,14 @@
             const user = localStorage.getItem('user_name');
             
             if (token && user) {
-                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('login-zone').classList.add('hidden');
                 document.getElementById('user-info').classList.remove('hidden');
                 document.getElementById('user-display').innerText = `Bonjour, ${user}`;
             }
         }
 
         // Init
-        checkAuth();
+        handleCallback().then(checkAuth);
 
         // Detection automatique du hostname (existant)
         const currentHost = window.location.hostname;

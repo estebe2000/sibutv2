@@ -23,14 +23,13 @@ echo "⚙️  Configuring Nextcloud Apps & OnlyOffice..."
 docker exec -u www-data but_tc_nextcloud php occ app:install onlyoffice || echo "OnlyOffice already installed"
 docker exec -u www-data but_tc_nextcloud php occ app:enable onlyoffice
 
-# Configure OnlyOffice URLs (DIRECT ACCESS MODE)
-# We use the PUBLIC host URL with PORT 8083 for browser access
-# We use INTERNAL container URL for Server-to-Server communication (if possible) or Public IP
-docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerUrl --value="http://projet-edu.eu:8083/"
+# Configure OnlyOffice URLs (Cloudflare Mode)
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerUrl --value="https://educ-ai.fr/onlyoffice/"
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerInternalUrl --value="http://but_tc_onlyoffice/"
-docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice StorageUrl --value="http://but-tc-ldap/"
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice StorageUrl --value="http://but_tc_nextcloud/"
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice jwt_secret --value="onlyoffice_secret"
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice jwt_header --value="Authorization"
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice verify_peer_off --value="true"
 
 # Install other collaborative apps
 APPS="terms_of_service contacts mail spreed collectives integration_mattermost"
@@ -84,16 +83,17 @@ docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapConfigu
 echo "🌱 Restoring Application Database..."
 # docker exec but_tc_api python -m app.seed_db
 
-# 4. Final settings (Clean up overwrites for Direct Access)
+# 4. Final settings (Trusted Domains & Proxies)
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 1 --value="localhost"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 2 --value="projet-edu.eu"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 2 --value="educ-ai.fr"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 3 --value="but_tc_nextcloud"
 
-# Clean up Overwrites from previous attempts
-docker exec -u www-data but_tc_nextcloud php occ config:system:delete overwrite.cli.url || true
-docker exec -u www-data but_tc_nextcloud php occ config:system:delete overwritehost || true
-docker exec -u www-data but_tc_nextcloud php occ config:system:delete overwriteprotocol || true
-docker exec -u www-data but_tc_nextcloud php occ config:system:delete overwritewebroot || true
+# Set Overwrites for Unified Domain
+docker exec -u www-data but_tc_nextcloud php occ config:system:set overwrite.cli.url --value="https://educ-ai.fr/nextcloud"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set overwritehost --value="educ-ai.fr"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set overwriteprotocol --value="https"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set overwritewebroot --value="/nextcloud"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set allow_local_remote_servers --value=true --type=bool
 
 echo "✅ Initialization Complete!"
 echo "---------------------------------------------------"
