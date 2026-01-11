@@ -46,6 +46,8 @@ docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapAgentNa
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapAgentPassword "Rangetachambre76*"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapUserDisplayName "displayname"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapEmailAttribute "mail"
+docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapUserFilter "(|(objectclass=inetOrgPerson))"
+docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapLoginFilter "(&(|(objectclass=inetOrgPerson))(|(uid=%uid)(mail=%uid)))"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapExpertUsernameAttr "uid"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapExpertUUIDUserAttr "uid"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapConfigurationActive 1
