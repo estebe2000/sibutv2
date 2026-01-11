@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Starting Local Infrastructure Initialization..."
+echo "🚀 Starting Local Infrastructure Initialization (Hybrid Mode)..."
 
 # 1. LDAP Seeding
 echo "🌱 Seeding LDAP..."
@@ -23,7 +23,9 @@ echo "⚙️  Configuring Nextcloud Apps & OnlyOffice..."
 docker exec -u www-data but_tc_nextcloud php occ app:install onlyoffice || echo "OnlyOffice already installed"
 docker exec -u www-data but_tc_nextcloud php occ app:enable onlyoffice
 
-# Configure OnlyOffice URLs
+# Configure OnlyOffice URLs (DIRECT ACCESS MODE)
+# We use the PUBLIC host URL with PORT 8083 for browser access
+# We use INTERNAL container URL for Server-to-Server communication (if possible) or Public IP
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerUrl --value="http://projet-edu.eu:8083/"
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerInternalUrl --value="http://but_tc_onlyoffice/"
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice StorageUrl --value="http://but_tc_nextcloud/"
@@ -36,6 +38,30 @@ for app in $APPS; do
     docker exec -u www-data but_tc_nextcloud php occ app:install $app || echo "$app already installed"
     docker exec -u www-data but_tc_nextcloud php occ app:enable $app
 done
+
+# Mattermost Admin User Creation
+echo "💬 Configuring Mattermost Admin..."
+until docker exec but_tc_mattermost mmctl --local system version > /dev/null 2>&1; do
+  echo "Waiting for Mattermost..."
+  sleep 5
+done
+
+# Check if admin exists, if not create it
+if ! docker exec but_tc_mattermost mmctl --local user search admin@projet-edu.eu > /dev/null 2>&1; then
+    echo "Creating Mattermost Admin user..."
+    docker exec but_tc_mattermost mmctl --local user create --email admin@projet-edu.eu --username admin --password "Rangetachambre76*" --system-admin
+else
+    echo "Mattermost Admin already exists"
+fi
+
+# Create Team if not exists
+if ! docker exec but_tc_mattermost mmctl --local team search but-tc > /dev/null 2>&1; then
+    echo "Creating Mattermost Team..."
+    docker exec but_tc_mattermost mmctl --local team create --name but-tc --display-name "BUT Techniques de Commercialisation"
+    docker exec but_tc_mattermost mmctl --local team add but-tc admin@projet-edu.eu
+else
+    echo "Mattermost Team already exists"
+fi
 
 # Enable LDAP app and configure connection
 docker exec -u www-data but_tc_nextcloud php occ app:enable user_ldap
@@ -55,39 +81,23 @@ docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapConfigu
 
 # 3. Application Database Restoration
 echo "🌱 Restoring Application Database..."
-docker stop but_tc_api || true
-docker exec but_tc_db psql -U app_user postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'skills_db' AND pid <> pg_backend_pid();"
-docker exec but_tc_db dropdb -U app_user skills_db || echo "DB did not exist"
-docker exec but_tc_db createdb -U app_user skills_db
+# docker exec but_tc_api python -m app.seed_db
 
-if [ -f "backup_full_descriptions.sql" ]; then
-    echo "💾 Restoring from backup_full_descriptions.sql..."
-    docker exec -i but_tc_db psql -U app_user skills_db < backup_full_descriptions.sql
-    docker exec but_tc_db psql -U app_user skills_db -c "ALTER TABLE resource ADD COLUMN IF NOT EXISTS responsible VARCHAR DEFAULT '(inconnu)';"
-    docker exec but_tc_db psql -U app_user skills_db -c "ALTER TABLE resource ADD COLUMN IF NOT EXISTS contributors VARCHAR DEFAULT '(inconnu)';"
-    docker exec but_tc_db psql -U app_user skills_db -c "ALTER TABLE activity ADD COLUMN IF NOT EXISTS responsible VARCHAR DEFAULT '(inconnu)';"
-    docker exec but_tc_db psql -U app_user skills_db -c "ALTER TABLE activity ADD COLUMN IF NOT EXISTS contributors VARCHAR DEFAULT '(inconnu)';"
-else
-    echo "⚠️  No backup found, running basic seeding..."
-    docker start but_tc_api
-    sleep 5
-    docker exec but_tc_api python -m app.seed_db
-fi
-
-docker start but_tc_api
-
-# 4. Final settings (Trusted Domains & Overwrites)
+# 4. Final settings (Clean up overwrites for Direct Access)
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 1 --value="localhost"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 2 --value="projet-edu.eu"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 3 --value="but_tc_nextcloud"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set overwrite.cli.url --value="http://projet-edu.eu:8082"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set overwritehost --value="projet-edu.eu:8082"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set overwriteprotocol --value="http"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set allow_local_remote_servers --value=true --type=bool
+
+# Clean up Overwrites from previous attempts
+docker exec -u www-data but_tc_nextcloud php occ config:system:delete overwrite.cli.url || true
+docker exec -u www-data but_tc_nextcloud php occ config:system:delete overwritehost || true
+docker exec -u www-data but_tc_nextcloud php occ config:system:delete overwriteprotocol || true
+docker exec -u www-data but_tc_nextcloud php occ config:system:delete overwritewebroot || true
 
 echo "✅ Initialization Complete!"
 echo "---------------------------------------------------"
-echo "Dashboard:  http://projet-edu.eu/"
-echo "Skills Hub: http://projet-edu.eu:3000/"
+echo "Dashboard:  https://projet-edu.eu/"
+echo "Skills Hub: https://projet-edu.eu/app/"
 echo "Nextcloud:  http://projet-edu.eu:8082/"
+echo "OnlyOffice: http://projet-edu.eu:8083/"
 echo "---------------------------------------------------"

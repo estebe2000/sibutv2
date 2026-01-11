@@ -18,7 +18,8 @@ import {
   PasswordInput,
   Center,
   Grid,
-  FileInput
+  FileInput,
+  Container
 } from '@mantine/core';
 import {
   IconUsers,
@@ -45,10 +46,8 @@ import { FichesView } from './views/FichesView';
 import { FichesPDF2View } from './views/FichesPDF2View';
 import { SettingsView } from './views/SettingsView';
 
-// Detect API URL
-const API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:8000' 
-  : `http://${window.location.hostname}:8000`;
+// Use relative URL for API to go through Nginx Gateway
+const API_URL = '/api';
 
 const YEAR_COLORS: any = {
   0: 'gray',
@@ -381,196 +380,8 @@ function App() {
   );
 }
 
-function DiscoveryView({ curriculum }: any) {
-  if (!curriculum || !curriculum.competences || curriculum.competences.length === 0) return <Center p="xl"><Stack align="center"><Loader /><Text>Chargement du référentiel...</Text></Stack></Center>;
-  const [pathway, setPathway] = useState('SME');
-  const [selectedCompCode, setSelectedCompCode] = useState('C1');
-  const [infoItem, setInfoItem] = useState<any>(null);
-  const years = [1, 2, 3];
-  const compCodes = ['C1', 'C2', 'C3', 'C4', 'C5'];
 
-  const getCompInfo = (code: string, year: number) => {
-    const comp = curriculum.competences.find((c: any) => c.code.startsWith(code) && c.level === year && (year === 1 || c.pathway === pathway || c.pathway === 'Tronc Commun'));
-    if (comp && comp.learning_outcomes) comp.learning_outcomes.sort((a: any, b: any) => a.code.localeCompare(b.code));
-    return comp;
-  };
 
-  const selectedData = {
-      title: selectedCompCode === 'C1' ? 'Marketing' : selectedCompCode === 'C2' ? 'Vente' : selectedCompCode === 'C3' ? 'Communication' : 'Spécialisation',
-      comp: getCompInfo(selectedCompCode, 1)
-  };
 
-  return (
-    <Container size="xl">
-      <Group justify="space-between" mb="xl">
-        <Title order={2}>Roadmap de Formation</Title>
-        <Select data={['BI', 'BDMRC', 'MDEE', 'MMPV', 'SME']} value={pathway} onChange={(v) => setPathway(v || 'SME')} />
-      </Group>
-      
-      <Grid gutter="md">
-        {compCodes.map(code => (
-            <Grid.Col span={12} key={code}>
-                <Paper withBorder p="sm">
-                    <Grid align="center">
-                        <Grid.Col span={2}><Badge size="xl" radius="sm" fullWidth>{code}</Badge></Grid.Col>
-                        {years.map(y => {
-                            const c = getCompInfo(code, y);
-                            return (
-                                <Grid.Col span={3} key={y}>
-                                    <Card withBorder padding="xs" shadow={selectedCompCode === code ? "md" : "none"} 
-                                          style={{ cursor: 'pointer', border: selectedCompCode === code ? '2px solid blue' : '1px solid #eee' }}
-                                          onClick={() => setSelectedCompCode(code)}>
-                                        <Text size="xs" fw={700}>Niveau {y}</Text>
-                                        <Text size="sm" truncate>{c?.label || "Non défini"}</Text>
-                                    </Card>
-                                </Grid.Col>
-                            );
-                        })}
-                    </Grid>
-                </Paper>
-            </Grid.Col>
-        ))}
-      </Grid>
-
-      {selectedCompCode && (
-          <Paper withBorder mt="xl" p="xl" radius="lg" shadow="xl">
-              <Title order={2} mb="xl" c="blue">{selectedCompCode} : {selectedData.title}</Title>
-              <Grid gutter="xl">
-                  {years.map(y => {
-                      const c = getCompInfo(selectedCompCode, y);
-                      return (
-                          <Grid.Col span={4} key={y}>
-                              <Paper withBorder h="100%" radius="md" bg="gray.0">
-                                  <Paper p="xs" bg="blue.7" style={{ borderRadius: '8px 8px 0 0' }}><Text c="white" fw={700} ta="center">BUT {y}</Text></Paper>
-                                  <Stack p="md" gap="xs">
-                                      {c?.learning_outcomes?.map((lo: any) => (
-                                          <Paper key={lo.id} withBorder p="xs" shadow="xs" style={{ cursor: 'pointer' }} onClick={() => setInfoItem(lo)}>
-                                              <Group wrap="nowrap" gap="xs">
-                                                  <Badge size="xs" variant="filled">{lo.code}</Badge>
-                                                  <Text size="xs" fw={500}>{lo.label}</Text>
-                                              </Group>
-                                          </Paper>
-                                      ))}
-                                  </Stack>
-                              </Paper>
-                          </Grid.Col>
-                      );
-                  })}
-              </Grid>
-          </Paper>
-      )}
-
-      <Modal opened={!!infoItem} onClose={() => setInfoItem(null)} title={infoItem?.code} size="lg">
-          <Stack>
-              <Title order={4} c="blue">{infoItem?.label}</Title>
-              <Divider />
-              <Box>{infoItem?.description ? renderRichText(infoItem.description, curriculum, () => {}, () => {}) : "Détails à venir..."}</Box>
-          </Stack>
-      </Modal>
-    </Container>
-  );
-}
-
-function RepartitionView({ curriculum }: any) {
-  const data = [
-    { label: "Enseignement (h)", s1: 375, s2: 375, s3: 355, s4: 225, s5: 365, s6: 105, total: 1800 },
-    { label: "Projet tutoré (h)", s1: 50, s2: 100, s3: 85, s4: 115, s5: 125, s6: 125, total: 600 }
-  ];
-  return (
-    <Container size="xl">
-      <Title order={2} mb="xl">Répartition des Heures</Title>
-      <Paper withBorder p="md" shadow="sm"><Table striped highlightOnHover withBorder withColumnBorders>
-        <Table.Thead bg="blue.7"><Table.Tr><Table.Th style={{color:'white'}}>Semestres</Table.Th><Table.Th style={{color:'white'}}>S1</Table.Th><Table.Th style={{color:'white'}}>S2</Table.Th><Table.Th style={{color:'white'}}>S3</Table.Th><Table.Th style={{color:'white'}}>S4</Table.Th><Table.Th style={{color:'white'}}>S5</Table.Th><Table.Th style={{color:'white'}}>S6</Table.Th><Table.Th style={{color:'white'}}>TOTAL</Table.Th></Table.Tr></Table.Thead>
-        <Table.Tbody>{data.map((r, i) => (<Table.Tr key={i}><Table.Td fw={500}>{r.label}</Table.Td><Table.Td>{r.s1}</Table.Td><Table.Td>{r.s2}</Table.Td><Table.Td>{r.s3}</Table.Td><Table.Td>{r.s4}</Table.Td><Table.Td>{r.s5}</Table.Td><Table.Td>{r.s6}</Table.Td><Table.Td fw={700} bg="blue.0">{r.total}</Table.Td></Table.Tr>))}</Table.Tbody>
-      </Table></Paper>
-    </Container>
-  );
-}
-
-function FichesView() {
-  const [fiches, setFiches] = useState<any[]>([]);
-  useEffect(() => { axios.get(`${API_URL}/fiches/list`).then(r => setFiches(r.data)); }, []);
-  return (
-    <Container size="xl">
-      <Title order={2} mb="xl">Fiches PDF Statiques</Title>
-      <Table striped withBorder><Table.Thead><Table.Tr><Table.Th>Semestre</Table.Th><Table.Th>Fiche</Table.Th><Table.Th>Action</Table.Th></Table.Tr></Table.Thead>
-      <Table.Tbody>{fiches.map((f, i) => (<Table.Tr key={i}><Table.Td><Badge>{f.semester}</Badge></Table.Td><Table.Td>{f.name}</Table.Td><Table.Td><Button component="a" href={`${API_URL}${f.url}`} target="_blank" size="xs">Ouvrir</Button></Table.Td></Table.Tr>))}</Table.Tbody></Table>
-    </Container>
-  );
-}
-
-function FichesPDF2View({ curriculum }: any) {
-  const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('TOUS');
-  const [pathwayFilter, setPathwayFilter] = useState('TOUS');
-  const [semesterFilter, setSemesterFilter] = useState('TOUS');
-
-  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
-  const types = ['TOUS', 'SAE', 'STAGE', 'PORTFOLIO', 'RESSOURCE'];
-  const semesters = ['TOUS', '1', '2', '3', '4', '5', '6'];
-
-  const allItems = [
-    ...(curriculum.activities || []).map((a: any) => ({ ...a, it: 'ACT', displayType: a.type })),
-    ...(curriculum.resources || []).map((r: any) => {
-        const semMatch = r.code.match(/R(\d)/);
-        const sem = semMatch ? semMatch[1] : '0';
-        return { ...r, it: 'RES', displayType: 'RESSOURCE', semester: parseInt(sem) };
-    })
-  ];
-
-  const filtered = allItems.filter((item: any) => {
-    const matchesSearch = item.code.toLowerCase().includes(search.toLowerCase()) || 
-                          item.label.toLowerCase().includes(search.toLowerCase());
-    const matchesType = typeFilter === 'TOUS' || (typeFilter === 'RESSOURCE' ? item.it === 'RES' : item.displayType === typeFilter);
-    const matchesPathway = pathwayFilter === 'TOUS' || item.pathway === pathwayFilter;
-    const matchesSemester = semesterFilter === 'TOUS' || item.semester.toString() === semesterFilter;
-    return matchesSearch && matchesType && matchesPathway && matchesSemester;
-  });
-
-  return (
-    <Container size="xl">
-      <Title order={2} mb="xl">Génération de PDF à la volée</Title>
-      <Paper withBorder p="md" shadow="sm" radius="md" mb="xl">
-        <Grid align="flex-end">
-          <Grid.Col span={3}><TextInput label="Rechercher" placeholder="Code..." value={search} onChange={(e) => setSearch(e.target.value)} /></Grid.Col>
-          <Grid.Col span={2}><Select label="Type" data={types} value={typeFilter} onChange={(v) => setTypeFilter(v || 'TOUS')} /></Grid.Col>
-          <Grid.Col span={3}><Select label="Parcours" data={pathways} value={pathwayFilter} onChange={(v) => setPathwayFilter(v || 'TOUS')} /></Grid.Col>
-          <Grid.Col span={2}><Select label="Semestre" data={semesters} value={semesterFilter} onChange={(v) => setSemesterFilter(v || 'TOUS')} /></Grid.Col>
-          <Grid.Col span={2}><Text size="xs" c="dimmed" ta="right">{filtered.length} éléments</Text></Grid.Col>
-        </Grid>
-      </Paper>
-      <Paper withBorder p={0} shadow="sm"><Table striped highlightOnHover>
-      <Table.Thead bg="gray.1"><Table.Tr><Table.Th>Type</Table.Th><Table.Th>Sem.</Table.Th><Table.Th>Code</Table.Th><Table.Th>Libellé</Table.Th><Table.Th style={{textAlign:'right'}}>Action</Table.Th></Table.Tr></Table.Thead>
-      <Table.Tbody>{filtered.map((item: any, i: number) => (<Table.Tr key={i}>
-          <Table.Td><Badge color={item.it === 'RES' ? 'teal' : 'orange'} size="sm" variant="light">{item.displayType}</Badge></Table.Td>
-          <Table.Td><Badge variant="outline" size="xs">S{item.semester}</Badge></Table.Td>
-          <Table.Td fw={700} size="sm">{item.code}</Table.Td><Table.Td>{item.label}</Table.Td>
-          <Table.Td><Group justify="flex-end"><Button size="xs" variant="light" leftSection={<IconFileText size={12}/>} onClick={() => window.open(`${API_URL}/${item.it === 'RES' ? 'resources' : 'activities'}/${item.id}/pdf`, '_blank')}>Générer PDF</Button></Group></Table.Td>
-      </Table.Tr>))}</Table.Tbody></Table></Paper>
-    </Container>
-  );
-}
-
-function SettingsView({ config, onSave }: any) {
-  const [localConfig, setLocalConfig] = useState<any[]>([]);
-  useEffect(() => {
-    const defaults = [
-      { key: 'inst_name', value: 'BUT TC - Skills Hub', category: 'identity' },
-      { key: 'inst_logo_url', value: '', category: 'identity' },
-      { key: 'inst_address', value: '', category: 'identity' },
-      { key: 'inst_contact_email', value: '', category: 'identity' },
-      { key: 'ldap_url', value: 'ldap://ldap:389', category: 'ldap' },
-      { key: 'smtp_host', value: 'mail', category: 'mail' }
-    ];
-    setLocalConfig(defaults.map(d => config.find((c: any) => c.key === d.key) || d));
-  }, [config]);
-  const updateVal = (key: string, val: string) => setLocalConfig(prev => prev.map(c => c.key === key ? { ...c, value: val } : c));
-  return (
-    <Container size="md">
-      <Title order={2} mb="xl">Configuration du Système</Title>
-      <Stack>{localConfig.map(item => (<TextInput key={item.key} label={item.key.replace(/_/g, ' ').toUpperCase()} value={item.value} onChange={(e) => updateVal(item.key, e.target.value)} />))}<Button onClick={() => onSave(localConfig)}>Enregistrer la configuration</Button></Stack>
-    </Container>
-  );
-}
 
 export default App;

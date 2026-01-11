@@ -1,5 +1,27 @@
 # User Stories - Epic 1 : Fondation, Infrastructure & Branding
 
+## Story 1.0 : Mise en place de la Gateway Unifiée (Nginx) [x]
+**En tant qu'** Utilisateur (Étudiant ou Professeur),
+**Je veux** accéder à tous les services (App, API, Nextcloud) via une adresse web unique sécurisée,
+**Afin de** ne pas avoir à jongler avec des ports différents et d'éviter les erreurs de connexion.
+
+*Note : OnlyOffice integration has known issues in local Docker Desktop environment (Server-to-Server communication).*
+
+### Contexte Technique
+*   **Composant :** Nginx (conteneur `dashboard` actuel à transformer).
+*   **Architecture :** Reverse Proxy vers les conteneurs internes (`web`, `api`, `nextcloud`, `mattermost`).
+*   **Sécurité :** Terminaison SSL unique.
+
+### Critères d'Acceptation
+1.  Le conteneur `dashboard` (Nginx) écoute sur les ports 80/443.
+2.  L'URL `/` redirige vers l'application Web React (`web:80`).
+3.  L'URL `/api` proxifie vers le backend FastAPI (`api:8000`).
+4.  L'URL `/nextcloud` proxifie vers le service Nextcloud (`nextcloud:80`).
+5.  Les ports internes (3000, 8000, 8082) ne sont plus exposés directement sur la machine hôte (sauf en dev si nécessaire).
+6.  La configuration Nginx gère correctement les en-têtes Websocket (pour le HMR de Vite) et les gros fichiers (pour l'upload).
+
+---
+
 ## Story 1.1 : Branding Dynamique via Variables d'Environnement
 **En tant qu'** Administrateur Départemental,
 **Je veux** que l'interface s'adapte aux couleurs et au logo de mon département via la configuration,
@@ -37,24 +59,7 @@
 
 ---
 
-## Story 1.3 : Isolation des Données (Multi-Tenant)
-**En tant qu'** Administrateur Système,
-**Je veux** que chaque instance Docker soit totalement isolée au niveau des données,
-**Afin de** garantir la confidentialité entre les différents départements de l'université.
-
-### Contexte Technique
-*   **Docker :** Utilisation de fichiers `.env` séparés par instance.
-*   **Base de données :** Une base de données (ou un schéma) par instance.
-
-### Critères d'Acceptation
-1.  L'application backend utilise la variable `DATABASE_URL` pour se connecter à sa propre base.
-2.  Les scripts de seed (`seed_db.py`) sont isolés et n'écrasent pas les données des autres instances.
-3.  Les dossiers de stockage temporaires sont isolés.
-4.  Vérification que l'instance A ne peut en aucun cas accéder aux fichiers ou utilisateurs de l'instance B.
-
----
-
 ## Notes pour les Développeurs
-*   Utiliser les **CSS Variables** pour injecter les couleurs dynamiques dans Mantine.
-*   Ne pas stocker les secrets (API Keys Nextcloud) dans le code, mais uniquement dans les variables d'environnement.
-*   Documenter les nouvelles variables d'environnement dans le `README.md`.
+*   **Story 1.0** est bloquante pour le déploiement propre sur le serveur de test.
+*   **Story 1.1** peut être développée en parallèle sur le Frontend.
+*   **Story 1.2** nécessite une migration DB.
