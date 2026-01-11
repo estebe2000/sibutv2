@@ -106,6 +106,8 @@ class Resource(SQLModel, table=True):
     hours_details: Optional[str] = None
     targeted_competencies: Optional[str] = None
     pathway: str = Field(default="Tronc Commun")
+    responsible: Optional[str] = Field(default="(inconnu)")
+    contributors: Optional[str] = Field(default="(inconnu)")
     
     learning_outcomes: List[LearningOutcome] = Relationship(back_populates="resources", link_model=ResourceACLink)
 
@@ -120,6 +122,8 @@ class Activity(SQLModel, table=True):
     semester: int = 1 # 1 to 6
     pathway: str = Field(default="Tronc Commun")
     resources: Optional[str] = None # List of R-codes
+    responsible: Optional[str] = Field(default="(inconnu)")
+    contributors: Optional[str] = Field(default="(inconnu)")
     
     learning_outcomes: List[LearningOutcome] = Relationship(back_populates="activities", link_model=ActivityACLink)
     essential_components: List[EssentialComponent] = Relationship(back_populates="activities", link_model=ActivityCELink)
