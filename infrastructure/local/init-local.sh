@@ -1,105 +1,84 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Starting Local Infrastructure Initialization (Hybrid Mode)..."
+echo "🚀 [Global] Starting Local Infrastructure Initialization..."
 
 # 1. LDAP Seeding
-echo "🌱 Seeding LDAP..."
+echo "🌱 [LDAP] Seeding data..."
 until docker exec but-tc-ldap ldapsearch -x -H ldap://localhost -b "dc=univ-lehavre,dc=fr" -D "cn=admin,dc=univ-lehavre,dc=fr" -w Rangetachambre76* > /dev/null 2>&1; do
   echo "Waiting for LDAP..."
   sleep 2
 done
 docker cp infrastructure/local/ldap/seed.ldif but-tc-ldap:/tmp/seed.ldif
-docker exec but-tc-ldap ldapadd -x -D "cn=admin,dc=univ-lehavre,dc=fr" -w Rangetachambre76* -f /tmp/seed.ldif || echo "LDAP already seeded"
+docker exec but-tc-ldap ldapadd -c -x -D "cn=admin,dc=univ-lehavre,dc=fr" -w Rangetachambre76* -f /tmp/seed.ldif || echo "LDAP partially seeded or entries already exist"
 
 # 2. Nextcloud & OnlyOffice Configuration
-echo "☁️  Waiting for Nextcloud..."
+echo "☁️ [Nextcloud] Waiting for service..."
 until docker exec but_tc_nextcloud php occ status > /dev/null 2>&1; do
   sleep 5
 done
 
-echo "⚙️  Configuring Nextcloud Apps & OnlyOffice..."
-# Install and Enable OnlyOffice
-docker exec -u www-data but_tc_nextcloud php occ app:install onlyoffice || echo "OnlyOffice already installed"
-docker exec -u www-data but_tc_nextcloud php occ app:enable onlyoffice
-
-# Configure OnlyOffice URLs (Cloudflare Mode)
-docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerUrl --value="https://educ-ai.fr/onlyoffice/"
-docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerInternalUrl --value="http://but_tc_onlyoffice/"
-docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice StorageUrl --value="http://but_tc_nextcloud/"
-docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice jwt_secret --value="onlyoffice_secret"
-docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice jwt_header --value="Authorization"
-docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice verify_peer_off --value="true"
-
-# Install other collaborative apps
-APPS="terms_of_service contacts mail spreed collectives integration_mattermost"
+echo "⚙️ [Nextcloud] Configuring Apps..."
+# Basic Apps
+APPS="user_oidc onlyoffice terms_of_service contacts mail spreed collectives integration_mattermost"
 for app in $APPS; do
     docker exec -u www-data but_tc_nextcloud php occ app:install $app || echo "$app already installed"
     docker exec -u www-data but_tc_nextcloud php occ app:enable $app
 done
 
-# Mattermost Admin User Creation
-echo "💬 Configuring Mattermost Admin..."
-until docker exec but_tc_mattermost mmctl --local system version > /dev/null 2>&1; do
-  echo "Waiting for Mattermost..."
-  sleep 5
-done
-
-# Check if admin exists, if not create it
-if ! docker exec but_tc_mattermost mmctl --local user search admin@projet-edu.eu > /dev/null 2>&1; then
-    echo "Creating Mattermost Admin user..."
-    docker exec but_tc_mattermost mmctl --local user create --email admin@projet-edu.eu --username admin --password "Rangetachambre76*" --system-admin
-else
-    echo "Mattermost Admin already exists"
-fi
-
-# Create Team if not exists
-if ! docker exec but_tc_mattermost mmctl --local team search but-tc > /dev/null 2>&1; then
-    echo "Creating Mattermost Team..."
-    docker exec but_tc_mattermost mmctl --local team create --name but-tc --display-name "BUT Techniques de Commercialisation"
-    docker exec but_tc_mattermost mmctl --local team add but-tc admin@projet-edu.eu
-else
-    echo "Mattermost Team already exists"
-fi
-
-# Enable LDAP app and configure connection
-docker exec -u www-data but_tc_nextcloud php occ app:enable user_ldap
-docker exec -u www-data but_tc_nextcloud php occ ldap:create-empty-config || echo "LDAP config already exists"
+# LDAP in Nextcloud
+docker exec -u www-data but_tc_nextcloud php occ ldap:create-empty-config || echo "LDAP config exists"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapHost "but-tc-ldap"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapPort 389
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapBase "dc=univ-lehavre,dc=fr"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapAgentName "cn=admin,dc=univ-lehavre,dc=fr"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapAgentPassword "Rangetachambre76*"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapUserDisplayName "displayname"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapEmailAttribute "mail"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapUserFilter "(&(uid=%uid)(objectClass=posixAccount))"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapLoginFilter "(&(uid=%uid)(objectClass=posixAccount))"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapGroupFilter "(&(objectClass=groupOfNames)(member=%dn))"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapExpertUsernameAttr "uid"
-docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapExpertUUIDUserAttr "uid"
+docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapUserFilter "(objectClass=inetOrgPerson)"
+docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapLoginFilter "(uid=%uid)"
+docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapUuidUserAttribute "uid"
 docker exec -u www-data but_tc_nextcloud php occ ldap:set-config s01 ldapConfigurationActive 1
 
-# 3. Application Database Restoration
-echo "🌱 Restoring Application Database..."
-# docker exec but_tc_api python -m app.seed_db
+# OIDC in Nextcloud
+echo "🔑 [Nextcloud] Configuring OIDC Provider..."
+docker exec -u www-data but_tc_nextcloud php occ user_oidc:provider \
+  --clientid=nextcloud-app \
+  --clientsecret=nextcloud_secret_sso \
+  --discoveryuri=https://keycloak.educ-ai.fr/realms/but-tc/.well-known/openid-configuration \
+  --mapping-uid=preferred_username \
+  Keycloak || true
+docker exec -u www-data but_tc_nextcloud php occ config:app:set user_oidc auto_redirect --value="1"
 
-# 4. Final settings (Trusted Domains & Proxies)
+# OnlyOffice in Nextcloud
+echo "📄 [Nextcloud] Linking OnlyOffice..."
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerUrl --value="https://only-office.educ-ai.fr/"
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerInternalUrl --value="http://but_tc_onlyoffice/"
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice StorageUrl --value="http://but_tc_nextcloud/"
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice jwt_secret --value="onlyoffice_secret"
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice verify_peer_off --value="true"
+
+# Trusted Domains & Proxies
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 1 --value="localhost"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 2 --value="educ-ai.fr"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 3 --value="but_tc_nextcloud"
-
-# Set Overwrites for Unified Domain
-docker exec -u www-data but_tc_nextcloud php occ config:system:set overwrite.cli.url --value="https://educ-ai.fr/nextcloud"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set overwritehost --value="educ-ai.fr"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 3 --value="nextcloud.educ-ai.fr"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 4 --value="home.educ-ai.fr"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_proxies 0 --value="172.16.0.0/12"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set overwriteprotocol --value="https"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set overwritewebroot --value="/nextcloud"
-docker exec -u www-data but_tc_nextcloud php occ config:system:set allow_local_remote_servers --value=true --type=bool
 
-echo "✅ Initialization Complete!"
-echo "---------------------------------------------------"
-echo "Dashboard:  https://projet-edu.eu/"
-echo "Skills Hub: https://projet-edu.eu/app/"
-echo "Nextcloud:  http://projet-edu.eu:8082/"
-echo "OnlyOffice: http://projet-edu.eu:8083/"
-echo "---------------------------------------------------"
+# 3. Mattermost
+echo "💬 [Mattermost] Initializing Admin..."
+bash -c "until docker exec but_tc_mattermost mmctl --local system version > /dev/null 2>&1; do sleep 5; done"
+if ! docker exec but_tc_mattermost mmctl --local user search admin@projet-edu.eu > /dev/null 2>&1; then
+    docker exec but_tc_mattermost mmctl --local user create --email admin@projet-edu.eu --username admin --password "Rangetachambre76*" --system-admin
+    docker exec but_tc_mattermost mmctl --local team create --name but-tc --display-name "BUT TC"
+    docker exec but_tc_mattermost mmctl --local team add but-tc admin@projet-edu.eu
+fi
+
+# 4. Keycloak Specific Config
 bash infrastructure/local/keycloak/init-keycloak.sh
+
+echo "✅ [Global] All systems initialized and unified!"
+echo "---------------------------------------------------"
+echo "Portal:    https://home.educ-ai.fr"
+echo "Nextcloud: https://nextcloud.educ-ai.fr"
+echo "Keycloak:  https://keycloak.educ-ai.fr"
+echo "---------------------------------------------------"
