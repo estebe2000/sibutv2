@@ -20,7 +20,18 @@
                 <i class="fas fa-graduation-cap mr-3"></i>
                 BUT TC - Skills Hub
             </h1>
-            <span class="text-blue-100 italic">Plateforme Pédagogique Intégrée</span>
+            <div id="auth-section" class="flex items-center gap-4">
+                <!-- Zone dynamique de connexion -->
+                <div id="login-form" class="flex items-center gap-2">
+                    <input type="text" id="username" placeholder="Identifiant" class="px-3 py-1 rounded text-gray-800 text-sm">
+                    <input type="password" id="password" placeholder="Mot de passe" class="px-3 py-1 rounded text-gray-800 text-sm">
+                    <button onclick="handleLogin()" id="login-btn" class="bg-blue-500 hover:bg-blue-600 px-4 py-1 rounded text-sm font-bold transition">Connexion</button>
+                </div>
+                <div id="user-info" class="hidden flex items-center gap-4">
+                    <span id="user-display" class="text-sm font-medium"></span>
+                    <button onclick="handleLogout()" class="text-xs underline text-blue-200 hover:text-white">Déconnexion</button>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -101,7 +112,95 @@
     </footer>
 
     <script>
-        // Detection automatique du hostname
+        // Configuration
+        const API_URL = '/api';
+        const COOKIE_NAME = 'auth_token';
+
+        // Helper pour les cookies
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            // IMPORTANT: path=/ et domain= window.location.hostname pour le SSO
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i=0;i < ca.length;i++) {
+                let c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {   
+            document.cookie = name+'=; Max-Age=-99999999; path=/;';  
+        }
+
+        // Login
+        async function handleLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('login-btn');
+
+            if(!user || !pass) return alert("Veuillez remplir les champs");
+
+            btn.innerText = "Chargement...";
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('username', user);
+            formData.append('password', pass);
+
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    setCookie(COOKIE_NAME, data.access_token, 1);
+                    localStorage.setItem('user_name', user);
+                    location.reload();
+                } else {
+                    alert("Identifiants incorrects");
+                }
+            } catch (e) {
+                alert("Erreur de connexion au serveur");
+            } finally {
+                btn.innerText = "Connexion";
+                btn.disabled = false;
+            }
+        }
+
+        function handleLogout() {
+            eraseCookie(COOKIE_NAME);
+            localStorage.removeItem('user_name');
+            location.reload();
+        }
+
+        function checkAuth() {
+            const token = getCookie(COOKIE_NAME);
+            const user = localStorage.getItem('user_name');
+            
+            if (token && user) {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('user-info').classList.remove('hidden');
+                document.getElementById('user-display').innerText = `Bonjour, ${user}`;
+            }
+        }
+
+        // Init
+        checkAuth();
+
+        // Detection automatique du hostname (existant)
         const currentHost = window.location.hostname;
         if (currentHost !== 'projet-edu.eu' && currentHost !== 'localhost') {
             document.querySelectorAll('a').forEach(link => {

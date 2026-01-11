@@ -64,6 +64,22 @@ function App() {
     config, setConfig
   } = useStore();
 
+  // SSO Auto-login via Cookie
+  useEffect(() => {
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      return null;
+    };
+
+    const ssoToken = getCookie('auth_token');
+    if (ssoToken && !token) {
+      console.log("SSO Token detected, logging in...");
+      setToken(ssoToken);
+    }
+  }, []);
+
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
@@ -83,10 +99,18 @@ function App() {
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Extract user from token
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.sub) setUser({ username: payload.sub });
+      } catch (e) { console.error("Error decoding token", e); }
+
       fetchData();
       fetchCurriculum(API_URL);
     } else {
       delete axios.defaults.headers.common['Authorization'];
+      setUser(null);
     }
   }, [token]);
 
@@ -230,7 +254,10 @@ function App() {
       <AppShell.Header p="md">
         <Group justify="space-between">
           <Group><IconShieldCheck size={28} color="#228be6" /><Title order={3}>Skills Hub Admin</Title></Group>
-          <Button variant="default" size="xs" onClick={handleLogout}>Déconnexion</Button>
+          <Group gap="xl">
+            {user && <Text size="sm" fw={500}>Bonjour, {user.username}</Text>}
+            <Button variant="default" size="xs" onClick={handleLogout}>Déconnexion</Button>
+          </Group>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">

@@ -1,679 +1,750 @@
 # Organizational Units
-dn: ou=people,dc=univ,dc=fr
+dn: ou=People,dc=univ-lehavre,dc=fr
 objectClass: organizationalUnit
-ou: people
+ou: People
 
-dn: uid=emma.dupont78,ou=people,dc=univ,dc=fr
+dn: ou=Groups,dc=univ-lehavre,dc=fr
+objectClass: organizationalUnit
+ou: Groups
+
+dn: ou=DSA,dc=univ-lehavre,dc=fr
+objectClass: organizationalUnit
+ou: DSA
+
+# Bind User
+dn: cn=ldapbindusr-caucri2,ou=DSA,dc=univ-lehavre,dc=fr
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: ldapbindusr-caucri2
+userPassword: Fctldap-8%caucri2_30688
+description: Compte de service pour bind LDAP
+
+# Groups
+dn: cn=etu,ou=Groups,dc=univ-lehavre,dc=fr
+objectClass: groupOfNames
+cn: etu
+member: uid=jean.dupont,ou=People,dc=univ-lehavre,dc=fr
+member: uid=emma.garcia,ou=People,dc=univ-lehavre,dc=fr
+member: uid=marie.petit,ou=People,dc=univ-lehavre,dc=fr
+member: uid=thomas.moreau,ou=People,dc=univ-lehavre,dc=fr
+member: uid=sophie.lefebvre,ou=People,dc=univ-lehavre,dc=fr
+member: uid=julie.lefebvre,ou=People,dc=univ-lehavre,dc=fr
+member: uid=pierre.lefebvre,ou=People,dc=univ-lehavre,dc=fr
+member: uid=sophie.lefebvre,ou=People,dc=univ-lehavre,dc=fr
+member: uid=emma.roux,ou=People,dc=univ-lehavre,dc=fr
+member: uid=lucas.martin,ou=People,dc=univ-lehavre,dc=fr
+member: uid=nicolas.simon,ou=People,dc=univ-lehavre,dc=fr
+member: uid=antoine.dupont,ou=People,dc=univ-lehavre,dc=fr
+member: uid=jean.dupont,ou=People,dc=univ-lehavre,dc=fr
+member: uid=julie.dupont,ou=People,dc=univ-lehavre,dc=fr
+member: uid=marie.garcia,ou=People,dc=univ-lehavre,dc=fr
+member: uid=nicolas.garcia,ou=People,dc=univ-lehavre,dc=fr
+member: uid=antoine.durand,ou=People,dc=univ-lehavre,dc=fr
+member: uid=marie.simon,ou=People,dc=univ-lehavre,dc=fr
+member: uid=pierre.durand,ou=People,dc=univ-lehavre,dc=fr
+member: uid=marie.leroy,ou=People,dc=univ-lehavre,dc=fr
+member: uid=sophie.simon,ou=People,dc=univ-lehavre,dc=fr
+member: uid=antoine.dupont,ou=People,dc=univ-lehavre,dc=fr
+member: uid=emma.petit,ou=People,dc=univ-lehavre,dc=fr
+member: uid=jean.dupont,ou=People,dc=univ-lehavre,dc=fr
+member: uid=marie.simon,ou=People,dc=univ-lehavre,dc=fr
+member: uid=julie.durand,ou=People,dc=univ-lehavre,dc=fr
+member: uid=emma.roux,ou=People,dc=univ-lehavre,dc=fr
+member: uid=nicolas.lefebvre,ou=People,dc=univ-lehavre,dc=fr
+member: uid=nicolas.martin,ou=People,dc=univ-lehavre,dc=fr
+member: uid=sophie.petit,ou=People,dc=univ-lehavre,dc=fr
+member: uid=jean.roux,ou=People,dc=univ-lehavre,dc=fr
+member: uid=emma.martin,ou=People,dc=univ-lehavre,dc=fr
+member: uid=nicolas.dupont,ou=People,dc=univ-lehavre,dc=fr
+member: uid=marie.moreau,ou=People,dc=univ-lehavre,dc=fr
+member: uid=emma.dupont,ou=People,dc=univ-lehavre,dc=fr
+
+dn: uid=emma.dupont,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: emma.dupont78
+uid: emma.dupont
 sn: DUPONT
 givenName: Emma
 cn: Emma DUPONT
 displayName: Emma DUPONT
-mail: emma.dupont78@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10001
+uidNumber: 20000
 gidNumber: 5001
-homeDirectory: /home/emma.dupont78
+homeDirectory: /home/emma.dupont
 
-dn: uid=marie.moreau93,ou=people,dc=univ,dc=fr
+dn: uid=marie.moreau,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: marie.moreau93
+uid: marie.moreau
 sn: MOREAU
 givenName: Marie
 cn: Marie MOREAU
 displayName: Marie MOREAU
-mail: marie.moreau93@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10002
+uidNumber: 20001
 gidNumber: 5001
-homeDirectory: /home/marie.moreau93
+homeDirectory: /home/marie.moreau
 
-dn: uid=nicolas.dupont87,ou=people,dc=univ,dc=fr
+dn: uid=nicolas.dupont,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: nicolas.dupont87
+uid: nicolas.dupont
 sn: DUPONT
 givenName: Nicolas
 cn: Nicolas DUPONT
 displayName: Nicolas DUPONT
-mail: nicolas.dupont87@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10003
+uidNumber: 20002
 gidNumber: 5001
-homeDirectory: /home/nicolas.dupont87
+homeDirectory: /home/nicolas.dupont
 
-dn: uid=emma.martin16,ou=people,dc=univ,dc=fr
+dn: uid=emma.martin,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: emma.martin16
+uid: emma.martin
 sn: MARTIN
 givenName: Emma
 cn: Emma MARTIN
 displayName: Emma MARTIN
-mail: emma.martin16@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10004
+uidNumber: 20003
 gidNumber: 5001
-homeDirectory: /home/emma.martin16
+homeDirectory: /home/emma.martin
 
-dn: uid=jean.roux79,ou=people,dc=univ,dc=fr
+dn: uid=jean.roux,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: jean.roux79
+uid: jean.roux
 sn: ROUX
 givenName: Jean
 cn: Jean ROUX
 displayName: Jean ROUX
-mail: jean.roux79@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10005
+uidNumber: 20004
 gidNumber: 5001
-homeDirectory: /home/jean.roux79
+homeDirectory: /home/jean.roux
 
-dn: uid=sophie.petit89,ou=people,dc=univ,dc=fr
+dn: uid=sophie.petit,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: sophie.petit89
+uid: sophie.petit
 sn: PETIT
 givenName: Sophie
 cn: Sophie PETIT
 displayName: Sophie PETIT
-mail: sophie.petit89@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10006
+uidNumber: 20005
 gidNumber: 5001
-homeDirectory: /home/sophie.petit89
+homeDirectory: /home/sophie.petit
 
-dn: uid=nicolas.martin13,ou=people,dc=univ,dc=fr
+dn: uid=nicolas.martin,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: nicolas.martin13
+uid: nicolas.martin
 sn: MARTIN
 givenName: Nicolas
 cn: Nicolas MARTIN
 displayName: Nicolas MARTIN
-mail: nicolas.martin13@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10007
+uidNumber: 20006
 gidNumber: 5001
-homeDirectory: /home/nicolas.martin13
+homeDirectory: /home/nicolas.martin
 
-dn: uid=nicolas.lefebvre43,ou=people,dc=univ,dc=fr
+dn: uid=nicolas.lefebvre,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: nicolas.lefebvre43
+uid: nicolas.lefebvre
 sn: LEFEBVRE
 givenName: Nicolas
 cn: Nicolas LEFEBVRE
 displayName: Nicolas LEFEBVRE
-mail: nicolas.lefebvre43@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10008
+uidNumber: 20007
 gidNumber: 5001
-homeDirectory: /home/nicolas.lefebvre43
+homeDirectory: /home/nicolas.lefebvre
 
-dn: uid=emma.roux34,ou=people,dc=univ,dc=fr
+dn: uid=emma.roux,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: emma.roux34
+uid: emma.roux
 sn: ROUX
 givenName: Emma
 cn: Emma ROUX
 displayName: Emma ROUX
-mail: emma.roux34@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10009
+uidNumber: 20008
 gidNumber: 5001
-homeDirectory: /home/emma.roux34
+homeDirectory: /home/emma.roux
 
-dn: uid=julie.durand50,ou=people,dc=univ,dc=fr
+dn: uid=julie.durand,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: julie.durand50
+uid: julie.durand
 sn: DURAND
 givenName: Julie
 cn: Julie DURAND
 displayName: Julie DURAND
-mail: julie.durand50@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10010
+uidNumber: 20009
 gidNumber: 5001
-homeDirectory: /home/julie.durand50
+homeDirectory: /home/julie.durand
 
-dn: uid=marie.simon14,ou=people,dc=univ,dc=fr
+dn: uid=marie.simon,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: marie.simon14
+uid: marie.simon
 sn: SIMON
 givenName: Marie
 cn: Marie SIMON
 displayName: Marie SIMON
-mail: marie.simon14@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10011
+uidNumber: 20010
 gidNumber: 5001
-homeDirectory: /home/marie.simon14
+homeDirectory: /home/marie.simon
 
-dn: uid=jean.dupont98,ou=people,dc=univ,dc=fr
+dn: uid=jean.dupont,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: jean.dupont98
+uid: jean.dupont
 sn: DUPONT
 givenName: Jean
 cn: Jean DUPONT
 displayName: Jean DUPONT
-mail: jean.dupont98@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10012
+uidNumber: 20011
 gidNumber: 5001
-homeDirectory: /home/jean.dupont98
+homeDirectory: /home/jean.dupont
 
-dn: uid=emma.petit57,ou=people,dc=univ,dc=fr
+dn: uid=emma.petit,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: emma.petit57
+uid: emma.petit
 sn: PETIT
 givenName: Emma
 cn: Emma PETIT
 displayName: Emma PETIT
-mail: emma.petit57@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10013
+uidNumber: 20012
 gidNumber: 5001
-homeDirectory: /home/emma.petit57
+homeDirectory: /home/emma.petit
 
-dn: uid=antoine.dupont29,ou=people,dc=univ,dc=fr
+dn: uid=antoine.dupont,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: antoine.dupont29
+uid: antoine.dupont
 sn: DUPONT
 givenName: Antoine
 cn: Antoine DUPONT
 displayName: Antoine DUPONT
-mail: antoine.dupont29@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10014
+uidNumber: 20013
 gidNumber: 5001
-homeDirectory: /home/antoine.dupont29
+homeDirectory: /home/antoine.dupont
 
-dn: uid=sophie.simon48,ou=people,dc=univ,dc=fr
+dn: uid=sophie.simon,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: sophie.simon48
+uid: sophie.simon
 sn: SIMON
 givenName: Sophie
 cn: Sophie SIMON
 displayName: Sophie SIMON
-mail: sophie.simon48@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10015
+uidNumber: 20014
 gidNumber: 5001
-homeDirectory: /home/sophie.simon48
+homeDirectory: /home/sophie.simon
 
-dn: uid=marie.leroy81,ou=people,dc=univ,dc=fr
+dn: uid=marie.leroy,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: marie.leroy81
+uid: marie.leroy
 sn: LEROY
 givenName: Marie
 cn: Marie LEROY
 displayName: Marie LEROY
-mail: marie.leroy81@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10016
+uidNumber: 20015
 gidNumber: 5001
-homeDirectory: /home/marie.leroy81
+homeDirectory: /home/marie.leroy
 
-dn: uid=pierre.durand11,ou=people,dc=univ,dc=fr
+dn: uid=pierre.durand,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: pierre.durand11
+uid: pierre.durand
 sn: DURAND
 givenName: Pierre
 cn: Pierre DURAND
 displayName: Pierre DURAND
-mail: pierre.durand11@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10017
+uidNumber: 20016
 gidNumber: 5001
-homeDirectory: /home/pierre.durand11
+homeDirectory: /home/pierre.durand
 
-dn: uid=marie.simon28,ou=people,dc=univ,dc=fr
+dn: uid=marie.simon,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: marie.simon28
+uid: marie.simon
 sn: SIMON
 givenName: Marie
 cn: Marie SIMON
 displayName: Marie SIMON
-mail: marie.simon28@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10018
+uidNumber: 20017
 gidNumber: 5001
-homeDirectory: /home/marie.simon28
+homeDirectory: /home/marie.simon
 
-dn: uid=antoine.durand10,ou=people,dc=univ,dc=fr
+dn: uid=antoine.durand,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: antoine.durand10
+uid: antoine.durand
 sn: DURAND
 givenName: Antoine
 cn: Antoine DURAND
 displayName: Antoine DURAND
-mail: antoine.durand10@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10019
+uidNumber: 20018
 gidNumber: 5001
-homeDirectory: /home/antoine.durand10
+homeDirectory: /home/antoine.durand
 
-dn: uid=nicolas.garcia31,ou=people,dc=univ,dc=fr
+dn: uid=nicolas.garcia,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: nicolas.garcia31
+uid: nicolas.garcia
 sn: GARCIA
 givenName: Nicolas
 cn: Nicolas GARCIA
 displayName: Nicolas GARCIA
-mail: nicolas.garcia31@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10020
+uidNumber: 20019
 gidNumber: 5001
-homeDirectory: /home/nicolas.garcia31
+homeDirectory: /home/nicolas.garcia
 
-dn: uid=marie.garcia70,ou=people,dc=univ,dc=fr
+dn: uid=marie.garcia,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: marie.garcia70
+uid: marie.garcia
 sn: GARCIA
 givenName: Marie
 cn: Marie GARCIA
 displayName: Marie GARCIA
-mail: marie.garcia70@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10021
+uidNumber: 20020
 gidNumber: 5001
-homeDirectory: /home/marie.garcia70
+homeDirectory: /home/marie.garcia
 
-dn: uid=julie.dupont12,ou=people,dc=univ,dc=fr
+dn: uid=julie.dupont,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: julie.dupont12
+uid: julie.dupont
 sn: DUPONT
 givenName: Julie
 cn: Julie DUPONT
 displayName: Julie DUPONT
-mail: julie.dupont12@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10022
+uidNumber: 20021
 gidNumber: 5001
-homeDirectory: /home/julie.dupont12
+homeDirectory: /home/julie.dupont
 
-dn: uid=jean.dupont30,ou=people,dc=univ,dc=fr
+dn: uid=jean.dupont,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: jean.dupont30
+uid: jean.dupont
 sn: DUPONT
 givenName: Jean
 cn: Jean DUPONT
 displayName: Jean DUPONT
-mail: jean.dupont30@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10023
+uidNumber: 20022
 gidNumber: 5001
-homeDirectory: /home/jean.dupont30
+homeDirectory: /home/jean.dupont
 
-dn: uid=antoine.dupont82,ou=people,dc=univ,dc=fr
+dn: uid=antoine.dupont,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: antoine.dupont82
+uid: antoine.dupont
 sn: DUPONT
 givenName: Antoine
 cn: Antoine DUPONT
 displayName: Antoine DUPONT
-mail: antoine.dupont82@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10024
+uidNumber: 20023
 gidNumber: 5001
-homeDirectory: /home/antoine.dupont82
+homeDirectory: /home/antoine.dupont
 
-dn: uid=nicolas.simon43,ou=people,dc=univ,dc=fr
+dn: uid=nicolas.simon,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: nicolas.simon43
+uid: nicolas.simon
 sn: SIMON
 givenName: Nicolas
 cn: Nicolas SIMON
 displayName: Nicolas SIMON
-mail: nicolas.simon43@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10025
+uidNumber: 20024
 gidNumber: 5001
-homeDirectory: /home/nicolas.simon43
+homeDirectory: /home/nicolas.simon
 
-dn: uid=lucas.martin68,ou=people,dc=univ,dc=fr
+dn: uid=lucas.martin,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: lucas.martin68
+uid: lucas.martin
 sn: MARTIN
 givenName: Lucas
 cn: Lucas MARTIN
 displayName: Lucas MARTIN
-mail: lucas.martin68@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10026
+uidNumber: 20025
 gidNumber: 5001
-homeDirectory: /home/lucas.martin68
+homeDirectory: /home/lucas.martin
 
-dn: uid=emma.roux10,ou=people,dc=univ,dc=fr
+dn: uid=emma.roux,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: emma.roux10
+uid: emma.roux
 sn: ROUX
 givenName: Emma
 cn: Emma ROUX
 displayName: Emma ROUX
-mail: emma.roux10@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10027
+uidNumber: 20026
 gidNumber: 5001
-homeDirectory: /home/emma.roux10
+homeDirectory: /home/emma.roux
 
-dn: uid=sophie.lefebvre61,ou=people,dc=univ,dc=fr
+dn: uid=sophie.lefebvre,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: sophie.lefebvre61
+uid: sophie.lefebvre
 sn: LEFEBVRE
 givenName: Sophie
 cn: Sophie LEFEBVRE
 displayName: Sophie LEFEBVRE
-mail: sophie.lefebvre61@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10028
+uidNumber: 20027
 gidNumber: 5001
-homeDirectory: /home/sophie.lefebvre61
+homeDirectory: /home/sophie.lefebvre
 
-dn: uid=pierre.lefebvre22,ou=people,dc=univ,dc=fr
+dn: uid=pierre.lefebvre,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: pierre.lefebvre22
+uid: pierre.lefebvre
 sn: LEFEBVRE
 givenName: Pierre
 cn: Pierre LEFEBVRE
 displayName: Pierre LEFEBVRE
-mail: pierre.lefebvre22@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10029
+uidNumber: 20028
 gidNumber: 5001
-homeDirectory: /home/pierre.lefebvre22
+homeDirectory: /home/pierre.lefebvre
 
-dn: uid=julie.lefebvre86,ou=people,dc=univ,dc=fr
+dn: uid=julie.lefebvre,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: julie.lefebvre86
+uid: julie.lefebvre
 sn: LEFEBVRE
 givenName: Julie
 cn: Julie LEFEBVRE
 displayName: Julie LEFEBVRE
-mail: julie.lefebvre86@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10030
+uidNumber: 20029
 gidNumber: 5001
-homeDirectory: /home/julie.lefebvre86
+homeDirectory: /home/julie.lefebvre
 
-dn: uid=sophie.lefebvre55,ou=people,dc=univ,dc=fr
+dn: uid=sophie.lefebvre,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: sophie.lefebvre55
+uid: sophie.lefebvre
 sn: LEFEBVRE
 givenName: Sophie
 cn: Sophie LEFEBVRE
 displayName: Sophie LEFEBVRE
-mail: sophie.lefebvre55@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10031
+uidNumber: 20030
 gidNumber: 5001
-homeDirectory: /home/sophie.lefebvre55
+homeDirectory: /home/sophie.lefebvre
 
-dn: uid=thomas.moreau97,ou=people,dc=univ,dc=fr
+dn: uid=thomas.moreau,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: thomas.moreau97
+uid: thomas.moreau
 sn: MOREAU
 givenName: Thomas
 cn: Thomas MOREAU
 displayName: Thomas MOREAU
-mail: thomas.moreau97@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10032
+uidNumber: 20031
 gidNumber: 5001
-homeDirectory: /home/thomas.moreau97
+homeDirectory: /home/thomas.moreau
 
-dn: uid=marie.petit63,ou=people,dc=univ,dc=fr
+dn: uid=marie.petit,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: marie.petit63
+uid: marie.petit
 sn: PETIT
 givenName: Marie
 cn: Marie PETIT
 displayName: Marie PETIT
-mail: marie.petit63@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10033
+uidNumber: 20032
 gidNumber: 5001
-homeDirectory: /home/marie.petit63
+homeDirectory: /home/marie.petit
 
-dn: uid=emma.garcia95,ou=people,dc=univ,dc=fr
+dn: uid=emma.garcia,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: emma.garcia95
+uid: emma.garcia
 sn: GARCIA
 givenName: Emma
 cn: Emma GARCIA
 displayName: Emma GARCIA
-mail: emma.garcia95@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10034
+uidNumber: 20033
 gidNumber: 5001
-homeDirectory: /home/emma.garcia95
+homeDirectory: /home/emma.garcia
 
-dn: uid=jean.dupont60,ou=people,dc=univ,dc=fr
+dn: uid=jean.dupont,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: jean.dupont60
+uid: jean.dupont
 sn: DUPONT
 givenName: Jean
 cn: Jean DUPONT
 displayName: Jean DUPONT
-mail: jean.dupont60@etu.univ.fr
+mail: 
 userPassword: password
-uidNumber: 10035
+uidNumber: 20034
 gidNumber: 5001
-homeDirectory: /home/jean.dupont60
+homeDirectory: /home/jean.dupont
 
-dn: uid=alain.dubois,ou=people,dc=univ,dc=fr
+# Teachers Group
+dn: cn=prof,ou=Groups,dc=univ-lehavre,dc=fr
+objectClass: groupOfNames
+cn: prof
+member: uid=prof.1,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.2,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.3,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.4,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.5,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.6,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.7,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.8,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.9,ou=People,dc=univ-lehavre,dc=fr
+member: uid=prof.10,ou=People,dc=univ-lehavre,dc=fr
+
+dn: uid=prof.1,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: alain.dubois
-sn: DUBOIS
-givenName: Alain
-cn: Alain DUBOIS
-displayName: Alain DUBOIS
-mail: alain.dubois@univ.fr
+uid: prof.1
+sn: PROFESSEUR1
+givenName: Prof1
+cn: Prof1 PROFESSEUR1
+displayName: Prof1 PROFESSEUR1
+mail: prof.1@univ-lehavre.fr
 userPassword: password
-uidNumber: 20001
+uidNumber: 30001
 gidNumber: 5002
-homeDirectory: /home/alain.dubois
+homeDirectory: /home/prof.1
 
-dn: uid=beatrice.leroux,ou=people,dc=univ,dc=fr
+dn: uid=prof.2,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: beatrice.leroux
-sn: LEROUX
-givenName: Beatrice
-cn: Beatrice LEROUX
-displayName: Beatrice LEROUX
-mail: beatrice.leroux@univ.fr
+uid: prof.2
+sn: PROFESSEUR2
+givenName: Prof2
+cn: Prof2 PROFESSEUR2
+displayName: Prof2 PROFESSEUR2
+mail: prof.2@univ-lehavre.fr
 userPassword: password
-uidNumber: 20002
+uidNumber: 30002
 gidNumber: 5002
-homeDirectory: /home/beatrice.leroux
+homeDirectory: /home/prof.2
 
-dn: uid=charles.morel,ou=people,dc=univ,dc=fr
+dn: uid=prof.3,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: charles.morel
-sn: MOREL
-givenName: Charles
-cn: Charles MOREL
-displayName: Charles MOREL
-mail: charles.morel@univ.fr
+uid: prof.3
+sn: PROFESSEUR3
+givenName: Prof3
+cn: Prof3 PROFESSEUR3
+displayName: Prof3 PROFESSEUR3
+mail: prof.3@univ-lehavre.fr
 userPassword: password
-uidNumber: 20003
+uidNumber: 30003
 gidNumber: 5002
-homeDirectory: /home/charles.morel
+homeDirectory: /home/prof.3
 
-dn: uid=delphine.fournier,ou=people,dc=univ,dc=fr
+dn: uid=prof.4,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: delphine.fournier
-sn: FOURNIER
-givenName: Delphine
-cn: Delphine FOURNIER
-displayName: Delphine FOURNIER
-mail: delphine.fournier@univ.fr
+uid: prof.4
+sn: PROFESSEUR4
+givenName: Prof4
+cn: Prof4 PROFESSEUR4
+displayName: Prof4 PROFESSEUR4
+mail: prof.4@univ-lehavre.fr
 userPassword: password
-uidNumber: 20004
+uidNumber: 30004
 gidNumber: 5002
-homeDirectory: /home/delphine.fournier
+homeDirectory: /home/prof.4
 
-dn: uid=eric.girard,ou=people,dc=univ,dc=fr
+dn: uid=prof.5,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: eric.girard
-sn: GIRARD
-givenName: Eric
-cn: Eric GIRARD
-displayName: Eric GIRARD
-mail: eric.girard@univ.fr
+uid: prof.5
+sn: PROFESSEUR5
+givenName: Prof5
+cn: Prof5 PROFESSEUR5
+displayName: Prof5 PROFESSEUR5
+mail: prof.5@univ-lehavre.fr
 userPassword: password
-uidNumber: 20005
+uidNumber: 30005
 gidNumber: 5002
-homeDirectory: /home/eric.girard
+homeDirectory: /home/prof.5
 
-dn: uid=florence.bonnet,ou=people,dc=univ,dc=fr
+dn: uid=prof.6,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: florence.bonnet
-sn: BONNET
-givenName: Florence
-cn: Florence BONNET
-displayName: Florence BONNET
-mail: florence.bonnet@univ.fr
+uid: prof.6
+sn: PROFESSEUR6
+givenName: Prof6
+cn: Prof6 PROFESSEUR6
+displayName: Prof6 PROFESSEUR6
+mail: prof.6@univ-lehavre.fr
 userPassword: password
-uidNumber: 20006
+uidNumber: 30006
 gidNumber: 5002
-homeDirectory: /home/florence.bonnet
+homeDirectory: /home/prof.6
 
-dn: uid=gilles.dupuis,ou=people,dc=univ,dc=fr
+dn: uid=prof.7,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: gilles.dupuis
-sn: DUPUIS
-givenName: Gilles
-cn: Gilles DUPUIS
-displayName: Gilles DUPUIS
-mail: gilles.dupuis@univ.fr
+uid: prof.7
+sn: PROFESSEUR7
+givenName: Prof7
+cn: Prof7 PROFESSEUR7
+displayName: Prof7 PROFESSEUR7
+mail: prof.7@univ-lehavre.fr
 userPassword: password
-uidNumber: 20007
+uidNumber: 30007
 gidNumber: 5002
-homeDirectory: /home/gilles.dupuis
+homeDirectory: /home/prof.7
 
-dn: uid=helene.lambert,ou=people,dc=univ,dc=fr
+dn: uid=prof.8,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: helene.lambert
-sn: LAMBERT
-givenName: Helene
-cn: Helene LAMBERT
-displayName: Helene LAMBERT
-mail: helene.lambert@univ.fr
+uid: prof.8
+sn: PROFESSEUR8
+givenName: Prof8
+cn: Prof8 PROFESSEUR8
+displayName: Prof8 PROFESSEUR8
+mail: prof.8@univ-lehavre.fr
 userPassword: password
-uidNumber: 20008
+uidNumber: 30008
 gidNumber: 5002
-homeDirectory: /home/helene.lambert
+homeDirectory: /home/prof.8
 
-dn: uid=ivan.faure,ou=people,dc=univ,dc=fr
+dn: uid=prof.9,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: ivan.faure
-sn: FAURE
-givenName: Ivan
-cn: Ivan FAURE
-displayName: Ivan FAURE
-mail: ivan.faure@univ.fr
+uid: prof.9
+sn: PROFESSEUR9
+givenName: Prof9
+cn: Prof9 PROFESSEUR9
+displayName: Prof9 PROFESSEUR9
+mail: prof.9@univ-lehavre.fr
 userPassword: password
-uidNumber: 20009
+uidNumber: 30009
 gidNumber: 5002
-homeDirectory: /home/ivan.faure
+homeDirectory: /home/prof.9
 
-dn: uid=julie.rousseau,ou=people,dc=univ,dc=fr
+dn: uid=prof.10,ou=People,dc=univ-lehavre,dc=fr
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
-uid: julie.rousseau
-sn: ROUSSEAU
-givenName: Julie
-cn: Julie ROUSSEAU
-displayName: Julie ROUSSEAU
-mail: julie.rousseau@univ.fr
+uid: prof.10
+sn: PROFESSEUR10
+givenName: Prof10
+cn: Prof10 PROFESSEUR10
+displayName: Prof10 PROFESSEUR10
+mail: prof.10@univ-lehavre.fr
 userPassword: password
-uidNumber: 20010
+uidNumber: 30010
 gidNumber: 5002
-homeDirectory: /home/julie.rousseau
+homeDirectory: /home/prof.10

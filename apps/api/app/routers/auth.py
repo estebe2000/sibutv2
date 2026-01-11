@@ -7,7 +7,16 @@ from ..database import get_session
 from ..models import User, Group
 from ..ldap_utils import verify_credentials
 
+import requests
+import os
+
 router = APIRouter(tags=["Auth"])
+
+# KEYCLOAK CONFIG
+KC_URL = os.getenv("KEYCLOAK_URL", "http://keycloak:8080/auth")
+KC_REALM = os.getenv("KEYCLOAK_REALM", "but-tc")
+KC_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID", "skills-hub-app")
+KC_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET", "")
 
 # JWT CONFIG
 SECRET_KEY = "supersecretkeychangeinprod"
@@ -22,18 +31,35 @@ def create_access_token(data: dict):
 
 @router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    print(f"Login attempt for user: {form_data.username}", flush=True)
+    # 1. Check local admin override
     if form_data.username == "admin" and form_data.password == "Rangetachambre76*":
         return {"access_token": create_access_token({"sub": "admin"}), "token_type": "bearer"}
+    
+    # 2. Try to authenticate against Keycloak
+    token_url = f"{KC_URL}/realms/{KC_REALM}/protocol/openid-connect/token"
+    print(f"Requesting token from Keycloak: {token_url}", flush=True)
+    data = {
+        "grant_type": "password",
+        "client_id": KC_CLIENT_ID,
+        "client_secret": KC_CLIENT_SECRET,
+        "username": form_data.username,
+        "password": form_data.password,
+        "scope": "openid"
+    }
+    
+    try:
+        response = requests.post(token_url, data=data, timeout=10)
+        print(f"Keycloak response code: {response.status_code}", flush=True)
+        if response.status_code == 200:
+            return {"access_token": create_access_token({"sub": form_data.username}), "token_type": "bearer"}
+        else:
+            print(f"Keycloak Auth Failed: {response.text}", flush=True)
+    except Exception as e:
+        print(f"Keycloak Connection Error: {e}", flush=True)
+
+    # 3. Fallback to LDAP direct (optional, but good for transition)
     if verify_credentials(form_data.username, form_data.password):
-        if form_data.username != "admin":
-             # We might want to allow non-admin login later, but for now logic is same as main.py
-             # Wait, main.py said: if form_data.username != "admin": raise HTTPException(status_code=403, detail="Accès réservé aux administrateurs")
-             # But it also checked verify_credentials.
-             # The original code:
-             # if verify_credentials(form_data.username, form_data.password):
-             #   if form_data.username != "admin":
-             #        raise HTTPException(status_code=403, detail="Accès réservé aux administrateurs")
-             #   return {"access_token": create_access_token({"sub": form_data.username}), "token_type": "bearer"}
-             raise HTTPException(status_code=403, detail="Accès réservé aux administrateurs")
         return {"access_token": create_access_token({"sub": form_data.username}), "token_type": "bearer"}
-    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
+    
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Identifiants incorrects")
