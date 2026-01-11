@@ -78,20 +78,16 @@ docker exec -i but_tc_db psql -U app_user skills_db < backup_data.sql
 
 ## 📂 Structure du Projet
 
-- `apps/api` : Backend FastAPI (SQLModel, PostgreSQL).
-- `apps/web` : Frontend React (Mantine UI, Vite).
+- `apps/api` : Backend FastAPI (SQLModel, PostgreSQL), refactorisé avec des routeurs modulaires.
+- `apps/web` : Frontend React (Mantine UI, Vite), avec gestion d'état centralisée (Zustand) et composants modulaires.
 - `apps/api/app/data/referentiel_final.json` : Fichier maître des données pédagogiques.
 - `infrastructure` : Configuration Docker et scripts de déploiement.
-- `docs` : Documentation technique et prompts d'extraction.
-- `tmp` : Scripts d'extraction et fichiers temporaires.
+- `docs` : Documentation technique. Les archives sont dans `docs/archive`.
 
-## 📝 Scripts d'Extraction (Maintenance)
+## 🛠 Maintenance
 
-Les scripts situés dans `tmp/` permettent de régénérer le fichier JSON à partir du PDF officiel.
-- `extract_resources.py` : Ressources BUT 1.
-- `extract_s2.py` : Activités BUT 1 (Semestre 2).
-- `extract_pathways.py` : BUT 2 & 3 complets (tous parcours).
-- `deduplicate_data.py` : Nettoyage des doublons.
+Les scripts de maintenance (ex: extraction PDF) sont situés dans `apps/api/scripts/`.
+- `ai_parser.py` : Script d'extraction assisté par IA (Codestral).
 
 ---
 *Projet développé avec l'assistance de Gemini CLI.*
