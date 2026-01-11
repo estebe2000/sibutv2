@@ -28,6 +28,7 @@ docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice Docum
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice DocumentServerInternalUrl --value="http://but_tc_onlyoffice/"
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice StorageUrl --value="http://but_tc_nextcloud/"
 docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice jwt_secret --value="onlyoffice_secret"
+docker exec -u www-data but_tc_nextcloud php occ config:app:set onlyoffice jwt_header --value="Authorization"
 
 # Install other collaborative apps
 APPS="terms_of_service contacts mail spreed collectives integration_mattermost"
@@ -75,10 +76,13 @@ fi
 
 docker start but_tc_api
 
-# 4. Final settings (Trusted Domains)
+# 4. Final settings (Trusted Domains & Overwrites)
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 1 --value="localhost"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 2 --value="projet-edu.eu"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 3 --value="but_tc_nextcloud"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set overwrite.cli.url --value="http://projet-edu.eu:8082"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set overwritehost --value="projet-edu.eu:8082"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set overwriteprotocol --value="http"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set allow_local_remote_servers --value=true --type=bool
 
 echo "✅ Initialization Complete!"

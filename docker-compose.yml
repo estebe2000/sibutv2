@@ -64,6 +64,8 @@ services:
     restart: unless-stopped
     ports:
       - "8082:80"
+    extra_hosts:
+      - "projet-edu.eu:host-gateway"
     environment:
       - NEXTCLOUD_ADMIN_USER=admin
       - NEXTCLOUD_ADMIN_PASSWORD=Rangetachambre76*
@@ -84,6 +86,8 @@ services:
     restart: unless-stopped
     ports:
       - "8083:80"
+    extra_hosts:
+      - "projet-edu.eu:host-gateway"
     environment:
       - JWT_ENABLED=true
       - JWT_SECRET=onlyoffice_secret
