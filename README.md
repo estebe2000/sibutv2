@@ -48,21 +48,41 @@ npm run infra:up
 # URL : http://projet-edu.eu/ (ou http://localhost)
 ```
 
-### Services Disponibles
-| Service | URL (Projet Edu) | Description |
+### Services Disponibles (Production)
+| Service | URL | Description |
 | :--- | :--- | :--- |
-| **Dashboard** | http://projet-edu.eu/ | Portail central (Port 80) |
-| **Skills Hub Admin** | http://projet-edu.eu:3000/ | Gestion du référentiel |
-| **Nextcloud** | http://projet-edu.eu:8082/ | Stockage & Édition |
-| **Mattermost** | http://projet-edu.eu:8065/ | Collaboration |
-| **LDAP Admin** | http://projet-edu.eu:8081/ | Gestion des comptes |
-| **Mailpit** | http://projet-edu.eu:8025/ | Test des emails |
+| **Dashboard** | https://home.educ-ai.fr/ | Portail central |
+| **Skills Hub Admin** | https://home.educ-ai.fr/app/ | Gestion du référentiel (SSO) |
+| **Nextcloud** | https://nextcloud.educ-ai.fr/ | Stockage & Édition (SSO) |
+| **Keycloak** | https://keycloak.educ-ai.fr/ | Identité & SSO |
+| **Mattermost** | https://home.educ-ai.fr/mattermost/ | Collaboration |
+| **LDAP Admin** | http://projet-edu.eu:8081/ | Gestion des comptes (Local) |
 
+## ☁️ Configuration Cloudflare Tunnel
+
+Pour exposer le projet via Cloudflare Zero Trust (domaine `educ-ai.fr`), configurez vos **Public Hostnames** comme suit :
+
+| Subdomain | Domain | Service | Origin Settings |
+| :--- | :--- | :--- | :--- |
+| `home` | `educ-ai.fr` | `http://localhost:80` | Default |
+| `nextcloud` | `educ-ai.fr` | `http://localhost:8082` | Default |
+| `keycloak` | `educ-ai.fr` | `http://localhost:8080` | Default |
+| `only-office`| `educ-ai.fr` | `http://localhost:8083` | Default |
+
+**Note :** Si vous pointez vers le port `443` de la machine hôte au lieu des ports directs, activez l'option **"No TLS Verify"** dans les *Origin Settings* pour accepter le certificat auto-signé de Nginx.
+
+## 🔑 Identification Unique (SSO)
+
+Le projet utilise **Keycloak** comme Identity Provider centralisé.
+- **Login unique** : Connectez-vous une fois sur le Dashboard pour accéder à toutes les applications.
+- **Source d'utilisateurs** : Fédération LDAP (Université) + Utilisateurs locaux Keycloak (Intervenants).
+- **Compte Admin par défaut** : `admin` / `Rangetachambre76*`
 
 ### Commandes Utiles
 
 **Purger et reconstruire (Full Reset) :**
 ```bash
+# Cette commande efface TOUS les volumes et réinitialise LDAP/Nextcloud/Keycloak
 npm run infra:reset
 ```
 

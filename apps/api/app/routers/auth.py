@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Form
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 from datetime import datetime, timedelta
@@ -57,9 +57,44 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             print(f"Keycloak Auth Failed: {response.text}", flush=True)
     except Exception as e:
         print(f"Keycloak Connection Error: {e}", flush=True)
-
+    
     # 3. Fallback to LDAP direct (optional, but good for transition)
     if verify_credentials(form_data.username, form_data.password):
         return {"access_token": create_access_token({"sub": form_data.username}), "token_type": "bearer"}
     
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Identifiants incorrects")
+
+@router.post("/auth/callback")
+async def auth_callback(code: str = Form(...), redirect_uri: str = Form(...)):
+    """
+    Exchange authorization code for access token.
+    """
+    token_url = f"{KC_URL}/realms/{KC_REALM}/protocol/openid-connect/token"
+    data = {
+        "grant_type": "authorization_code",
+        "client_id": KC_CLIENT_ID,
+        "client_secret": KC_CLIENT_SECRET,
+        "code": code,
+        "redirect_uri": redirect_uri
+    }
+    
+    try:
+        response = requests.post(token_url, data=data, timeout=10)
+        if response.status_code == 200:
+            token_data = response.json()
+            # Extract username from id_token or access_token
+            payload = jwt.get_unverified_claims(token_data['access_token'])
+            username = payload.get("preferred_username", payload.get("sub"))
+            
+            # Emit our local token for the Skills Hub compatibility
+            return {
+                "access_token": create_access_token({"sub": username}),
+                "username": username,
+                "token_type": "bearer"
+            }
+        else:
+            print(f"Keycloak Code Exchange Failed: {response.text}", flush=True)
+            raise HTTPException(status_code=400, detail="Code exchange failed")
+    except Exception as e:
+        print(f"Keycloak Callback Error: {e}", flush=True)
+        raise HTTPException(status_code=500, detail=str(e))

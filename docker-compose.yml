@@ -65,12 +65,15 @@ services:
     ports:
       - "8082:80"
     extra_hosts:
-      - "projet-edu.eu:host-gateway"
+      - "educ-ai.fr:host-gateway"
+      - "nextcloud.educ-ai.fr:host-gateway"
+      - "only-office.educ-ai.fr:host-gateway"
+      - "home.educ-ai.fr:host-gateway"
     environment:
       - NEXTCLOUD_ADMIN_USER=admin
       - NEXTCLOUD_ADMIN_PASSWORD=Rangetachambre76*
-      - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu
-      # RESTORED: No overwrite config, letting it behave naturally on port 8082
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu educ-ai.fr *.educ-ai.fr
+      - OVERWRITEPROTOCOL=https
       # Using SQLite for the dev instance
       - SQLITE_DATABASE=nextcloud
     volumes:
@@ -88,11 +91,17 @@ services:
     ports:
       - "8083:80"
     extra_hosts:
-      - "projet-edu.eu:host-gateway"
+      - "educ-ai.fr:host-gateway"
+      - "nextcloud.educ-ai.fr:host-gateway"
+      - "only-office.educ-ai.fr:host-gateway"
+      - "home.educ-ai.fr:host-gateway"
     environment:
       - JWT_ENABLED=true
       - JWT_SECRET=onlyoffice_secret
       - JWT_HEADER=Authorization
+      - USE_UNAUTHORIZED_STORAGE=true
+      - ALLOW_PRIVATE_IP_ADDRESS=true
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     networks:
       - app_network
 
@@ -156,10 +165,9 @@ services:
       - KC_DB_PASSWORD=keycloak_password
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=Rangetachambre76*
-      # - KC_HOSTNAME=projet-edu.eu
+      - KC_HOSTNAME=keycloak.educ-ai.fr
       - KC_HOSTNAME_STRICT=false
-      - KC_HTTP_RELATIVE_PATH=/auth
-      # - KC_PROXY=edge
+      - KC_PROXY=edge
     depends_on:
       - db_keycloak
     ports:
@@ -179,8 +187,8 @@ services:
     environment:
       - MM_SQLSETTINGS_DRIVERNAME=postgres
       - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mmpassword@db_mattermost:5432/mattermost?sslmode=disable&connect_timeout=10
-      - MM_SERVICESETTINGS_SITEURL=http://localhost:8065
-      - MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS=localhost 127.0.0.1
+      - MM_SERVICESETTINGS_SITEURL=https://educ-ai.fr/mattermost
+      - MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS=localhost 127.0.0.1 educ-ai.fr
       - MM_SERVICESETTINGS_ENABLEDEVELOPER=true
     ports:
       - "8065:8065"
@@ -212,7 +220,7 @@ services:
       - NEXTCLOUD_ADMIN=admin
       - NEXTCLOUD_PASS=Rangetachambre76*
       - ROOT_PATH=/api
-      - KEYCLOAK_URL=http://but_tc_keycloak:8080/auth
+      - KEYCLOAK_URL=http://but_tc_keycloak:8080
       - KEYCLOAK_REALM=but-tc
       - KEYCLOAK_CLIENT_ID=skills-hub-app
       - KEYCLOAK_CLIENT_SECRET=ASzD8MghmcXaTSas1MvjiK9o81DrlEeO
