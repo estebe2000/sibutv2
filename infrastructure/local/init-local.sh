@@ -78,6 +78,7 @@ docker start but_tc_api
 # 4. Final settings (Trusted Domains)
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 1 --value="localhost"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 2 --value="projet-edu.eu"
+docker exec -u www-data but_tc_nextcloud php occ config:system:set trusted_domains 3 --value="but_tc_nextcloud"
 docker exec -u www-data but_tc_nextcloud php occ config:system:set allow_local_remote_servers --value=true --type=bool
 
 echo "✅ Initialization Complete!"
