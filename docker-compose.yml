@@ -133,9 +133,9 @@ services:
       - KC_DB_PASSWORD=keycloak_password
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=Rangetachambre76*
-      - KC_HOSTNAME=keycloak.educ-ai.fr
       - KC_HOSTNAME_STRICT=false
-      - KC_HTTP_RELATIVE_PATH=/
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HTTP_ENABLED=true
       - KC_PROXY=edge
     volumes:
       - ./infrastructure/keycloak/import:/opt/keycloak/data/import
@@ -187,7 +187,7 @@ services:
       - LDAP_BASE_DN=dc=univ-lehavre,dc=fr
       - LDAP_BIND_DN=cn=ldapbindusr-caucri2,ou=DSA,dc=univ-lehavre,dc=fr
       - LDAP_BIND_PASSWORD=Fctldap-8%caucri2_30688
-      - NEXTCLOUD_URL=http://projet-edu.eu:8082
+      - NEXTCLOUD_URL=https://nextcloud.educ-ai.fr
       - NEXTCLOUD_ADMIN=admin
       - NEXTCLOUD_PASS=Rangetachambre76*
       - ROOT_PATH=/api

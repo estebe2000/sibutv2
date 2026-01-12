@@ -19,7 +19,8 @@ import {
   Center,
   Grid,
   FileInput,
-  Container
+  Container,
+  Accordion
 } from '@mantine/core';
 import {
   IconUsers,
@@ -57,6 +58,7 @@ const YEAR_COLORS: any = {
 };
 
 function App() {
+  console.log("Skills Hub Admin v1.1.0 - Import Modal Active");
   const {
     token, setToken,
     user, setUser,
@@ -87,6 +89,8 @@ function App() {
   // VIEW STATE
   const [activeTab, setActiveTab] = useState<string | null>('dispatcher');
   const [ldapUsers, setLdapUsers] = useState<any[]>([]);
+  const [ldapSearchQuery, setLdapSearchQuery] = useState('');
+  const [ldapLoading, setLdapLoading] = useState(false);
   const [localGroups, setLocalGroups] = useState<any[]>([]);
   const [assignedUsers, setAssignedUsers] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -94,6 +98,29 @@ function App() {
   // Group Creation State
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [newGroup, setNewGroup] = useState({ name: '', year: 1, pathway: 'Tronc Commun', formation_type: 'FI' });
+
+  // Import Options State
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [pendingImportFile, setPendingImportFile] = useState<File | null>(null);
+  const [importOptions, setImportOptions] = useState({ year: 1, formation_type: 'FI' });
+
+  // LDAP Search Logic
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (ldapSearchQuery.length >= 3) {
+        setLdapLoading(true);
+        try {
+          const res = await axios.get(`${API_URL}/ldap-users/search?q=${ldapSearchQuery}`);
+          setLdapUsers(res.data);
+        } catch (e) { console.error("Search error", e); }
+        setLdapLoading(false);
+      } else if (ldapSearchQuery.length === 0) {
+        fetchData(); // Reset to default list if search is empty
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [ldapSearchQuery]);
 
   // Axios Interceptor for Auth
   useEffect(() => {
@@ -161,15 +188,25 @@ function App() {
     }
   };
 
-  const handleStudentImport = async (file: File | null) => {
+  const handleStudentImport = (file: File | null) => {
     if (!file) return;
+    setPendingImportFile(file);
+    setIsImportModalOpen(true);
+  };
+
+  const submitStudentImport = async () => {
+    if (!pendingImportFile) return;
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', pendingImportFile);
     try {
-      await axios.post(`${API_URL}/import/students`, formData);
+      await axios.post(`${API_URL}/import/students?year=${importOptions.year}&formation_type=${importOptions.formation_type}`, formData);
       notifications.show({ title: 'Succès', message: 'Étudiants importés et assignés' });
+      setIsImportModalOpen(false);
+      setPendingImportFile(null);
       fetchData();
-    } catch (e) { notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de l\'importation' }); }
+    } catch (e) {
+      notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de l\'importation' });
+    }
   };
 
   const handleCreateGroup = async () => {
@@ -285,6 +322,25 @@ function App() {
                 </Stack>
               </Modal>
 
+              <Modal opened={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} title="Configuration de l'importation">
+                <Stack>
+                  <Text size="sm">Fichier : <b>{pendingImportFile?.name}</b></Text>
+                  <Select 
+                    label="Niveau de BUT" 
+                    data={[{label: 'BUT 1', value: '1'}, {label: 'BUT 2', value: '2'}, {label: 'BUT 3', value: '3'}]} 
+                    value={importOptions.year.toString()} 
+                    onChange={(v) => setImportOptions({...importOptions, year: parseInt(v || '1')})} 
+                  />
+                  <Select 
+                    label="Type de formation" 
+                    data={[{label: 'Initiale (FI)', value: 'FI'}, {label: 'Alternance (FA)', value: 'FA'}]} 
+                    value={importOptions.formation_type} 
+                    onChange={(v) => setImportOptions({...importOptions, formation_type: v || 'FI'})} 
+                  />
+                  <Button onClick={submitStudentImport}>Lancer l'importation</Button>
+                </Stack>
+              </Modal>
+
               <Group justify="space-between" mb="md">
                 <Title order={4}>Dispatching des Étudiants</Title>
                 <Group>
@@ -304,7 +360,14 @@ function App() {
               <Grid h="calc(100% - 50px)">
                 <Grid.Col span={4} h="100%">
                   <Paper withBorder p="md" h="100%" bg="gray.0" style={{ display: 'flex', flexDirection: 'column' }}>
-                    <Title order={5} mb="md">LDAP ({ldapUsers.filter(lu => !assignedUsers.find(au => au.ldap_uid === lu.uid)).length})</Title>
+                    <Title order={5} mb="xs">Annuaire LDAP</Title>
+                    <TextInput 
+                      placeholder="Chercher (Nom, UID...)" 
+                      mb="md" 
+                      value={ldapSearchQuery} 
+                      onChange={(e) => setLdapSearchQuery(e.target.value)} 
+                      rightSection={ldapLoading ? <Center><Badge size="xs" variant="subtle">...</Badge></Center> : null}
+                    />
                     <Droppable droppableId="ldap-list" isDropDisabled={true}>
                       {(provided) => (
                         <ScrollArea h="100%" ref={provided.innerRef} {...provided.droppableProps}>
@@ -327,61 +390,78 @@ function App() {
                 </Grid.Col>
                 <Grid.Col span={8} h="100%">
                   <ScrollArea h="100%">
-                    <Grid>{localGroups.map(group => (
-                      <Grid.Col key={group.id} span={6}>
-                        <Droppable droppableId={`group-${group.id}`}>
-                          {(provided, snapshot) => (
-                            <Card withBorder ref={provided.innerRef} {...provided.droppableProps} bg={snapshot.isDraggingOver ? 'blue.0' : 'white'} style={{ minHeight: '150px' }}>
-                              <Card.Section withBorder inheritPadding py="xs" bg={`${YEAR_COLORS[group.year]}.1`}>
-                                <Group justify="space-between">
-                                  <Group gap="xs">
-                                    <Text fw={700} size="sm">{group.name}</Text>
-                                    <Badge color={YEAR_COLORS[group.year]} size="xs">BUT {group.year}</Badge>
-                                  </Group>
-                                  <Group gap={5}>
-                                    {group.name !== "Enseignants" && (
-                                      <>
-                                        <ActionIcon size="xs" variant="subtle" color="blue" onClick={() => {
-                                          setNewGroup(group);
-                                          setIsGroupModalOpen(true);
-                                        }}>
-                                          <IconPencil size={12} />
-                                        </ActionIcon>
-                                        <ActionIcon size="xs" variant="subtle" color="red" onClick={() => deleteGroup(group.id)}>
-                                          <IconTrash size={12} />
-                                        </ActionIcon>
-                                      </>
+                    <Accordion variant="separated">
+                      {localGroups.sort((a, b) => a.year - b.year || a.name.localeCompare(b.name)).map(group => (
+                        <Accordion.Item key={group.id} value={`group-${group.id}`} mb="xs">
+                          <Accordion.Control bg={`${YEAR_COLORS[group.year]}.0`}>
+                            <Group justify="space-between" pr="md">
+                              <Group gap="xs">
+                                <Text fw={700} size="sm">{group.name}</Text>
+                                <Badge color={YEAR_COLORS[group.year]} size="xs">BUT {group.year}</Badge>
+                                <Badge variant="outline" color="gray" size="xs">{group.formation_type}</Badge>
+                                <Text size="xs" c="dimmed">({assignedUsers.filter(u => u.group_id === group.id).length} étudiants)</Text>
+                              </Group>
+                              <Group gap={5} onClick={(e) => e.stopPropagation()}>
+                                {group.name !== "Enseignants" && (
+                                  <>
+                                    <ActionIcon size="xs" variant="subtle" color="blue" onClick={() => {
+                                      setNewGroup(group);
+                                      setIsGroupModalOpen(true);
+                                    }}>
+                                      <IconPencil size={12} />
+                                    </ActionIcon>
+                                    <ActionIcon size="xs" variant="subtle" color="red" onClick={() => deleteGroup(group.id)}>
+                                      <IconTrash size={12} />
+                                    </ActionIcon>
+                                  </>
+                                )}
+                              </Group>
+                            </Group>
+                          </Accordion.Control>
+                          <Accordion.Panel>
+                            <Droppable droppableId={`group-${group.id}`}>
+                              {(provided, snapshot) => (
+                                <div ref={provided.innerRef} {...provided.droppableProps} style={{ 
+                                  minHeight: '50px',
+                                  backgroundColor: snapshot.isDraggingOver ? 'var(--mantine-color-blue-0)' : 'transparent',
+                                  padding: '10px',
+                                  borderRadius: '8px'
+                                }}>
+                                  <Stack gap={4}>
+                                    {assignedUsers.filter(u => u.group_id === group.id).map((u, index) => (
+                                      <Draggable key={u.ldap_uid} draggableId={u.ldap_uid} index={index}>
+                                        {(provided) => (
+                                          <Paper withBorder p="xs" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} bg="white">
+                                            <Group justify="space-between">
+                                              <div>
+                                                <Text size="xs" fw={500}>{u.full_name}</Text>
+                                                <Text size="10px" c="dimmed">{u.email}</Text>
+                                              </div>
+                                              <Group gap={4}>
+                                                {group.name === "Enseignants" && (
+                                                  <ActionIcon size="xs" color="blue" variant="light" onClick={() => handleSetQuota(u.ldap_uid)} title="Augmenter Quota (100 Go)">
+                                                    <IconDatabase size={12} />
+                                                  </ActionIcon>
+                                                )}
+                                                <ActionIcon size="xs" color="red" variant="subtle" onClick={() => unassignUser(u.ldap_uid)}><IconTrash size={12} /></ActionIcon>
+                                              </Group>
+                                            </Group>
+                                          </Paper>
+                                        )}
+                                      </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                    {assignedUsers.filter(u => u.group_id === group.id).length === 0 && (
+                                      <Center p="xs"><Text size="xs" c="dimmed italic">Glissez des étudiants ici</Text></Center>
                                     )}
-                                  </Group>
-                                </Group>
-                              </Card.Section>
-                              <Stack gap={4} mt="xs">
-                                {assignedUsers.filter(u => u.group_id === group.id).map((u, index) => (
-                                  <Draggable key={u.ldap_uid} draggableId={u.ldap_uid} index={index}>
-                                    {(provided) => (
-                                      <Paper withBorder p="xs" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} bg="white">
-                                        <Group justify="space-between">
-                                          <Text size="xs">{u.full_name}</Text>
-                                          <Group gap={4}>
-                                            {group.name === "Enseignants" && (
-                                              <ActionIcon size="xs" color="blue" variant="light" onClick={() => handleSetQuota(u.ldap_uid)} title="Augmenter Quota (100 Go)">
-                                                <IconDatabase size={12} />
-                                              </ActionIcon>
-                                            )}
-                                            <ActionIcon size="xs" color="red" variant="subtle" onClick={() => unassignUser(u.ldap_uid)}><IconTrash size={12} /></ActionIcon>
-                                          </Group>
-                                        </Group>
-                                      </Paper>
-                                    )}
-                                  </Draggable>
-                                ))}
-                                {provided.placeholder}
-                              </Stack>
-                            </Card>
-                          )}
-                        </Droppable>
-                      </Grid.Col>
-                    ))}</Grid>
+                                  </Stack>
+                                </div>
+                              )}
+                            </Droppable>
+                          </Accordion.Panel>
+                        </Accordion.Item>
+                      ))}
+                    </Accordion>
                   </ScrollArea>
                 </Grid.Col>
               </Grid>

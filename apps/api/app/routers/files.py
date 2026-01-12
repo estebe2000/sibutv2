@@ -91,7 +91,13 @@ def get_referentiel():
     except: return {"parcours": ["Tronc Commun", "BDMRC", "MDEE", "MMPV", "SME", "BI"]}
 
 @router.post("/import/students")
-async def import_students(file: UploadFile = File(...), session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+async def import_students(
+    file: UploadFile = File(...), 
+    year: int = 1,
+    formation_type: str = "FI",
+    session: Session = Depends(get_session), 
+    current_user: str = Depends(get_current_user)
+):
     contents = await file.read()
     try:
         if file.filename.endswith('.csv'): df = pd.read_csv(io.BytesIO(contents))
@@ -101,28 +107,60 @@ async def import_students(file: UploadFile = File(...), session: Session = Depen
 
     df.columns = [c.lower().strip() for c in df.columns]
 
-    ldap_users = get_ldap_users()
+    from ..ldap_utils import get_ldap_user_by_filter
+    
     count = 0
     for _, row in df.iterrows():
-        email = str(row.get('mail', row.get('email', ''))).strip()
-        group_name = str(row.get('groupes', row.get('promotion', ''))).strip()
-        if not email or not group_name: continue
+        # Détection flexible des colonnes d'email
+        email1 = str(row.get('mail', row.get('email', ''))).strip().lower()
+        email2 = str(row.get('personnel', '')).strip().lower()
+        
+        # Détection flexible de la colonne de groupe, fallback sur 'Global' si non trouvé
+        group_label = str(row.get('groupes', 
+                          row.get('groupe', 
+                          row.get('promotion', 
+                          row.get('tronc commun', ''))))).strip()
+        
+        if group_label == 'nan' or not group_label:
+            group_label = "Global"
+        
+        if not email1 and not email2: continue
 
-        group = session.exec(select(Group).where(Group.name == group_name)).first()
+        # Formatage du nom du groupe (ex: Groupe 5 BUT1 FI ou Global BUT1 FI)
+        full_group_name = f"{group_label} BUT{year} {formation_type}"
+
+        group = session.exec(select(Group).where(Group.name == full_group_name)).first()
         if not group:
-            group = Group(name=group_name, year=1, pathway=str(row.get('parcours', 'Tronc Commun')))
+            group = Group(name=full_group_name, year=year, formation_type=formation_type, pathway="Tronc Commun")
             session.add(group); session.commit(); session.refresh(group)
 
-        ldap_match = next((u for u in ldap_users if u['email'].lower() == email.lower()), None)
-        if ldap_match:
-            existing = session.exec(select(User).where(User.ldap_uid == ldap_match['uid'])).first()
-            if existing:
-                existing.group_id = group.id
-                existing.role = UserRole.STUDENT
-                session.add(existing)
-            else:
-                session.add(User(ldap_uid=ldap_match['uid'], email=ldap_match['email'], full_name=ldap_match['full_name'], role=UserRole.STUDENT, group_id=group.id))
-            count += 1
+        # Recherche LDAP par email ou UID
+        ldap_match = get_ldap_user_by_filter(f'(|(mail={email1})(mail={email2}))')
+        if not ldap_match and email1:
+            ldap_match = get_ldap_user_by_filter(f'(uid={email1.split("@")[0]})')
 
-    session.commit()
+        if ldap_match:
+            try:
+                existing = session.exec(select(User).where(User.ldap_uid == ldap_match['uid'])).first()
+                if existing:
+                    existing.group_id = group.id
+                    existing.role = UserRole.STUDENT
+                    existing.email = ldap_match['email']
+                    existing.full_name = ldap_match['full_name']
+                    session.add(existing)
+                else:
+                    session.add(User(
+                        ldap_uid=ldap_match['uid'], 
+                        email=ldap_match['email'], 
+                        full_name=ldap_match['full_name'], 
+                        role=UserRole.STUDENT, 
+                        group_id=group.id
+                    ))
+                session.commit()
+                count += 1
+            except Exception as e:
+                print(f"Error importing student {ldap_match['uid']}: {e}")
+                session.rollback()
+                continue
+
     return {"status": "success", "imported": count}
