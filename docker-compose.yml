@@ -12,48 +12,16 @@ services:
       POSTGRES_DB: skills_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./backup_full_descriptions.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
       - app_network
 
   # ---------------------------------------------------------------------------
-  # Authentication (OpenLDAP) - Mocking University LDAP
+  # Authentication (LDAP officiel IUT)
+  # Le serveur LDAP est externe, plus besoin du conteneur local 'ldap'
   # ---------------------------------------------------------------------------
-  ldap:
-    image: osixia/openldap:latest
-    container_name: but-tc-ldap
-    restart: unless-stopped
-    ports:
-      - '389:389'
-      - '636:636'
-    environment:
-      - LDAP_ADMIN_PASSWORD=Rangetachambre76*
-      - LDAP_DOMAIN=univ-lehavre.fr
-      - LDAP_ORGANISATION=Universite du Havre
-      - LDAP_BASE_DN=dc=univ-lehavre,dc=fr
-    volumes:
-      - ldap_data:/var/lib/ldap
-      - ldap_config:/etc/ldap/slapd.d
-    networks:
-      - app_network
-
-  # ---------------------------------------------------------------------------
-  # LDAP Admin (phpLDAPadmin) - Visual Interface for LDAP
-  # ---------------------------------------------------------------------------
-  phpldapadmin:
-    image: osixia/phpldapadmin:latest
-    container_name: but_tc_ldap_admin
-    restart: unless-stopped
-    ports:
-      - '8081:80'
-    environment:
-      - PHPLDAPADMIN_LDAP_HOSTS=ldap
-      - PHPLDAPADMIN_HTTPS=false
-    depends_on:
-      - ldap
-    networks:
-      - app_network
 
   # ---------------------------------------------------------------------------
   # File Storage (Nextcloud) - Mocking IUT Nextcloud
@@ -157,7 +125,7 @@ services:
     image: quay.io/keycloak/keycloak:latest
     container_name: but_tc_keycloak
     restart: unless-stopped
-    command: start-dev --hostname-strict=false
+    command: start-dev --hostname-strict=false --import-realm
     environment:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://db_keycloak:5432/keycloak
@@ -167,7 +135,10 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=Rangetachambre76*
       - KC_HOSTNAME=keycloak.educ-ai.fr
       - KC_HOSTNAME_STRICT=false
+      - KC_HTTP_RELATIVE_PATH=/
       - KC_PROXY=edge
+    volumes:
+      - ./infrastructure/keycloak/import:/opt/keycloak/data/import
     depends_on:
       - db_keycloak
     ports:
@@ -212,10 +183,10 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://app_user:app_password@db:5432/skills_db
-      - LDAP_URL=ldap://but-tc-ldap:389
+      - LDAP_URL=ldap://ldap.univ-lehavre.fr:389
       - LDAP_BASE_DN=dc=univ-lehavre,dc=fr
-      - LDAP_BIND_DN=cn=admin,dc=univ-lehavre,dc=fr
-      - LDAP_BIND_PASSWORD=Rangetachambre76*
+      - LDAP_BIND_DN=cn=ldapbindusr-caucri2,ou=DSA,dc=univ-lehavre,dc=fr
+      - LDAP_BIND_PASSWORD=Fctldap-8%caucri2_30688
       - NEXTCLOUD_URL=http://projet-edu.eu:8082
       - NEXTCLOUD_ADMIN=admin
       - NEXTCLOUD_PASS=Rangetachambre76*
