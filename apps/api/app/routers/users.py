@@ -4,23 +4,27 @@ from typing import List
 from ..database import get_session
 from ..models import Group, User, UserRole
 from ..ldap_utils import get_ldap_users
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_staff
 import os
 
 router = APIRouter(tags=["Users"])
 
+@router.get("/users/me")
+def get_me(current_user: any = Depends(get_current_user)):
+    return current_user
+
 # --- GROUPS ---
 @router.get("/groups", response_model=List[Group])
-def list_groups(session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+def list_groups(session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     return session.exec(select(Group)).all()
 
 @router.post("/groups", response_model=Group)
-def create_group(group: Group, session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+def create_group(group: Group, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     session.add(group); session.commit(); session.refresh(group)
     return group
 
 @router.patch("/groups/{group_id}", response_model=Group)
-def update_group(group_id: int, group_data: Group, session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+def update_group(group_id: int, group_data: Group, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     group = session.get(Group, group_id)
     if not group: raise HTTPException(status_code=404, detail="Group not found")
     group_data_dict = group_data.model_dump(exclude_unset=True)
@@ -30,7 +34,7 @@ def update_group(group_id: int, group_data: Group, session: Session = Depends(ge
     return group
 
 @router.delete("/groups/{group_id}")
-def delete_group(group_id: int, session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+def delete_group(group_id: int, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     group = session.get(Group, group_id)
     if not group: raise HTTPException(status_code=404, detail="Group not found")
     users = session.exec(select(User).where(User.group_id == group_id)).all()
@@ -43,15 +47,21 @@ def delete_group(group_id: int, session: Session = Depends(get_session), current
 
 # --- USERS & DISPATCHING ---
 @router.get("/ldap-users")
-def list_ldap_raw(current_user: str = Depends(get_current_user)):
+def list_ldap_raw(current_user: any = Depends(require_staff)):
     return get_ldap_users()
 
+@router.get("/ldap-users/search")
+def search_ldap(q: str, current_user: any = Depends(require_staff)):
+    from ..ldap_utils import search_ldap_users
+    if len(q) < 3: return [] # On évite les recherches trop larges
+    return search_ldap_users(q)
+
 @router.get("/users", response_model=List[User])
-def list_assigned_users(session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+def list_assigned_users(session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     return session.exec(select(User)).all()
 
 @router.post("/users/assign")
-def assign_user(user_data: User, session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+def assign_user(user_data: User, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     existing = session.exec(select(User).where(User.ldap_uid == user_data.ldap_uid)).first()
     group = session.get(Group, user_data.group_id) if user_data.group_id else None
     role = user_data.role
@@ -67,7 +77,7 @@ def assign_user(user_data: User, session: Session = Depends(get_session), curren
     return {"status": "success"}
 
 @router.post("/users/unassign")
-def unassign_user(ldap_uid: str, session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+def unassign_user(ldap_uid: str, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     user = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
     if user:
         user.group_id = None
@@ -77,7 +87,7 @@ def unassign_user(ldap_uid: str, session: Session = Depends(get_session), curren
     raise HTTPException(status_code=404, detail="User not found")
 
 @router.post("/users/{ldap_uid}/quota")
-def set_user_quota(ldap_uid: str, quota: str = "100 GB", session: Session = Depends(get_session), current_user: str = Depends(get_current_user)):
+def set_user_quota(ldap_uid: str, quota: str = "100 GB", session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     import requests
     from requests.auth import HTTPBasicAuth
 
@@ -90,7 +100,8 @@ def set_user_quota(ldap_uid: str, quota: str = "100 GB", session: Session = Depe
     data = {"key": "quota", "value": quota}
 
     try:
-        response = requests.put(url, data=data, headers=headers, auth=HTTPBasicAuth(nc_admin, nc_pass))
+        # Disable SSL verify for internal communication via public domain
+        response = requests.put(url, data=data, headers=headers, auth=HTTPBasicAuth(nc_admin, nc_pass), verify=False)
         if response.status_code == 200:
             return {"status": "success"}
         else:
