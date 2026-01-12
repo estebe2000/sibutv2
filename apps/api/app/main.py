@@ -4,6 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, select
 import os
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from .database import create_db_and_tables, engine
 from .models import Group
