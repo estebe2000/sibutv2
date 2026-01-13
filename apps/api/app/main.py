@@ -10,7 +10,7 @@ load_dotenv()
 
 from .database import create_db_and_tables, engine
 from .models import Group
-from .routers import auth, users, curriculum, config, files
+from .routers import auth, users, curriculum, config, files, keycloak_admin
 
 app = FastAPI(title="BUT TC Skills Hub API", root_path=os.getenv("ROOT_PATH", ""))
 
@@ -41,6 +41,7 @@ app.include_router(users.router)
 app.include_router(curriculum.router)
 app.include_router(config.router)
 app.include_router(files.router)
+app.include_router(keycloak_admin.router)
 
 @app.get("/")
 def read_root():

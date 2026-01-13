@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict kzvtkbrhyZiW1cEX0LehUFpvD0BWtJKTBtKQf6O508g8ZcWHsvKt4as1fbOu7uk
+\restrict vzwQdUqViNPb8XQwrvgTelkBIszvtox6ygNmBLbPQ6f0lcwjpP5yMUaNMk2DvwJ
 
 -- Dumped from database version 15.15
 -- Dumped by pg_dump version 15.15
@@ -18,61 +18,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-ALTER TABLE IF EXISTS ONLY public."user" DROP CONSTRAINT IF EXISTS user_group_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.resourceaclink DROP CONSTRAINT IF EXISTS resourceaclink_resource_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.resourceaclink DROP CONSTRAINT IF EXISTS resourceaclink_ac_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.learningoutcome DROP CONSTRAINT IF EXISTS learningoutcome_competency_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.essentialcomponent DROP CONSTRAINT IF EXISTS essentialcomponent_competency_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.activitycelink DROP CONSTRAINT IF EXISTS activitycelink_ce_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.activitycelink DROP CONSTRAINT IF EXISTS activitycelink_activity_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.activityaclink DROP CONSTRAINT IF EXISTS activityaclink_activity_id_fkey;
-ALTER TABLE IF EXISTS ONLY public.activityaclink DROP CONSTRAINT IF EXISTS activityaclink_ac_id_fkey;
-DROP INDEX IF EXISTS public.ix_user_ldap_uid;
-DROP INDEX IF EXISTS public.ix_systemconfig_key;
-DROP INDEX IF EXISTS public.ix_resource_code;
-DROP INDEX IF EXISTS public.ix_group_name;
-DROP INDEX IF EXISTS public.ix_competency_code;
-DROP INDEX IF EXISTS public.ix_activity_code;
-ALTER TABLE IF EXISTS ONLY public."user" DROP CONSTRAINT IF EXISTS user_pkey;
-ALTER TABLE IF EXISTS ONLY public.systemconfig DROP CONSTRAINT IF EXISTS systemconfig_pkey;
-ALTER TABLE IF EXISTS ONLY public.resourceaclink DROP CONSTRAINT IF EXISTS resourceaclink_pkey;
-ALTER TABLE IF EXISTS ONLY public.resource DROP CONSTRAINT IF EXISTS resource_pkey;
-ALTER TABLE IF EXISTS ONLY public.learningoutcome DROP CONSTRAINT IF EXISTS learningoutcome_pkey;
-ALTER TABLE IF EXISTS ONLY public."group" DROP CONSTRAINT IF EXISTS group_pkey;
-ALTER TABLE IF EXISTS ONLY public.essentialcomponent DROP CONSTRAINT IF EXISTS essentialcomponent_pkey;
-ALTER TABLE IF EXISTS ONLY public.competency DROP CONSTRAINT IF EXISTS competency_pkey;
-ALTER TABLE IF EXISTS ONLY public.activitycelink DROP CONSTRAINT IF EXISTS activitycelink_pkey;
-ALTER TABLE IF EXISTS ONLY public.activityaclink DROP CONSTRAINT IF EXISTS activityaclink_pkey;
-ALTER TABLE IF EXISTS ONLY public.activity DROP CONSTRAINT IF EXISTS activity_pkey;
-ALTER TABLE IF EXISTS public."user" ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE IF EXISTS public.systemconfig ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE IF EXISTS public.resource ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE IF EXISTS public.learningoutcome ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE IF EXISTS public."group" ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE IF EXISTS public.essentialcomponent ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE IF EXISTS public.competency ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE IF EXISTS public.activity ALTER COLUMN id DROP DEFAULT;
-DROP SEQUENCE IF EXISTS public.user_id_seq;
-DROP TABLE IF EXISTS public."user";
-DROP SEQUENCE IF EXISTS public.systemconfig_id_seq;
-DROP TABLE IF EXISTS public.systemconfig;
-DROP TABLE IF EXISTS public.resourceaclink;
-DROP SEQUENCE IF EXISTS public.resource_id_seq;
-DROP TABLE IF EXISTS public.resource;
-DROP SEQUENCE IF EXISTS public.learningoutcome_id_seq;
-DROP TABLE IF EXISTS public.learningoutcome;
-DROP SEQUENCE IF EXISTS public.group_id_seq;
-DROP TABLE IF EXISTS public."group";
-DROP SEQUENCE IF EXISTS public.essentialcomponent_id_seq;
-DROP TABLE IF EXISTS public.essentialcomponent;
-DROP SEQUENCE IF EXISTS public.competency_id_seq;
-DROP TABLE IF EXISTS public.competency;
-DROP TABLE IF EXISTS public.activitycelink;
-DROP TABLE IF EXISTS public.activityaclink;
-DROP SEQUENCE IF EXISTS public.activity_id_seq;
-DROP TABLE IF EXISTS public.activity;
-DROP TYPE IF EXISTS public.userrole;
-DROP TYPE IF EXISTS public.activitytype;
 --
 -- Name: activitytype; Type: TYPE; Schema: public; Owner: app_user
 --
@@ -1199,13 +1144,27 @@ COPY public.essentialcomponent (id, code, label, level, pathway, competency_id) 
 
 COPY public."group" (id, name, year, pathway, formation_type, academic_year) FROM stdin;
 1	Enseignants	0	Staff	N/A	2025-2026
-3	Groupe 5	1	Tronc Commun	FI	2025-2026
-4	Groupe 3	1	Tronc Commun	FI	2025-2026
-5	Groupe 2	1	Tronc Commun	FI	2025-2026
-6	Groupe 1	1	Tronc Commun	FI	2025-2026
-7	Groupe 4	1	Tronc Commun	FI	2025-2026
-8	Démission	1	Tronc Commun	FI	2025-2026
-9	nan	1	Tronc Commun	FI	2025-2026
+59	Groupe 5 BUT1 FI	1	Tronc Commun	FI	2025-2026
+60	Groupe 3 BUT1 FI	1	Tronc Commun	FI	2025-2026
+61	Groupe 2 BUT1 FI	1	Tronc Commun	FI	2025-2026
+62	Groupe 1 BUT1 FI	1	Tronc Commun	FI	2025-2026
+63	Groupe 4 BUT1 FI	1	Tronc Commun	FI	2025-2026
+64	Démission BUT1 FI	1	Tronc Commun	FI	2025-2026
+65	nan BUT1 FI	1	Tronc Commun	FI	2025-2026
+66	Groupe 2 BUT3 FI	3	Tronc Commun	FI	2025-2026
+67	Groupe 3 BUT3 FI	3	Tronc Commun	FI	2025-2026
+68	Groupe 1 BUT3 FI	3	Tronc Commun	FI	2025-2026
+69	Gr. étrangers BUT3 FI	3	Tronc Commun	FI	2025-2026
+70	nan BUT3 FI	3	Tronc Commun	FI	2025-2026
+71	groupe 1 BUT2 FI	2	Tronc Commun	FI	2025-2026
+72	groupe 2 BUT2 FI	2	Tronc Commun	FI	2025-2026
+73	groupe 3 BUT2 FI	2	Tronc Commun	FI	2025-2026
+74	Gr Etranger BUT2 FI	2	Tronc Commun	FI	2025-2026
+75	nan BUT2 FI	2	Tronc Commun	FI	2025-2026
+76	Global BUT2 FA	2	Tronc Commun	FA	2025-2026
+77	Global BUT3 FA	3	Tronc Commun	FA	2025-2026
+78	Groupe 1 BUT3 FA	3	Tronc Commun	FA	2025-2026
+79	Groupe 2 BUT3 FA	3	Tronc Commun	FA	2025-2026
 \.
 
 
@@ -2870,48 +2829,365 @@ COPY public.systemconfig (id, key, value, category) FROM stdin;
 --
 
 COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
-1	emma.dupont78	emma.dupont78@etu.univ.fr	Emma DUPONT	STUDENT	3
-2	marie.moreau93	marie.moreau93@etu.univ.fr	Marie MOREAU	STUDENT	3
-3	nicolas.dupont87	nicolas.dupont87@etu.univ.fr	Nicolas DUPONT	STUDENT	3
-4	emma.martin16	emma.martin16@etu.univ.fr	Emma MARTIN	STUDENT	3
-5	jean.roux79	jean.roux79@etu.univ.fr	Jean ROUX	STUDENT	3
-6	sophie.petit89	sophie.petit89@etu.univ.fr	Sophie PETIT	STUDENT	4
-7	nicolas.martin13	nicolas.martin13@etu.univ.fr	Nicolas MARTIN	STUDENT	4
-8	nicolas.lefebvre43	nicolas.lefebvre43@etu.univ.fr	Nicolas LEFEBVRE	STUDENT	4
-9	emma.roux34	emma.roux34@etu.univ.fr	Emma ROUX	STUDENT	4
-10	julie.durand50	julie.durand50@etu.univ.fr	Julie DURAND	STUDENT	4
-11	marie.simon14	marie.simon14@etu.univ.fr	Marie SIMON	STUDENT	5
-12	jean.dupont98	jean.dupont98@etu.univ.fr	Jean DUPONT	STUDENT	5
-13	emma.petit57	emma.petit57@etu.univ.fr	Emma PETIT	STUDENT	5
-14	antoine.dupont29	antoine.dupont29@etu.univ.fr	Antoine DUPONT	STUDENT	5
-15	sophie.simon48	sophie.simon48@etu.univ.fr	Sophie SIMON	STUDENT	6
-16	marie.leroy81	marie.leroy81@etu.univ.fr	Marie LEROY	STUDENT	6
-17	pierre.durand11	pierre.durand11@etu.univ.fr	Pierre DURAND	STUDENT	6
-18	marie.simon28	marie.simon28@etu.univ.fr	Marie SIMON	STUDENT	6
-19	antoine.durand10	antoine.durand10@etu.univ.fr	Antoine DURAND	STUDENT	6
-20	nicolas.garcia31	nicolas.garcia31@etu.univ.fr	Nicolas GARCIA	STUDENT	7
-21	marie.garcia70	marie.garcia70@etu.univ.fr	Marie GARCIA	STUDENT	7
-22	julie.dupont12	julie.dupont12@etu.univ.fr	Julie DUPONT	STUDENT	7
-23	jean.dupont30	jean.dupont30@etu.univ.fr	Jean DUPONT	STUDENT	7
-24	antoine.dupont82	antoine.dupont82@etu.univ.fr	Antoine DUPONT	STUDENT	7
-25	nicolas.simon43	nicolas.simon43@etu.univ.fr	Nicolas SIMON	STUDENT	8
-26	lucas.martin68	lucas.martin68@etu.univ.fr	Lucas MARTIN	STUDENT	8
-27	emma.roux10	emma.roux10@etu.univ.fr	Emma ROUX	STUDENT	8
-28	sophie.lefebvre61	sophie.lefebvre61@etu.univ.fr	Sophie LEFEBVRE	STUDENT	8
-29	pierre.lefebvre22	pierre.lefebvre22@etu.univ.fr	Pierre LEFEBVRE	STUDENT	8
-30	julie.lefebvre86	julie.lefebvre86@etu.univ.fr	Julie LEFEBVRE	STUDENT	8
-31	sophie.lefebvre55	sophie.lefebvre55@etu.univ.fr	Sophie LEFEBVRE	STUDENT	9
-32	thomas.moreau97	thomas.moreau97@etu.univ.fr	Thomas MOREAU	STUDENT	9
-33	marie.petit63	marie.petit63@etu.univ.fr	Marie PETIT	STUDENT	9
-34	emma.garcia95	emma.garcia95@etu.univ.fr	Emma GARCIA	STUDENT	9
-35	jean.dupont60	jean.dupont60@etu.univ.fr	Jean DUPONT	STUDENT	9
-36	prof.1	prof.1@univ-lehavre.fr	Prof1 PROFESSEUR1	PROFESSOR	1
-37	prof.2	prof.2@univ-lehavre.fr	Prof2 PROFESSEUR2	PROFESSOR	1
-38	prof.3	prof.3@univ-lehavre.fr	Prof3 PROFESSEUR3	PROFESSOR	1
-39	prof.4	prof.4@univ-lehavre.fr	Prof4 PROFESSEUR4	PROFESSOR	1
-40	prof.5	prof.5@univ-lehavre.fr	Prof5 PROFESSEUR5	PROFESSOR	1
-41	prof.6	prof.6@univ-lehavre.fr	Prof6 PROFESSEUR6	PROFESSOR	1
-42	prof.7	prof.7@univ-lehavre.fr	Prof7 PROFESSEUR7	PROFESSOR	1
+1	emma.dupont78	emma.dupont78@etu.univ.fr	Emma DUPONT	GUEST	\N
+2	marie.moreau93	marie.moreau93@etu.univ.fr	Marie MOREAU	GUEST	\N
+3	nicolas.dupont87	nicolas.dupont87@etu.univ.fr	Nicolas DUPONT	GUEST	\N
+18	marie.simon28	marie.simon28@etu.univ.fr	Marie SIMON	GUEST	\N
+50	bl251857	lucie.ba@etu.univ-lehavre.fr	Lucie Ba	STUDENT	62
+51	bf252370	feinda.bakhayokho@etu.univ-lehavre.fr	Feinda Bakhayokho	STUDENT	62
+54	bj250155	jalil.bel-imam--letellier@etu.univ-lehavre.fr	Jalil Bel imam--letellier	STUDENT	63
+210	gt231116	thomas.godard@etu.univ-lehavre.fr	Thomas Godard	STUDENT	69
+53	bc252577	clemence.beauchamps--jeanne@etu.univ-lehavre.fr	Clemence Beauchamps--jeanne	STUDENT	64
+55	bl252505	lehna.benslimane@etu.univ-lehavre.fr	Lehna Benslimane	STUDENT	63
+44	ar251429	riad.aissaoui@etu.univ-lehavre.fr	Riad Aissaoui	STUDENT	60
+60	bn250395	nathan-david.bothorel@etu.univ-lehavre.fr	Nathan-david Bothorel	STUDENT	61
+47	an241357	nellyna.audal--frovil@etu.univ-lehavre.fr	Nellyna Audal--frovil	STUDENT	61
+48	al252868	lalie.audouard@etu.univ-lehavre.fr	Lalie Audouard	STUDENT	61
+211	gr232671	raphaelle.grieu@etu.univ-lehavre.fr	Raphaelle Grieu	STUDENT	68
+52	bk252733	kadiatou.balde@etu.univ-lehavre.fr	Kadiatou Balde	STUDENT	63
+215	ky220837	yah.kouame-schmidt@etu.univ-lehavre.fr	Yah Kouame-schmidt	STUDENT	68
+220	ll232815	lena.lefevre@etu.univ-lehavre.fr	Lena Lefevre	STUDENT	68
+56	bi250967	iliana.bensmaine@etu.univ-lehavre.fr	Iliana Bensmaine	STUDENT	63
+242	ao242575	olasubomi.adeniyi@etu.univ-lehavre.fr	Olasubomi Adeniyi	STUDENT	71
+49	ad251637	dorine.avenel@etu.univ-lehavre.fr	Dorine Avenel	STUDENT	62
+57	br250653	rossana.bettencourt-da-silva-carvalho@etu.univ-lehavre.fr	Rossana Bettencourt da silva carvalho	STUDENT	60
+58	bn252938	noe.bloino@etu.univ-lehavre.fr	Noe Bloino	STUDENT	63
+61	bj252564	joris.bouchez@etu.univ-lehavre.fr	Joris Bouchez	STUDENT	63
+59	bm250979	mila.bonnet@etu.univ-lehavre.fr	Mila Bonnet	STUDENT	64
+199	ca211054	antonin.chapelle@etu.univ-lehavre.fr	Antonin Chapelle	STUDENT	66
+203	dl230848	leo.delozier@etu.univ-lehavre.fr	Leo Delozier	STUDENT	66
+204	dj231904	justine.deschamps@etu.univ-lehavre.fr	Justine Deschamps	STUDENT	66
+4	emma.martin16	emma.martin16@etu.univ.fr	Emma MARTIN	GUEST	\N
+5	jean.roux79	jean.roux79@etu.univ.fr	Jean ROUX	GUEST	\N
+6	sophie.petit89	sophie.petit89@etu.univ.fr	Sophie PETIT	GUEST	\N
+7	nicolas.martin13	nicolas.martin13@etu.univ.fr	Nicolas MARTIN	GUEST	\N
+8	nicolas.lefebvre43	nicolas.lefebvre43@etu.univ.fr	Nicolas LEFEBVRE	GUEST	\N
+9	emma.roux34	emma.roux34@etu.univ.fr	Emma ROUX	GUEST	\N
+10	julie.durand50	julie.durand50@etu.univ.fr	Julie DURAND	GUEST	\N
+11	marie.simon14	marie.simon14@etu.univ.fr	Marie SIMON	GUEST	\N
+12	jean.dupont98	jean.dupont98@etu.univ.fr	Jean DUPONT	GUEST	\N
+13	emma.petit57	emma.petit57@etu.univ.fr	Emma PETIT	GUEST	\N
+14	antoine.dupont29	antoine.dupont29@etu.univ.fr	Antoine DUPONT	GUEST	\N
+20	nicolas.garcia31	nicolas.garcia31@etu.univ.fr	Nicolas GARCIA	GUEST	\N
+21	marie.garcia70	marie.garcia70@etu.univ.fr	Marie GARCIA	GUEST	\N
+22	julie.dupont12	julie.dupont12@etu.univ.fr	Julie DUPONT	GUEST	\N
+23	jean.dupont30	jean.dupont30@etu.univ.fr	Jean DUPONT	GUEST	\N
+24	antoine.dupont82	antoine.dupont82@etu.univ.fr	Antoine DUPONT	GUEST	\N
+25	nicolas.simon43	nicolas.simon43@etu.univ.fr	Nicolas SIMON	GUEST	\N
+26	lucas.martin68	lucas.martin68@etu.univ.fr	Lucas MARTIN	GUEST	\N
+27	emma.roux10	emma.roux10@etu.univ.fr	Emma ROUX	GUEST	\N
+28	sophie.lefebvre61	sophie.lefebvre61@etu.univ.fr	Sophie LEFEBVRE	GUEST	\N
+29	pierre.lefebvre22	pierre.lefebvre22@etu.univ.fr	Pierre LEFEBVRE	GUEST	\N
+30	julie.lefebvre86	julie.lefebvre86@etu.univ.fr	Julie LEFEBVRE	GUEST	\N
+31	sophie.lefebvre55	sophie.lefebvre55@etu.univ.fr	Sophie LEFEBVRE	GUEST	\N
+32	thomas.moreau97	thomas.moreau97@etu.univ.fr	Thomas MOREAU	GUEST	\N
+33	marie.petit63	marie.petit63@etu.univ.fr	Marie PETIT	GUEST	\N
+34	emma.garcia95	emma.garcia95@etu.univ.fr	Emma GARCIA	GUEST	\N
+35	jean.dupont60	jean.dupont60@etu.univ.fr	Jean DUPONT	GUEST	\N
+15	sophie.simon48	sophie.simon48@etu.univ.fr	Sophie SIMON	GUEST	\N
+16	marie.leroy81	marie.leroy81@etu.univ.fr	Marie LEROY	GUEST	\N
+17	pierre.durand11	pierre.durand11@etu.univ.fr	Pierre DURAND	GUEST	\N
+19	antoine.durand10	antoine.durand10@etu.univ.fr	Antoine DURAND	GUEST	\N
+209	gg253671	godwin-alphonse.gninevi@etu.univ-lehavre.fr	Godwin alphonse Gninevi	STUDENT	67
+212	jj231322	janelle.jacq-bonnechere@etu.univ-lehavre.fr	Janelle Jacq--bonnechere	STUDENT	68
+213	kc231261	camelia.kadi@etu.univ-lehavre.fr	Camelia Kadi	STUDENT	68
+214	kr231780	romane.kiehl@etu.univ-lehavre.fr	Romane Kiehl	STUDENT	69
+217	lq231372	quentin.landemaine@etu.univ-lehavre.fr	Quentin Landemaine	STUDENT	69
+221	lj230616	jade.lehodey@etu.univ-lehavre.fr	Jade Lehodey	STUDENT	69
+245	an240751	nathan.annest-dur@etu.univ-lehavre.fr	Nathan Annest-dur	STUDENT	73
+250	bv241118	valere.beauvais@etu.univ-lehavre.fr	Valere Beauvais	STUDENT	71
+254	bm242285	marius.bride@etu.univ-lehavre.fr	Marius Bride	STUDENT	74
+259	cq242200	quentin.chaumont@etu.univ-lehavre.fr	Quentin Chaumont	STUDENT	73
+264	ci240770	ines.crespin@etu.univ-lehavre.fr	Ines Crespin	STUDENT	73
+269	dl241212	lola.ducastel@etu.univ-lehavre.fr	Lola Ducastel	STUDENT	73
+36	prof.1	prof.1@univ-lehavre.fr	Prof1 PROFESSEUR1	GUEST	\N
+37	prof.2	prof.2@univ-lehavre.fr	Prof2 PROFESSEUR2	GUEST	\N
+38	prof.3	prof.3@univ-lehavre.fr	Prof3 PROFESSEUR3	GUEST	\N
+39	prof.4	prof.4@univ-lehavre.fr	Prof4 PROFESSEUR4	GUEST	\N
+40	prof.5	prof.5@univ-lehavre.fr	Prof5 PROFESSEUR5	GUEST	\N
+41	prof.6	prof.6@univ-lehavre.fr	Prof6 PROFESSEUR6	GUEST	\N
+42	prof.7	prof.7@univ-lehavre.fr	Prof7 PROFESSEUR7	GUEST	\N
+227	mh230864	hubercia.massamba@etu.univ-lehavre.fr	Hubercia Massamba	STUDENT	67
+228	mk220329	kamelia.mouaoued@etu.univ-lehavre.fr	Kamelia Mouaoued	STUDENT	66
+229	oc243330	christianne.ogoe@etu.univ-lehavre.fr	Christianne Ogoe	STUDENT	66
+230	ov233784	viktoriia.ohirko@etu.univ-lehavre.fr	Viktoriia Ohirko	STUDENT	66
+231	ps231658	selena.peter@etu.univ-lehavre.fr	Selena Peter	STUDENT	66
+301	ms232231	sanaa.mekkaoui@etu.univ-lehavre.fr	Sanaa Mekkaoui	STUDENT	73
+232	pa230715	achille.plaisant@etu.univ-lehavre.fr	Achille Plaisant	STUDENT	66
+233	sl233501	laura.salmi@etu.univ-lehavre.fr	Laura Salmi	STUDENT	66
+234	sa230921	aida.seye@etu.univ-lehavre.fr	Aida Seye	STUDENT	68
+304	ma242522	aurelien.monnier@etu.univ-lehavre.fr	Aurelien Monnier	STUDENT	71
+235	sj231750	justine.sigogne@etu.univ-lehavre.fr	Justine Sigogne	STUDENT	69
+236	sl232993	lalya.susunaga@etu.univ-lehavre.fr	Lalya Susunaga	STUDENT	70
+237	ta231912	alice.teissere@etu.univ-lehavre.fr	Alice Teissere	STUDENT	69
+238	ts231183	selen.topcu@etu.univ-lehavre.fr	Selen Topcu	STUDENT	68
+239	vo224060	oleksandr.vusatyi@etu.univ-lehavre.fr	Oleksandr Vusatyi	STUDENT	66
+306	nc240702	chaima.naamane@etu.univ-lehavre.fr	Chaima Naamane	STUDENT	72
+309	pm242800	matheo.planoudis@etu.univ-lehavre.fr	Matheo Planoudis	STUDENT	73
+311	qi241652	ines.quesada@etu.univ-lehavre.fr	Ines Quesada	STUDENT	72
+314	se241209	elif.sagir@etu.univ-lehavre.fr	Elif Sagir	STUDENT	73
+316	sc242837	carla.signour@etu.univ-lehavre.fr	Carla Signour	STUDENT	72
+319	va222409	apolline.vergneault@etu.univ-lehavre.fr	Apolline Vergneault	STUDENT	74
+240	zc211044	chaima.zeggai@etu.univ-lehavre.fr	Chaima Zeggai	STUDENT	66
+321	wg241458	garance.wawrzyniak@etu.univ-lehavre.fr	Garance Wawrzyniak	STUDENT	74
+325	dl231710	lea.dechamps@etu.univ-lehavre.fr	Lea Dechamps	STUDENT	76
+328	le241962	eve-lenig.le-mouel@etu.univ-lehavre.fr	Eve-lenig Le mouel	STUDENT	76
+62	ba252385	anouk.breton@etu.univ-lehavre.fr	Anouk Breton	STUDENT	63
+241	zs231744	sara.zermane@etu.univ-lehavre.fr	Sara Zermane	STUDENT	66
+243	aj240990	jade-mahite.alves@etu.univ-lehavre.fr	Jade - mahite Alves	STUDENT	72
+63	bg251631	gabriel.bunel@etu.univ-lehavre.fr	Gabriel Bunel	STUDENT	60
+66	ck250680	kahina.chabbi@etu.univ-lehavre.fr	Kahina Chabbi	STUDENT	64
+330	rl241373	lilou.rioult@etu.univ-lehavre.fr	Lilou Rioult	STUDENT	76
+333	an231349	naim.asselin@etu.univ-lehavre.fr	Naim Asselin	STUDENT	77
+67	cm252766	marwane.chanaoui@etu.univ-lehavre.fr	Marwane Chanaoui	STUDENT	60
+247	ak253272	kossi-mawuto-guy.azonhouto@etu.univ-lehavre.fr	Kossi mawuto guy Azonhouto	STUDENT	72
+68	cs252698	selim.chati@etu.univ-lehavre.fr	Selim Chati	STUDENT	59
+70	ca250685	alizarine.cherriere@etu.univ-lehavre.fr	Alizarine Cherriere	STUDENT	59
+71	ce251389	esra.chtioui@etu.univ-lehavre.fr	Esra Chtioui	STUDENT	62
+72	cs250840	sarta.cissoko@etu.univ-lehavre.fr	Sarta Cissoko	STUDENT	61
+256	cl240415	lea.calais@etu.univ-lehavre.fr	Lea Calais	STUDENT	73
+74	cm242178	mathys.couture@etu.univ-lehavre.fr	Mathys Couture	STUDENT	63
+75	dd252233	davina.dassi-momo@etu.univ-lehavre.fr	Davina Dassi momo	STUDENT	63
+336	dy230579	yasmine.drici@etu.univ-lehavre.fr	Yasmine Drici	STUDENT	78
+337	ej231718	jade.esnault@etu.univ-lehavre.fr	Jade Esnault	STUDENT	77
+261	cl242750	lilou.coquin@etu.univ-lehavre.fr	Lilou Coquin	STUDENT	73
+266	dl241089	lisa.della-casa@etu.univ-lehavre.fr	Lisa Della casa	STUDENT	74
+271	es240531	shaima.el-bazze@etu.univ-lehavre.fr	Shaima El bazze	STUDENT	72
+76	de252748	elouan.de-kerliviou@etu.univ-lehavre.fr	Elouan De kerliviou	STUDENT	64
+274	gc241716	carla.garnier@etu.univ-lehavre.fr	Carla Garnier	STUDENT	72
+77	da252730	aissata.deh1@etu.univ-lehavre.fr	Aissata Deh	STUDENT	60
+276	hj242566	jade.haugomat@etu.univ-lehavre.fr	Jade Haugomat	STUDENT	74
+279	js242223	salome.jassak@etu.univ-lehavre.fr	Salome Jassak	STUDENT	72
+281	ka240442	alisya.kilic@etu.univ-lehavre.fr	Alisya Kilic	STUDENT	73
+284	lg240913	garance.langlois@etu.univ-lehavre.fr	Garance Langlois	STUDENT	71
+286	lz241599	zoe.le-moal@etu.univ-lehavre.fr	Zoe Le moal	STUDENT	73
+289	lm241655	matheo.lefebvre@etu.univ-lehavre.fr	Matheo Lefebvre	STUDENT	72
+291	ld242109	diego.leite-goncalves@etu.univ-lehavre.fr	Diego Leite gonçalves	STUDENT	72
+294	lf242599	faustine.letellier@etu.univ-lehavre.fr	Faustine Letellier	STUDENT	72
+78	df241325	frederique.dehais@etu.univ-lehavre.fr	Frederique Dehais	STUDENT	61
+79	dm252979	mansour-yatou.demba@etu.univ-lehavre.fr	Mansour-yatou Demba	STUDENT	60
+81	da250807	allyna.deschamps@etu.univ-lehavre.fr	Allyna Deschamps	STUDENT	63
+82	dl250475	luka.desweemer@etu.univ-lehavre.fr	Luka Desweemer	STUDENT	61
+187	as230483	sarah.aubourg@etu.univ-lehavre.fr	Sarah Aubourg	STUDENT	66
+216	ky233536	yuliia.kravchuk@etu.univ-lehavre.fr	Yuliia Kravchuk	STUDENT	66
+222	ls231884	simon.lemesle@etu.univ-lehavre.fr	Simon Lemesle	STUDENT	66
+223	li231682	ilona.lepiller@etu.univ-lehavre.fr	Ilona Lepiller	STUDENT	67
+224	le231208	eliot.levasseur@etu.univ-lehavre.fr	Eliot Levasseur	STUDENT	68
+225	ma221128	anais.macedo-coelho@etu.univ-lehavre.fr	Anais Macedo coelho	STUDENT	67
+226	ma232161	arthur.marie-olive@etu.univ-lehavre.fr	Arthur Marie-olive	STUDENT	68
+296	lm242931	mathias.liaigre--grenet@etu.univ-lehavre.fr	Mathias Liaigre grenet	STUDENT	71
+299	me240380	ethan.mauranges@etu.univ-lehavre.fr	Ethan Mauranges	STUDENT	72
+341	ll232087	lucas.laville@etu.univ-lehavre.fr	Lucas Laville	STUDENT	77
+342	la230535	anaelle.legrand@etu.univ-lehavre.fr	Anaelle Legrand	STUDENT	77
+346	oc230995	carla.olivier@etu.univ-lehavre.fr	Carla Olivier	STUDENT	77
+347	qb231188	baptiste.quintino@etu.univ-lehavre.fr	Baptiste Quintino	STUDENT	77
+351	rm232117	maelys.rustuel@etu.univ-lehavre.fr	Maelys Rustuel	STUDENT	78
+352	sm232141	malik.soret@etu.univ-lehavre.fr	Malik Soret	STUDENT	79
+277	ha241438	agathe.huberson@etu.univ-lehavre.fr	Agathe Huberson	STUDENT	73
+282	km242841	mathys.kong-sinh@etu.univ-lehavre.fr	Mathys Kong-sinh	STUDENT	73
+287	ll243139	lola.lecanu@etu.univ-lehavre.fr	Lola Lecanu	STUDENT	71
+292	ll242125	laurette.lelong@etu.univ-lehavre.fr	Laurette Lelong	STUDENT	74
+297	ly241097	yanis.loubes@etu.univ-lehavre.fr	Yanis Loubes	STUDENT	71
+302	ml222490	lorry.mhayerenge@etu.univ-lehavre.fr	Lorry Mhayerenge	STUDENT	72
+307	oa242204	asma.ouchamhou@etu.univ-lehavre.fr	Asma Ouchamhou	STUDENT	72
+308	oa240740	arthur.ouvry@etu.univ-lehavre.fr	Arthur Ouvry	STUDENT	74
+43	am252995	massound-omar.abdillah-said@etu.univ-lehavre.fr	Massound-omar Abdillah said	STUDENT	59
+45	as253032	shayna.aksouh@etu.univ-lehavre.fr	Shayna Aksouh	STUDENT	59
+46	aa253702	abdelhak-yanis.amiche@etu.univ-lehavre.fr	Abdelhak yanis Amiche	STUDENT	59
+64	cl252396	loane.camara@etu.univ-lehavre.fr	Loane Camara	STUDENT	63
+65	ca253867	adrien.carluer@etu.univ-lehavre.fr	Adrien Carluer	STUDENT	63
+69	ch251397	hajar.cherraj@etu.univ-lehavre.fr	Hajar Cherraj	STUDENT	63
+73	cm252920	madyson.cousin@etu.univ-lehavre.fr	Madyson Cousin	STUDENT	59
+80	di253062	imane.dembele@etu.univ-lehavre.fr	Imane Dembele	STUDENT	59
+83	de252254	el-hadj-hamidou.diaw@etu.univ-lehavre.fr	El hadj hamidou Diaw	STUDENT	60
+84	dm251391	malik.djalout@etu.univ-lehavre.fr	Malik Djalout	STUDENT	60
+85	dl254035	louisa.djemel@etu.univ-lehavre.fr	Louisa Djemel	STUDENT	59
+86	dm251421	melissa.douay@etu.univ-lehavre.fr	Melissa Douay	STUDENT	63
+87	dc250695	chloe.dubuc@etu.univ-lehavre.fr	Chloe Dubuc	STUDENT	60
+185	am232477	munahil.ashaq@etu.univ-lehavre.fr	Munahil Ashaq	STUDENT	67
+312	rg241719	gauthier.reaux@etu.univ-lehavre.fr	Gauthier Reaux	STUDENT	71
+313	ri240698	isaac.renault@etu.univ-lehavre.fr	Isaac Renault	STUDENT	73
+317	sa242321	aysen.son@etu.univ-lehavre.fr	Aysen Son	STUDENT	73
+318	te240919	elena.theodat@etu.univ-lehavre.fr	Elena Theodat	STUDENT	72
+322	ys241058	sacha.yalaoui@etu.univ-lehavre.fr	Sacha Yalaoui	STUDENT	71
+323	yh240936	herro.yamanda@etu.univ-lehavre.fr	Herro Yamanda	STUDENT	71
+326	gv230592	victor.guille@etu.univ-lehavre.fr	Victor Guille	STUDENT	76
+331	tn242196	nathan.targy@etu.univ-lehavre.fr	Nathan Targy	STUDENT	76
+334	bs231843	sacha.blondel@etu.univ-lehavre.fr	Sacha Blondel	STUDENT	78
+338	gc230480	cloe.gosset@etu.univ-lehavre.fr	Cloe Gosset	STUDENT	79
+343	ls232085	salome.leveque@etu.univ-lehavre.fr	Salome Leveque	STUDENT	77
+348	rh231863	hugo.reynier@etu.univ-lehavre.fr	Hugo Reynier	STUDENT	77
+186	aa243443	ayawo-phillippe.attissogan@etu.univ-lehavre.fr	Ayawo phillippe Attissogan	STUDENT	67
+188	bl231274	lou.baudry@etu.univ-lehavre.fr	Lou Baudry	STUDENT	68
+189	bs231961	samy.beghoura@etu.univ-lehavre.fr	Samy Beghoura	STUDENT	68
+190	bm231784	mathieu.bernard@etu.univ-lehavre.fr	Mathieu Bernard	STUDENT	67
+353	tm230204	marion.tisserand@etu.univ-lehavre.fr	Marion Tisserand	STUDENT	77
+356	ze230272	emilien.zwisler@etu.univ-lehavre.fr	Emilien Zwisler	STUDENT	77
+358	millemi	mickael.millet@univ-lehavre.fr	Mickael Millet	PROFESSOR	1
+191	bc230951	clemence.bostyn@etu.univ-lehavre.fr	Clemence Bostyn	STUDENT	69
+192	bn232234	naelya.boulard-diallo@etu.univ-lehavre.fr	Naelya Boulard-diallo	STUDENT	68
+194	bl230128	luis-samuel.branco@etu.univ-lehavre.fr	Luis samuel Branco	STUDENT	68
+196	cf232016	florian.caciotti@etu.univ-lehavre.fr	Florian Caciotti	STUDENT	69
+197	cl230297	lou.cartier@etu.univ-lehavre.fr	Lou Cartier	STUDENT	68
+200	dj231257	jade.daubeuf@etu.univ-lehavre.fr	Jade Daubeuf	STUDENT	69
+201	dr232304	raphael.david@etu.univ-lehavre.fr	Raphael David	STUDENT	68
+202	da231203	axel.delamare@etu.univ-lehavre.fr	Axel Delamare	STUDENT	68
+205	dt231021	timothee.desmons@etu.univ-lehavre.fr	Timothee Desmons	STUDENT	68
+206	dy231946	yanis.dubuc--jouanne@etu.univ-lehavre.fr	Yanis Dubuc--jouanne	STUDENT	68
+208	fa231554	adelie.feron@etu.univ-lehavre.fr	Adelie Feron	STUDENT	69
+244	am240383	mathilda.aly-stervinou@etu.univ-lehavre.fr	Mathilda Aly-stervinou	STUDENT	72
+248	bl242248	lola.batista-gomes@etu.univ-lehavre.fr	Lola Batista gomes	STUDENT	71
+252	bl241160	louis.belland@etu.univ-lehavre.fr	Louis Belland	STUDENT	74
+257	ca240983	aminata.camara@etu.univ-lehavre.fr	Aminata Camara	STUDENT	72
+262	ct241585	timothe.costantin@etu.univ-lehavre.fr	Timothe Costantin	STUDENT	71
+267	dp240224	paul.depoix@etu.univ-lehavre.fr	Paul Depoix	STUDENT	72
+272	ea242990	adam.elouaid@etu.univ-lehavre.fr	Adam Elouaid	STUDENT	71
+123	lm252399	marilou.lebrument@etu.univ-lehavre.fr	Marilou Lebrument	STUDENT	61
+193	br231059	raika.boura@etu.univ-lehavre.fr	Raika Boura	STUDENT	66
+195	bt222383	theo.broust@etu.univ-lehavre.fr	Theo Broust	STUDENT	66
+357	pytels	steeve.pytel@univ-lehavre.fr	Steeve Pytel	PROFESSOR	1
+93	fp250049	pierre.fouillet@etu.univ-lehavre.fr	Pierre Fouillet	STUDENT	63
+94	gi251885	ismael.gerard@etu.univ-lehavre.fr	Ismael Gerard-depetris	STUDENT	61
+95	gl252149	lily.geretto@etu.univ-lehavre.fr	Lily Geretto	STUDENT	63
+198	cr230418	raphael.chanvallon@etu.univ-lehavre.fr	Raphael Chanvallon	STUDENT	66
+246	am240684	manon.auger@etu.univ-lehavre.fr	Manon Auger	STUDENT	73
+251	bv241130	victor.becquet@etu.univ-lehavre.fr	Victor Becquet	STUDENT	73
+255	bm242610	maele.briere@etu.univ-lehavre.fr	Maele Briere	STUDENT	72
+260	cy243015	yousra.chehbar@etu.univ-lehavre.fr	Yousra Chehbar	STUDENT	72
+265	dj242173	jason.de-polignac@etu.univ-lehavre.fr	Jason De polignac--pawlowski	STUDENT	73
+270	eb253669	bladavi-charlotte.egbakou@etu.univ-lehavre.fr	Bladavi charlotte Egbakou	STUDENT	71
+275	gm240569	malo.gledel@etu.univ-lehavre.fr	Malo Gledel	STUDENT	73
+280	kh241447	hasmik.keanian@etu.univ-lehavre.fr	Hasmik Keanian	STUDENT	73
+96	gd253329	dapolek.gomis@etu.univ-lehavre.fr	Dapolek Gomis	STUDENT	59
+97	gj252592	joolya.gosset@etu.univ-lehavre.fr	Joolya Gosset	STUDENT	64
+285	lm240263	melia.le-flanchec@etu.univ-lehavre.fr	Melia Le flanchec	STUDENT	72
+290	lt242899	thomas.lefiot@etu.univ-lehavre.fr	Thomas Lefiot	STUDENT	71
+295	ll242751	lena.lhuissier--caballe@etu.univ-lehavre.fr	Lena Lhuissier--caballe	STUDENT	71
+300	md240382	dounia.mehadji@etu.univ-lehavre.fr	Dounia Mehadji	STUDENT	71
+305	mr230767	ryan.mourzik@etu.univ-lehavre.fr	Ryan Mourzik	STUDENT	71
+310	pc242294	clara.poignant@etu.univ-lehavre.fr	Clara Poignant	STUDENT	73
+315	sh241427	hugo.saillot@etu.univ-lehavre.fr	Hugo Saillot	STUDENT	72
+88	dp251943	paul-antoine.dumais@etu.univ-lehavre.fr	Paul-antoine Dumais	STUDENT	62
+89	ee250915	emeline.ettendorff@etu.univ-lehavre.fr	Emeline Ettendorff	STUDENT	62
+90	fr250469	rodrigue.fichaux@etu.univ-lehavre.fr	Rodrigue Fichaux	STUDENT	64
+91	fa251707	agathe.finet@etu.univ-lehavre.fr	Agathe Finet	STUDENT	64
+92	fm251967	maelie.foucourt@etu.univ-lehavre.fr	Maelie Foucourt	STUDENT	62
+98	gm251337	margot.grodwohl@etu.univ-lehavre.fr	Margot Grodwohl	STUDENT	64
+99	ga250861	antoine.guerin@etu.univ-lehavre.fr	Antoine Guerin	STUDENT	59
+100	gm251730	marie.guibe@etu.univ-lehavre.fr	Marie Guibe	STUDENT	64
+101	gl252323	louane.guillesser@etu.univ-lehavre.fr	Louane Guillesser	STUDENT	61
+102	ge251251	emma.guyomard@etu.univ-lehavre.fr	Emma Guyomard	STUDENT	63
+103	gm252545	manon.guyot@etu.univ-lehavre.fr	Manon Guyot	STUDENT	62
+104	hn250192	noelie.hachard-etcheto@etu.univ-lehavre.fr	Noelie Hachard-etcheto	STUDENT	62
+105	hm242235	marine.haddad@etu.univ-lehavre.fr	Marine Haddad	STUDENT	59
+106	hr251962	reda.hamouche@etu.univ-lehavre.fr	Reda Hamouche	STUDENT	64
+107	hh252512	hamza.hamoudi@etu.univ-lehavre.fr	Hamza Hamoudi	STUDENT	60
+108	hr251331	rafael.hoffecard@etu.univ-lehavre.fr	Rafael Hoffecard	STUDENT	62
+109	hc251336	clara.homont@etu.univ-lehavre.fr	Clara Homont	STUDENT	59
+110	ha252599	aloyse.houard@etu.univ-lehavre.fr	Aloyse Houard	STUDENT	64
+111	hs253005	samir.houmadi@etu.univ-lehavre.fr	Samir Houmadi	STUDENT	63
+112	ja251113	alexandre.joubert@etu.univ-lehavre.fr	Alexandre Joubert	STUDENT	59
+113	jw253107	wilina.jules-marthe@etu.univ-lehavre.fr	Wilina Jules-marthe	STUDENT	62
+114	kc252645	celia.kessas@etu.univ-lehavre.fr	Celia Kessas	STUDENT	64
+115	ka252475	aalya.khaloua@etu.univ-lehavre.fr	Aalya Khaloua	STUDENT	64
+116	kp251912	paul.kiehl@etu.univ-lehavre.fr	Paul Kiehl	STUDENT	60
+117	ko251654	oum-kalthum.konate@etu.univ-lehavre.fr	Oum-kalthum Konate	STUDENT	60
+118	ky250972	yelyzaveta.kuznietsova@etu.univ-lehavre.fr	Yelyzaveta Kuznietsova	STUDENT	62
+119	la252504	arthur.lagarde@etu.univ-lehavre.fr	Arthur Lagarde	STUDENT	61
+120	lm251469	marie.langlois@etu.univ-lehavre.fr	Marie Langlois	STUDENT	60
+121	lp252252	pauline.le-drezen@etu.univ-lehavre.fr	Pauline Le drezen	STUDENT	59
+359	davidm	maxime.david@univ-lehavre.fr	Maxime David	PROFESSOR	1
+122	lm252757	mahene.lebret--mendy@etu.univ-lehavre.fr	Mahene Lebret--mendy	STUDENT	59
+320	vc241032	camille.vincent@etu.univ-lehavre.fr	Camille Vincent	STUDENT	73
+324	dl243055	louise.danger@etu.univ-lehavre.fr	Louise Danger	STUDENT	76
+327	lj240339	jeanne.laignel@etu.univ-lehavre.fr	Jeanne Laignel	STUDENT	76
+329	pc241988	cesar.poittevin@etu.univ-lehavre.fr	Cesar Poittevin	STUDENT	76
+332	tl242384	lison.thilloy@etu.univ-lehavre.fr	Lison Thilloy	STUDENT	76
+335	cz230752	zoe.cailly@etu.univ-lehavre.fr	Zoe Cailly	STUDENT	79
+339	kg233164	guillaume.konan@etu.univ-lehavre.fr	Guillaume Konan	STUDENT	78
+340	ls231304	soa.lamande@etu.univ-lehavre.fr	Soa Lamande	STUDENT	77
+344	ml230379	lena.moulin@etu.univ-lehavre.fr	Lena Moulin	STUDENT	78
+345	np231172	paul.neel@etu.univ-lehavre.fr	Paul Neel	STUDENT	78
+349	ra231371	axel.romer--messe@etu.univ-lehavre.fr	Axel Romer--messe	STUDENT	78
+350	rb230630	baptiste.rose@etu.univ-lehavre.fr	Baptiste Rose	STUDENT	77
+354	tm230955	mathieu.tocquer@etu.univ-lehavre.fr	Mathieu Tocquer	STUDENT	77
+355	ta221625	alexandre.trancart@etu.univ-lehavre.fr	Alexandre Trancart	STUDENT	77
+131	lk253957	kassy.levesque@etu.univ-lehavre.fr	Kassy Levesque	STUDENT	59
+132	ln252240	noah.lioust-dit-lafleur@etu.univ-lehavre.fr	Noah Lioust dit lafleur	STUDENT	64
+137	mi251216	ibtissem.marni-sandid@etu.univ-lehavre.fr	Ibtissem Marni-sandid	STUDENT	63
+138	me251129	eden.mfinka-tomanitou@etu.univ-lehavre.fr	Eden Mfinka tomanitou	STUDENT	59
+133	lc251886	clarisse.lorenzon@etu.univ-lehavre.fr	Clarisse Lorenzon	STUDENT	63
+143	ni251442	ilhan.ndopedro@etu.univ-lehavre.fr	Ilhan Ndopedro	STUDENT	60
+134	mj251114	julien.mahier@etu.univ-lehavre.fr	Julien Mahier	STUDENT	60
+139	mj252484	josephina.moisa@etu.univ-lehavre.fr	Josephina Moisa	STUDENT	59
+124	lv252253	victor.lecaron@etu.univ-lehavre.fr	Victor Lecaron	STUDENT	64
+135	ml250268	lorena.marchais@etu.univ-lehavre.fr	Lorena Marchais	STUDENT	60
+136	ml252672	liam.marie@etu.univ-lehavre.fr	Liam Marie	STUDENT	60
+149	pm251875	manon.paumelle@etu.univ-lehavre.fr	Manon Paumelle	STUDENT	61
+125	la251719	aela.lecoq--petitjean@etu.univ-lehavre.fr	Aela Lecoq--petitjean	STUDENT	64
+140	ml252711	lana.monchaux@etu.univ-lehavre.fr	Lana Monchaux	STUDENT	64
+155	rj251734	jawad.rhabbour-el-melhaoui@etu.univ-lehavre.fr	Jawad Rhabbour el melhaoui	STUDENT	62
+156	rm252597	melene.romeo@etu.univ-lehavre.fr	Melene Romeo	STUDENT	64
+126	lm250060	maelle.lecourtois@etu.univ-lehavre.fr	Maelle Lecourtois	STUDENT	60
+127	la252743	anne-sarah.legat@etu.univ-lehavre.fr	Anne-sarah Legat	STUDENT	62
+167	ta250120	amadou.tall@etu.univ-lehavre.fr	Amadou Tall	STUDENT	59
+128	lp252646	paul.lelandais@etu.univ-lehavre.fr	Paul Lelandais	STUDENT	61
+141	np251128	pauline.navarro@etu.univ-lehavre.fr	Pauline Navarro	STUDENT	61
+144	nt250562	timeo.neusy@etu.univ-lehavre.fr	Timeo Neusy	STUDENT	62
+150	pe252659	emma.planchon@etu.univ-lehavre.fr	Emma Planchon	STUDENT	60
+151	pm252595	myrtille.pouytes@etu.univ-lehavre.fr	Myrtille Pouytes	STUDENT	63
+168	tk250452	kerem.tas@etu.univ-lehavre.fr	Kerem Tas	STUDENT	61
+145	na252393	anithan.newton-rubaraj@etu.univ-lehavre.fr	Anithan Newton rubaraj	STUDENT	61
+129	lv253345	valentin.lemesle@etu.univ-lehavre.fr	Valentin Lemesle	STUDENT	61
+161	ss222742	soimadou.said-mmadi@etu.univ-lehavre.fr	Soimadou Said m'madi	STUDENT	63
+169	tm251348	matheo.tauvel@etu.univ-lehavre.fr	Matheo Tauvel	STUDENT	63
+172	tc250504	cassandra.turgy@etu.univ-lehavre.fr	Cassandra Turgy	STUDENT	62
+219	ll232027	louis.lecomte@etu.univ-lehavre.fr	Louis Lecomte	STUDENT	67
+249	bm231958	mathis.baumann@etu.univ-lehavre.fr	Mathis Baumann	STUDENT	71
+157	rt251714	timeo.rossard@etu.univ-lehavre.fr	Timeo Rossard	STUDENT	61
+162	sl251481	lucie.sapin@etu.univ-lehavre.fr	Lucie Sapin	STUDENT	61
+130	le252428	eryne.lerouge-morin@etu.univ-lehavre.fr	Eryne Lerouge-morin	STUDENT	62
+170	tc250065	clement.tisserand@etu.univ-lehavre.fr	Clement Tisserand	STUDENT	61
+142	nd250498	djilliane.navet@etu.univ-lehavre.fr	Djilliane Navet	STUDENT	60
+177	wh252729	hannah.watrin@etu.univ-lehavre.fr	Hannah Watrin	STUDENT	60
+152	pi251927	ines.pouzet@etu.univ-lehavre.fr	Ines Pouzet	STUDENT	62
+146	na252803	angela.ngudi@etu.univ-lehavre.fr	Angela Ngudi	STUDENT	61
+173	va251472	adam.vekemans@etu.univ-lehavre.fr	Adam Vekemans	STUDENT	62
+147	oe252498	efe.odabas@etu.univ-lehavre.fr	Efe Odabas	STUDENT	64
+148	or252083	rayan.ouamara@etu.univ-lehavre.fr	Rayan Ouamara	STUDENT	60
+163	ss251045	steven.schouppe@etu.univ-lehavre.fr	Steven Schouppe	STUDENT	62
+253	bm242358	maxime.bertin@etu.univ-lehavre.fr	Maxime Bertin	STUDENT	73
+174	vt252276	thibaut.vendeville@etu.univ-lehavre.fr	Thibaut Vendeville	STUDENT	61
+164	ss252257	syana.sibler@etu.univ-lehavre.fr	Syana Sibler	STUDENT	64
+153	pp252434	paloma.puccinelli@etu.univ-lehavre.fr	Paloma Puccinelli	STUDENT	60
+182	zr252098	rayan.zariouh@etu.univ-lehavre.fr	Rayan Zariouh	STUDENT	64
+165	sd252701	diariata.sow@etu.univ-lehavre.fr	Diariata Sow	STUDENT	63
+171	ts251449	sean.toutain@etu.univ-lehavre.fr	Sean Toutain	STUDENT	62
+154	ql251618	louison.quivy@etu.univ-lehavre.fr	Louison Quivy	STUDENT	60
+178	wr251278	rose.welle@etu.univ-lehavre.fr	Rose Welle	STUDENT	63
+175	vm250803	maxence.vilquin@etu.univ-lehavre.fr	Maxence Vilquin	STUDENT	63
+176	va253281	alice.volle@etu.univ-lehavre.fr	Alice Volle	STUDENT	64
+179	wt251426	tom.werbrouck@etu.univ-lehavre.fr	Tom Werbrouck	STUDENT	62
+180	ws252744	seth.willems@etu.univ-lehavre.fr	Seth Willems	STUDENT	62
+183	am230241	maeva.akele@etu.univ-lehavre.fr	Maeva Akele	STUDENT	66
+181	wt251770	theophile.woerth--goetz@etu.univ-lehavre.fr	Theophile Woerth--goetz	STUDENT	62
+158	rt251125	thomas.rousseau@etu.univ-lehavre.fr	Thomas Rousseau	STUDENT	64
+184	as222198	simitha.aruldas@etu.univ-lehavre.fr	Simitha Aruldas	STUDENT	66
+159	sh250354	hanae.sa@etu.univ-lehavre.fr	Hanae Sa	STUDENT	60
+160	sa252570	adam.sabri@etu.univ-lehavre.fr	Adam Sabri	STUDENT	59
+166	se252380	eva.szumacher@etu.univ-lehavre.fr	Eva Lolivier	STUDENT	64
+207	ea231234	alexandre.elbaz@etu.univ-lehavre.fr	Alexandre Elbaz	STUDENT	68
+218	lm231971	morgane.launay@etu.univ-lehavre.fr	Morgane Launay	STUDENT	67
+258	cr241689	romane.camara@etu.univ-lehavre.fr	Romane Camara	STUDENT	71
+263	cu241982	ulysse.cottineau@etu.univ-lehavre.fr	Ulysse Cottineau	STUDENT	72
+268	dd242940	djibril.diallo@etu.univ-lehavre.fr	Djibril Diallo	STUDENT	73
+273	fb242636	britney.faha@etu.univ-lehavre.fr	Britney Faha	STUDENT	71
+278	jl242158	lilou.jacquet-usureau@etu.univ-lehavre.fr	Lilou Jacquet - usureau	STUDENT	72
+283	ly241902	yanis.lambourdiere--couillard@etu.univ-lehavre.fr	Yanis Lambourdiere - - couillard	STUDENT	71
+288	ll242257	lisa.lefebvre@etu.univ-lehavre.fr	Lisa Lefebvre	STUDENT	72
+293	lp242802	paloma.lequien@etu.univ-lehavre.fr	Paloma Lequien	STUDENT	74
+298	mj240527	jules.mary@etu.univ-lehavre.fr	Jules Mary	STUDENT	71
+303	ma242510	adele.michel@etu.univ-lehavre.fr	Adele Michel	STUDENT	72
 \.
 
 
@@ -2940,7 +3216,7 @@ SELECT pg_catalog.setval('public.essentialcomponent_id_seq', 110, true);
 -- Name: group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.group_id_seq', 8, true);
+SELECT pg_catalog.setval('public.group_id_seq', 79, true);
 
 
 --
@@ -2968,7 +3244,7 @@ SELECT pg_catalog.setval('public.systemconfig_id_seq', 1, false);
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 37, true);
+SELECT pg_catalog.setval('public.user_id_seq', 359, true);
 
 
 --
@@ -3177,5 +3453,5 @@ ALTER TABLE ONLY public."user"
 -- PostgreSQL database dump complete
 --
 
-\unrestrict kzvtkbrhyZiW1cEX0LehUFpvD0BWtJKTBtKQf6O508g8ZcWHsvKt4as1fbOu7uk
+\unrestrict vzwQdUqViNPb8XQwrvgTelkBIszvtox6ygNmBLbPQ6f0lcwjpP5yMUaNMk2DvwJ
 

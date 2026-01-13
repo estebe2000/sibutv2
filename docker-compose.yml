@@ -74,19 +74,6 @@ services:
       - app_network
 
   # ---------------------------------------------------------------------------
-  # Mail Server (Mailpit) - Mocking SMTP
-  # ---------------------------------------------------------------------------
-  mailpit:
-    image: axllent/mailpit
-    container_name: but_tc_mail
-    restart: unless-stopped
-    ports:
-      - "8025:8025" # Web UI
-      - "1025:1025" # SMTP Port
-    networks:
-      - app_network
-
-  # ---------------------------------------------------------------------------
   # Database for Mattermost (PostgreSQL)
   # ---------------------------------------------------------------------------
   db_mattermost:
@@ -158,9 +145,18 @@ services:
     environment:
       - MM_SQLSETTINGS_DRIVERNAME=postgres
       - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mmpassword@db_mattermost:5432/mattermost?sslmode=disable&connect_timeout=10
-      - MM_SERVICESETTINGS_SITEURL=https://educ-ai.fr/mattermost
+      - MM_SERVICESETTINGS_SITEURL=https://mattermost.educ-ai.fr
       - MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS=localhost 127.0.0.1 educ-ai.fr
       - MM_SERVICESETTINGS_ENABLEDEVELOPER=true
+      - MM_LOGINSETTINGS_ENABLEOAUTHGAMES=false
+      - MM_GITLABSETTINGS_ENABLE=true
+      - MM_GITLABSETTINGS_ID=mattermost-app
+      - MM_GITLABSETTINGS_SECRET=mattermost_secret_key_76
+      - MM_GITLABSETTINGS_DISCOVERYENDPOINT=https://keycloak.educ-ai.fr/realms/but-tc/.well-known/openid-configuration
+      - MM_GITLABSETTINGS_AUTHENDPOINT=https://keycloak.educ-ai.fr/realms/but-tc/protocol/openid-connect/auth
+      - MM_GITLABSETTINGS_TOKENENDPOINT=https://keycloak.educ-ai.fr/realms/but-tc/protocol/openid-connect/token
+      - MM_GITLABSETTINGS_USERAPIENDPOINT=https://keycloak.educ-ai.fr/realms/but-tc/protocol/openid-connect/userinfo
+      - MM_GITLABSETTINGS_BUTTONTEXT=Connexion avec Keycloak
     ports:
       - "8065:8065"
     volumes:
@@ -195,6 +191,12 @@ services:
       - KEYCLOAK_REALM=but-tc
       - KEYCLOAK_CLIENT_ID=skills-hub-app
       - KEYCLOAK_CLIENT_SECRET=ASzD8MghmcXaTSas1MvjiK9o81DrlEeO
+      # Configuration Mail OVH
+      - SMTP_HOST=ssl0.ovh.net
+      - SMTP_PORT=465
+      - SMTP_USER=votre-email@domaine.com
+      - SMTP_PASS=votre-mot-de-passe
+      - SMTP_TLS=true
     networks:
       - app_network
 
