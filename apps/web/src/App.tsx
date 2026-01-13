@@ -46,6 +46,7 @@ import { RepartitionView } from './views/RepartitionView';
 import { FichesView } from './views/FichesView';
 import { FichesPDF2View } from './views/FichesPDF2View';
 import { SettingsView } from './views/SettingsView';
+import { KeycloakUserManagement } from './views/KeycloakUserManagement';
 
 // Use relative URL for API to go through Nginx Gateway
 const API_URL = '/api';
@@ -305,6 +306,7 @@ function App() {
           <Button variant={activeTab === 'repartition' ? 'light' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={20} />} color="orange">Répartition</Button>
           {/* <Button variant={activeTab === 'fiches' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches')} leftSection={<IconDownload size={20} />} color="blue">Fiches PDF</Button> */}
           <Button variant={activeTab === 'fiches2' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={20} />} color="cyan">Fiches PDF 2</Button>
+          <Button variant={activeTab === 'keycloak' ? 'light' : 'subtle'} onClick={() => setActiveTab('keycloak')} leftSection={<IconShieldCheck size={20} />} color="orange">Comptes Locaux</Button>
           <Button variant={activeTab === 'settings' ? 'light' : 'subtle'} onClick={() => setActiveTab('settings')} color="gray" leftSection={<IconSettings size={20} />}>Configuration</Button>
         </Stack>
       </AppShell.Navbar>
@@ -480,6 +482,8 @@ function App() {
             <FichesView />
           ) : activeTab === 'fiches2' ? (
             <FichesPDF2View curriculum={curriculum} />
+          ) : activeTab === 'keycloak' ? (
+            <KeycloakUserManagement />
           ) : <SettingsView config={config} onSave={handleSaveConfig} />}
         </DragDropContext>
       </AppShell.Main>
