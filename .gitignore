@@ -26,3 +26,4 @@ Thumbs.db
 tmp/
 referentiel_final.json
 parsed_competencies.json
+\n# Temporary and obsolete files\ntrash/
