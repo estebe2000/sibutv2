@@ -1,13 +1,19 @@
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Frame, PageTemplate, NextPageTemplate
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Frame, PageTemplate, NextPageTemplate, Image
 from reportlab.lib.units import cm
 from io import BytesIO
-from ..models import Activity, Resource, LearningOutcome, User, ResponsibilityMatrix, ResponsibilityEntityType, ResponsibilityType
+from ..models import Activity, Resource, LearningOutcome, User, ResponsibilityMatrix, ResponsibilityEntityType, ResponsibilityType, SystemConfig
 from sqlmodel import Session, select
 import re
+import os
+import requests
 from datetime import datetime
+
+def get_config_value(session: Session, key: str, default: str = ""):
+    item = session.exec(select(SystemConfig).where(SystemConfig.key == key)).first()
+    return item.value if item else default
 
 def get_governance_info(session: Session, entity_id: str, entity_type: ResponsibilityEntityType):
     """Récupère les noms et emails des responsables pour le PDF."""
@@ -34,10 +40,10 @@ def get_governance_info(session: Session, entity_id: str, entity_type: Responsib
     return owner_info, intervenants
 import html
 
-def get_styles():
+def get_styles(primary_color="#1971c2"):
     styles = getSampleStyleSheet()
-    styles.add(ParagraphStyle(name='TitleStyle', fontSize=18, leading=22, spaceAfter=12, textColor=colors.HexColor("#1971c2"), fontWeight='Bold'))
-    styles.add(ParagraphStyle(name='Heading2Style', fontSize=14, leading=18, spaceBefore=12, spaceAfter=6, textColor=colors.HexColor("#228be6"), fontWeight='Bold'))
+    styles.add(ParagraphStyle(name='TitleStyle', fontSize=18, leading=22, spaceAfter=12, textColor=colors.HexColor(primary_color), fontWeight='Bold'))
+    styles.add(ParagraphStyle(name='Heading2Style', fontSize=14, leading=18, spaceBefore=12, spaceAfter=6, textColor=colors.HexColor(primary_color), fontWeight='Bold'))
     styles.add(ParagraphStyle(name='NormalStyle', fontSize=10, leading=14, spaceAfter=6))
     styles.add(ParagraphStyle(name='TableTextStyle', fontSize=9, leading=11))
     return styles
@@ -57,6 +63,10 @@ def clean_markdown(text):
 def generate_activity_pdf(activity: Activity, session: Session):
     buffer = BytesIO()
     
+    # Configuration
+    primary_color = get_config_value(session, "APP_PRIMARY_COLOR", "#1971c2")
+    logo_url = get_config_value(session, "APP_LOGO_URL", "")
+
     # 1. Define Document
     doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=1.5*cm, leftMargin=1.5*cm, topMargin=1.5*cm, bottomMargin=1.5*cm)
     
@@ -73,11 +83,45 @@ def generate_activity_pdf(activity: Activity, session: Session):
     doc.addPageTemplates([template_p, template_l])
     
     story = []
-    styles = get_styles()
+    styles = get_styles(primary_color)
 
-    # --- HEADER: Date de génération ---
-    gen_date = datetime.now().strftime("%d/%m/%Y")
-    story.append(Paragraph(f"Document généré le {gen_date} - Skills Hub BUT TC", styles['NormalStyle']))
+    # --- HEADER: Logo + Date ---
+    header_data = []
+    logo_path = logo_url
+    
+    # Gestion du logo distant
+    if logo_url and logo_url.startswith("http"):
+        try:
+            response = requests.get(logo_url, timeout=5, verify=False)
+            if response.status_code == 200:
+                temp_logo = f"/tmp/logo_{datetime.now().timestamp()}.png"
+                with open(temp_logo, 'wb') as f:
+                    f.write(response.content)
+                logo_path = temp_logo
+        except Exception as e:
+            print(f"Erreur téléchargement logo: {e}")
+
+    if logo_path and os.path.exists(logo_path):
+        try:
+            img = Image(logo_path)
+            # Resize proportiennel (Max hauteur 1.5cm)
+            aspect = img.imageWidth / img.imageHeight
+            img.drawHeight = 1.5*cm
+            img.drawWidth = 1.5*cm * aspect
+            header_data.append([img, Paragraph(f"Document généré le {datetime.now().strftime('%d/%m/%Y')}", styles['NormalStyle'])])
+        except Exception as e:
+             header_data.append([Paragraph("Skills Hub", styles['TitleStyle']), Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y')}", styles['NormalStyle'])])
+    else:
+        header_data.append([Paragraph("Skills Hub BUT TC", styles['TitleStyle']), Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y')}", styles['NormalStyle'])])
+
+    t_header = Table(header_data, colWidths=[12*cm, 6*cm])
+    t_header.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('ALIGN', (1,0), (1,0), 'RIGHT'),
+    ]))
+    story.append(t_header)
+    story.append(Spacer(1, 0.5*cm))
+    story.append(Paragraph("_" * 60, styles['NormalStyle'])) # Horizontal Line
     story.append(Spacer(1, 0.5*cm))
 
     # --- PAGE 1: ACTIVITY OVERVIEW ---
@@ -202,13 +246,48 @@ def generate_activity_pdf(activity: Activity, session: Session):
 
 def generate_resource_pdf(resource: Resource, session: Session):
     buffer = BytesIO()
+    
+    # Configuration
+    primary_color = get_config_value(session, "APP_PRIMARY_COLOR", "#1971c2")
+    logo_url = get_config_value(session, "APP_LOGO_URL", "")
+    
     doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=1.5*cm, leftMargin=1.5*cm, topMargin=1.5*cm, bottomMargin=1.5*cm)
     story = []
-    styles = get_styles()
+    styles = get_styles(primary_color)
 
-    # --- HEADER: Date de génération ---
-    gen_date = datetime.now().strftime("%d/%m/%Y")
-    story.append(Paragraph(f"Document généré le {gen_date} - Skills Hub BUT TC", styles['NormalStyle']))
+    # --- HEADER ---
+    header_data = []
+    logo_path = logo_url
+    
+    # Gestion du logo distant
+    if logo_url and logo_url.startswith("http"):
+        try:
+            response = requests.get(logo_url, timeout=5, verify=False)
+            if response.status_code == 200:
+                temp_logo = f"/tmp/logo_res_{datetime.now().timestamp()}.png"
+                with open(temp_logo, 'wb') as f:
+                    f.write(response.content)
+                logo_path = temp_logo
+        except Exception as e:
+            print(f"Erreur téléchargement logo: {e}")
+
+    if logo_path and os.path.exists(logo_path):
+        try:
+            img = Image(logo_path)
+            aspect = img.imageWidth / img.imageHeight
+            img.drawHeight = 1.5*cm
+            img.drawWidth = 1.5*cm * aspect
+            header_data.append([img, Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y')}", styles['NormalStyle'])])
+        except:
+            header_data.append([Paragraph("Skills Hub", styles['TitleStyle']), Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y')}", styles['NormalStyle'])])
+    else:
+        header_data.append([Paragraph("Skills Hub BUT TC", styles['TitleStyle']), Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y')}", styles['NormalStyle'])])
+
+    t_header = Table(header_data, colWidths=[12*cm, 6*cm])
+    t_header.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'MIDDLE'), ('ALIGN', (1,0), (1,0), 'RIGHT')]))
+    story.append(t_header)
+    story.append(Spacer(1, 0.5*cm))
+    story.append(Paragraph("_" * 60, styles['NormalStyle']))
     story.append(Spacer(1, 0.5*cm))
 
     story.append(Paragraph(f"Ressource {resource.code} : {resource.label}", styles['TitleStyle']))

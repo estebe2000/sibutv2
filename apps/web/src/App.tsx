@@ -49,7 +49,6 @@ const YEAR_COLORS: any = {
 };
 
 function App() {
-  console.log("Skills Hub Admin v1.1.0 - Import Modal Active");
   const {
     token, setToken,
     user, setUser,
