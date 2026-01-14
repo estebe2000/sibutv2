@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 from typing import List
 from ..database import get_session
 from ..models import Group, User, UserRole
-from ..ldap_utils import get_ldap_users
+from ..services.ldap_service import get_ldap_users
 from ..dependencies import get_current_user, require_staff
 import os
 
@@ -15,7 +15,7 @@ def get_me(current_user: any = Depends(get_current_user)):
 
 # --- GROUPS ---
 @router.get("/groups", response_model=List[Group])
-def list_groups(session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
+def list_groups(session: Session = Depends(get_session), current_user: any = Depends(get_current_user)):
     return session.exec(select(Group)).all()
 
 @router.post("/groups", response_model=Group)
@@ -52,7 +52,7 @@ def list_ldap_raw(current_user: any = Depends(require_staff)):
 
 @router.get("/ldap-users/search")
 def search_ldap(q: str, current_user: any = Depends(require_staff)):
-    from ..ldap_utils import search_ldap_users
+    from ..services.ldap_service import search_ldap_users
     if len(q) < 3: return [] # On évite les recherches trop larges
     return search_ldap_users(q)
 
@@ -80,6 +80,14 @@ def assign_user(user_data: User, session: Session = Depends(get_session), curren
 def unassign_user(ldap_uid: str, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     user = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
     if user:
+        # 1. Supprimer ses responsabilités dans la matrice (SAE, Ressources, Tuteur)
+        from ..models import ResponsibilityMatrix
+        stmt = select(ResponsibilityMatrix).where(ResponsibilityMatrix.user_id == ldap_uid)
+        resps = session.exec(stmt).all()
+        for r in resps:
+            session.delete(r)
+            
+        # 2. Retirer du groupe et repasser en GUEST
         user.group_id = None
         user.role = UserRole.GUEST
         session.add(user); session.commit()

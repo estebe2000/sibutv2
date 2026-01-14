@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from ..dependencies import require_staff
-from ..keycloak_utils import list_local_users, create_local_user, delete_local_user
+from ..services.keycloak_service import list_local_users, create_local_user, delete_local_user
 from pydantic import BaseModel
 
 router = APIRouter(tags=["Keycloak Admin"])

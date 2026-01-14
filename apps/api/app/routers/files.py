@@ -9,9 +9,9 @@ import json
 import pandas as pd
 from ..database import get_session
 from ..models import Activity, Resource, Competency, Group, User, UserRole
-from ..pdf_generator import generate_activity_pdf, generate_resource_pdf
+from ..services.pdf_service import generate_activity_pdf, generate_resource_pdf
 from ..dependencies import get_current_user
-from ..ldap_utils import get_ldap_users
+from ..services.ldap_service import get_ldap_users
 
 router = APIRouter(tags=["Files"])
 
@@ -107,7 +107,7 @@ async def import_students(
 
     df.columns = [c.lower().strip() for c in df.columns]
 
-    from ..ldap_utils import get_ldap_user_by_filter
+    from ..services.ldap_service import get_ldap_user_by_filter
     
     count = 0
     for _, row in df.iterrows():

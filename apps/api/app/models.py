@@ -37,6 +37,26 @@ class SystemConfig(SQLModel, table=True):
     value: str
     category: str # "ldap", "mail", "nextcloud"
 
+# --- RESPONSIBILITY MATRIX ---
+
+class ResponsibilityType(str, Enum):
+    OWNER = "OWNER"           # Responsable principal
+    INTERVENANT = "INTERVENANT" # Intervenant / Participant
+    TUTOR = "TUTOR"           # Tuteur (pour stage/portfolio individuel)
+
+class ResponsibilityEntityType(str, Enum):
+    RESOURCE = "RESOURCE"
+    ACTIVITY = "ACTIVITY"
+    STUDENT = "STUDENT"
+
+class ResponsibilityMatrix(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True) # UID de l'utilisateur (LDAP ou Local)
+    entity_type: ResponsibilityEntityType
+    entity_id: str # Code de la ressource (ex: R1.01) ou ID de l'activité ou UID de l'étudiant
+    role_type: ResponsibilityType = Field(default=ResponsibilityType.INTERVENANT)
+    academic_year: str = "2025-2026"
+
 # --- CURRICULUM MODELS ---
 
 class ActivityType(str, Enum):

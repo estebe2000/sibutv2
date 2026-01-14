@@ -1,34 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Group, Title, Button, Paper, Grid, TextInput, Select, Text, ScrollArea, Table, Badge, Center, Loader } from '@mantine/core';
-import { IconBook, IconInfoCircle, IconDownload } from '@tabler/icons-react';
-import { notifications } from '@mantine/notifications';
-import axios from 'axios';
-
-// API URL (Relative for Nginx Gateway)
-const API_URL = '/api';
+import { IconFileText, IconDownload, IconExternalLink, IconRefresh } from '@tabler/icons-react';
+import api from '../services/api';
 
 export function FichesView() {
   const [fiches, setFiches] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [pathwayFilter, setPathwayFilter] = useState('TOUS');
-  const [semesterFilter, setSemesterFilter] = useState('TOUS');
-
-  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
-  const semesters = ['TOUS', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
-
-  useEffect(() => {
-    fetchFiches();
-  }, []);
 
   const fetchFiches = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_URL}/fiches/list`);
+      const res = await api.get('/fiches/list');
       setFiches(res.data);
-    } catch (e) {
-      notifications.show({ title: 'Erreur', message: 'Impossible de charger la liste des fiches', color: 'red' });
-    }
+    } catch (e) { console.error(e); }
     setLoading(false);
   };
 

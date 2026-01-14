@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Group, Stack, Title, Text, Select, Paper, Grid, Card, ThemeIcon, List, Badge, Modal, Center, Loader, Box, Divider } from '@mantine/core';
 import { IconUsers, IconShieldCheck, IconPlus } from '@tabler/icons-react';
-import axios from 'axios';
+import api from '../services/api';
 import { renderRichText } from '../components/RichTextRenderer';
-
-// API URL (will be passed or fetched from store/env)
-const API_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:8000'
-  : `http://${window.location.hostname}:8000`;
 
 export function DiscoveryView({ curriculum }: any) {
   if (!curriculum || !curriculum.competences) return <Center p="xl"><Loader /></Center>;
@@ -26,7 +21,7 @@ export function DiscoveryView({ curriculum }: any) {
     setInfoItem({ ...item, type });
     try {
         if (type === 'RES') {
-            const res = await axios.get(`${API_URL}/resources/${item.code.trim()}`);
+            const res = await api.get(`/resources/${item.code.trim()}`);
             setInfoItem({ ...res.data, type });
         }
     } catch (e) {

@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { IconPlus, IconTrash, IconUser, IconRefresh } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import axios from 'axios';
+import api from '../services/api';
 
 export function KeycloakUserManagement() {
   const [users, setUsers] = useState<any[]>([]);
@@ -37,8 +37,8 @@ export function KeycloakUserManagement() {
     if (loading) return; // Prevent concurrent requests
     setLoading(true);
     try {
-      const url = query ? `/api/keycloak/users?q=${query}` : '/api/keycloak/users';
-      const res = await axios.get(url);
+      const url = query ? `/keycloak/users?q=${query}` : '/keycloak/users';
+      const res = await api.get(url);
       setUsers(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
       notifications.show({ color: 'red', title: 'Erreur', message: 'Impossible de récupérer les utilisateurs' });
@@ -57,7 +57,7 @@ export function KeycloakUserManagement() {
 
   const handleCreate = async () => {
     try {
-      await axios.post('/api/keycloak/users', newUser);
+      await api.post('/keycloak/users', newUser);
       notifications.show({ color: 'green', title: 'Succès', message: 'Utilisateur créé' });
       setIsModalOpen(false);
       setNewUser({ username: '', email: '', first_name: '', last_name: '', password: '' });
@@ -70,13 +70,14 @@ export function KeycloakUserManagement() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Supprimer cet utilisateur ?")) return;
     try {
-      await axios.delete(`/api/keycloak/users/${id}`);
+      await api.delete(`/keycloak/users/${id}`);
       notifications.show({ color: 'green', title: 'Succès', message: 'Utilisateur supprimé' });
       fetchUsers(search); // On rafraichit avec la recherche actuelle
     } catch (e) {
       notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de la suppression' });
     }
   };
+
 
   return (
     <Paper withBorder p="md" shadow="xs" style={{ position: 'relative' }}>

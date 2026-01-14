@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from ..database import get_session
 from ..models import User, Group
-from ..ldap_utils import verify_credentials
+from ..services.ldap_service import verify_credentials
 
 import requests
 import os
