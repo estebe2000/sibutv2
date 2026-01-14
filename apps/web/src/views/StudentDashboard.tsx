@@ -1,7 +1,8 @@
-import React from 'react';
-import { Container, Paper, Title, Text, Group, Stack, Badge, ThemeIcon, Alert, ActionIcon, Loader, Center, Divider, Accordion } from '@mantine/core';
-import { IconUser, IconSchool, IconInfoCircle, IconTimeline, IconFileText, IconDownload, IconBook, IconFolder, IconFileUpload, IconBriefcase } from '@tabler/icons-react';
-
+import React, { useState, useEffect } from 'react';
+import { Container, Paper, Title, Text, Group, Stack, Badge, ThemeIcon, Alert, ActionIcon, Loader, Center, Divider, Accordion, FileInput } from '@mantine/core';
+import { IconUser, IconSchool, IconInfoCircle, IconTimeline, IconFileText, IconDownload, IconBook, IconFolder, IconFileUpload, IconBriefcase, IconTrash, IconLock } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import api from '../services/api';
 interface StudentDashboardProps {
   user: any;
   groups: any[];
@@ -9,13 +10,56 @@ interface StudentDashboardProps {
 }
 
 export function StudentDashboard({ user, groups, curriculum }: StudentDashboardProps) {
-  // Debug
-  console.log("StudentDashboard - User:", user);
-  console.log("StudentDashboard - Groups count:", groups?.length);
-  
+  const [fiches, setFiches] = useState<any[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState<string | null>(null); // ID de l'entité en cours d'upload
+
   // Trouver le groupe de l'étudiant
   const studentGroup = groups?.find(g => Number(g.id) === Number(user?.group_id));
-  console.log("StudentDashboard - Found Group:", studentGroup);
+
+  const fetchStudentData = async () => {
+    try {
+      const [fichesRes, filesRes] = await Promise.all([
+        api.get('/fiches/list'),
+        api.get('/portfolio/files')
+      ]);
+      setFiches(fichesRes.data);
+      setUploadedFiles(filesRes.data);
+    } catch (e) { console.error("Error fetching data", e); }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchStudentData();
+  }, []);
+
+  const handleUpload = async (file: File | null, entityType: string, entityId: string) => {
+    if (!file) return;
+    setUploading(entityId);
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      await api.post(`/portfolio/upload?entity_type=${entityType}&entity_id=${entityId}`, formData);
+      notifications.show({ title: 'Succès', message: 'Fichier déposé', color: 'green' });
+      fetchStudentData();
+    } catch (e) {
+      notifications.show({ title: 'Erreur', message: 'Échec de l\'envoi', color: 'red' });
+    }
+    setUploading(null);
+  };
+
+  const handleDeleteFile = async (fileId: number) => {
+    if (!window.confirm("Supprimer ce document ?")) return;
+    try {
+      await api.delete(`/portfolio/files/${fileId}`);
+      notifications.show({ title: 'Succès', message: 'Fichier supprimé' });
+      fetchStudentData();
+    } catch (e: any) {
+      const msg = e.response?.status === 403 ? "Ce fichier est verrouillé par un enseignant" : "Échec de la suppression";
+      notifications.show({ title: 'Erreur', message: msg, color: 'red' });
+    }
+  };
 
   if (!curriculum || !curriculum.activities || !groups) {
     return <Center h="50vh"><Loader size="lg" /></Center>;
@@ -199,18 +243,55 @@ export function StudentDashboard({ user, groups, curriculum }: StudentDashboardP
             </Alert>
 
             <Text size="xs" fw={700} c="dimmed" tt="uppercase">Dépôts par Activité</Text>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              {filteredActivities.map((act: any) => (
-                <Paper key={`upload-${act.id}`} withBorder p="xs" radius="sm" style={{ borderStyle: 'dashed' }}>
-                  <Group justify="space-between">
-                    <Stack gap={0}>
-                      <Text size="xs" fw={700}>{act.code}</Text>
-                      <Text size="10px" c="dimmed" truncate>{act.label}</Text>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
+              {filteredActivities.map((act: any) => {
+                const files = uploadedFiles.filter(f => f.entity_type === 'ACTIVITY' && f.entity_id === act.id.toString());
+                return (
+                  <Paper key={`upload-${act.id}`} withBorder p="md" radius="md" bg="white">
+                    <Stack gap="xs">
+                      <Group justify="space-between" wrap="nowrap">
+                        <Stack gap={0} style={{ flexGrow: 1, minWidth: 0 }}>
+                          <Text size="xs" fw={700} c="blue">{act.code}</Text>
+                          <Text size="xs" truncate fw={500}>{act.label}</Text>
+                        </Stack>
+                        <FileInput 
+                          placeholder="Déposer" 
+                          size="xs" 
+                          variant="filled"
+                          leftSection={<IconFileUpload size={14} />} 
+                          onChange={(file) => handleUpload(file, 'ACTIVITY', act.id.toString())}
+                          disabled={uploading === act.id.toString()}
+                          style={{ width: 100 }}
+                        />
+                      </Group>
+
+                      {files.length > 0 ? (
+                        <Stack gap={4} mt="xs">
+                          {files.map(file => (
+                            <Paper key={file.id} withBorder p={5} bg="gray.0" radius="xs">
+                              <Group justify="space-between">
+                                <Group gap={5} wrap="nowrap" style={{ flexGrow: 1, minWidth: 0 }}>
+                                  {file.is_locked ? <IconLock size={12} color="orange" /> : <IconFileText size={12} color="gray" />}
+                                  <Text size="10px" truncate>{file.filename}</Text>
+                                </Group>
+                                <Group gap={2}>
+                                  {!file.is_locked && (
+                                    <ActionIcon size="xs" color="red" variant="subtle" onClick={() => handleDeleteFile(file.id)}>
+                                      <IconTrash size={12} />
+                                    </ActionIcon>
+                                  )}
+                                </Group>
+                              </Group>
+                            </Paper>
+                          ))}
+                        </Stack>
+                      ) : (
+                        <Text size="10px" c="dimmed" fs="italic" ta="center">Aucun document</Text>
+                      )}
                     </Stack>
-                    <Badge variant="light" color="gray" size="xs">0 fichier</Badge>
-                  </Group>
-                </Paper>
-              ))}
+                  </Paper>
+                );
+              })}
             </div>
           </Stack>
         </Paper>

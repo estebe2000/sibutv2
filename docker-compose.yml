@@ -186,6 +186,8 @@ services:
       - NEXTCLOUD_URL=https://nextcloud.educ-ai.fr
       - NEXTCLOUD_ADMIN=admin
       - NEXTCLOUD_PASS=Rangetachambre76*
+      - NEXTCLOUD_SERVICE_USER=hub-service
+      - NEXTCLOUD_SERVICE_PASS=Rangetachambre76*
       - ROOT_PATH=/api
       - KEYCLOAK_URL=http://but_tc_keycloak:8080
       - KEYCLOAK_REALM=but-tc

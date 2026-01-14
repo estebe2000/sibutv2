@@ -7,6 +7,11 @@ export function FichesView() {
   const [fiches, setFiches] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
+  const [pathwayFilter, setPathwayFilter] = useState('TOUS');
+  const [semesterFilter, setSemesterFilter] = useState('TOUS');
+
+  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
+  const semesters = ['TOUS', '1', '2', '3', '4', '5', '6'];
 
   const fetchFiches = async () => {
     setLoading(true);

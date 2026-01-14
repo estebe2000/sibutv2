@@ -1,6 +1,7 @@
-from typing import Optional, List
-from sqlmodel import SQLModel, Field, Relationship
+from typing import List, Optional
 from enum import Enum
+from datetime import datetime
+from sqlmodel import SQLModel, Field, Relationship
 
 class UserRole(str, Enum):
     SUPER_ADMIN = "SUPER_ADMIN"
@@ -56,6 +57,18 @@ class ResponsibilityMatrix(SQLModel, table=True):
     entity_id: str # Code de la ressource (ex: R1.01) ou ID de l'activité ou UID de l'étudiant
     role_type: ResponsibilityType = Field(default=ResponsibilityType.INTERVENANT)
     academic_year: str = "2025-2026"
+
+# --- FILE MANAGEMENT ---
+
+class StudentFile(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_uid: str = Field(index=True)
+    filename: str
+    nc_path: str # Chemin sur Nextcloud
+    entity_type: ResponsibilityEntityType # ACTIVITY ou RESOURCE
+    entity_id: str # ID de l'activité ou code ressource
+    is_locked: bool = Field(default=False)
+    uploaded_at: datetime = Field(default_factory=datetime.now)
 
 # --- CURRICULUM MODELS ---
 

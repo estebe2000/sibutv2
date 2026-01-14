@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Title, Paper, Tabs, Stack, TextInput, Button } from '@mantine/core';
-import { IconUsers, IconDatabase } from '@tabler/icons-react';
+import { IconUsers, IconDatabase, IconSettings } from '@tabler/icons-react';
 
 export function SettingsView({ config, onSave }: any) {
   const [localConfig, setLocalConfig] = useState<any[]>([]);
@@ -12,7 +12,10 @@ export function SettingsView({ config, onSave }: any) {
       { key: 'ldap_base_dn', value: 'dc=univ,dc=fr', category: 'ldap' },
       { key: 'smtp_host', value: 'mail', category: 'mail' },
       { key: 'smtp_port', value: '1025', category: 'mail' },
-      { key: 'mistral_api_key', value: '', category: 'ai' }
+      { key: 'mistral_api_key', value: '', category: 'ai' },
+      { key: 'APP_LOGO_URL', value: '', category: 'branding' },
+      { key: 'APP_PRIMARY_COLOR', value: '#1971c2', category: 'branding' },
+      { key: 'APP_WELCOME_MESSAGE', value: 'Bienvenue sur Skills Hub', category: 'branding' }
     ];
 
     const merged = defaults.map(d => {
@@ -29,7 +32,8 @@ export function SettingsView({ config, onSave }: any) {
   const categories = [
     { id: 'ldap', label: 'Serveur LDAP', icon: <IconUsers size={16} /> },
     { id: 'mail', label: 'Serveur Mail (SMTP)', icon: <IconUsers size={16} /> },
-    { id: 'ai', label: 'IA (Codestral)', icon: <IconDatabase size={16} /> }
+    { id: 'ai', label: 'IA (Codestral)', icon: <IconDatabase size={16} /> },
+    { id: 'branding', label: 'Identité Visuelle', icon: <IconSettings size={16} /> }
   ];
 
   return (
