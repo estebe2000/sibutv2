@@ -35,19 +35,16 @@ import {
   IconCrown
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import axios from 'axios';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import api from '../services/api';
 import { renderRichText } from '../components/RichTextRenderer';
 import { ResponsibilitySelector } from '../components/ResponsibilitySelector';
-
-// API URL (will be passed or fetched from store/env)
-const API_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:8000'
-  : `http://${window.location.hostname}:8000`;
 
 export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   const [pathway, setPathway] = useState('Tronc Commun');
   const [editingComp, setEditingComp] = useState<any>(null);
   const [editingAct, setEditingAct] = useState<any>(null);
+  const [editingRes, setEditingRes] = useState<any>(null);
 
   const [infoItem, setInfoItem] = useState<any>(null);
   const [infoLoading, setInfoLoading] = useState(false);
@@ -125,45 +122,83 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
 
   const handleSaveComp = async () => {
     try {
-        await axios.patch(`${API_URL}/competencies/${editingComp.id}`, editingComp);
-        notifications.show({ title: 'Succès', message: 'Compétence mise à jour' });
-        setEditingComp(null);
+        if (editingComp.id) {
+            await api.patch(`/competencies/${editingComp.id}`, editingComp);
+            notifications.show({ title: 'Succès', message: 'Compétence mise à jour', color: 'green' });
+        } else {
+            await api.post(`/competencies`, editingComp);
+            notifications.show({ title: 'Succès', message: 'Compétence créée', color: 'green' });
+        }
+        setIsCompModalOpen(false);
         onRefresh();
-    } catch (e) { notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de la sauvegarde' }); }
+    } catch (e) {
+        notifications.show({ title: 'Erreur', message: 'Échec de l\'opération', color: 'red' });
+    }
   };
 
   const handleSaveAct = async () => {
     try {
-        await axios.patch(`${API_URL}/activities/${editingAct.id}`, editingAct);
-        notifications.show({ title: 'Succès', message: 'Activité mise à jour' });
-        setEditingAct(null);
+        if (editingAct.id) {
+            const payload = {
+                label: editingAct.label,
+                description: editingAct.description,
+                resources: editingAct.resources
+            };
+            await api.patch(`/activities/${editingAct.id}`, payload);
+            notifications.show({ title: 'Succès', message: 'Activité mise à jour', color: 'green' });
+        } else {
+            await api.post(`/activities`, editingAct);
+            notifications.show({ title: 'Succès', message: 'Activité créée', color: 'green' });
+        }
+        setEditingAct(null); // Correction ici : on ferme la modal
         onRefresh();
-    } catch (e) { notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de la sauvegarde' }); }
+    } catch (e) {
+        notifications.show({ title: 'Erreur', message: 'Échec de l\'opération', color: 'red' });
+    }
+  };
+
+  const handleSaveRes = async () => {
+    try {
+        if (editingRes.id) {
+            const payload = {
+                label: editingRes.label,
+                description: editingRes.description,
+                content: editingRes.content,
+                hours: editingRes.hours,
+                hours_details: editingRes.hours_details
+            };
+            await api.patch(`/resources/${editingRes.id}`, payload);
+            notifications.show({ title: 'Succès', message: 'Ressource mise à jour', color: 'green' });
+        }
+        setEditingRes(null);
+        onRefresh();
+    } catch (e) {
+        notifications.show({ title: 'Erreur', message: 'Échec de l\'opération', color: 'red' });
+    }
   };
 
   const handleExport = async () => {
     try {
-        const res = await axios.get(`${API_URL}/export/curriculum`);
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(res.data, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href",     dataStr);
-        downloadAnchorNode.setAttribute("download", `referentiel_tc_${new Date().toISOString().split('T')[0]}.json`);
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-        notifications.show({ title: 'Export réussi', message: 'Le fichier de sauvegarde a été téléchargé' });
-    } catch (e) { notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de l\'export' }); }
+        const res = await api.get(`/export/curriculum`);
+        const blob = new Blob([JSON.stringify(res.data, null, 2)], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `referentiel_TC_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+    } catch (e) {
+        notifications.show({ title: 'Erreur', message: 'Échec de l\'export', color: 'red' });
+    }
   };
 
-  const showInfo = async (item: any, type: 'RES' | 'AC', pathway?: string) => {
+  const showInfo = async (item: any, type: 'RES' | 'AC') => {
     setInfoLoading(true);
     setInfoItem({ ...item, type });
     try {
         if (type === 'RES') {
-            const url = pathway
-                ? `${API_URL}/resources/${item.code.trim()}?pathway=${encodeURIComponent(pathway)}`
-                : `${API_URL}/resources/${item.code.trim()}`;
-            const res = await axios.get(url);
+            const res = await api.get(`/resources/${item.code.trim()}`);
             setInfoItem({ ...res.data, type });
         }
     } catch (e) {
@@ -265,8 +300,29 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                 <TextInput label="Libellé" value={editingAct.label} onChange={(e) => setEditingAct({...editingAct, label: e.target.value})} />
                 <Textarea label="Description (Objectifs)" value={editingAct.description || ''} onChange={(e) => setEditingAct({...editingAct, description: e.target.value})} autosize minRows={4} />
                 <TextInput label="Ressources" value={editingAct.resources || ''} onChange={(e) => setEditingAct({...editingAct, resources: e.target.value})} placeholder="R1.01, R1.02..." />
-                <ResponsibilitySelector entity={editingAct} type="activity" professors={professors} onRefresh={onRefresh} apiUrl={API_URL} />
+                <ResponsibilitySelector entityId={editingAct.id.toString()} entityType="ACTIVITY" professors={professors} onRefresh={onRefresh} />
                 <Button onClick={handleSaveAct} mt="md">Sauvegarder</Button>
+            </Stack>
+        )}
+      </Modal>
+
+      {/* RESOURCE EDITOR MODAL */}
+      <Modal opened={!!editingRes} onClose={() => setEditingRes(null)} title="Édition Ressource" size="lg">
+        {editingRes && (
+            <Stack>
+                <Group grow>
+                    <TextInput label="Code" value={editingRes.code} disabled />
+                    <TextInput label="Parcours" value={editingRes.pathway} disabled />
+                </Group>
+                <TextInput label="Libellé" value={editingRes.label} onChange={(e) => setEditingRes({...editingRes, label: e.target.value})} />
+                <Textarea label="Objectifs" value={editingRes.description || ''} onChange={(e) => setEditingRes({...editingRes, description: e.target.value})} autosize minRows={3} />
+                <Textarea label="Contenu Pédagogique" value={editingRes.content || ''} onChange={(e) => setEditingRes({...editingRes, content: e.target.value})} autosize minRows={4} />
+                <Group grow>
+                    <TextInput label="Heures (Nombre)" type="number" value={editingRes.hours} onChange={(e) => setEditingRes({...editingRes, hours: parseInt(e.target.value) || 0})} />
+                    <TextInput label="Détails Horaires" value={editingRes.hours_details || ''} onChange={(e) => setEditingRes({...editingRes, hours_details: e.target.value})} />
+                </Group>
+                <ResponsibilitySelector entityId={editingRes.code} entityType="RESOURCE" professors={professors} onRefresh={onRefresh} />
+                <Button onClick={handleSaveRes} mt="md">Sauvegarder</Button>
             </Stack>
         )}
       </Modal>
@@ -487,16 +543,28 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
 
                             <Grid.Col span={12}>
                                 <Divider my="xs" variant="dotted" />
-                                <Group gap="xl">
-                                    <Group gap={4}>
-                                        <IconCrown size={14} color="gold" />
-                                        <Text size="xs" c="dimmed">Responsable : {professors?.find((p: any) => p.id === a.owner_id)?.full_name || 'Non assigné'}</Text>
+                                <Stack gap={4}>
+                                    <Group gap="xl">
+                                        <Group gap={4}>
+                                            <IconCrown size={14} color="gold" />
+                                            <Text size="xs" fw={700}>Responsable : {professors?.find((p: any) => p.ldap_uid === a.owner_id)?.full_name || 'Non assigné'}</Text>
+                                        </Group>
                                     </Group>
-                                    <Group gap={4}>
-                                        <IconUsers size={14} color="gray" />
-                                        <Text size="xs" c="dimmed">Intervenants : {a.intervenants?.length || 0}</Text>
-                                    </Group>
-                                </Group>
+                                    
+                                    {a.intervenants_identifies?.length > 0 && (
+                                        <Group gap={4}>
+                                            <IconUsers size={14} color="blue" />
+                                            <Text size="xs">Intervenants identifiés : {a.intervenants_identifies.map((uid: string) => professors?.find((p: any) => p.ldap_uid === uid)?.full_name || uid).join(', ')}</Text>
+                                        </Group>
+                                    )}
+
+                                    {a.intervenants_de_fait?.length > 0 && (
+                                        <Group gap={4}>
+                                            <IconUsers size={14} color="gray" />
+                                            <Text size="xs" c="dimmed" fs="italic">Intervenants de fait (Ressources) : {a.intervenants_de_fait.map((uid: string) => professors?.find((p: any) => p.ldap_uid === uid)?.full_name || uid).join(', ')}</Text>
+                                        </Group>
+                                    )}
+                                </Stack>
                             </Grid.Col>
                         </Grid>
                       </Accordion.Panel>
@@ -554,12 +622,25 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                                         {r.hours > 0 && (
                                             <Badge size="xs" variant="light" color="gray" leftSection={<IconClock size={10} />}>{r.hours}h</Badge>
                                         )}
-                                        <Button size="compact-xs" variant="light" onClick={(e) => { e.stopPropagation(); showInfo(r, 'RES'); }}>Détail</Button>
+                                        <ActionIcon size="xs" variant="subtle" color="blue" onClick={(e) => { e.stopPropagation(); showInfo(r, 'RES'); }} title="Voir Détails"><IconCategory size={12} /></ActionIcon>
+                                        <ActionIcon size="xs" variant="subtle" onClick={(e) => { e.stopPropagation(); setEditingRes(r); }}><IconPencil size={12} /></ActionIcon>
                                     </Group>
                                 </Group>
                             </Accordion.Control>
                             <Accordion.Panel>
                                 <Stack gap="md">
+                                    <Group gap="xl">
+                                        <Group gap={4}>
+                                            <IconCrown size={14} color="gold" />
+                                            <Text size="xs" fw={700}>Responsable : {professors?.find((p: any) => p.ldap_uid === r.owner_id)?.full_name || 'Non assigné'}</Text>
+                                        </Group>
+                                        {r.intervenants_identifies?.length > 0 && (
+                                            <Group gap={4}>
+                                                <IconUsers size={14} color="blue" />
+                                                <Text size="xs">Intervenants : {r.intervenants_identifies.map((uid: string) => professors?.find((p: any) => p.ldap_uid === uid)?.full_name || uid).join(', ')}</Text>
+                                            </Group>
+                                        )}
+                                    </Group>
                                     {(r.hours > 0 || r.hours_details) && (
                                         <Group>
                                             <Badge size="lg" color="blue" variant="filled" leftSection={<IconClock size={14} />}>Volume Horaire : {r.hours_details || `${r.hours}h`}</Badge>

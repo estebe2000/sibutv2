@@ -4,9 +4,34 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Frame, PageTemplate, NextPageTemplate
 from reportlab.lib.units import cm
 from io import BytesIO
-from .models import Activity, Resource, LearningOutcome
+from ..models import Activity, Resource, LearningOutcome, User, ResponsibilityMatrix, ResponsibilityEntityType, ResponsibilityType
 from sqlmodel import Session, select
 import re
+from datetime import datetime
+
+def get_governance_info(session: Session, entity_id: str, entity_type: ResponsibilityEntityType):
+    """Récupère les noms et emails des responsables pour le PDF."""
+    stmt = select(ResponsibilityMatrix).where(
+        ResponsibilityMatrix.entity_id == entity_id,
+        ResponsibilityMatrix.entity_type == entity_type
+    )
+    resps = session.exec(stmt).all()
+    
+    owner_info = "Non assigné"
+    intervenants = []
+    
+    for r in resps:
+        user = session.exec(select(User).where(User.ldap_uid == r.user_id)).first()
+        name = user.full_name if user else r.user_id
+        email = user.email if user else ""
+        info = f"{name} ({email})" if email else name
+        
+        if r.role_type == ResponsibilityType.OWNER:
+            owner_info = info
+        else:
+            intervenants.append(info)
+            
+    return owner_info, intervenants
 import html
 
 def get_styles():
@@ -50,10 +75,29 @@ def generate_activity_pdf(activity: Activity, session: Session):
     story = []
     styles = get_styles()
 
+    # --- HEADER: Date de génération ---
+    gen_date = datetime.now().strftime("%d/%m/%Y")
+    story.append(Paragraph(f"Document généré le {gen_date} - Skills Hub BUT TC", styles['NormalStyle']))
+    story.append(Spacer(1, 0.5*cm))
+
     # --- PAGE 1: ACTIVITY OVERVIEW ---
     story.append(Paragraph(f"{activity.code} : {activity.label}", styles['TitleStyle']))
     story.append(Spacer(1, 0.5*cm))
     
+    # --- GOUVERNANCE ---
+    owner, intervenants = get_governance_info(session, str(activity.id), ResponsibilityEntityType.ACTIVITY)
+    
+    gov_data = [
+        [Paragraph("<b>Responsable :</b>", styles['NormalStyle']), Paragraph(owner, styles['NormalStyle'])],
+    ]
+    if intervenants:
+        gov_data.append([Paragraph("<b>Intervenant(s) :</b>", styles['NormalStyle']), Paragraph(", ".join(intervenants), styles['NormalStyle'])])
+    
+    t_gov = Table(gov_data, colWidths=[4*cm, 11*cm])
+    t_gov.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'TOP'), ('BOTTOMPADDING', (0,0), (-1,-1), 2)]))
+    story.append(t_gov)
+    story.append(Spacer(1, 0.5*cm))
+
     data = [["Type:", activity.type], ["Semestre:", f"S{activity.semester}"], ["Parcours:", activity.pathway]]
     t = Table(data, colWidths=[3*cm, 12*cm])
     t.setStyle(TableStyle([('FONTNAME', (0,0), (0,-1), 'Helvetica-Bold'), ('FONTSIZE', (0,0), (-1,-1), 10), ('ALIGN', (0,0), (-1,-1), 'LEFT')]))
@@ -162,8 +206,28 @@ def generate_resource_pdf(resource: Resource, session: Session):
     story = []
     styles = get_styles()
 
+    # --- HEADER: Date de génération ---
+    gen_date = datetime.now().strftime("%d/%m/%Y")
+    story.append(Paragraph(f"Document généré le {gen_date} - Skills Hub BUT TC", styles['NormalStyle']))
+    story.append(Spacer(1, 0.5*cm))
+
     story.append(Paragraph(f"Ressource {resource.code} : {resource.label}", styles['TitleStyle']))
     story.append(Spacer(1, 0.5*cm))
+    
+    # --- GOUVERNANCE ---
+    owner, intervenants = get_governance_info(session, resource.code, ResponsibilityEntityType.RESOURCE)
+    
+    gov_data = [
+        [Paragraph("<b>Responsable :</b>", styles['NormalStyle']), Paragraph(owner, styles['NormalStyle'])],
+    ]
+    if intervenants:
+        gov_data.append([Paragraph("<b>Intervenant(s) :</b>", styles['NormalStyle']), Paragraph(", ".join(intervenants), styles['NormalStyle'])])
+    
+    t_gov = Table(gov_data, colWidths=[4*cm, 11*cm])
+    t_gov.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'TOP'), ('BOTTOMPADDING', (0,0), (-1,-1), 2)]))
+    story.append(t_gov)
+    story.append(Spacer(1, 0.5*cm))
+
     story.append(Paragraph(f"Parcours: {resource.pathway} | Volume : {resource.hours_details or 'N/A'}", styles['NormalStyle']))
     story.append(Spacer(1, 0.5*cm))
 

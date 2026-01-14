@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
-import { notifications } from '@mantine/notifications';
+import api from '../services/api';
 
 interface State {
   token: string | null;
@@ -11,7 +10,7 @@ interface State {
   setUser: (user: any) => void;
   setConfig: (config: any[]) => void;
   setCurriculum: (curriculum: any) => void;
-  fetchCurriculum: (apiUrl: string) => Promise<void>;
+  fetchCurriculum: () => Promise<void>;
   logout: () => void;
 }
 
@@ -28,12 +27,12 @@ export const useStore = create<State>((set) => ({
   setUser: (user) => set({ user }),
   setConfig: (config) => set({ config }),
   setCurriculum: (curriculum) => set({ curriculum }),
-  fetchCurriculum: async (apiUrl) => {
+  fetchCurriculum: async () => {
     try {
       const [compRes, actRes, resRes] = await Promise.all([
-        axios.get(`${apiUrl}/competencies`),
-        axios.get(`${apiUrl}/activities`),
-        axios.get(`${apiUrl}/resources`)
+        api.get('/competencies'),
+        api.get('/activities'),
+        api.get('/resources')
       ]);
       set({
         curriculum: {
