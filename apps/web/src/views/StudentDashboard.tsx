@@ -3,6 +3,8 @@ import { Container, Paper, Title, Text, Group, Stack, Badge, ThemeIcon, Alert, A
 import { IconUser, IconSchool, IconInfoCircle, IconTimeline, IconFileText, IconDownload, IconBook, IconFolder, IconFileUpload, IconBriefcase, IconTrash, IconLock } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from '../services/api';
+import OdooWidget from '../components/OdooWidget';
+
 interface StudentDashboardProps {
   user: any;
   groups: any[];
@@ -148,6 +150,8 @@ export function StudentDashboard({ user, groups, curriculum }: StudentDashboardP
             </Stack>
           </Paper>
         </div>
+
+        <OdooWidget />
 
         <Alert variant="light" color="indigo" title="En cours de développement" icon={<IconInfoCircle />}>
           Votre espace de suivi des compétences et votre portfolio Nextcloud sont en cours de configuration. 

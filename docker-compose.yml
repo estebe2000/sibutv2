@@ -106,6 +106,42 @@ services:
       - app_network
 
   # ---------------------------------------------------------------------------
+  # Database for Odoo (PostgreSQL 15)
+  # ---------------------------------------------------------------------------
+  db_odoo:
+    image: postgres:15-alpine
+    container_name: but_tc_db_odoo
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: Rangetachambre76*
+      POSTGRES_DB: postgres
+    volumes:
+      - odoo_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Odoo ERP
+  # ---------------------------------------------------------------------------
+  odoo:
+    image: odoo:17.0
+    container_name: but_tc_odoo
+    restart: unless-stopped
+    depends_on:
+      - db_odoo
+    environment:
+      - HOST=db_odoo
+      - USER=odoo
+      - PASSWORD=Rangetachambre76*
+    # On utilise le fichier de configuration monté
+    volumes:
+      - ./apps/odoo/odoo.conf:/etc/odoo/odoo.conf
+      - odoo_data:/var/lib/odoo
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
   # Keycloak Identity Provider
   # ---------------------------------------------------------------------------
   keycloak:
@@ -193,6 +229,8 @@ services:
       - KEYCLOAK_REALM=but-tc
       - KEYCLOAK_CLIENT_ID=skills-hub-app
       - KEYCLOAK_CLIENT_SECRET=ASzD8MghmcXaTSas1MvjiK9o81DrlEeO
+      # Odoo Database Direct Access (for admin tasks)
+      - ODOO_DB_URL=postgresql://odoo:Rangetachambre76*@db_odoo:5432/postgres
       # Configuration Mail OVH
       - SMTP_HOST=ssl0.ovh.net
       - SMTP_PORT=465
@@ -240,6 +278,8 @@ volumes:
   mattermost_config:
   mattermost_logs:
   mattermost_plugins:
+  odoo_data:
+  odoo_db_data:
 
 networks:
   app_network:
