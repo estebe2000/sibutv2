@@ -10,7 +10,7 @@ load_dotenv()
 
 from .database import create_db_and_tables, engine
 from .models import Group
-from .routers import auth, users, curriculum, config, files, keycloak_admin, portfolio, odoo
+from .routers import auth, users, curriculum, config, files, keycloak_admin, portfolio, odoo, ai
 
 app = FastAPI(title="BUT TC Skills Hub API", root_path=os.getenv("ROOT_PATH", ""))
 
@@ -44,6 +44,7 @@ app.include_router(files.router)
 app.include_router(keycloak_admin.router)
 app.include_router(portfolio.router)
 app.include_router(odoo.router, prefix="/odoo", tags=["Odoo Provisioning"])
+app.include_router(ai.router, prefix="/ai", tags=["AI Assistant"])
 
 @app.get("/")
 def read_root():

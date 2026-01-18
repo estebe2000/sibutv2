@@ -1,77 +1,134 @@
-import React from 'react';
-import { Container, Title, Text, SimpleGrid, Paper, ThemeIcon, Button, Group, Alert, Timeline } from '@mantine/core';
-import { IconRobot, IconSchool, IconChecklist, IconBrain, IconMessageChatbot, IconSparkles, IconDatabase } from '@tabler/icons-react';
+import React, { useState } from 'react';
+import { Container, Title, Text, Group, ThemeIcon, Paper, ScrollArea, TextInput, ActionIcon, Stack, Loader, Avatar, SimpleGrid, Alert } from '@mantine/core';
+import { IconRobot, IconSend, IconUser, IconSchool, IconChecklist, IconBrain, IconSparkles } from '@tabler/icons-react';
+import api from '../services/api';
+
+interface Message {
+    role: 'user' | 'bot';
+    content: string;
+}
+
+const SimpleMarkdown = ({ content }: { content: string }) => {
+    // Découpage simple pour gérer le gras et le code inline LaTeX
+    const parts = content.split(/(\*\*.*?\*\*|\\(.*?\\))/g); 
+    
+    return (
+        <span>
+            {parts.map((part, i) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                    return <strong key={i}>{part.slice(2, -2)}</strong>;
+                }
+                if (part.startsWith('\\(') && part.endsWith('\\)')) {
+                    return <code key={i} style={{background: 'rgba(0,0,0,0.1)', padding: '2px 4px', borderRadius: 4, fontFamily: 'monospace'}}>{part.slice(2, -2)}</code>;
+                }
+                return part;
+            })}
+        </span>
+    );
+};
 
 export function AiAssistantView() {
+  const [messages, setMessages] = useState<Message[]>([
+      { role: 'bot', content: "Bonjour ! Je suis l'assistant pédagogique du BUT TC. Comment puis-je vous aider aujourd'hui ? (Génération de cours, idées d'évaluation...)" }
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSend = async () => {
+      if (!input.trim()) return;
+      const userMsg = input;
+      setInput('');
+      setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+      setLoading(true);
+
+      try {
+          const res = await api.post('/ai/chat', { message: userMsg });
+          setMessages(prev => [...prev, { role: 'bot', content: res.data.response }]);
+      } catch (e) {
+          console.error(e);
+          setMessages(prev => [...prev, { role: 'bot', content: "Désolé, je rencontre des difficultés techniques pour joindre mon cerveau (Mistral)." }]);
+      }
+      setLoading(false);
+  };
+
   return (
     <Container size="lg" py="xl">
-      <Group mb="xl">
-        <ThemeIcon size={40} radius="xl" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>
-          <IconRobot size={24} />
-        </ThemeIcon>
-        <div>
-          <Title order={2}>Assistant Pédagogique IA</Title>
-          <Text c="dimmed">Votre copilote intelligent pour le BUT TC</Text>
-        </div>
-      </Group>
+        <Group mb="xl">
+            <ThemeIcon size={40} radius="xl" variant="gradient" gradient={{ from: 'blue', to: 'cyan' }}>
+            <IconRobot size={24} />
+            </ThemeIcon>
+            <div>
+            <Title order={2}>Assistant Pédagogique IA</Title>
+            <Text c="dimmed">Propulsé par Mistral Codestral</Text>
+            </div>
+        </Group>
 
-      <Alert variant="light" color="blue" title="Fonctionnalité en cours de déploiement" icon={<IconSparkles />} mb="xl">
-        Cet assistant est actuellement en phase de pré-lancement. Il sera bientôt connecté à l'ensemble du référentiel de compétences pour vous assister au quotidien.
-      </Alert>
+        <Alert variant="light" color="blue" title="Fonctionnalité en cours de déploiement" icon={<IconSparkles />} mb="xl">
+            Cet assistant est connecté au LLM Mistral pour répondre à vos questions. Les fonctionnalités avancées ci-dessous arriveront bientôt.
+        </Alert>
 
-      <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg" mb={50}>
-        <Paper withBorder p="xl" radius="md" shadow="sm">
-          <ThemeIcon size="lg" radius="md" variant="light" color="indigo" mb="md">
-            <IconSchool size={20} />
-          </ThemeIcon>
-          <Text size="lg" fw={500} mt="md" mb="xs">Génération de Contenu</Text>
-          <Text size="sm" c="dimmed" mb="md">
-            Créez des plans de cours, des scénarios de SAÉ ou des exercices adaptés aux niveaux taxonomiques des compétences ciblées.
-          </Text>
-          <Button variant="light" fullWidth disabled>Bientôt disponible</Button>
+        <SimpleGrid cols={{ base: 1, md: 3 }} spacing="lg" mb="xl">
+            <Paper withBorder p="md" radius="md" shadow="sm">
+            <ThemeIcon size="lg" radius="md" variant="light" color="indigo" mb="xs"><IconSchool size={20} /></ThemeIcon>
+            <Text size="md" fw={500}>Génération de Contenu</Text>
+            <Text size="xs" c="dimmed" mb="md">Créez des plans de cours et scénarios pédagogiques.</Text>
+            </Paper>
+            <Paper withBorder p="md" radius="md" shadow="sm">
+            <ThemeIcon size="lg" radius="md" variant="light" color="teal" mb="xs"><IconChecklist size={20} /></ThemeIcon>
+            <Text size="md" fw={500}>Grilles d'Évaluation</Text>
+            <Text size="xs" c="dimmed" mb="md">Générez des critères basés sur le référentiel.</Text>
+            </Paper>
+            <Paper withBorder p="md" radius="md" shadow="sm">
+            <ThemeIcon size="lg" radius="md" variant="light" color="grape" mb="xs"><IconBrain size={20} /></ThemeIcon>
+            <Text size="md" fw={500}>Analyse de Cohérence</Text>
+            <Text size="xs" c="dimmed" mb="md">Vérifiez l'alignement pédagogique.</Text>
+            </Paper>
+        </SimpleGrid>
+
+        <Title order={3} mb="md">Discussion Interactive</Title>
+        <Paper withBorder p="md" radius="md" shadow="sm" h={500} style={{ display: 'flex', flexDirection: 'column' }}>
+            <ScrollArea style={{ flexGrow: 1 }} mb="md" type="always">
+                <Stack gap="md" p="xs">
+                    {messages.map((m, i) => (
+                        <Group key={i} align="flex-start" justify={m.role === 'user' ? 'flex-end' : 'flex-start'}>
+                            {m.role === 'bot' && <Avatar color="blue" radius="xl"><IconRobot size={20} /></Avatar>}
+                            <Paper 
+                                withBorder={m.role === 'bot'}
+                                bg={m.role === 'user' ? 'blue' : 'gray.0'}
+                                c={m.role === 'user' ? 'white' : 'dark'}
+                                py="xs" px="md" radius="lg" 
+                                style={{ maxWidth: '80%' }}
+                            >
+                                <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>
+                                    <SimpleMarkdown content={m.content} />
+                                </Text>
+                            </Paper>
+                            {m.role === 'user' && <Avatar color="gray" radius="xl"><IconUser size={20} /></Avatar>}
+                        </Group>
+                    ))}
+                    {loading && (
+                        <Group align="center">
+                             <Avatar color="blue" radius="xl"><IconRobot size={20} /></Avatar>
+                             <Loader size="xs" variant="dots" />
+                        </Group>
+                    )}
+                </Stack>
+            </ScrollArea>
+
+            <Group>
+                <TextInput 
+                    placeholder="Posez votre question..." 
+                    style={{ flexGrow: 1 }}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                    disabled={loading}
+                />
+                <ActionIcon size="lg" color="blue" variant="filled" onClick={handleSend} loading={loading}>
+                    <IconSend size={18} />
+                </ActionIcon>
+            </Group>
         </Paper>
-
-        <Paper withBorder p="xl" radius="md" shadow="sm">
-          <ThemeIcon size="lg" radius="md" variant="light" color="teal" mb="md">
-            <IconChecklist size={20} />
-          </ThemeIcon>
-          <Text size="lg" fw={500} mt="md" mb="xs">Grilles d'Évaluation</Text>
-          <Text size="sm" c="dimmed" mb="md">
-            Générez automatiquement des grilles critériées basées sur les Composantes Essentielles et les Apprentissages Critiques du référentiel.
-          </Text>
-          <Button variant="light" fullWidth disabled>Bientôt disponible</Button>
-        </Paper>
-
-        <Paper withBorder p="xl" radius="md" shadow="sm">
-          <ThemeIcon size="lg" radius="md" variant="light" color="grape" mb="md">
-            <IconBrain size={20} />
-          </ThemeIcon>
-          <Text size="lg" fw={500} mt="md" mb="xs">Analyse de Cohérence</Text>
-          <Text size="sm" c="dimmed" mb="md">
-            Vérifiez l'alignement pédagogique entre vos objectifs, vos méthodes d'évaluation et les ressources mobilisées.
-          </Text>
-          <Button variant="light" fullWidth disabled>Bientôt disponible</Button>
-        </Paper>
-      </SimpleGrid>
-
-      <Title order={3} mb="lg">Comment ça marche ?</Title>
-      <Timeline active={1} bulletSize={24} lineWidth={2}>
-        <Timeline.Item bullet={<IconDatabase size={12} />} title="Indexation du Référentiel">
-          <Text c="dimmed" size="sm">L'IA analyse l'ensemble des fiches ressources, SAÉ et compétences du BUT TC pour comprendre le contexte.</Text>
-        </Timeline.Item>
-
-        <Timeline.Item bullet={<IconMessageChatbot size={12} />} title="Interface Chat">
-          <Text c="dimmed" size="sm">Vous posez une question en langage naturel : "Propose-moi une SAÉ de niveau 2 mêlant Marketing et Droit".</Text>
-        </Timeline.Item>
-
-        <Timeline.Item title="Génération Contextuelle" lineVariant="dashed">
-          <Text c="dimmed" size="sm">L'assistant propose un contenu structuré respectant les contraintes horaires et les coefficients.</Text>
-        </Timeline.Item>
-
-        <Timeline.Item title="Export & Intégration">
-          <Text c="dimmed" size="sm">Vous pouvez exporter le résultat en PDF ou l'intégrer directement dans vos fiches modules.</Text>
-        </Timeline.Item>
-      </Timeline>
     </Container>
   );
 }
