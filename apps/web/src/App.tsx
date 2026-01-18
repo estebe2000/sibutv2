@@ -26,7 +26,9 @@ import {
   IconShieldCheck,
   IconBook,
   IconFileText,
-  IconCategory
+  IconCategory,
+  IconSparkles,
+  IconLayoutDashboard
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
@@ -41,6 +43,8 @@ import { KeycloakUserManagement } from './views/KeycloakUserManagement';
 import { DispatcherView } from './views/DispatcherView';
 import { StudentDashboard } from './views/StudentDashboard';
 import { OdooAdminView } from './views/OdooAdminView';
+import { ProfessorDashboard } from './views/ProfessorDashboard';
+import { AiAssistantView } from './views/AiAssistantView';
 
 const YEAR_COLORS: any = {
   0: 'gray',
@@ -180,7 +184,7 @@ function App() {
     </Center>
   );
 
-  // Vue Étudiant
+  // --- VUE ÉTUDIANT ---
   if (user && user.role === 'STUDENT') {
     return (
       <AppShell header={{ height: 60 }} padding="md">
@@ -200,7 +204,53 @@ function App() {
     );
   }
 
-  // Vue Administration (Staff)
+  // --- VUE ENSEIGNANT ---
+  if (user && user.role === 'PROFESSOR') {
+    return (
+      <AppShell header={{ height: 60 }} navbar={{ width: 250, breakpoint: 'sm' }} padding="md">
+        <AppShell.Header p="md">
+          <Group justify="space-between">
+            <Group><IconShieldCheck size={28} color="#228be6" /><Title order={3}>Espace Enseignant</Title></Group>
+            <Group gap="xl">
+              <Text size="sm" fw={500}>{user.full_name}</Text>
+              <Button variant="default" size="xs" onClick={handleLogout}>Déconnexion</Button>
+            </Group>
+          </Group>
+        </AppShell.Header>
+        <AppShell.Navbar p="md">
+          <Stack>
+            <Button variant={activeTab === 'dashboard' ? 'light' : 'subtle'} onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={20} />}>Tableau de Bord</Button>
+            <Button variant={activeTab === 'curriculum' ? 'light' : 'subtle'} onClick={() => setActiveTab('curriculum')} leftSection={<IconBook size={20} />} color="grape">Référentiel</Button>
+            <Button variant={activeTab === 'discovery' ? 'light' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={20} />} color="teal">Découverte</Button>
+            <Button variant={activeTab === 'repartition' ? 'light' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={20} />} color="orange">Répartition</Button>
+            <Button variant={activeTab === 'fiches2' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={20} />} color="cyan">Fiches PDF</Button>
+            <Button variant={activeTab === 'ai-assistant' ? 'light' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={20} />} color="indigo">Assistant IA</Button>
+          </Stack>
+        </AppShell.Navbar>
+        <AppShell.Main bg="gray.0">
+          {activeTab === 'dashboard' || activeTab === 'dispatcher' ? ( // Fallback to dashboard if coming from default 'dispatcher' state
+             <ProfessorDashboard user={user} curriculum={curriculum} />
+          ) : activeTab === 'curriculum' ? (
+            <CompetencyEditor 
+                curriculum={curriculum} 
+                onRefresh={fetchCurriculum}
+                professors={assignedUsers.filter(u => u.role === 'PROFESSOR' || u.role === 'ADMIN' || u.role === 'SUPER_ADMIN')} 
+            />
+          ) : activeTab === 'discovery' ? (
+            <DiscoveryView curriculum={curriculum} />
+          ) : activeTab === 'repartition' ? (
+            <RepartitionView curriculum={curriculum} />
+          ) : activeTab === 'fiches2' ? (
+            <FichesPDF2View curriculum={curriculum} />
+          ) : activeTab === 'ai-assistant' ? (
+            <AiAssistantView />
+          ) : <ProfessorDashboard user={user} curriculum={curriculum} />}
+        </AppShell.Main>
+      </AppShell>
+    );
+  }
+
+  // --- VUE ADMINISTRATION (Staff / Admin) ---
   return (
     <AppShell header={{ height: 60 }} navbar={{ width: 250, breakpoint: 'sm' }} padding="md">
       <AppShell.Header p="md">
