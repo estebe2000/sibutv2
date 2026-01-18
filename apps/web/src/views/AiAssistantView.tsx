@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Container, Title, Text, Group, ThemeIcon, Paper, ScrollArea, TextInput, ActionIcon, Stack, Loader, Avatar, SimpleGrid, Alert } from '@mantine/core';
 import { IconRobot, IconSend, IconUser, IconSchool, IconChecklist, IconBrain, IconSparkles } from '@tabler/icons-react';
 import api from '../services/api';
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 
 interface Message {
     role: 'user' | 'bot';
@@ -9,23 +11,54 @@ interface Message {
 }
 
 const SimpleMarkdown = ({ content }: { content: string }) => {
-    // Découpage simple pour gérer le gras et le code inline LaTeX
-    const parts = content.split(/(\*\*.*?\*\*|\\(.*?\\))/g); 
+    if (!content) return null;
+    
+    // Normalisation des délimiteurs LaTeX pour éviter les erreurs de parsing
+    let normalized = content
+        .replace(/\\\\\((.*?)\\\\\)/g, '\\\($1\\\)')
+        .replace(/\\\\\[(.*?)\\\\\\]/g, '\\\[$1\\\]')
+        .replace(/\$\$(.*?)\$\$/gs, '\\\[$1\\\]')
+        .replace(/\$(.*?)\$/g, '\\\($1\\\)');
+
+    // Découpage pour gérer le gras, le LaTeX en ligne \( \) et le LaTeX en bloc \[ \]
+    const parts = normalized.split(/(\*\*.*?\*\*|\\\(.*?\\\)|\\\[.*?\\\])/gs);
     
     return (
         <span>
             {parts.map((part, i) => {
+                if (!part) return null;
+                
+                // Gras
                 if (part.startsWith('**') && part.endsWith('**')) {
                     return <strong key={i}>{part.slice(2, -2)}</strong>;
                 }
-                if (part.startsWith('\\(') && part.endsWith('\\)')) {
-                    return <code key={i} style={{background: 'rgba(0,0,0,0.1)', padding: '2px 4px', borderRadius: 4, fontFamily: 'monospace'}}>{part.slice(2, -2)}</code>;
+                
+                // LaTeX en bloc \[ ... \]
+                if (part.startsWith('\\\[') && part.endsWith('\\\]')) {
+                    const math = part.slice(2, -2).trim();
+                    try {
+                        return <BlockMath key={i} math={math} />;
+                    } catch (e) {
+                        return <code key={i}>{math}</code>;
+                    }
                 }
+                
+                // LaTeX en ligne \( ... \)
+                if (part.startsWith('\\(') && part.endsWith('\\)')) {
+                    const math = part.slice(2, -2).trim();
+                    try {
+                        return <InlineMath key={i} math={math} />;
+                    } catch (e) {
+                        return <code key={i}>{math}</code>;
+                    }
+                }
+                
                 return part;
             })}
         </span>
     );
 };
+
 
 export function AiAssistantView() {
   const [messages, setMessages] = useState<Message[]>([
@@ -35,18 +68,29 @@ export function AiAssistantView() {
   const [loading, setLoading] = useState(false);
 
   const handleSend = async () => {
-      if (!input.trim()) return;
-      const userMsg = input;
+      if (!input.trim() || loading) return;
+      
+      const userMsg: Message = { role: 'user', content: input };
+      const newHistory = [...messages, userMsg];
+      
+      setMessages(newHistory);
       setInput('');
-      setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
       setLoading(true);
 
       try {
-          const res = await api.post('/ai/chat', { message: userMsg });
+          // On envoie tout l'historique pour la mémoire
+          const res = await api.post('/ai/chat', { 
+              messages: newHistory.map(m => ({
+                  role: m.role === 'bot' ? 'assistant' : 'user',
+                  content: m.content
+              }))
+          });
+          
           setMessages(prev => [...prev, { role: 'bot', content: res.data.response }]);
-      } catch (e) {
+      } catch (e: any) {
           console.error(e);
-          setMessages(prev => [...prev, { role: 'bot', content: "Désolé, je rencontre des difficultés techniques pour joindre mon cerveau (Mistral)." }]);
+          const errorMsg = e.response?.data?.detail || "Désolé, je rencontre des difficultés techniques.";
+          setMessages(prev => [...prev, { role: 'bot', content: errorMsg }]);
       }
       setLoading(false);
   };
