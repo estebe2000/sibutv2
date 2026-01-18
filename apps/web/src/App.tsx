@@ -40,6 +40,7 @@ import { SettingsView } from './views/SettingsView';
 import { KeycloakUserManagement } from './views/KeycloakUserManagement';
 import { DispatcherView } from './views/DispatcherView';
 import { StudentDashboard } from './views/StudentDashboard';
+import { OdooAdminView } from './views/OdooAdminView';
 
 const YEAR_COLORS: any = {
   0: 'gray',
@@ -220,6 +221,7 @@ function App() {
           {/* <Button variant={activeTab === 'fiches' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches')} leftSection={<IconDownload size={20} />} color="blue">Fiches PDF</Button> */}
           <Button variant={activeTab === 'fiches2' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={20} />} color="cyan">Fiches PDF 2</Button>
           <Button variant={activeTab === 'keycloak' ? 'light' : 'subtle'} onClick={() => setActiveTab('keycloak')} leftSection={<IconShieldCheck size={20} />} color="orange">Comptes Locaux</Button>
+          <Button variant={activeTab === 'odoo-admin' ? 'light' : 'subtle'} onClick={() => setActiveTab('odoo-admin')} leftSection={<IconDatabase size={20} />} color="indigo">Gestion Odoo</Button>
           <Button variant={activeTab === 'settings' ? 'light' : 'subtle'} onClick={() => setActiveTab('settings')} color="gray" leftSection={<IconSettings size={20} />}>Configuration</Button>
         </Stack>
       </AppShell.Navbar>
@@ -249,6 +251,8 @@ function App() {
           <FichesPDF2View curriculum={curriculum} />
         ) : activeTab === 'keycloak' ? (
           <KeycloakUserManagement />
+        ) : activeTab === 'odoo-admin' ? (
+          <OdooAdminView />
         ) : <SettingsView config={config} onSave={handleSaveConfig} />}
       </AppShell.Main>
     </AppShell>

@@ -71,6 +71,16 @@
                 <p class="text-gray-600">Espace de discussion et de collaboration en temps réel pour les équipes.</p>
                 <div class="mt-6 text-sm font-semibold text-indigo-600">Portail Unifié <i class="fas fa-external-link-alt ml-1"></i></div>
             </a>
+
+            <!-- Odoo ERP -->
+            <a href="https://odoo.educ-ai.fr" id="link-odoo" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-purple-600 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-purple-600">
+                    <i class="fas fa-briefcase text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Odoo ERP</h3>
+                </div>
+                <p class="text-gray-600">Gestion d'entreprise, CRM, Ventes et Site Web. Votre environnement métier complet.</p>
+                <div class="mt-6 text-sm font-semibold text-purple-600">Accès Direct <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
         </div>
     </main>
 
@@ -163,14 +173,45 @@
             window.location.href = logoutUrl;
         }
 
-        function checkAuth() {
+        async function checkAuth() {
             const token = getCookie(COOKIE_NAME);
-            const user = localStorage.getItem('user_name');
+            // On ne se fie plus seulement au localStorage, on va chercher le profil frais
             
-            if (token && user) {
+            if (token) {
                 document.getElementById('login-zone').classList.add('hidden');
                 document.getElementById('user-info').classList.remove('hidden');
-                document.getElementById('user-display').innerText = `Bonjour, ${user}`;
+                
+                try {
+                    // Récupération du profil complet (Role, Email...)
+                    const res = await fetch(`${API_URL}/users/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (res.ok) {
+                        const user = await res.json();
+                        document.getElementById('user-display').innerText = `Bonjour, ${user.full_name || user.username}`;
+                        
+                        // LOGIQUE DYNAMIQUE ODOO
+                        if (user.role === 'STUDENT' && user.email) {
+                            // Calcul du nom de la base (doit matcher la logique Python/React)
+                            const namePart = user.email.split('@')[0];
+                            const dbName = namePart.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/^-|-$/g, '');
+                            const studentUrl = `https://${dbName}.educ-ai.fr`;
+                            
+                            const odooLink = document.getElementById('link-odoo');
+                            if (odooLink) {
+                                odooLink.href = studentUrl;
+                                // Visuel pour indiquer que c'est perso
+                                odooLink.classList.remove('border-purple-600');
+                                odooLink.classList.add('border-green-500');
+                                odooLink.querySelector('.text-purple-600').classList.replace('text-purple-600', 'text-green-600');
+                                odooLink.querySelector('.mt-6').innerHTML = 'Mon Instance <i class="fas fa-user-circle ml-1"></i>';
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Erreur récupération profil", e);
+                }
             }
         }
 
