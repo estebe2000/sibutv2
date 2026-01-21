@@ -43,7 +43,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Skills Hub Admin -->
-            <a href="https://home.educ-ai.fr/app/" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-600 hover:shadow-xl">
+            <a href="https://home.${DOMAIN}/app/" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-600 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-blue-600">
                     <i class="fas fa-desktop text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Skills Hub Admin</h3>
@@ -53,7 +53,7 @@
             </a>
 
             <!-- Nextcloud -->
-            <a href="https://nextcloud.educ-ai.fr" id="link-nextcloud" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-400 hover:shadow-xl">
+            <a href="https://nextcloud.${DOMAIN}" id="link-nextcloud" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-400 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-blue-400">
                     <i class="fas fa-cloud text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Nextcloud</h3>
@@ -63,7 +63,7 @@
             </a>
 
             <!-- Mattermost -->
-            <a href="https://mattermost.educ-ai.fr" id="link-mattermost" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-indigo-600 hover:shadow-xl">
+            <a href="https://mattermost.${DOMAIN}" id="link-mattermost" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-indigo-600 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-indigo-600">
                     <i class="fas fa-comments text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Mattermost</h3>
@@ -73,7 +73,7 @@
             </a>
 
             <!-- Odoo ERP -->
-            <a href="https://odoo.educ-ai.fr" id="link-odoo" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-purple-600 hover:shadow-xl">
+            <a href="https://odoo.${DOMAIN}" id="link-odoo" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-purple-600 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-purple-600">
                     <i class="fas fa-briefcase text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Odoo ERP</h3>
@@ -94,7 +94,7 @@
     <script>
         // Configuration
         const API_URL = '/api';
-        const KC_URL = 'https://keycloak.educ-ai.fr';
+        const KC_URL = 'https://keycloak.${DOMAIN}';
         const KC_REALM = 'but-tc';
         const KC_CLIENT_ID = 'skills-hub-app';
         const COOKIE_NAME = 'auth_token';
@@ -196,7 +196,7 @@
                             // Calcul du nom de la base (doit matcher la logique Python/React)
                             const namePart = user.email.split('@')[0];
                             const dbName = namePart.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/^-|-$/g, '');
-                            const studentUrl = `https://${dbName}.educ-ai.fr`;
+                            const studentUrl = `https://${dbName}.${DOMAIN}`;
                             
                             const odooLink = document.getElementById('link-odoo');
                             if (odooLink) {

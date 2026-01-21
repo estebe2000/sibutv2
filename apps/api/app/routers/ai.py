@@ -1,4 +1,5 @@
 import requests
+import os
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
 from pydantic import BaseModel
 from typing import List, Optional
@@ -10,8 +11,8 @@ import fitz  # PyMuPDF
 router = APIRouter()
 
 # Configuration par défaut
-MISTRAL_ENDPOINT = "https://codestral.mistral.ai/v1/chat/completions"
-MODEL_NAME = "codestral-latest"
+MISTRAL_ENDPOINT = os.getenv("MISTRAL_ENDPOINT", "https://codestral.mistral.ai/v1/chat/completions")
+MODEL_NAME = os.getenv("MISTRAL_MODEL", "codestral-latest")
 
 class MessageItem(BaseModel):
     role: str

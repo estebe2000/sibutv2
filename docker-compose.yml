@@ -7,9 +7,9 @@ services:
     container_name: but_tc_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: app_user
-      POSTGRES_PASSWORD: app_password
-      POSTGRES_DB: skills_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backup_full_descriptions.sql:/docker-entrypoint-initdb.d/init.sql
@@ -33,14 +33,14 @@ services:
     ports:
       - "8082:80"
     extra_hosts:
-      - "educ-ai.fr:host-gateway"
-      - "nextcloud.educ-ai.fr:host-gateway"
-      - "only-office.educ-ai.fr:host-gateway"
-      - "home.educ-ai.fr:host-gateway"
+      - "${DOMAIN}:host-gateway"
+      - "nextcloud.${DOMAIN}:host-gateway"
+      - "only-office.${DOMAIN}:host-gateway"
+      - "home.${DOMAIN}:host-gateway"
     environment:
-      - NEXTCLOUD_ADMIN_USER=admin
-      - NEXTCLOUD_ADMIN_PASSWORD=Rangetachambre76*
-      - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu educ-ai.fr *.educ-ai.fr
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu ${DOMAIN} *.${DOMAIN}
       - OVERWRITEPROTOCOL=https
       # Using SQLite for the dev instance
       - SQLITE_DATABASE=nextcloud
@@ -59,10 +59,10 @@ services:
     ports:
       - "8083:80"
     extra_hosts:
-      - "educ-ai.fr:host-gateway"
-      - "nextcloud.educ-ai.fr:host-gateway"
-      - "only-office.educ-ai.fr:host-gateway"
-      - "home.educ-ai.fr:host-gateway"
+      - "${DOMAIN}:host-gateway"
+      - "nextcloud.${DOMAIN}:host-gateway"
+      - "only-office.${DOMAIN}:host-gateway"
+      - "home.${DOMAIN}:host-gateway"
     environment:
       - JWT_ENABLED=true
       - JWT_SECRET=onlyoffice_secret
@@ -81,8 +81,8 @@ services:
     container_name: but_tc_db_mattermost
     restart: unless-stopped
     environment:
-      POSTGRES_USER: mmuser
-      POSTGRES_PASSWORD: mmpassword
+      POSTGRES_USER: ${MM_DB_USER}
+      POSTGRES_PASSWORD: ${MM_DB_PASSWORD}
       POSTGRES_DB: mattermost
     volumes:
       - mattermost_db_data:/var/lib/postgresql/data
@@ -97,8 +97,8 @@ services:
     container_name: but_tc_db_keycloak
     restart: unless-stopped
     environment:
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak_password
+      POSTGRES_USER: ${KC_DB_USER}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
       POSTGRES_DB: keycloak
     volumes:
       - keycloak_db_data:/var/lib/postgresql/data
@@ -113,8 +113,8 @@ services:
     container_name: but_tc_db_odoo
     restart: unless-stopped
     environment:
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: Rangetachambre76*
+      POSTGRES_USER: ${ODOO_DB_USER}
+      POSTGRES_PASSWORD: ${ODOO_DB_PASSWORD}
       POSTGRES_DB: postgres
     volumes:
       - odoo_db_data:/var/lib/postgresql/data
@@ -132,8 +132,9 @@ services:
       - db_odoo
     environment:
       - HOST=db_odoo
-      - USER=odoo
-      - PASSWORD=Rangetachambre76*
+      - USER=${ODOO_DB_USER}
+      - PASSWORD=${ODOO_DB_PASSWORD}
+    command: odoo --admin_passwd=${ODOO_MASTER_PASSWORD}
     # On utilise le fichier de configuration monté
     volumes:
       - ./apps/odoo/odoo.conf:/etc/odoo/odoo.conf
@@ -152,10 +153,10 @@ services:
     environment:
       - KC_DB=postgres
       - KC_DB_URL=jdbc:postgresql://db_keycloak:5432/keycloak
-      - KC_DB_USERNAME=keycloak
-      - KC_DB_PASSWORD=keycloak_password
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=Rangetachambre76*
+      - KC_DB_USERNAME=${KC_DB_USER}
+      - KC_DB_PASSWORD=${KC_DB_PASSWORD}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - KC_HOSTNAME_STRICT=false
       - KC_HOSTNAME_STRICT_HTTPS=false
       - KC_HTTP_ENABLED=true
@@ -180,18 +181,18 @@ services:
       - db_mattermost
     environment:
       - MM_SQLSETTINGS_DRIVERNAME=postgres
-      - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mmpassword@db_mattermost:5432/mattermost?sslmode=disable&connect_timeout=10
-      - MM_SERVICESETTINGS_SITEURL=https://mattermost.educ-ai.fr
-      - MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS=localhost 127.0.0.1 educ-ai.fr
+      - MM_SQLSETTINGS_DATASOURCE=postgres://${MM_DB_USER}:${MM_DB_PASSWORD}@db_mattermost:5432/mattermost?sslmode=disable&connect_timeout=10
+      - MM_SERVICESETTINGS_SITEURL=https://mattermost.${DOMAIN}
+      - MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS=localhost 127.0.0.1 ${DOMAIN}
       - MM_SERVICESETTINGS_ENABLEDEVELOPER=true
       - MM_LOGINSETTINGS_ENABLEOAUTHGAMES=false
       - MM_GITLABSETTINGS_ENABLE=true
-      - MM_GITLABSETTINGS_ID=mattermost-app
-      - MM_GITLABSETTINGS_SECRET=mattermost_secret_key_76
-      - MM_GITLABSETTINGS_DISCOVERYENDPOINT=https://keycloak.educ-ai.fr/realms/but-tc/.well-known/openid-configuration
-      - MM_GITLABSETTINGS_AUTHENDPOINT=https://keycloak.educ-ai.fr/realms/but-tc/protocol/openid-connect/auth
-      - MM_GITLABSETTINGS_TOKENENDPOINT=https://keycloak.educ-ai.fr/realms/but-tc/protocol/openid-connect/token
-      - MM_GITLABSETTINGS_USERAPIENDPOINT=https://keycloak.educ-ai.fr/realms/but-tc/protocol/openid-connect/userinfo
+      - MM_GITLABSETTINGS_ID=${MM_GITLABSETTINGS_ID}
+      - MM_GITLABSETTINGS_SECRET=${MM_GITLABSETTINGS_SECRET}
+      - MM_GITLABSETTINGS_DISCOVERYENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/.well-known/openid-configuration
+      - MM_GITLABSETTINGS_AUTHENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/auth
+      - MM_GITLABSETTINGS_TOKENENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/token
+      - MM_GITLABSETTINGS_USERAPIENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/userinfo
       - MM_GITLABSETTINGS_BUTTONTEXT=Connexion avec Keycloak
     ports:
       - "8065:8065"
@@ -214,28 +215,30 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgresql://app_user:app_password@db:5432/skills_db
-      - LDAP_URL=ldap://ldap.univ-lehavre.fr:389
-      - LDAP_BASE_DN=dc=univ-lehavre,dc=fr
-      - LDAP_BIND_DN=cn=ldapbindusr-caucri2,ou=DSA,dc=univ-lehavre,dc=fr
-      - LDAP_BIND_PASSWORD=Fctldap-8%caucri2_30688
-      - NEXTCLOUD_URL=https://nextcloud.educ-ai.fr
-      - NEXTCLOUD_ADMIN=admin
-      - NEXTCLOUD_PASS=Rangetachambre76*
-      - NEXTCLOUD_SERVICE_USER=hub-service
-      - NEXTCLOUD_SERVICE_PASS=Rangetachambre76*
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - LDAP_URL=${LDAP_URL}
+      - LDAP_BASE_DN=${LDAP_BASE_DN}
+      - LDAP_BIND_DN=${LDAP_BIND_DN}
+      - LDAP_BIND_PASSWORD=${LDAP_BIND_PASSWORD}
+      - NEXTCLOUD_URL=https://nextcloud.${DOMAIN}
+      - NEXTCLOUD_ADMIN=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_PASS=${NEXTCLOUD_ADMIN_PASSWORD}
+      - NEXTCLOUD_SERVICE_USER=${NEXTCLOUD_SERVICE_USER}
+      - NEXTCLOUD_SERVICE_PASS=${NEXTCLOUD_SERVICE_PASS}
       - ROOT_PATH=/api
       - KEYCLOAK_URL=http://but_tc_keycloak:8080
       - KEYCLOAK_REALM=but-tc
-      - KEYCLOAK_CLIENT_ID=skills-hub-app
-      - KEYCLOAK_CLIENT_SECRET=ASzD8MghmcXaTSas1MvjiK9o81DrlEeO
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       # Odoo Database Direct Access (for admin tasks)
-      - ODOO_DB_URL=postgresql://odoo:Rangetachambre76*@db_odoo:5432/postgres
+      - ODOO_DB_URL=postgresql://${ODOO_DB_USER}:${ODOO_DB_PASSWORD}@db_odoo:5432/postgres
+      - ODOO_MASTER_PASSWORD=${ODOO_MASTER_PASSWORD}
+      - DOMAIN=${DOMAIN}
       # Configuration Mail OVH
-      - SMTP_HOST=ssl0.ovh.net
-      - SMTP_PORT=465
-      - SMTP_USER=votre-email@domaine.com
-      - SMTP_PASS=votre-mot-de-passe
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
       - SMTP_TLS=true
     networks:
       - app_network
