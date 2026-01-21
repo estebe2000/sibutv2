@@ -125,7 +125,8 @@ services:
   # Odoo ERP
   # ---------------------------------------------------------------------------
   odoo:
-    image: odoo:17.0
+    build:
+      context: ./apps/odoo
     container_name: but_tc_odoo
     restart: unless-stopped
     depends_on:
@@ -134,10 +135,8 @@ services:
       - HOST=db_odoo
       - USER=${ODOO_DB_USER}
       - PASSWORD=${ODOO_DB_PASSWORD}
-    command: odoo --admin_passwd=${ODOO_MASTER_PASSWORD}
-    # On utilise le fichier de configuration monté
+      - ODOO_MASTER_PASSWORD=${ODOO_MASTER_PASSWORD}
     volumes:
-      - ./apps/odoo/odoo.conf:/etc/odoo/odoo.conf
       - odoo_data:/var/lib/odoo
     networks:
       - app_network
@@ -259,6 +258,8 @@ services:
       context: ./apps/dashboard
     container_name: but_tc_dashboard
     restart: unless-stopped
+    environment:
+      - DOMAIN=${DOMAIN}
     ports:
       - "80:80"
       - "443:443"

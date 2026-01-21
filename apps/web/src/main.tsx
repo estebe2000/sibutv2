@@ -5,6 +5,7 @@ import { Notifications } from '@mantine/notifications'
 import App from './App.tsx'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
+import '@mantine/dates/styles.css'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

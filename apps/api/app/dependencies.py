@@ -15,32 +15,37 @@ async def get_current_user(token: str = Depends(oauth2_scheme), session: Session
         if username is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         
-        # 1. Handle Hardcoded Admin
+        # 1. Administrateur de secours (local)
         if username == "admin":
             return {"ldap_uid": "admin", "full_name": "Administrateur Local", "role": UserRole.SUPER_ADMIN}
 
-        # 2. Check in Local DB
+        # 2. Recherche dans la base locale (utilisateurs dispatchés)
         statement = select(User).where(User.ldap_uid == username)
         user = session.exec(statement).first()
         
-        if user:
-            return user
+        # SÉCURITÉ CRITIQUE : Si l'utilisateur n'est pas en base OU s'il n'a pas de groupe assigné OU s'il est GUEST
+        if not user or not user.group_id or user.role == UserRole.GUEST:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, 
+                detail="Accès refusé : vous n'avez pas été assigné à une promotion ou un rôle par l'administration."
+            )
             
-        # 3. If authenticated but not in DB, return minimal info (Guest)
-        return {"ldap_uid": username, "full_name": username, "role": UserRole.GUEST}
+        return user
 
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 def require_staff(current_user: any = Depends(get_current_user)):
     """
-    Restrict access to PROFESSOR, ADMIN or SUPER_ADMIN.
+    Restrict access to STAFF (Prof, Admin, Direction).
     """
-    # Si c'est un dictionnaire (admin local ou user non-synchro)
     role = current_user["role"] if isinstance(current_user, dict) else current_user.role
     
-    allowed_roles = [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.PROFESSOR, 
-                     UserRole.PROF_RESP_PARCOURS, UserRole.PROF_RESP_SAE]
+    allowed_roles = [
+        UserRole.SUPER_ADMIN, UserRole.ADMIN, 
+        UserRole.DEPT_HEAD, UserRole.ADMIN_STAFF,
+        UserRole.PROFESSOR, UserRole.STUDY_DIRECTOR, UserRole.PROF_RESP_SAE
+    ]
     
     if role not in allowed_roles:
         raise HTTPException(

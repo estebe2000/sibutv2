@@ -64,8 +64,32 @@ def list_assigned_users(session: Session = Depends(get_session), current_user: a
 def assign_user(user_data: User, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     existing = session.exec(select(User).where(User.ldap_uid == user_data.ldap_uid)).first()
     group = session.get(Group, user_data.group_id) if user_data.group_id else None
+    
+    # Détecter si l'utilisateur quitte le groupe "Enseignants"
+    was_teacher = existing and existing.group and existing.group.name == "Enseignants"
+    is_becoming_teacher = group and group.name == "Enseignants"
+    
+    # LOGIQUE DE RÔLE :
+    # 1. Si on reçoit un rôle spécifique (autre que GUEST/STUDENT), on le garde.
+    # 2. Sinon, si on entre dans le groupe Enseignants, on met PROFESSOR par défaut.
     role = user_data.role
-    if group and group.name == "Enseignants": role = UserRole.PROFESSOR
+    
+    if is_becoming_teacher:
+        # Si c'est déjà un rôle de staff, on ne le rétrograde pas en simple PROFESSOR
+        staff_roles = [UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DEPT_HEAD, UserRole.ADMIN_STAFF, UserRole.STUDY_DIRECTOR]
+        if role not in staff_roles:
+            role = UserRole.PROFESSOR
+            
+    elif was_teacher and not is_becoming_teacher:
+        # Nettoyage si on sort du staff
+        from ..models import ResponsibilityMatrix
+        stmt = select(ResponsibilityMatrix).where(ResponsibilityMatrix.user_id == user_data.ldap_uid)
+        resps = session.exec(stmt).all()
+        for r in resps: session.delete(r)
+        
+        if group and group.name != "Enseignants": role = UserRole.STUDENT
+        else: role = UserRole.GUEST
+
     if existing:
         existing.role = role
         existing.group_id = user_data.group_id
@@ -73,6 +97,7 @@ def assign_user(user_data: User, session: Session = Depends(get_session), curren
     else:
         user_data.role = role
         session.add(user_data)
+    
     session.commit()
     return {"status": "success"}
 
@@ -80,17 +105,18 @@ def assign_user(user_data: User, session: Session = Depends(get_session), curren
 def unassign_user(ldap_uid: str, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
     user = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
     if user:
-        # 1. Supprimer ses responsabilités dans la matrice (SAE, Ressources, Tuteur)
+        # 1. Nettoyer les responsabilités
         from ..models import ResponsibilityMatrix
         stmt = select(ResponsibilityMatrix).where(ResponsibilityMatrix.user_id == ldap_uid)
         resps = session.exec(stmt).all()
         for r in resps:
             session.delete(r)
             
-        # 2. Retirer du groupe et repasser en GUEST
+        # 2. Retirer du groupe et FORCER le rôle GUEST (bloque l'accès via dependencies.py)
         user.group_id = None
         user.role = UserRole.GUEST
-        session.add(user); session.commit()
+        session.add(user)
+        session.commit()
         return {"status": "success"}
     raise HTTPException(status_code=404, detail="User not found")
 

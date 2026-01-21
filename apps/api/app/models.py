@@ -6,7 +6,9 @@ from sqlmodel import SQLModel, Field, Relationship
 class UserRole(str, Enum):
     SUPER_ADMIN = "SUPER_ADMIN"
     ADMIN = "ADMIN"
-    PROF_RESP_PARCOURS = "PROF_RESP_PARCOURS"
+    DEPT_HEAD = "DEPT_HEAD"           # Directeur de département
+    ADMIN_STAFF = "ADMIN_STAFF"       # Personnel administratif
+    STUDY_DIRECTOR = "STUDY_DIRECTOR" # Directeur d'études (Responsable Promo)
     PROF_RESP_SAE = "PROF_RESP_SAE"
     PROFESSOR = "PROFESSOR"
     STUDENT = "STUDENT"
@@ -22,6 +24,23 @@ class Group(SQLModel, table=True):
     
     users: List["User"] = Relationship(back_populates="group")
 
+# --- ACTIVITY GROUPS (SAÉ) ---
+
+class ActivityGroupStudentLink(SQLModel, table=True):
+    """Lien entre un groupe d'activité et un étudiant"""
+    group_id: Optional[int] = Field(default=None, foreign_key="activitygroup.id", primary_key=True)
+    student_uid: Optional[str] = Field(default=None, foreign_key="user.ldap_uid", primary_key=True)
+
+class ActivityGroup(SQLModel, table=True):
+    """Groupe d'étudiants pour une SAÉ spécifique"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str # e.g., "Groupe 1", "Les Innovateurs"
+    activity_id: int = Field(foreign_key="activity.id")
+    academic_year: str = "2025-2026"
+    
+    activity: "Activity" = Relationship(back_populates="activity_groups")
+    students: List["User"] = Relationship(back_populates="activity_groups", link_model=ActivityGroupStudentLink)
+
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     ldap_uid: str = Field(unique=True, index=True)
@@ -31,6 +50,9 @@ class User(SQLModel, table=True):
     
     group_id: Optional[int] = Field(default=None, foreign_key="group.id")
     group: Optional[Group] = Relationship(back_populates="users")
+    
+    # Lien avec les groupes de SAÉ
+    activity_groups: List[ActivityGroup] = Relationship(back_populates="students", link_model=ActivityGroupStudentLink)
 
 class SystemConfig(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -59,6 +81,62 @@ class ResponsibilityMatrix(SQLModel, table=True):
     academic_year: str = "2025-2026"
 
 # --- FILE MANAGEMENT ---
+
+# --- INTERNSHIPS ---
+
+class PromotionResponsibility(SQLModel, table=True):
+    """Lien entre un enseignant et une promotion (BUT1, Groupe A, etc.)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    teacher_uid: str = Field(index=True, foreign_key="user.ldap_uid")
+    group_id: int = Field(index=True, foreign_key="group.id")
+    academic_year: str = "2025-2026"
+
+class Internship(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_uid: str = Field(index=True, foreign_key="user.ldap_uid")
+    academic_year: str = "2025-2026"
+    
+    # Dates (gérées par le tuteur)
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    
+    # Informations Entreprise (gérées par l'étudiant)
+    company_name: Optional[str] = None
+    company_address: Optional[str] = None
+    company_phone: Optional[str] = None
+    company_email: Optional[str] = None
+    
+    # Encadrant Entreprise
+    supervisor_name: Optional[str] = None
+    supervisor_phone: Optional[str] = None
+    supervisor_email: Optional[str] = None
+
+# --- EVALUATION RUBRICS ---
+
+class EvaluationRubric(SQLModel, table=True):
+    """Grille d'évaluation pour une activité"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    activity_id: int = Field(index=True, foreign_key="activity.id")
+    name: str # e.g., "Soutenance de mi-parcours"
+    total_points: float = Field(default=20.0)
+    academic_year: str = "2025-2026"
+    
+    criteria: List["RubricCriterion"] = Relationship(back_populates="rubric")
+
+class RubricCriterion(SQLModel, table=True):
+    """Ligne de critère dans une grille"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    rubric_id: int = Field(index=True, foreign_key="evaluationrubric.id")
+    
+    # Références optionnelles au référentiel
+    ac_id: Optional[int] = Field(default=None, foreign_key="learningoutcome.id")
+    ce_id: Optional[int] = Field(default=None, foreign_key="essentialcomponent.id")
+    
+    label: str # Intitulé du critère
+    description: Optional[str] = None
+    weight: float = Field(default=1.0) # Coefficient ou Points direct
+    
+    rubric: Optional[EvaluationRubric] = Relationship(back_populates="criteria")
 
 class StudentFile(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -160,3 +238,4 @@ class Activity(SQLModel, table=True):
     
     learning_outcomes: List[LearningOutcome] = Relationship(back_populates="activities", link_model=ActivityACLink)
     essential_components: List[EssentialComponent] = Relationship(back_populates="activities", link_model=ActivityCELink)
+    activity_groups: List[ActivityGroup] = Relationship(back_populates="activity")
