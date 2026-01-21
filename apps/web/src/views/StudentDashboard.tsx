@@ -11,7 +11,22 @@ interface StudentDashboardProps {
   curriculum: any;
 }
 
-export function StudentDashboard({ user, groups, curriculum }: StudentDashboardProps) {
+import { InternshipForm } from '../components/InternshipForm';
+
+export function StudentDashboard({ user, curriculum, groups }: any) {
+  const [tutor, setTutor] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchTutor = async () => {
+        try {
+            const res = await api.get(`/activity-management/student/${user.ldap_uid}/tutor`);
+            setTutor(res.data);
+        } catch(e) {}
+    };
+    fetchTutor();
+  }, [user.ldap_uid]);
+
+
   const [fiches, setFiches] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,7 +118,7 @@ export function StudentDashboard({ user, groups, curriculum }: StudentDashboardP
           </Group>
         </Paper>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
           <Paper withBorder p="lg" radius="md" shadow="xs">
             <Group mb="md">
               <IconSchool color="var(--mantine-color-blue-6)" />
@@ -119,18 +134,28 @@ export function StudentDashboard({ user, groups, curriculum }: StudentDashboardP
                   <Text size="sm" fw={500}>Année :</Text>
                   <Badge variant="outline" color="blue">BUT {studentGroup.year}</Badge>
                 </Group>
-                <Group justify="space-between">
-                  <Text size="sm" fw={500}>Parcours :</Text>
-                  <Badge variant="light" color="grape">{studentGroup.pathway}</Badge>
-                </Group>
-                <Group justify="space-between">
-                  <Text size="sm" fw={500}>Type :</Text>
-                  <Badge variant="dot" color="teal">{studentGroup.formation_type === 'FI' ? 'Initiale' : 'Alternance'}</Badge>
-                </Group>
               </Stack>
             ) : (
-              <Text size="sm" c="orange" fs="italic">Vous n'avez pas encore été assigné à un groupe par l'administration.</Text>
+              <Text size="sm" c="orange" fs="italic">Non assigné.</Text>
             )}
+          </Paper>
+
+          <Paper withBorder p="lg" radius="md" shadow="xs" bg="blue.0">
+            <Group mb="md">
+              <IconBriefcase color="var(--mantine-color-blue-6)" />
+              <Title order={4}>Mon Tutorat</Title>
+            </Group>
+            <Stack gap="xs">
+                <Text size="xs" c="dimmed" fw={700}>TUTEUR DE STAGE</Text>
+                {tutor ? (
+                    <div>
+                        <Text fw={600} size="sm">{tutor.full_name}</Text>
+                        <Text size="xs" c="blue">{tutor.email}</Text>
+                    </div>
+                ) : (
+                    <Text size="xs" c="dimmed" fs="italic">Non assigné</Text>
+                )}
+            </Stack>
           </Paper>
 
           <Paper withBorder p="lg" radius="md" shadow="xs">
@@ -145,7 +170,7 @@ export function StudentDashboard({ user, groups, curriculum }: StudentDashboardP
               </Group>
               <Group justify="space-between">
                 <Text size="sm" fw={500}>Email :</Text>
-                <Text size="sm">{user?.email || 'Non renseigné'}</Text>
+                <Text size="sm" truncate>{user?.email || 'N/A'}</Text>
               </Group>
             </Stack>
           </Paper>
@@ -153,7 +178,9 @@ export function StudentDashboard({ user, groups, curriculum }: StudentDashboardP
 
         <OdooWidget />
 
-        <Alert variant="light" color="indigo" title="En cours de développement" icon={<IconInfoCircle />}>
+        {tutor && <InternshipForm studentUid={user.ldap_uid} />}
+
+        <Alert variant="light" color="indigo" title="Suivi des Compétences" icon={<IconInfoCircle />}>
           Votre espace de suivi des compétences et votre portfolio Nextcloud sont en cours de configuration. 
           Bientôt, vous pourrez uploader vos preuves et suivre l'acquisition de vos apprentissages critiques ici.
         </Alert>
