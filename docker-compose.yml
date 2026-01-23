@@ -239,6 +239,12 @@ services:
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
       - SMTP_TLS=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./docs:/app/data_source/docs
+      - ./fiches:/app/data_source/fiches
+      - rag_vectors:/app/vectors
     networks:
       - app_network
 
@@ -284,6 +290,7 @@ volumes:
   mattermost_plugins:
   odoo_data:
   odoo_db_data:
+  rag_vectors:
 
 networks:
   app_network:

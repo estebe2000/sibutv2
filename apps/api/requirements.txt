@@ -13,3 +13,10 @@ openpyxl
 pymupdf
 reportlab
 webdav4
+langchain==0.3.7
+langchain-community==0.3.7
+langchain-mistralai
+langchain-openai
+faiss-cpu
+sentence-transformers
+tabulate
