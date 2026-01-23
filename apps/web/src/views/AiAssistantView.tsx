@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { Container, Title, Text, Group, ThemeIcon, Paper, ScrollArea, TextInput, ActionIcon, Stack, Loader, Avatar, SimpleGrid, Alert, FileInput, Tooltip, Button, Badge } from '@mantine/core';
-import { IconRobot, IconSend, IconUser, IconSchool, IconChecklist, IconBrain, IconSparkles, IconTrash, IconFileUpload, IconFileCheck } from '@tabler/icons-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Container, Title, Text, Group, ThemeIcon, Paper, ScrollArea, Textarea, ActionIcon, Stack, Loader, Avatar, SimpleGrid, Alert, FileInput, Tooltip, Button, Badge, Chip, Box } from '@mantine/core';
+import { IconRobot, IconSend, IconUser, IconSchool, IconChecklist, IconBrain, IconSparkles, IconTrash, IconFileUpload, IconFileCheck, IconBulb, IconRefresh } from '@tabler/icons-react';
+import { useAiChat } from '../hooks/useAiChat';
+import { notifications } from '@mantine/notifications';
 import api from '../services/api';
 
 // BIBLIOTHÈQUES STANDARDS
@@ -9,68 +11,48 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
-interface Message {
-    role: 'user' | 'bot';
-    content: string;
-}
+const QUICK_PROMPTS = [
+    "Résume le programme du S1",
+    "Quelles sont les compétences du BUT TC ?",
+    "Explique moi la SAE 1.01",
+    "Comment évaluer la compétence 'Vente' ?"
+];
 
 export function AiAssistantView() {
-  const INITIAL_MESSAGE: Message = { role: 'bot', content: "Bonjour ! Je suis l'assistant pédagogique du BUT TC. Comment puis-je vous aider aujourd'hui ?" };
-  
-  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
+  const { messages, loading, fileName, clearChat, handleFileUpload, sendMessage, setFileContext, setFilename } = useAiChat();
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [fileContext, setFileContext] = useState<string | null>(null);
-  const [fileName, setFilename] = useState<string | null>(null);
+  const [ingesting, setIngesting] = useState(false);
+  const scrollViewport = useRef<HTMLDivElement>(null);
 
-  const clearChat = () => {
-      setMessages([INITIAL_MESSAGE]);
-      setFileContext(null);
-      setFilename(null);
-  };
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (scrollViewport.current) {
+        scrollViewport.current.scrollTo({ top: scrollViewport.current.scrollHeight, behavior: 'smooth' });
+    }
+  }, [messages, loading]);
 
-  const handleFileUpload = async (file: File | null) => {
-      if (!file) return;
-      setLoading(true);
-      const formData = new FormData();
-      formData.append('file', file);
-      try {
-          const res = await api.post('/ai/extract-text', formData);
-          setFileContext(res.data.text);
-          setFilename(res.data.filename);
-          setMessages(prev => [...prev, { role: 'bot', content: `Document **${res.data.filename}** ajouté au contexte.` }]);
-      } catch (e) {
-          console.error(e);
-          setMessages(prev => [...prev, { role: 'bot', content: "Erreur lors de la lecture du fichier." }]);
-      }
-      setLoading(false);
-  };
-
-  const handleSend = async () => {
-      if (!input.trim() || loading) return;
-      const userMsg: Message = { role: 'user', content: input };
-      const newHistory = [...messages, userMsg];
-      setMessages(newHistory);
+  const onSend = () => {
+      if (!input.trim()) return;
+      sendMessage(input);
       setInput('');
-      setLoading(true);
+  };
 
-      try {
-          // On retire le message de bienvenue pour l'IA
-          const historyToSend = newHistory.slice(1);
-          
-          const res = await api.post('/ai/chat', { 
-              messages: historyToSend.map(m => ({
-                  role: m.role === 'bot' ? 'assistant' : 'user',
-                  content: m.content
-              })),
-              file_context: fileContext
-          });
-          setMessages(prev => [...prev, { role: 'bot', content: res.data.response }]);
-      } catch (e: any) {
-          console.error(e);
-          setMessages(prev => [...prev, { role: 'bot', content: "Désolé, je rencontre des difficultés techniques." }]);
+  const onKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          onSend();
       }
-      setLoading(false);
+  };
+
+  const handleIngest = async () => {
+      setIngesting(true);
+      try {
+          await api.post('/ai/ingest');
+          notifications.show({ title: 'Mise à jour lancée', message: 'L\'IA lit les documents en arrière-plan...', color: 'green' });
+      } catch (e) {
+          notifications.show({ title: 'Erreur', message: 'Impossible de lancer la mise à jour.', color: 'red' });
+      }
+      setIngesting(false);
   };
 
   return (
@@ -85,9 +67,14 @@ export function AiAssistantView() {
                     <Text size="sm" c="dimmed">Expert BUT Techniques de Commercialisation</Text>
                 </div>
             </Group>
-            <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>} onClick={clearChat}>
-                Réinitialiser
-            </Button>
+            <Group>
+                <Button variant="light" leftSection={<IconRefresh size={16}/>} onClick={handleIngest} loading={ingesting}>
+                    Mettre à jour l'IA
+                </Button>
+                <Button variant="subtle" color="red" leftSection={<IconTrash size={16}/>} onClick={clearChat}>
+                    Réinitialiser
+                </Button>
+            </Group>
         </Group>
 
         <Alert variant="light" color="blue" title="IA Augmentée" icon={<IconSparkles />} mb="xl">
@@ -113,39 +100,49 @@ export function AiAssistantView() {
         </SimpleGrid>
 
         <Title order={3} mb="md">Discussion Interactive</Title>
-        <Paper withBorder radius="lg" shadow="md" h={500} style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <ScrollArea style={{ flexGrow: 1 }} p="md" type="always">
+        <Paper withBorder radius="lg" shadow="md" h={600} style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <ScrollArea viewportRef={scrollViewport} style={{ flexGrow: 1 }} p="md" type="always" bg="gray.0">
                 <Stack gap="xl" py="md">
                     {messages.map((m, i) => (
                         <Group key={i} align="flex-start" justify={m.role === 'user' ? 'flex-end' : 'flex-start'} wrap="nowrap">
-                            {m.role === 'bot' && <Avatar color="blue" radius="md" size="md"><IconRobot size={20} /></Avatar>}
+                            {m.role === 'bot' && <Avatar color="blue" radius="xl" size="md"><IconRobot size={20} /></Avatar>}
                             <Paper 
-                                withBorder={m.role === 'bot'} 
+                                withBorder={false} 
                                 bg={m.role === 'user' ? 'blue.6' : 'white'} 
-                                c={m.role === 'user' ? 'white' : 'dark.8'}
-                                py="sm" px="md" radius="lg" 
+                                c={m.role === 'user' ? 'white' : 'dark.9'}
+                                py="xs" px="md" radius="lg" 
+                                shadow={m.role === 'bot' ? 'sm' : 'none'}
                                 style={{ 
                                     maxWidth: '85%',
-                                    boxShadow: m.role === 'bot' ? '0 2px 12px rgba(0,0,0,0.04)' : 'none'
+                                    borderBottomLeftRadius: m.role === 'bot' ? 0 : undefined,
+                                    borderBottomRightRadius: m.role === 'user' ? 0 : undefined,
                                 }}
                             >
-                                <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                                <Box style={{ fontSize: '14px', lineHeight: '1.6' }} className="markdown-content">
                                     <ReactMarkdown 
                                         remarkPlugins={[remarkMath]} 
                                         rehypePlugins={[rehypeKatex]}
+                                        components={{
+                                            p: ({node, ...props}) => <p style={{margin: 0, marginBottom: '0.5em'}} {...props} />,
+                                            ul: ({node, ...props}) => <ul style={{paddingLeft: '1.2em', margin: 0}} {...props} />,
+                                            ol: ({node, ...props}) => <ol style={{paddingLeft: '1.2em', margin: 0}} {...props} />,
+                                        }}
                                     >
                                         {m.content}
                                     </ReactMarkdown>
-                                </div>
+                                </Box>
                             </Paper>
-                            {m.role === 'user' && <Avatar color="gray" radius="md" size="md"><IconUser size={20} /></Avatar>}
+                            {m.role === 'user' && <Avatar color="gray" radius="xl" size="md"><IconUser size={20} /></Avatar>}
                         </Group>
                     ))}
                     {loading && (
                         <Group align="center" gap="xs">
-                             <Avatar color="blue" radius="md" size="md"><IconRobot size={20} /></Avatar>
-                             <Paper withBorder py="xs" px="md" radius="lg" bg="white">
-                                <Loader size="xs" variant="dots" />
+                             <Avatar color="blue" radius="xl" size="md"><IconRobot size={20} /></Avatar>
+                             <Paper withBorder={false} py="xs" px="md" radius="lg" bg="white" shadow="sm" style={{ borderBottomLeftRadius: 0 }}>
+                                <Group gap={4}>
+                                    <Loader size={6} variant="dots" color="blue" />
+                                    <Text size="xs" c="dimmed">En train d'écrire...</Text>
+                                </Group>
                              </Paper>
                         </Group>
                     )}
@@ -154,50 +151,90 @@ export function AiAssistantView() {
 
             <div style={{ padding: '15px', borderTop: '1px solid #e9ecef', background: 'white' }}>
                 <Stack gap="xs">
+                    {/* Quick Prompts */}
+                    {messages.length < 3 && !loading && (
+                        <Group gap="xs" mb="xs">
+                            <ThemeIcon size="sm" variant="transparent" color="yellow"><IconBulb size={16} /></ThemeIcon>
+                            <ScrollArea type="never">
+                                <Group wrap="nowrap">
+                                    {QUICK_PROMPTS.map((prompt, i) => (
+                                        <Chip 
+                                            key={i} 
+                                            size="xs" 
+                                            variant="outline" 
+                                            onClick={() => { setInput(prompt); }} 
+                                            styles={{ label: { cursor: 'pointer' } }}
+                                            checked={false}
+                                        >
+                                            {prompt}
+                                        </Chip>
+                                    ))}
+                                </Group>
+                            </ScrollArea>
+                        </Group>
+                    )}
+
                     {fileName && (
                         <Group gap="xs">
-                            <Badge color="green" variant="light" leftSection={<IconFileCheck size={12}/>}>
-                                Document : {fileName}
+                            <Badge color="green" variant="light" leftSection={<IconFileCheck size={12}/>} size="lg">
+                                {fileName}
                             </Badge>
-                            <ActionIcon size="xs" color="red" variant="subtle" onClick={() => {setFileContext(null); setFilename(null);}}>
-                                <IconTrash size={12}/>
+                            <ActionIcon size="sm" color="red" variant="subtle" onClick={() => {setFileContext(null); setFilename(null);}}>
+                                <IconTrash size={14}/>
                             </ActionIcon>
                         </Group>
                     )}
-                    <Group gap="xs">
+                    
+                    <Group gap="xs" align="flex-end">
                         <FileInput 
                             style={{ display: 'none' }} 
                             id="ai-file-upload" 
                             accept=".pdf,.txt"
-                            onChange={handleFileUpload} 
+                            onChange={(p) => handleFileUpload(p)} 
                         />
-                        <Tooltip label="Joindre un document">
+                        <Tooltip label="Joindre un document (PDF, TXT)">
                             <ActionIcon 
-                                size="42px" 
+                                size={44}
                                 variant="light" 
                                 color="blue" 
                                 radius="md"
                                 onClick={() => document.getElementById('ai-file-upload')?.click()}
                                 loading={loading}
+                                mb={2}
                             >
                                 <IconFileUpload size={22} />
                             </ActionIcon>
                         </Tooltip>
                         
-                        <TextInput 
-                            placeholder={fileName ? "Question sur le document..." : "Posez votre question..."} 
+                        <Textarea 
+                            placeholder={fileName ? "Posez une question sur ce document..." : "Posez votre question à l'assistant..."} 
                             style={{ flexGrow: 1 }} 
-                            size="md"
+                            minRows={1}
+                            maxRows={4}
+                            autosize
                             radius="md"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                            onKeyDown={onKeyDown}
                             disabled={loading}
                         />
-                        <ActionIcon size="42px" radius="md" color="blue" variant="filled" onClick={handleSend} loading={loading}>
+                        
+                        <ActionIcon 
+                            size={44} 
+                            radius="md" 
+                            color="blue" 
+                            variant="filled" 
+                            onClick={onSend} 
+                            loading={loading}
+                            disabled={!input.trim()}
+                            mb={2}
+                        >
                             <IconSend size={22} />
                         </ActionIcon>
                     </Group>
+                    <Text size="xs" c="dimmed" ta="center">
+                        L'IA peut faire des erreurs. Vérifiez les informations importantes.
+                    </Text>
                 </Stack>
             </div>
         </Paper>
