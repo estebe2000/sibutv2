@@ -163,6 +163,22 @@ async def save_internship_evaluation(student_uid: str, eval_data: dict, session:
     session.commit()
     return {"status": "success"}
 
+@router.get("/{student_uid}/pdf")
+async def get_internship_pdf(student_uid: str, session: Session = Depends(get_session)):
+    """Génère le bilan de stage en PDF"""
+    from fastapi.responses import StreamingResponse
+    from ..services.pdf_service import generate_internship_report
+    
+    pdf_buffer = generate_internship_report(session, student_uid)
+    if not pdf_buffer:
+        raise HTTPException(status_code=404, detail="Bilan non disponible")
+        
+    return StreamingResponse(
+        pdf_buffer, 
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=bilan_stage_{student_uid}.pdf"}
+    )
+
 @router.get("/{student_uid}/evaluations", response_model=List[InternshipEvaluation])
 async def get_all_internship_evaluations(student_uid: str, session: Session = Depends(get_session)):
     statement = select(Internship).where(Internship.student_uid == student_uid, Internship.is_active == True)
