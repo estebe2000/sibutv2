@@ -46,6 +46,7 @@ class User(SQLModel, table=True):
     ldap_uid: str = Field(unique=True, index=True)
     email: str
     full_name: str
+    phone: Optional[str] = None
     role: UserRole = Field(default=UserRole.GUEST)
     
     group_id: Optional[int] = Field(default=None, foreign_key="group.id")

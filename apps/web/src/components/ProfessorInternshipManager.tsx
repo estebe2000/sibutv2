@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Group, TextInput, Button, Divider, Text, Paper, Title, Select, Textarea, Timeline, Alert, Slider, Badge } from '@mantine/core';
+import { Stack, Group, TextInput, Button, Divider, Text, Paper, Title, Select, Textarea, Timeline, Alert, Slider, Badge, ThemeIcon, Anchor, Box } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { DateInput } from '@mantine/dates';
-import { IconDeviceFloppy, IconPlus, IconTruck, IconPhone, IconVideo, IconLink, IconMail, IconTrash, IconCirclePlus } from '@tabler/icons-react';
+import { IconDeviceFloppy, IconPlus, IconTruck, IconPhone, IconVideo, IconLink, IconMail, IconTrash, IconCirclePlus, IconBriefcase, IconShare } from '@tabler/icons-react';
 import api from '../services/api';
 import { notifications } from '@mantine/notifications';
 
 export function ProfessorInternshipManager({ student }: { student: any }) {
+    const isMobile = useMediaQuery('(max-width: 62em)');
     const [data, setData] = useState<any>(null);
     const [visits, setVisits] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -37,11 +39,7 @@ export function ProfessorInternshipManager({ student }: { student: any }) {
                 setRubric(r);
                 const initialScores = r.criteria.map((c: any) => {
                     const existing = evalRes.data.find((e: any) => e.evaluator_role === 'TEACHER' && e.criterion_id === c.id);
-                    return { 
-                        criterion_id: c.id, 
-                        score: existing ? existing.score : 50,
-                        comment: existing ? existing.comment : '' 
-                    };
+                    return { criterion_id: c.id, score: existing ? existing.score : 50, comment: existing ? existing.comment : '' };
                 });
                 setTeacherScores(initialScores);
             }
@@ -109,14 +107,22 @@ export function ProfessorInternshipManager({ student }: { student: any }) {
         setGeneratingLink(false);
     };
 
-    const getScoreByRole = (criterionId: number, role: string) => {
-        const ev = evaluations.find(e => e.evaluator_role === role && e.criterion_id === criterionId);
-        return ev ? ev.score : null;
-    };
+    const handleShareLink = async () => {
+        const shareUrl = `${window.location.origin}/app/?token=${data.evaluation_token}`;
+        const shareData = {
+            title: 'Évaluation de Stage',
+            text: `Bonjour, voici le lien pour évaluer le stage de ${student.full_name} :`,
+            url: shareUrl,
+        };
 
-    const getCommentByRole = (criterionId: number, role: string) => {
-        const ev = evaluations.find(e => e.evaluator_role === role && e.criterion_id === criterionId);
-        return ev ? ev.comment : null;
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) { console.log('Share failed', err); }
+        } else {
+            navigator.clipboard.writeText(`${shareData.text} ${shareUrl}`);
+            notifications.show({ title: 'Copié !', message: 'Lien copié dans le presse-papier.' });
+        }
     };
 
     const calculateFinalGrade = () => {
@@ -130,126 +136,215 @@ export function ProfessorInternshipManager({ student }: { student: any }) {
         return (actualPoints / totalPoints) * 20;
     };
 
-    const getVisitIcon = (type: string) => {
-        if (type === 'SITE') return <IconTruck size={12} />;
-        if (type === 'PHONE') return <IconPhone size={12} />;
-        return <IconVideo size={12} />;
+    const getScoreByRole = (criterionId: number, role: string) => {
+        const ev = evaluations.find(e => e.evaluator_role === role && e.criterion_id === criterionId);
+        return ev ? ev.score : null;
     };
 
-    if (loading) return <Text>Chargement...</Text>;
+    const getCommentByRole = (criterionId: number, role: string) => {
+        const ev = evaluations.find(e => e.evaluator_role === role && e.criterion_id === criterionId);
+        return ev ? ev.comment : null;
+    };
+
+    const getVisitIcon = (type: string) => {
+        if (type === 'SITE') return <IconTruck size={16} />;
+        if (type === 'PHONE') return <IconPhone size={16} />;
+        return <IconVideo size={16} />;
+    };
+
+    if (loading) return <Text p="xl" ta="center">Chargement des données...</Text>;
 
     return (
-        <Stack gap="md">
-            <Paper withBorder p="xs" bg="gray.0">
+        <Stack gap="xl" pb={isMobile ? 100 : 0}>
+            {/* ACTIONS DE GESTION */}
+            <Paper withBorder p="sm" bg="gray.0" radius="md">
                 <Group justify="space-between">
-                    <Button variant="outline" color="blue" size="xs" leftSection={<IconCirclePlus size={14}/>} onClick={handleCreateNew}>
+                    <Button variant="outline" color="blue" size={isMobile ? "md" : "xs"} leftSection={<IconCirclePlus size={16}/>} onClick={handleCreateNew}>
                         Nouveau Stage
                     </Button>
-                    <Button variant="subtle" color="red" size="xs" leftSection={<IconTrash size={14}/>} onClick={handleDelete}>
-                        Effacer ce stage
+                    <Button variant="subtle" color="red" size={isMobile ? "md" : "xs"} leftSection={<IconTrash size={16}/>} onClick={handleDelete}>
+                        Effacer
                     </Button>
                 </Group>
             </Paper>
 
-            <Paper withBorder p="sm" bg="blue.0">
-                <Title order={5} mb="xs">Calendrier du Stage</Title>
-                <Group grow>
-                    <DateInput label="Début" value={data.start_date ? new Date(data.start_date) : null} onChange={(d) => setData({...data, start_date: d})} />
-                    <DateInput label="Fin" value={data.end_date ? new Date(data.end_date) : null} onChange={(d) => setData({...data, end_date: d})} />
-                </Group>
-                <Button fullWidth mt="md" size="xs" onClick={handleSaveDates} leftSection={<IconDeviceFloppy size={14}/>}>
-                    Fixer les dates
-                </Button>
-            </Paper>
-
-            <Divider label="Visites" labelPosition="center" />
-            <Paper withBorder p="sm" bg="gray.0">
-                <Stack gap="xs">
-                    <Group grow align="flex-end">
-                        <DateInput label="Date" value={newVisit.date} onChange={(d) => d && setNewVisit({...newVisit, date: d})} size="xs" />
-                        <Select label="Type" value={newVisit.type} onChange={(v) => setNewVisit({...newVisit, type: v || 'SITE'})} data={[{value:'SITE', label:'Sur place'}, {value:'PHONE', label:'Tél'}, {value:'VISIO', label:'Visio'}]} size="xs" />
+            {/* DATES */}
+            <Paper withBorder p={isMobile ? "xl" : "md"} radius="md" bg="blue.0" shadow="sm">
+                <Title order={5} mb="md">Calendrier du Stage</Title>
+                <Stack gap="md">
+                    <Group grow stackOnMobile>
+                        <DateInput label="Date de début" size={isMobile ? "lg" : "sm"} value={data.start_date ? new Date(data.start_date) : null} onChange={(d) => setData({...data, start_date: d})} />
+                        <DateInput label="Date de fin" size={isMobile ? "lg" : "sm"} value={data.end_date ? new Date(data.end_date) : null} onChange={(d) => setData({...data, end_date: d})} />
                     </Group>
-                    <Textarea label="Rapport" value={newVisit.report_content} onChange={(e) => setNewVisit({...newVisit, report_content: e.target.value})} size="xs" />
-                    <Button onClick={handleAddVisit} size="xs" color="green" leftSection={<IconPlus size={14}/>}>Ajouter</Button>
+                    <Button fullWidth size={isMobile ? "lg" : "sm"} onClick={handleSaveDates} leftSection={<IconDeviceFloppy size={20}/>}>
+                        Enregistrer les dates
+                    </Button>
                 </Stack>
             </Paper>
 
+            {/* VISITES ET CONTACTS */}
+            <Divider label={<Text size="sm" fw={700}>VISITES ET CONTACTS</Text>} labelPosition="center" />
+            
+            <Paper withBorder p={isMobile ? "xl" : "md"} bg="gray.0" radius="md">
+                <Stack gap="lg">
+                    {/* BLOC CONTACTS */}
+                    <Stack gap="md">
+                        <Paper p="md" radius="sm" withBorder bg="white">
+                            <Text size="xs" fw={700} c="dimmed" mb={5}>ÉLÈVE</Text>
+                            <Text size="lg" fw={700}>{student.full_name}</Text>
+                            <Anchor href={`mailto:${student.email}`} size="md" display="block">{student.email}</Anchor>
+                            {student.phone && (
+                                <Anchor href={`tel:${student.phone.replace(/\s/g, '')}`} size="lg" fw={700} color="green" display="block" mt={5}>
+                                    <IconPhone size={18} style={{ verticalAlign: 'middle', marginRight: 8 }} />
+                                    {student.phone}
+                                </Anchor>
+                            )}
+                        </Paper>
+                        <Paper p="md" radius="sm" withBorder bg="white">
+                            <Text size="xs" fw={700} c="dimmed" mb={5}>ENTREPRISE & TUTEUR PRO</Text>
+                            <Text size="lg" fw={700}>{data.company_name || 'N/A'}</Text>
+                            <Text size="md" fw={600}>{data.supervisor_name || 'Maître de stage non renseigné'}</Text>
+                            <Anchor href={`mailto:${data.company_email}`} size="md" display="block">{data.company_email}</Anchor>
+                            {(data.supervisor_phone || data.company_phone) && (
+                                <Anchor href={`tel:${(data.supervisor_phone || data.company_phone).replace(/\s/g, '')}`} size="lg" fw={700} color="green" display="block" mt={5}>
+                                    <IconPhone size={18} style={{ verticalAlign: 'middle', marginRight: 8 }} />
+                                    {data.supervisor_phone || data.company_phone}
+                                </Anchor>
+                            )}
+                        </Paper>
+                    </Stack>
+                    
+                    <Divider variant="dotted" />
+
+                    {/* FORMULAIRE VISITE */}
+                    <Stack gap="md">
+                        <Title order={5}>Ajouter un suivi / RDV</Title>
+                        <Group grow stackOnMobile>
+                            <DateInput label="Date du RDV" size="lg" value={newVisit.date} onChange={(d) => d && setNewVisit({...newVisit, date: d})} />
+                            <Select label="Type" size="lg" value={newVisit.type} onChange={(v) => setNewVisit({...newVisit, type: v || 'SITE'})} data={[{value:'SITE', label:'Sur place'}, {value:'PHONE', label:'Tél'}, {value:'VISIO', label:'Visio'}]} />
+                        </Group>
+                        <Textarea label="Rapport de visite" size="lg" placeholder="Points abordés, ambiance..." minRows={3} value={newVisit.report_content} onChange={(e) => setNewVisit({...newVisit, report_content: e.target.value})} />
+                        <Button onClick={handleAddVisit} size="lg" color="green" leftSection={<IconPlus size={20}/>}>Valider ce rapport</Button>
+                    </Stack>
+                </Stack>
+            </Paper>
+
+            {/* TIMELINE VISITES */}
             {visits.length > 0 && (
-                <Timeline active={visits.length - 1} bulletSize={24} lineWidth={2}>
-                    {visits.map((v, i) => (
-                        <Timeline.Item key={i} bullet={getVisitIcon(v.type)} title={new Date(v.date).toLocaleDateString()}>
-                            <Text size="sm">{v.report_content}</Text>
-                        </Timeline.Item>
-                    ))}
-                </Timeline>
+                <Paper p="md">
+                    <Timeline active={visits.length - 1} bulletSize={isMobile ? 32 : 24} lineWidth={2}>
+                        {visits.map((v, i) => (
+                            <Timeline.Item key={i} bullet={getVisitIcon(v.type)} title={new Date(v.date).toLocaleDateString()}>
+                                <Text size={isMobile ? "md" : "sm"}>{v.report_content}</Text>
+                                <Text size="xs" c="dimmed">{v.type}</Text>
+                            </Timeline.Item>
+                        ))}
+                    </Timeline>
+                </Paper>
             )}
 
-            <Divider label="Synthèse Évaluations" labelPosition="center" />
+            {/* SYNTHÈSE ÉVALUATIONS */}
+            <Divider label={<Text size="sm" fw={700}>SYNTHÈSE ET ÉVALUATION FINALE</Text>} labelPosition="center" />
+            
             {rubric && (
-                <Paper withBorder p="md" mb="md" bg="blue.0" radius="md">
+                <Paper withBorder p="xl" bg="blue.0" radius="md" shadow="md">
                     <Group justify="space-between">
-                        <Title order={5}>Note Finale Calculée</Title>
-                        <Badge size="xl" color="blue" variant="filled">
-                            {calculateFinalGrade().toFixed(2)} / 20
+                        <Title order={4}>Note Académique Finale</Title>
+                        <Badge size="xl" h={50} px="xl" color="blue" variant="filled">
+                            <Text size="xl" fw={900}>{calculateFinalGrade().toFixed(2)} / 20</Text>
                         </Badge>
                     </Group>
                 </Paper>
             )}
 
             {rubric ? (
-                <Stack gap="md">
+                <Stack gap="xl">
                     {rubric.criteria.map((c: any, idx: number) => {
                         const sScore = getScoreByRole(c.id, 'STUDENT');
                         const pScore = getScoreByRole(c.id, 'PRO');
                         const sComm = getCommentByRole(c.id, 'STUDENT');
                         const pComm = getCommentByRole(c.id, 'PRO');
                         return (
-                            <Paper key={c.id} withBorder p="xs" bg="gray.0">
-                                <Text size="sm" fw={600} mb="xs">{c.label} ({c.weight} pts)</Text>
-                                <Stack gap={5}>
-                                    <Group grow>
-                                        <div><Text size="10px" c="blue" fw={700}>Élève: {sScore??'N/A'}%</Text>{sComm && <Text size="10px" fs="italic" c="dimmed">{sComm}</Text>}</div>
-                                        <div><Text size="10px" c="orange" fw={700}>Pro: {pScore??'N/A'}%</Text>{pComm && <Text size="10px" fs="italic" c="dimmed">{pComm}</Text>}</div>
+                            <Paper key={c.id} withBorder p="xl" bg="white" shadow="sm">
+                                <Text size="lg" fw={700} mb="lg" c="indigo">{c.label} ({c.weight} pts)</Text>
+                                <Stack gap="md">
+                                    <Group grow stackOnMobile>
+                                        <Paper p="sm" withBorder bg="blue.0">
+                                            <Text size="xs" fw={700} c="blue">ÉLÈVE: {sScore??'N/A'}%</Text>
+                                            {sComm && <Text size="sm" fs="italic">{sComm}</Text>}
+                                        </Paper>
+                                        <Paper p="sm" withBorder bg="orange.0">
+                                            <Text size="xs" fw={700} c="orange">PRO: {pScore??'N/A'}%</Text>
+                                            {pComm && <Text size="sm" fs="italic">{pComm}</Text>}
+                                        </Paper>
                                     </Group>
-                                    <Divider variant="dashed" my={5} />
-                                    <Slider label={(v)=>`Prof: ${v}%`} value={teacherScores[idx]?.score || 0} onChange={(v)=>{const n=[...teacherScores]; n[idx].score=v; setTeacherScores(n);}} color="green" />
-                                    <Textarea placeholder="Commentaire prof..." size="xs" value={teacherScores[idx]?.comment || ''} onChange={(e)=>{const n=[...teacherScores]; n[idx].comment=e.target.value; setTeacherScores(n);}} />
+                                    <Divider variant="dashed" my="md" />
+                                    <Text fw={700} size="md">VOTRE NOTE (PROF) :</Text>
+                                    <Slider 
+                                        size="xl"
+                                        label={(v)=>`Prof: ${v}%`} 
+                                        value={teacherScores[idx]?.score || 0} 
+                                        onChange={(v)=>{const n=[...teacherScores]; n[idx].score=v; setTeacherScores(n);}} 
+                                        color="green" 
+                                        marks={[{value:0, label:'0%'}, {value:50, label:'50%'}, {value:100, label:'100%'}]}
+                                        mb="xl"
+                                    />
+                                    <Textarea 
+                                        label="Commentaire académique"
+                                        size="lg"
+                                        placeholder="Observations finales..." 
+                                        value={teacherScores[idx]?.comment || ''} 
+                                        onChange={(e)=>{const n=[...teacherScores]; n[idx].comment=e.target.value; setTeacherScores(n);}} 
+                                    />
                                 </Stack>
                             </Paper>
                         );
                     })}
-                    <Button color={data.is_finalized ? "gray" : "green"} size="xs" onClick={handleSaveTeacherEval} disabled={data.is_finalized} leftSection={<IconDeviceFloppy size={14}/>}>
-                        {data.is_finalized ? "Déjà finalisée" : "Valider l'évaluation finale"}
+                    <Button fullWidth size="xl" color={data.is_finalized ? "gray" : "green"} onClick={handleSaveTeacherEval} disabled={data.is_finalized} leftSection={<IconDeviceFloppy size={24}/>}>
+                        {data.is_finalized ? "Évaluation déjà finalisée" : "VALIDER L'ÉVALUATION FINALE"}
                     </Button>
                 </Stack>
-            ) : <Text size="xs" c="dimmed" ta="center">Pas de grille définie.</Text>}
+            ) : <Text p="xl" ta="center" c="dimmed">Aucune grille d'évaluation définie pour ce stage.</Text>}
 
-            <Divider label="Entreprise" labelPosition="center" />
-            <Paper withBorder p="sm">
-                <Stack gap="xs">
-                    <Group justify="space-between"><Text size="xs" fw={700}>ENTREPRISE :</Text><Text size="sm">{data.company_name || 'N/A'}</Text></Group>
-                    <Group justify="space-between"><Text size="xs" fw={700}>EMAIL :</Text><Text size="sm">{data.company_email || 'N/A'}</Text></Group>
-                </Stack>
-                {data.company_email && (
-                    <Stack mt="md">
-                        {!data.evaluation_token ? (
-                            <Button variant="light" size="xs" onClick={handleGenerateLink}>Générer le Magic Link</Button>
-                        ) : (
-                            <Alert color="blue" p="xs">
-                                <Text size="xs" style={{ wordBreak: 'break-all' }}>{window.location.origin}/app/?token={data.evaluation_token}</Text>
+            {/* MAGIC LINK */}
+            {data && data.company_email && (
+                <Paper withBorder p="xl" radius="md" shadow="sm">
+                    <Title order={5} mb="md">Partage du Magic Link (Tuteur Pro)</Title>
+                    {!data.evaluation_token ? (
+                        <Button fullWidth variant="light" size="lg" onClick={handleGenerateLink} leftSection={<IconLink size={20}/>}>Générer le lien d'évaluation</Button>
+                    ) : (
+                        <Stack gap="md">
+                            <Alert color="blue" p="md" icon={<IconLink size={20} />}>
+                                <Text size="sm" fw={700} mb="xs">Lien d'évaluation :</Text>
+                                <Text size="xs" style={{ wordBreak: 'break-all' }} fw={600} bg="white" p="xs">{window.location.origin}/app/?token={data.evaluation_token}</Text>
                             </Alert>
-                        )}
-                    </Stack>
-                )}
-            </Paper>
+                            <Button 
+                                fullWidth 
+                                size="xl" 
+                                color="blue" 
+                                leftSection={<IconShare size={24}/>} 
+                                onClick={handleShareLink}
+                            >
+                                {navigator.share ? "Partager (SMS, WhatsApp, Mail...)" : "Copier le lien"}
+                            </Button>
+                        </Stack>
+                    )}
+                </Paper>
+            )}
 
+            {/* HISTORIQUE */}
             {history.length > 0 && (
                 <Stack mt="xl">
-                    <Divider label="Historique" labelPosition="center" />
+                    <Divider label="HISTORIQUE DES STAGES" labelPosition="center" />
                     {history.map(h => (
-                        <Paper key={h.id} withBorder p="xs" bg="gray.1">
-                            <Text size="xs" fw={700}>{h.company_name || 'Inconnue'}</Text>
-                            <Text size="10px" c="dimmed">ID: {h.id}</Text>
+                        <Paper key={h.id} withBorder p="md" bg="gray.1">
+                            <Group justify="space-between">
+                                <div>
+                                    <Text size="md" fw={700}>{h.company_name || 'Entreprise inconnue'}</Text>
+                                    <Text size="xs" c="dimmed">ID: {h.id} | Finalisé: {h.is_finalized ? 'Oui' : 'Non'}</Text>
+                                </div>
+                                <Badge color="gray">Archivé</Badge>
+                            </Group>
                         </Paper>
                     ))}
                 </Stack>
