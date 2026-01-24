@@ -270,6 +270,79 @@ def generate_internship_report(session: Session, student_uid: str):
     buffer.seek(0)
     return buffer
 
+def generate_governance_report_pdf(session: Session, filter_type: str = None):
+    """Génère un rapport global ou filtré des responsabilités pédagogiques."""
+    from ..models import ResponsibilityMatrix, User, ResponsibilityEntityType
+    
+    if filter_type:
+        matrix = session.exec(select(ResponsibilityMatrix).where(ResponsibilityMatrix.entity_type == filter_type)).all()
+    else:
+        matrix = session.exec(select(ResponsibilityMatrix)).all()
+    
+    buffer = BytesIO()
+    primary_color = get_config_value(session, "APP_PRIMARY_COLOR", "#1971c2")
+    styles = get_styles(primary_color)
+    
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=1*cm, leftMargin=1*cm, topMargin=1.5*cm, bottomMargin=1.5*cm)
+    story = []
+
+    title = "RAPPORT DE GOUVERNANCE PÉDAGOGIQUE"
+    if filter_type == "RESOURCE": title = "RAPPORT GOUVERNANCE : RESSOURCES (R)"
+    elif filter_type == "ACTIVITY": title = "RAPPORT GOUVERNANCE : ACTIVITÉS ET SAÉ"
+    elif filter_type == "STUDENT": title = "RAPPORT GOUVERNANCE : TUTORAT ÉTUDIANT"
+
+    story.append(Paragraph(title, styles['TitleStyle']))
+    story.append(Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}", styles['NormalStyle']))
+    story.append(Spacer(1, 1*cm))
+
+    # Tableau
+    table_data = [["Type", "Entité (Code/ID)", "Rôle", "Nom Enseignant", "Email"]]
+    
+    # Dictionnaire de traduction pour les enums
+    type_labels = {
+        "RESOURCE": "Ressource",
+        "ACTIVITY": "Activité / SAÉ",
+        "STUDENT": "Tutorat Étudiant"
+    }
+    role_labels = {
+        "OWNER": "Responsable",
+        "INTERVENANT": "Intervenant",
+        "TUTOR": "Tuteur"
+    }
+
+    for entry in matrix:
+        user = session.exec(select(User).where(User.ldap_uid == entry.user_id)).first()
+        
+        # Nettoyage des valeurs (extraction si c'est un objet enum ou une chaîne brute)
+        e_type = str(entry.entity_type).split('.')[-1]
+        r_type = str(entry.role_type).split('.')[-1]
+
+        table_data.append([
+            type_labels.get(e_type, e_type),
+            entry.entity_id,
+            role_labels.get(r_type, r_type),
+            user.full_name if user else entry.user_id,
+            user.email if user else "N/A"
+        ])
+
+    # Ajustement des largeurs pour format paysage (Total ~27cm)
+    t = Table(table_data, colWidths=[3.5*cm, 4.5*cm, 3*cm, 7*cm, 9*cm])
+    t.setStyle(TableStyle([
+        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor(primary_color)),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0,0), (-1,-1), 9),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+        ('TOPPADDING', (0,0), (-1,-1), 5),
+        ('ALIGN', (0,0), (2,-1), 'CENTER'), # Centre Type, ID et Rôle
+    ]))
+    
+    story.append(t)
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
 # --- ANCIENNES FONCTIONS RESTAURÉES ---
 
 def generate_activity_pdf(activity: Activity, session: Session):

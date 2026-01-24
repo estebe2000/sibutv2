@@ -18,6 +18,7 @@ import { AiAssistantView } from './views/AiAssistantView';
 import { AdminDashboardView } from './views/AdminDashboardView';
 import { PublicEvaluationView } from './views/PublicEvaluationView';
 import { InternshipManagementView } from './views/InternshipManagementView';
+import { GovernanceReportView } from './views/GovernanceReportView';
 
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
 
@@ -173,21 +174,22 @@ function App() {
       <AppShell.Navbar p="md">
         <Stack gap="xs">
           {/* Menu Commun Staff */}
-          <Button variant={activeTab === 'dashboard' ? 'light' : 'subtle'} onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={20} />}>Tableau de Bord</Button>
-          {isAdmin && <Button variant={activeTab === 'dispatcher' ? 'light' : 'subtle'} onClick={() => setActiveTab('dispatcher')} leftSection={<IconUsers size={20} />}>Dispatching</Button>}
-          <Button variant={activeTab === 'curriculum' ? 'light' : 'subtle'} onClick={() => setActiveTab('curriculum')} leftSection={<IconBook size={20} />} color="grape">Référentiel</Button>
-          <Button variant={activeTab === 'discovery' ? 'light' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={20} />} color="teal">Découverte</Button>
-          <Button variant={activeTab === 'repartition' ? 'light' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={20} />} color="orange">Répartition</Button>
-          <Button variant={activeTab === 'fiches2' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={20} />} color="cyan">Fiches PDF</Button>
-          <Button variant={activeTab === 'internships' ? 'light' : 'subtle'} onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={20} />} color="blue">Tutorat de Stage</Button>
-          <Button variant={activeTab === 'ai-assistant' ? 'light' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={20} />} color="indigo">Assistant IA</Button>
+          <Button variant={activeTab === 'dashboard' ? 'light' : 'subtle'} onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={20} />} justify="start">Tableau de Bord</Button>
+          {isAdmin && <Button variant={activeTab === 'dispatcher' ? 'light' : 'subtle'} onClick={() => setActiveTab('dispatcher')} leftSection={<IconUsers size={20} />} justify="start">Dispatching</Button>}
+          <Button variant={activeTab === 'curriculum' ? 'light' : 'subtle'} onClick={() => setActiveTab('curriculum')} leftSection={<IconBook size={20} />} color="grape" justify="start">Référentiel</Button>
+          <Button variant={activeTab === 'discovery' ? 'light' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={20} />} color="teal" justify="start">Découverte</Button>
+          <Button variant={activeTab === 'repartition' ? 'light' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={20} />} color="orange" justify="start">Répartition</Button>
+          <Button variant={activeTab === 'fiches2' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={20} />} color="cyan" justify="start">Fiches PDF</Button>
+          <Button variant={activeTab === 'governance-report' ? 'light' : 'subtle'} onClick={() => setActiveTab('governance-report')} leftSection={<IconShieldCheck size={20} />} color="indigo" justify="start">Rapport Gouvernance</Button>
+          <Button variant={activeTab === 'internships' ? 'light' : 'subtle'} onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={20} />} color="blue" justify="start">Tutorat de Stage</Button>
+          <Button variant={activeTab === 'ai-assistant' ? 'light' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={20} />} color="indigo" justify="start">Assistant IA</Button>
           
           {/* Menu Admin Uniquement */}
           {isAdmin && (
             <>
-              <Button variant={activeTab === 'keycloak' ? 'light' : 'subtle'} onClick={() => setActiveTab('keycloak')} leftSection={<IconKey size={20} />} color="orange">Comptes Locaux</Button>
-              <Button variant={activeTab === 'odoo-admin' ? 'light' : 'subtle'} onClick={() => setActiveTab('odoo-admin')} leftSection={<IconDatabase size={20} />} color="indigo">Gestion Odoo</Button>
-              <Button variant={activeTab === 'settings' ? 'light' : 'subtle'} onClick={() => setActiveTab('settings')} color="gray" leftSection={<IconSettings size={20} />}>Configuration</Button>
+              <Button variant={activeTab === 'keycloak' ? 'light' : 'subtle'} onClick={() => setActiveTab('keycloak')} leftSection={<IconKey size={20} />} color="orange" justify="start">Comptes Locaux</Button>
+              <Button variant={activeTab === 'odoo-admin' ? 'light' : 'subtle'} onClick={() => setActiveTab('odoo-admin')} leftSection={<IconDatabase size={20} />} color="indigo" justify="start">Gestion Odoo</Button>
+              <Button variant={activeTab === 'settings' ? 'light' : 'subtle'} onClick={() => setActiveTab('settings')} color="gray" leftSection={<IconSettings size={20} />} justify="start">Configuration</Button>
             </>
           )}
         </Stack>
@@ -199,6 +201,7 @@ function App() {
         {activeTab === 'discovery' && <DiscoveryView curriculum={curriculum} />}
         {activeTab === 'repartition' && <RepartitionView curriculum={curriculum} />}
         {activeTab === 'fiches2' && <FichesPDF2View curriculum={curriculum} />}
+        {activeTab === 'governance-report' && <GovernanceReportView />}
         {activeTab === 'internships' && <InternshipManagementView user={user} />}
         {activeTab === 'odoo-admin' && <OdooAdminView />}
         {activeTab === 'ai-assistant' && <AiAssistantView />}
