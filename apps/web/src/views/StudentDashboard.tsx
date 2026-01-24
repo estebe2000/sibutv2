@@ -12,18 +12,25 @@ interface StudentDashboardProps {
 }
 
 import { InternshipForm } from '../components/InternshipForm';
+import { InternshipSelfEvaluation } from '../components/InternshipSelfEvaluation';
+
 
 export function StudentDashboard({ user, curriculum, groups }: any) {
   const [tutor, setTutor] = useState<any>(null);
+  const [internship, setInternship] = useState<any>(null);
 
   useEffect(() => {
-    const fetchTutor = async () => {
+    const fetchData = async () => {
         try {
-            const res = await api.get(`/activity-management/student/${user.ldap_uid}/tutor`);
-            setTutor(res.data);
+            const [tutorRes, internRes] = await Promise.all([
+                api.get(`/activity-management/student/${user.ldap_uid}/tutor`),
+                api.get(`/internships/${user.ldap_uid}`)
+            ]);
+            setTutor(tutorRes.data);
+            setInternship(internRes.data);
         } catch(e) {}
     };
-    fetchTutor();
+    fetchData();
   }, [user.ldap_uid]);
 
 
@@ -178,7 +185,10 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
 
         <OdooWidget />
 
-        {tutor && <InternshipForm studentUid={user.ldap_uid} />}
+        {internship && !internship.is_finalized && <InternshipForm studentUid={user.ldap_uid} />}
+
+        <InternshipSelfEvaluation studentUid={user.ldap_uid} />
+
 
         <Alert variant="light" color="indigo" title="Suivi des Compétences" icon={<IconInfoCircle />}>
           Votre espace de suivi des compétences et votre portfolio Nextcloud sont en cours de configuration. 

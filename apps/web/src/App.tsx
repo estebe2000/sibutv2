@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput } from '@mantine/core';
-import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey } from '@tabler/icons-react';
+import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
 import { useStore } from './store/useStore';
@@ -16,11 +16,14 @@ import { OdooAdminView } from './views/OdooAdminView';
 import { ProfessorDashboard } from './views/ProfessorDashboard';
 import { AiAssistantView } from './views/AiAssistantView';
 import { AdminDashboardView } from './views/AdminDashboardView';
+import { PublicEvaluationView } from './views/PublicEvaluationView';
+import { InternshipManagementView } from './views/InternshipManagementView';
 
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
 
 function App() {
   const { token, setToken, user, setUser, curriculum, fetchCurriculum, setConfig, config } = useStore();
+  const [publicToken, setPublicToken] = useState<string | null>(null);
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
@@ -31,6 +34,10 @@ function App() {
   const [assignedUsers, setAssignedUsers] = useState<any[]>([]);
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const magicToken = urlParams.get('token');
+    if (magicToken) setPublicToken(magicToken);
+
     const getCookie = (name: string) => {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
@@ -104,6 +111,8 @@ function App() {
     setLoginLoading(false);
   };
 
+  if (publicToken) return <PublicEvaluationView token={publicToken} />;
+
   if (isForbidden) return (
     <Center h="100vh" bg="red.0">
       <Paper shadow="xl" p="xl" radius="md" withBorder w={500} ta="center">
@@ -170,6 +179,7 @@ function App() {
           <Button variant={activeTab === 'discovery' ? 'light' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={20} />} color="teal">Découverte</Button>
           <Button variant={activeTab === 'repartition' ? 'light' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={20} />} color="orange">Répartition</Button>
           <Button variant={activeTab === 'fiches2' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={20} />} color="cyan">Fiches PDF</Button>
+          <Button variant={activeTab === 'internships' ? 'light' : 'subtle'} onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={20} />} color="blue">Tutorat de Stage</Button>
           <Button variant={activeTab === 'ai-assistant' ? 'light' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={20} />} color="indigo">Assistant IA</Button>
           
           {/* Menu Admin Uniquement */}
@@ -183,12 +193,13 @@ function App() {
         </Stack>
       </AppShell.Navbar>
       <AppShell.Main bg="gray.0">
-        {activeTab === 'dashboard' && (isAdmin ? <AdminDashboardView /> : <ProfessorDashboard user={user} curriculum={curriculum} />)}
+        {activeTab === 'dashboard' && (isAdmin ? <AdminDashboardView /> : <ProfessorDashboard user={user} curriculum={curriculum} setActiveTab={setActiveTab} />)}
         {activeTab === 'dispatcher' && <DispatcherView fetchData={() => fetchData(user.role)} ldapUsers={ldapUsers} setLdapUsers={setLdapUsers} localGroups={localGroups} assignedUsers={assignedUsers} YEAR_COLORS={YEAR_COLORS} />}
         {activeTab === 'curriculum' && <CompetencyEditor curriculum={curriculum} onRefresh={fetchCurriculum} professors={staffUsers} />}
         {activeTab === 'discovery' && <DiscoveryView curriculum={curriculum} />}
         {activeTab === 'repartition' && <RepartitionView curriculum={curriculum} />}
         {activeTab === 'fiches2' && <FichesPDF2View curriculum={curriculum} />}
+        {activeTab === 'internships' && <InternshipManagementView user={user} />}
         {activeTab === 'odoo-admin' && <OdooAdminView />}
         {activeTab === 'ai-assistant' && <AiAssistantView />}
         {activeTab === 'keycloak' && <KeycloakUserManagement />}

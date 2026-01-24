@@ -111,6 +111,38 @@ class Internship(SQLModel, table=True):
     supervisor_phone: Optional[str] = None
     supervisor_email: Optional[str] = None
 
+    # Magic Link pour évaluation
+    evaluation_token: Optional[str] = Field(default=None, index=True)
+    token_expires_at: Optional[datetime] = None
+    is_finalized: bool = Field(default=False)
+    is_active: bool = Field(default=True)
+
+    visits: List["InternshipVisit"] = Relationship(back_populates="internship")
+
+class VisitType(str, Enum):
+    SITE = "SITE"
+    PHONE = "PHONE"
+    VISIO = "VISIO"
+
+class InternshipVisit(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    internship_id: int = Field(foreign_key="internship.id")
+    date: datetime = Field(default_factory=datetime.now)
+    type: VisitType = Field(default=VisitType.SITE)
+    report_content: Optional[str] = None
+    
+    internship: Optional["Internship"] = Relationship(back_populates="visits")
+
+class InternshipEvaluation(SQLModel, table=True):
+    """Évaluation détaillée d'un stage par critère (Maître de stage, Étudiant ou Tuteur)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    internship_id: int = Field(foreign_key="internship.id")
+    evaluator_role: str # "PRO", "STUDENT", "TEACHER"
+    criterion_id: int # ID du critère de la grille
+    score: float = Field(default=0.0) # 0-100%
+    comment: Optional[str] = None
+    updated_at: datetime = Field(default_factory=datetime.now)
+
 # --- EVALUATION RUBRICS ---
 
 class EvaluationRubric(SQLModel, table=True):

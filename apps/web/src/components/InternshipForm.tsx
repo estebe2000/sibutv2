@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Title, TextInput, Stack, Button, Group, Text, Divider, Alert } from '@mantine/core';
-import { IconBriefcase, IconUserCheck, IconDeviceFloppy, IconInfoCircle } from '@tabler/icons-react';
+import { Paper, Title, TextInput, Stack, Button, Group, Text, Divider, Alert, ThemeIcon, Badge } from '@mantine/core';
+import { IconBriefcase, IconDeviceFloppy, IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from '../services/api';
 
@@ -27,10 +27,10 @@ export function InternshipForm({ studentUid }: { studentUid: string }) {
         setSaving(false);
     };
 
-    if (loading) return <Text size="sm" c="dimmed">Chargement...</Text>;
+    if (loading) return <Text size="sm" c="dimmed">Chargement de la fiche de stage...</Text>;
 
     return (
-        <Paper withBorder p="md" radius="md">
+        <Paper withBorder p="md" radius="md" shadow="xs">
             <Stack gap="md">
                 <Group justify="space-between">
                     <Group gap="xs">
@@ -58,7 +58,7 @@ export function InternshipForm({ studentUid }: { studentUid: string }) {
                     <TextInput label="Email contact" value={data.company_email || ''} onChange={(e) => setData({...data, company_email: e.target.value})} />
                 </Group>
 
-                <Divider label="L'Encadrant Professionnel" labelPosition="center" mt="md" />
+                <Divider label="L'Encadrant Professionnel (Maître de stage)" labelPosition="center" mt="md" />
                 <TextInput label="Nom du tuteur entreprise" value={data.supervisor_name || ''} onChange={(e) => setData({...data, supervisor_name: e.target.value})} />
                 <Group grow>
                     <TextInput label="Téléphone encadrant" value={data.supervisor_phone || ''} onChange={(e) => setData({...data, supervisor_phone: e.target.value})} />
@@ -72,5 +72,3 @@ export function InternshipForm({ studentUid }: { studentUid: string }) {
         </Paper>
     );
 }
-
-import { ThemeIcon, Badge } from '@mantine/core';
