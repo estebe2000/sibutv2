@@ -26,7 +26,7 @@ import { Alert } from '@mantine/core';
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
 
 function App() {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery('(max-width: 62em)');
   const { token, setToken, user, setUser, curriculum, fetchCurriculum, setConfig, config } = useStore();
   const [publicToken, setPublicToken] = useState<string | null>(null);
   const [loginUsername, setLoginUsername] = useState('');
@@ -155,9 +155,17 @@ function App() {
             <Button variant="default" size="xs" onClick={handleLogout}>Déconnexion</Button>
           </Group>
         </AppShell.Header>
-        <AppShell.Main bg="gray.0">
+        <AppShell.Main bg="gray.0" pb={isMobile ? 80 : 0}>
           <StudentDashboard user={user} curriculum={curriculum} groups={localGroups} />
         </AppShell.Main>
+        {isMobile && (
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 65, background: 'white', borderTop: '2px solid #eee', zIndex: 1000, padding: '10px' }}>
+            <Group grow h="100%">
+              <Button variant="subtle" onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={20}/>}>Bord</Button>
+              <Button variant="subtle" color="blue" onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={20}/>}>Stage</Button>
+            </Group>
+          </div>
+        )}
       </AppShell>
     );
   }

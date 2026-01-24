@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Title, Text, Grid, Paper, Group, ThemeIcon, Badge, Button, Stack, Loader, Modal, Center } from '@mantine/core';
 import { IconClock, IconUsers, IconCrown, IconArrowRight, IconSettings, IconTargetArrow } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 import { ActivityGroupManager } from '../components/ActivityGroupManager';
 import { ProfessorInternshipManager } from '../components/ProfessorInternshipManager';
 import api from '../services/api';
@@ -8,6 +9,7 @@ import api from '../services/api';
 import { RubricBuilder } from '../components/RubricBuilder';
 
 export function ProfessorDashboard({ user, curriculum, setActiveTab }: any) {
+  const isMobile = useMediaQuery('(max-width: 62em)');
   const [allStudents, setAllStudents] = useState([]);
   const [tutoredStudents, setTutoredStudents] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
@@ -124,29 +126,32 @@ export function ProfessorDashboard({ user, curriculum, setActiveTab }: any) {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, md: 4 }}>
-                <Stack>
-                    <Paper withBorder p="md" radius="md">
-                        <Title order={5} mb="md">Accès Services</Title>
-                        <Stack gap="xs">
-                            <Button variant="light" justify="space-between" rightSection={<IconArrowRight size={16} />} fullWidth component="a" href={`https://odoo.${window.location.hostname.split('.').slice(-2).join('.')}`} target="_blank">Odoo (ERP)</Button>
-                            <Button variant="light" color="indigo" justify="space-between" rightSection={<IconArrowRight size={16} />} fullWidth component="a" href={`https://mattermost.${window.location.hostname.split('.').slice(-2).join('.')}`} target="_blank">Mattermost</Button>
-                            <Button variant="light" color="cyan" justify="space-between" rightSection={<IconArrowRight size={16} />} fullWidth component="a" href={`https://nextcloud.${window.location.hostname.split('.').slice(-2).join('.')}`} target="_blank">Nextcloud</Button>
-                        </Stack>
-                    </Paper>
+                <Stack gap={isMobile ? "xl" : "md"}>
+                    {!isMobile && (
+                        <Paper withBorder p="md" radius="md">
+                            <Title order={5} mb="md">Accès Services</Title>
+                            <Stack gap="xs">
+                                <Button variant="light" justify="space-between" rightSection={<IconArrowRight size={16} />} fullWidth component="a" href={`https://odoo.${window.location.hostname.split('.').slice(-2).join('.')}`} target="_blank">Odoo (ERP)</Button>
+                                <Button variant="light" color="indigo" justify="space-between" rightSection={<IconArrowRight size={16} />} fullWidth component="a" href={`https://mattermost.${window.location.hostname.split('.').slice(-2).join('.')}`} target="_blank">Mattermost</Button>
+                                <Button variant="light" color="cyan" justify="space-between" rightSection={<IconArrowRight size={16} />} fullWidth component="a" href={`https://nextcloud.${window.location.hostname.split('.').slice(-2).join('.')}`} target="_blank">Nextcloud</Button>
+                            </Stack>
+                        </Paper>
+                    )}
 
-                    <Paper withBorder p="md" radius="md" bg="blue.0">
-                        <Group mb="xs">
-                            <IconUsers size={20} color="#228be6" />
-                            <Text fw={600}>Tutorat de Stage ({tutoredStudents.length})</Text>
+                    <Paper withBorder p={isMobile ? "xl" : "md"} radius="md" bg="blue.0" shadow={isMobile ? "md" : "xs"}>
+                        <Group mb="md">
+                            <IconUsers size={isMobile ? 28 : 20} color="#228be6" />
+                            <Text fw={700} size={isMobile ? "lg" : "md"}>Tutorat de Stage ({tutoredStudents.length})</Text>
                         </Group>
                         {tutoredStudents.length === 0 ? (
                             <Text size="xs" c="dimmed">Vous ne suivez aucun étudiant pour le moment.</Text>
                         ) : (
-                            <Stack gap="xs">
+                            <Stack gap="md">
                                 {tutoredStudents.map((s: any) => (
-                                    <Paper key={s.ldap_uid} p="xs" radius="xs" withBorder style={{ cursor: 'pointer' }} onClick={() => setActiveTab('internships')}>
-                                        <Text size="xs" fw={600}>{s.full_name}</Text>
+                                    <Paper key={s.ldap_uid} p={isMobile ? "xl" : "xs"} radius="md" withBorder shadow={isMobile ? "sm" : "none"} bg="white" style={{ cursor: 'pointer', borderLeft: isMobile ? '8px solid #228be6' : '1px solid #eee' }} onClick={() => setActiveTab('internships')}>
+                                        <Text size={isMobile ? "lg" : "xs"} fw={700}>{s.full_name}</Text>
                                         <Text size="xs" c="dimmed">{s.email}</Text>
+                                        {isMobile && <Button variant="subtle" fullWidth mt="md" rightSection={<IconArrowRight size={18}/>}>Voir le suivi</Button>}
                                     </Paper>
                                 ))}
                             </Stack>
