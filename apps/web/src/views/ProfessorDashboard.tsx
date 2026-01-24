@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Container, Title, Text, Grid, Paper, Group, ThemeIcon, Badge, Button, Stack, Loader, Modal, Center } from '@mantine/core';
 import { IconClock, IconUsers, IconCrown, IconArrowRight, IconSettings, IconTargetArrow } from '@tabler/icons-react';
 import { ActivityGroupManager } from '../components/ActivityGroupManager';
+import { ProfessorInternshipManager } from '../components/ProfessorInternshipManager';
 import api from '../services/api';
 
 import { RubricBuilder } from '../components/RubricBuilder';
 
-export function ProfessorDashboard({ user, curriculum }: any) {
+export function ProfessorDashboard({ user, curriculum, setActiveTab }: any) {
   const [allStudents, setAllStudents] = useState([]);
   const [tutoredStudents, setTutoredStudents] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
@@ -61,11 +62,11 @@ export function ProfessorDashboard({ user, curriculum }: any) {
 
         <Grid>
             <Grid.Col span={{ base: 12, md: 8 }}>
-                <Title order={4} mb="md">Mes SAÉ (Gestion des Groupes)</Title>
+                <Title order={4} mb="md">Mes Activités (SAÉ, Stages, Projets)</Title>
                 
                 {myActivities.length === 0 ? (
                     <Paper withBorder p="xl" ta="center" bg="gray.0" radius="md">
-                        <Text c="dimmed">Aucune SAÉ ne vous est assignée comme responsable.</Text>
+                        <Text c="dimmed">Aucune activité ne vous est assignée comme responsable.</Text>
                     </Paper>
                 ) : (
                     <Stack gap="md">
@@ -77,15 +78,17 @@ export function ProfessorDashboard({ user, curriculum }: any) {
                                         <Text fw={600}>{act.label}</Text>
                                     </Group>
                                     <Group gap="xs">
-                                        <Button 
-                                            size="xs" 
-                                            variant="light" 
-                                            color="orange" 
-                                            leftSection={<IconSettings size={14}/>}
-                                            onClick={() => setSelectedActivity(act)}
-                                        >
-                                            Groupes
-                                        </Button>
+                                        {act.type !== 'STAGE' && (
+                                            <Button 
+                                                size="xs" 
+                                                variant="light" 
+                                                color="orange" 
+                                                leftSection={<IconSettings size={14}/>}
+                                                onClick={() => setSelectedActivity(act)}
+                                            >
+                                                Groupes
+                                            </Button>
+                                        )}
                                         <Button 
                                             size="xs" 
                                             variant="light" 
@@ -141,7 +144,7 @@ export function ProfessorDashboard({ user, curriculum }: any) {
                         ) : (
                             <Stack gap="xs">
                                 {tutoredStudents.map((s: any) => (
-                                    <Paper key={s.ldap_uid} p="xs" radius="xs" withBorder style={{ cursor: 'pointer' }} onClick={() => setSelectedTutoredStudent(s)}>
+                                    <Paper key={s.ldap_uid} p="xs" radius="xs" withBorder style={{ cursor: 'pointer' }} onClick={() => setActiveTab('internships')}>
                                         <Text size="xs" fw={600}>{s.full_name}</Text>
                                         <Text size="xs" c="dimmed">{s.email}</Text>
                                     </Paper>
@@ -152,10 +155,6 @@ export function ProfessorDashboard({ user, curriculum }: any) {
                 </Stack>
             </Grid.Col>
         </Grid>
-
-        <Modal opened={!!selectedTutoredStudent} onClose={() => setSelectedTutoredStudent(null)} title={`Suivi de Stage : ${selectedTutoredStudent?.full_name}`}>
-            {selectedTutoredStudent && <ProfessorInternshipManager student={selectedTutoredStudent} />}
-        </Modal>
 
         <Modal opened={!!selectedEvalActivity} onClose={() => setSelectedEvalActivity(null)} title="Configuration de la Grille d'Évaluation" size="90%">
             {selectedEvalActivity && <RubricBuilder activity={selectedEvalActivity} />}

@@ -3,11 +3,37 @@ from sqlmodel import Session, select
 from typing import List, Optional
 from pydantic import BaseModel
 from ..database import get_session
-from ..models import Activity, EvaluationRubric, RubricCriterion, User
+from ..models import Activity, EvaluationRubric, RubricCriterion, User, ActivityType
 from ..dependencies import require_staff
 from sqlalchemy.orm import selectinload
 
 router = APIRouter()
+
+@router.get("/activities")
+async def list_activities_with_rubrics(session: Session = Depends(get_session)):
+    """Liste toutes les activités groupées par type avec leurs grilles"""
+    activities = session.exec(select(Activity)).all()
+    result = []
+    
+    for act in activities:
+        rubrics = session.exec(select(EvaluationRubric).where(EvaluationRubric.activity_id == act.id)).all()
+        act_data = {
+            "id": act.id,
+            "code": act.code,
+            "label": act.label,
+            "type": act.type,
+            "rubrics": []
+        }
+        for r in rubrics:
+            criteria = session.exec(select(RubricCriterion).where(RubricCriterion.rubric_id == r.id)).all()
+            act_data["rubrics"].append({
+                "id": r.id,
+                "name": r.name,
+                "total_points": r.total_points,
+                "criteria": [c.model_dump() for c in criteria]
+            })
+        result.append(act_data)
+    return result
 
 class RubricUpdate(BaseModel):
     name: Optional[str] = None
