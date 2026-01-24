@@ -29,6 +29,21 @@ Application de gestion des compétences et du référentiel pédagogique pour le
 - **Filtrage Avancé** : Recherche et filtres par semestre, type et parcours pour la génération de documents.
 - **Configuration d'Identité** : Gestion dynamique du logo, de l'adresse et des contacts de l'établissement.
 
+### 🎓 Suivi des Stages & Évaluation Tripartite
+- **Cycle Complet** : Gestion de l'assignation des tuteurs, programmation des visites et rapports de suivi (Site, Tél, Visio).
+- **Évaluation Tripartite** : Système de notation et commentaires croisés entre l'Étudiant, le Maître de Stage (Pro) et le Tuteur Enseignant.
+- **Magic Links** : Accès sécurisé sans authentification pour les tuteurs en entreprise via UUID unique.
+- **Bilan de Stage PDF** : Document officiel rigoureux incluant :
+  - **Graphique Radar** généré dynamiquement (`Matplotlib`) comparant les 3 regards.
+  - **Détail des scores** par critère avec code couleur (Élève: Bleu, Pro: Orange, Prof: Vert).
+  - **Synthèse des commentaires** détaillés pour chaque compétence.
+- **Gestion de l'Historique** : Archivage des anciens stages et possibilité de réinitialiser un parcours en cas de changement d'entreprise.
+
+### 📊 Pilotage & Gouvernance
+- **Rapport de Gouvernance** : Vue centralisée des responsabilités segmentée par Ressources (R), SAÉ et Tutorat.
+- **Exports Administratifs** : Génération de rapports PDF paysages filtrés pour le pilotage du département.
+- **Recherche Instantanée** : Filtres temps-réel par enseignant, code d'activité ou email.
+
 ### 🛠️ Outils d'Administration & Sécurité
 - **Provisioning Nextcloud** : Création automatique de dossiers sécurisés en "Lecture Seule" pour les élèves via l'API.
 - **Configuration SMTP** : Support des e-mails réels (OVH ssl0.ovh.net) pour les notifications et les futurs Magic Links.
@@ -77,6 +92,11 @@ Le projet utilise **Keycloak** comme Identity Provider centralisé.
 - **Login unique** : Connectez-vous une fois sur le Dashboard pour accéder à toutes les applications.
 - **Source d'utilisateurs** : Fédération LDAP (Université) + Utilisateurs locaux Keycloak (Intervenants).
 - **Compte Admin par défaut** : `admin` / `Rangetachambre76*`
+- **Comptes de Test (Local)** : 
+  - Admin : `tata` / `tata`
+  - Directeur d'Études : `tbtb` / `tbtb`
+  - Enseignant : `tctc` / `tctc`
+  - Étudiant : `tdtd` / `tdtd`
 
 ### Commandes Utiles
 
