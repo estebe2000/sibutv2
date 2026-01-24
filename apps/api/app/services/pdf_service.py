@@ -166,7 +166,27 @@ def generate_internship_report(session: Session, student_uid: str):
 
     # Tableau des Notes
     story.append(PageBreak())
-    story.append(Paragraph("Détail des Acquisitions de Compétences", styles['Heading2Style']))
+    
+    # Calcul de la note finale sur 20 selon la pondération de la grille (logic simulateur)
+    final_grade = 0
+    total_weight = 0
+    if rubric:
+        total_weight = sum(c.weight for c in rubric.criteria)
+        for c in rubric.criteria:
+            t_eval = next((e for e in evals if e.criterion_id == c.id and e.evaluator_role == "TEACHER"), None)
+            if t_eval:
+                final_grade += (c.weight * (t_eval.score / 100))
+    
+    # Normalisation sur 20 si le total n'est pas déjà 20
+    display_grade = final_grade
+    if total_weight > 0 and total_weight != 20:
+        display_grade = (final_grade / total_weight) * 20
+
+    story.append(Table([
+        [Paragraph("Détail des Acquisitions", styles['Heading2Style']), 
+         Paragraph(f"NOTE FINALE : {display_grade:.2f} / 20", ParagraphStyle('grade', parent=styles['TitleStyle'], alignment=2, fontSize=16))]
+    ], colWidths=[10*cm, 6*cm]))
+    story.append(Spacer(1, 0.5*cm))
     
     table_eval_data = [["Compétence / Apprentissage Critique", "Élève", "Pro", "Prof"]]
     for c in rubric.criteria:

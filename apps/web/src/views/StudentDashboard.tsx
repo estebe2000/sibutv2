@@ -5,6 +5,8 @@ import { notifications } from '@mantine/notifications';
 import api from '../services/api';
 import OdooWidget from '../components/OdooWidget';
 
+import { useMediaQuery } from '@mantine/hooks';
+
 interface StudentDashboardProps {
   user: any;
   groups: any[];
@@ -16,6 +18,7 @@ import { InternshipSelfEvaluation } from '../components/InternshipSelfEvaluation
 
 
 export function StudentDashboard({ user, curriculum, groups }: any) {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [tutor, setTutor] = useState<any>(null);
   const [internship, setInternship] = useState<any>(null);
 
@@ -183,159 +186,319 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
           </Paper>
         </div>
 
-        <OdooWidget />
+                {!isMobile && <OdooWidget />}
 
-        {internship && !internship.is_finalized && <InternshipForm studentUid={user.ldap_uid} />}
+        
 
-        <InternshipSelfEvaluation studentUid={user.ldap_uid} />
+                {internship && !internship.is_finalized && <InternshipForm studentUid={user.ldap_uid} />}
 
+        
 
-        <Alert variant="light" color="indigo" title="Suivi des Compétences" icon={<IconInfoCircle />}>
-          Votre espace de suivi des compétences et votre portfolio Nextcloud sont en cours de configuration. 
-          Bientôt, vous pourrez uploader vos preuves et suivre l'acquisition de vos apprentissages critiques ici.
-        </Alert>
+                <InternshipSelfEvaluation studentUid={user.ldap_uid} />
 
-        <Paper withBorder p="lg" radius="md" shadow="xs">
-          <Group mb="md" justify="space-between">
-            <Group>
-              <IconFileText color="var(--mantine-color-blue-6)" />
-              <Title order={4}>Mes Fiches de Formation (PDF)</Title>
-            </Group>
-            <Badge variant="light">{filteredActivities.length + filteredResources.length} documents</Badge>
-          </Group>
-          
-          <Divider mb="md" />
+        
 
-          <Accordion variant="separated">
-            <Accordion.Item value="activities">
-              <Accordion.Control icon={<IconSchool size={18} color="orange" />}>
-                <Text fw={700}>SAÉ & Activités ({filteredActivities.length})</Text>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <Stack gap="xs">
-                  {filteredActivities.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((act: any) => (
-                    <Paper key={act.id} withBorder p="xs" radius="sm" bg="gray.0">
-                      <Group justify="space-between">
-                        <Group gap="xs">
-                          <Badge size="xs" variant="filled" color="orange">{act.code}</Badge>
-                          <Text size="sm" fw={500}>{act.label}</Text>
+                {!isMobile && (
+
+                  <>
+
+                    <Alert variant="light" color="indigo" title="Suivi des Compétences" icon={<IconInfoCircle />}>
+
+                      Votre espace de suivi des compétences et votre portfolio Nextcloud sont en cours de configuration. 
+
+                      Bientôt, vous pourrez uploader vos preuves et suivre l'acquisition de vos apprentissages critiques ici.
+
+                    </Alert>
+
+        
+
+                    <Paper withBorder p="lg" radius="md" shadow="xs">
+
+                      <Group mb="md" justify="space-between">
+
+                        <Group>
+
+                          <IconFileText color="var(--mantine-color-blue-6)" />
+
+                          <Title order={4}>Mes Fiches de Formation (PDF)</Title>
+
                         </Group>
-                        <ActionIcon 
-                          component="a" 
-                          href={`/api/activities/${act.id}/pdf`}
-                          target="_blank"
-                          variant="light" 
-                          color="orange" 
-                          size="md"
-                        >
-                          <IconDownload size={16} />
-                        </ActionIcon>
-                      </Group>
-                    </Paper>
-                  ))}
-                </Stack>
-              </Accordion.Panel>
-            </Accordion.Item>
 
-            <Accordion.Item value="resources">
-              <Accordion.Control icon={<IconBook size={18} color="teal" />}>
-                <Text fw={700}>Ressources ({filteredResources.length})</Text>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <Stack gap="xs">
-                  {filteredResources.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((res: any) => (
-                    <Paper key={res.id} withBorder p="xs" radius="sm" bg="gray.0">
-                      <Group justify="space-between">
-                        <Group gap="xs">
-                          <Badge size="xs" variant="filled" color="teal">{res.code}</Badge>
-                          <Text size="sm" fw={500}>{res.label}</Text>
-                        </Group>
-                        <ActionIcon 
-                          component="a" 
-                          href={`/api/resources/${res.id}/pdf`}
-                          target="_blank"
-                          variant="light" 
-                          color="teal" 
-                          size="md"
-                        >
-                          <IconDownload size={16} />
-                        </ActionIcon>
-                      </Group>
-                    </Paper>
-                  ))}
-                </Stack>
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
-        </Paper>
+                        <Badge variant="light">{filteredActivities.length + filteredResources.length} documents</Badge>
 
-        <Paper withBorder p="lg" radius="md" shadow="xs">
-          <Group mb="md">
-            <IconFolder color="var(--mantine-color-indigo-6)" />
-            <Title order={4}>Mon Portfolio & Preuves</Title>
-          </Group>
-          
-          <Divider mb="md" />
-
-          <Stack gap="md">
-            <Alert variant="outline" color="gray" icon={<IconBriefcase size={16} />}>
-              <Text size="sm" fw={500}>Gestionnaire de Portfolio (Bientôt disponible)</Text>
-              <Text size="xs" c="dimmed">Espace centralisé pour gérer l'ensemble de vos documents et preuves de compétences.</Text>
-            </Alert>
-
-            <Text size="xs" fw={700} c="dimmed" tt="uppercase">Dépôts par Activité</Text>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
-              {filteredActivities.map((act: any) => {
-                const files = uploadedFiles.filter(f => f.entity_type === 'ACTIVITY' && f.entity_id === act.id.toString());
-                return (
-                  <Paper key={`upload-${act.id}`} withBorder p="md" radius="md" bg="white">
-                    <Stack gap="xs">
-                      <Group justify="space-between" wrap="nowrap">
-                        <Stack gap={0} style={{ flexGrow: 1, minWidth: 0 }}>
-                          <Text size="xs" fw={700} c="blue">{act.code}</Text>
-                          <Text size="xs" truncate fw={500}>{act.label}</Text>
-                        </Stack>
-                        <FileInput 
-                          placeholder="Déposer" 
-                          size="xs" 
-                          variant="filled"
-                          leftSection={<IconFileUpload size={14} />} 
-                          onChange={(file) => handleUpload(file, 'ACTIVITY', act.id.toString())}
-                          disabled={uploading === act.id.toString()}
-                          style={{ width: 100 }}
-                        />
                       </Group>
 
-                      {files.length > 0 ? (
-                        <Stack gap={4} mt="xs">
-                          {files.map(file => (
-                            <Paper key={file.id} withBorder p={5} bg="gray.0" radius="xs">
-                              <Group justify="space-between">
-                                <Group gap={5} wrap="nowrap" style={{ flexGrow: 1, minWidth: 0 }}>
-                                  {file.is_locked ? <IconLock size={12} color="orange" /> : <IconFileText size={12} color="gray" />}
-                                  <Text size="10px" truncate>{file.filename}</Text>
-                                </Group>
-                                <Group gap={2}>
-                                  {!file.is_locked && (
-                                    <ActionIcon size="xs" color="red" variant="subtle" onClick={() => handleDeleteFile(file.id)}>
-                                      <IconTrash size={12} />
+                      
+
+                      <Divider mb="md" />
+
+        
+
+                      <Accordion variant="separated">
+
+                        <Accordion.Item value="activities">
+
+                          <Accordion.Control icon={<IconSchool size={18} color="orange" />}>
+
+                            <Text fw={700}>SAÉ & Activités ({filteredActivities.length})</Text>
+
+                          </Accordion.Control>
+
+                          <Accordion.Panel>
+
+                            <Stack gap="xs">
+
+                              {filteredActivities.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((act: any) => (
+
+                                <Paper key={act.id} withBorder p="xs" radius="sm" bg="gray.0">
+
+                                  <Group justify="space-between">
+
+                                    <Group gap="xs">
+
+                                      <Badge size="xs" variant="filled" color="orange">{act.code}</Badge>
+
+                                      <Text size="sm" fw={500}>{act.label}</Text>
+
+                                    </Group>
+
+                                    <ActionIcon 
+
+                                      component="a" 
+
+                                      href={`/api/activities/${act.id}/pdf`}
+
+                                      target="_blank"
+
+                                      variant="light" 
+
+                                      color="orange" 
+
+                                      size="md"
+
+                                    >
+
+                                      <IconDownload size={16} />
+
                                     </ActionIcon>
+
+                                  </Group>
+
+                                </Paper>
+
+                              ))}
+
+                            </Stack>
+
+                          </Accordion.Panel>
+
+                        </Accordion.Item>
+
+        
+
+                        <Accordion.Item value="resources">
+
+                          <Accordion.Control icon={<IconBook size={18} color="teal" />}>
+
+                            <Text fw={700}>Ressources ({filteredResources.length})</Text>
+
+                          </Accordion.Control>
+
+                          <Accordion.Panel>
+
+                            <Stack gap="xs">
+
+                              {filteredResources.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((res: any) => (
+
+                                <Paper key={res.id} withBorder p="xs" radius="sm" bg="gray.0">
+
+                                  <Group justify="space-between">
+
+                                    <Group gap="xs">
+
+                                      <Badge size="xs" variant="filled" color="teal">{res.code}</Badge>
+
+                                      <Text size="sm" fw={500}>{res.label}</Text>
+
+                                    </Group>
+
+                                    <ActionIcon 
+
+                                      component="a" 
+
+                                      href={`/api/resources/${res.id}/pdf`}
+
+                                      target="_blank"
+
+                                      variant="light" 
+
+                                      color="teal" 
+
+                                      size="md"
+
+                                    >
+
+                                      <IconDownload size={16} />
+
+                                    </ActionIcon>
+
+                                  </Group>
+
+                                </Paper>
+
+                              ))}
+
+                            </Stack>
+
+                          </Accordion.Panel>
+
+                        </Accordion.Item>
+
+                      </Accordion>
+
+                    </Paper>
+
+        
+
+                    <Paper withBorder p="lg" radius="md" shadow="xs">
+
+                      <Group mb="md">
+
+                        <IconFolder color="var(--mantine-color-indigo-6)" />
+
+                        <Title order={4}>Mon Portfolio & Preuves</Title>
+
+                      </Group>
+
+                      
+
+                      <Divider mb="md" />
+
+        
+
+                      <Stack gap="md">
+
+                        <Alert variant="outline" color="gray" icon={<IconBriefcase size={16} />}>
+
+                          <Text size="sm" fw={500}>Gestionnaire de Portfolio (Bientôt disponible)</Text>
+
+                          <Text size="xs" c="dimmed">Espace centralisé pour gérer l'ensemble de vos documents et preuves de compétences.</Text>
+
+                        </Alert>
+
+        
+
+                        <Text size="xs" fw={700} c="dimmed" tt="uppercase">Dépôts par Activité</Text>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
+
+                          {filteredActivities.map((act: any) => {
+
+                            const files = uploadedFiles.filter(f => f.entity_type === 'ACTIVITY' && f.entity_id === act.id.toString());
+
+                            return (
+
+                              <Paper key={`upload-${act.id}`} withBorder p="md" radius="md" bg="white">
+
+                                <Stack gap="xs">
+
+                                  <Group justify="space-between" wrap="nowrap">
+
+                                    <Stack gap={0} style={{ flexGrow: 1, minWidth: 0 }}>
+
+                                      <Text size="xs" fw={700} c="blue">{act.code}</Text>
+
+                                      <Text size="xs" truncate fw={500}>{act.label}</Text>
+
+                                    </Stack>
+
+                                    <FileInput 
+
+                                      placeholder="Déposer" 
+
+                                      size="xs" 
+
+                                      variant="filled"
+
+                                      leftSection={<IconFileUpload size={14} />} 
+
+                                      onChange={(file) => handleUpload(file, 'ACTIVITY', act.id.toString())}
+
+                                      disabled={uploading === act.id.toString()}
+
+                                      style={{ width: 100 }}
+
+                                    />
+
+                                  </Group>
+
+        
+
+                                  {files.length > 0 ? (
+
+                                    <Stack gap={4} mt="xs">
+
+                                      {files.map(file => (
+
+                                        <Paper key={file.id} withBorder p={5} bg="gray.0" radius="xs">
+
+                                          <Group justify="space-between">
+
+                                            <Group gap={5} wrap="nowrap" style={{ flexGrow: 1, minWidth: 0 }}>
+
+                                              {file.is_locked ? <IconLock size={12} color="orange" /> : <IconFileText size={12} color="gray" />}
+
+                                              <Text size="10px" truncate>{file.filename}</Text>
+
+                                            </Group>
+
+                                            <Group gap={2}>
+
+                                              {!file.is_locked && (
+
+                                                <ActionIcon size="xs" color="red" variant="subtle" onClick={() => handleDeleteFile(file.id)}>
+
+                                                  <IconTrash size={12} />
+
+                                                </ActionIcon>
+
+                                              )}
+
+                                            </Group>
+
+                                          </Group>
+
+                                        </Paper>
+
+                                      ))}
+
+                                    </Stack>
+
+                                  ) : (
+
+                                    <Text size="10px" c="dimmed" fs="italic" ta="center">Aucun document</Text>
+
                                   )}
-                                </Group>
-                              </Group>
-                            </Paper>
-                          ))}
-                        </Stack>
-                      ) : (
-                        <Text size="10px" c="dimmed" fs="italic" ta="center">Aucun document</Text>
-                      )}
-                    </Stack>
-                  </Paper>
-                );
-              })}
-            </div>
-          </Stack>
-        </Paper>
+
+                                </Stack>
+
+                              </Paper>
+
+                            );
+
+                          })}
+
+                        </div>
+
+                      </Stack>
+
+                    </Paper>
+
+                  </>
+
+                )}
+
+        
       </Stack>
     </Container>
   );
