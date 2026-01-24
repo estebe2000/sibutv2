@@ -119,6 +119,17 @@ export function ProfessorInternshipManager({ student }: { student: any }) {
         return ev ? ev.comment : null;
     };
 
+    const calculateFinalGrade = () => {
+        if (!rubric) return 0;
+        const totalPoints = rubric.criteria.reduce((acc: number, c: any) => acc + (c.weight || 0), 0);
+        const actualPoints = rubric.criteria.reduce((acc: number, c: any, idx: number) => {
+            const score = teacherScores[idx]?.score || 0;
+            return acc + ((c.weight || 0) * (score / 100));
+        }, 0);
+        if (totalPoints === 0) return 0;
+        return (actualPoints / totalPoints) * 20;
+    };
+
     const getVisitIcon = (type: string) => {
         if (type === 'SITE') return <IconTruck size={12} />;
         if (type === 'PHONE') return <IconPhone size={12} />;
@@ -174,6 +185,17 @@ export function ProfessorInternshipManager({ student }: { student: any }) {
             )}
 
             <Divider label="Synthèse Évaluations" labelPosition="center" />
+            {rubric && (
+                <Paper withBorder p="md" mb="md" bg="blue.0" radius="md">
+                    <Group justify="space-between">
+                        <Title order={5}>Note Finale Calculée</Title>
+                        <Badge size="xl" color="blue" variant="filled">
+                            {calculateFinalGrade().toFixed(2)} / 20
+                        </Badge>
+                    </Group>
+                </Paper>
+            )}
+
             {rubric ? (
                 <Stack gap="md">
                     {rubric.criteria.map((c: any, idx: number) => {
@@ -183,7 +205,7 @@ export function ProfessorInternshipManager({ student }: { student: any }) {
                         const pComm = getCommentByRole(c.id, 'PRO');
                         return (
                             <Paper key={c.id} withBorder p="xs" bg="gray.0">
-                                <Text size="sm" fw={600} mb="xs">{c.label}</Text>
+                                <Text size="sm" fw={600} mb="xs">{c.label} ({c.weight} pts)</Text>
                                 <Stack gap={5}>
                                     <Group grow>
                                         <div><Text size="10px" c="blue" fw={700}>Élève: {sScore??'N/A'}%</Text>{sComm && <Text size="10px" fs="italic" c="dimmed">{sComm}</Text>}</div>
