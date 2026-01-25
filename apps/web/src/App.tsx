@@ -215,9 +215,14 @@ function App() {
               <Text size="10px" fw={700} c="blue.9" px="xs" mb={5} tt="uppercase">Suivi & Terrain</Text>
               <Stack gap={2}>
                 <Button variant={activeTab === 'internships' ? 'filled' : 'subtle'} onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={18} />} justify="start" size="compact-sm" color="blue">Tutorat de Stage</Button>
+                <Button variant={activeTab === 'admin-portfolios' ? 'filled' : 'subtle'} onClick={() => setActiveTab('admin-portfolios')} leftSection={<IconBook size={18} />} justify="start" size="compact-sm" color="blue">Portfolio</Button>
                 <Button variant={activeTab === 'ai-assistant' ? 'filled' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={18} />} justify="start" size="compact-sm" color="blue">Assistant IA</Button>
               </Stack>
             </Paper>
+--
+        {activeTab === 'internships' && <InternshipManagementView user={user} />}
+        {activeTab === 'admin-portfolios' && !isMobile && <Container py="xl"><Title order={2}>Consultation des Portfolios</Title><Text c="dimmed">Cette section est en cours de développement.</Text></Container>}
+        {activeTab === 'odoo-admin' && !isMobile && <OdooAdminView />}
             
             {/* ZONE ADMIN */}
             {isAdmin && (
