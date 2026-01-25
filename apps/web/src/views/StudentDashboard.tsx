@@ -80,7 +80,8 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
   };
 
   const getLinkedFileIds = (contentJson: string) => {
-    const regex = /\/api\/portfolio\/download\/(\d+)/g;
+    // Regex plus robuste acceptant les éventuels backslashes d'échappement du JSON
+    const regex = /\/api\/portfolio\/download\\?\/(\d+)/g;
     const ids: string[] = [];
     let match;
     while ((match = regex.exec(contentJson)) !== null) {
