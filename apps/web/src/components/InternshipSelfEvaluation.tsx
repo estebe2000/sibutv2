@@ -86,21 +86,25 @@ export function InternshipSelfEvaluation({ studentUid }: { studentUid: string })
 
                     <Paper withBorder p="lg" bg="white" w="100%" radius="md">
                         <Title order={5} ta="center" mb="xl">Synthèse des Compétences (%)</Title>
-                        <div style={{ height: 400, width: '100%', minWidth: 300 }}>
-                            <RadarChart
-                                h={350}
-                                data={chartData}
-                                dataKey="criterion"
-                                withLegend
-                                gridColor="gray.2"
-                                series={[
-                                    { name: 'Etudiant', color: 'blue.4', opacity: 0.1 },
-                                    { name: 'Pro', color: 'orange.4', opacity: 0.1 },
-                                    { name: 'Prof', color: 'green.7', opacity: 0.4 },
-                                ]}
-                                radarProps={{ isAnimationActive: true }}
-                            />
-                        </div>
+                        {chartData.length >= 3 ? (
+                            <div style={{ height: 350, width: '100%' }}>
+                                <RadarChart
+                                    h={350}
+                                    data={chartData}
+                                    dataKey="criterion"
+                                    withLegend
+                                    gridColor="gray.2"
+                                    series={[
+                                        { name: 'Etudiant', color: 'blue.4', opacity: 0.1 },
+                                        { name: 'Pro', color: 'orange.4', opacity: 0.1 },
+                                        { name: 'Prof', color: 'green.7', opacity: 0.4 },
+                                    ]}
+                                    radarProps={{ isAnimationActive: true }}
+                                />
+                            </div>
+                        ) : (
+                            <Text ta="center" c="dimmed" py="xl">Pas assez de critères pour générer le graphique.</Text>
+                        )}
                     </Paper>
 
                     <Button 
