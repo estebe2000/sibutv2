@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+from fastapi.responses import StreamingResponse, FileResponse
 from sqlmodel import Session, select
 from typing import List, Optional
 from ..database import get_session
@@ -84,7 +85,7 @@ async def upload_portfolio_file(
     db_file = StudentFile(
         student_uid=current_user.ldap_uid,
         filename=file.filename,
-        nc_path=file_path, # Path local pour l'instant
+        nc_path=file_path,
         entity_type=entity_type,
         entity_id=entity_id,
         academic_year=academic_year
@@ -99,7 +100,6 @@ async def delete_student_file(file_id: int, session: Session = Depends(get_sessi
     db_file = session.get(StudentFile, file_id)
     if not db_file: raise HTTPException(status_code=404)
     
-    # Sécurité : seul l'étudiant proprio ou un prof peut supprimer
     if db_file.student_uid != current_user.ldap_uid and current_user.role == "STUDENT":
         raise HTTPException(status_code=403)
         
@@ -112,3 +112,18 @@ async def delete_student_file(file_id: int, session: Session = Depends(get_sessi
     session.delete(db_file)
     session.commit()
     return {"status": "success"}
+
+@router.get("/download/{file_id}")
+async def download_portfolio_file(file_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+    db_file = session.get(StudentFile, file_id)
+    if not db_file: raise HTTPException(status_code=404)
+    
+    # Sécurité : proprio ou staff
+    is_staff = current_user.role in ["PROFESSOR", "ADMIN", "SUPER_ADMIN", "DEPT_HEAD", "STUDY_DIRECTOR"]
+    if db_file.student_uid != current_user.ldap_uid and not is_staff:
+        raise HTTPException(status_code=403)
+        
+    if not os.path.exists(db_file.nc_path):
+        raise HTTPException(status_code=404, detail="File not found on disk")
+        
+    return FileResponse(db_file.nc_path, filename=db_file.filename)

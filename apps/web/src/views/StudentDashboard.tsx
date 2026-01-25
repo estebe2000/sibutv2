@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Title, Text, Group, Stack, Badge, ThemeIcon, Alert, ActionIcon, Loader, Center, Divider, Accordion, FileInput, Button, Select } from '@mantine/core';
-import { IconUser, IconSchool, IconInfoCircle, IconTimeline, IconFileText, IconDownload, IconBook, IconFolder, IconFileUpload, IconBriefcase, IconTrash, IconLock, IconPencil, IconPlus, IconHistory } from '@tabler/icons-react';
+import { Container, Paper, Title, Text, Group, Stack, Badge, ThemeIcon, Alert, ActionIcon, Loader, Center, Divider, Accordion, FileInput, Button, Select, Menu } from '@mantine/core';
+import { IconUser, IconSchool, IconInfoCircle, IconTimeline, IconFileText, IconDownload, IconBook, IconFolder, IconFileUpload, IconBriefcase, IconTrash, IconLock, IconPencil, IconPlus, IconHistory, IconPaperclip, IconCloudDownload } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from '../services/api';
 import OdooWidget from '../components/OdooWidget';
@@ -79,6 +79,16 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
     } catch (e) { notifications.show({ title: 'Erreur', color: 'red' }); }
   };
 
+  const getLinkedFileIds = (contentJson: string) => {
+    const regex = /\/api\/portfolio\/download\/(\d+)/g;
+    const ids: string[] = [];
+    let match;
+    while ((match = regex.exec(contentJson)) !== null) {
+        if (!ids.includes(match[1])) ids.push(match[1]);
+    }
+    return ids;
+  };
+
   if (view === 'editor') {
     return (
         <Container size="lg" py="xl">
@@ -92,8 +102,6 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
   }
 
   const studentGroup = groups?.find((g:any) => Number(g.id) === Number(user?.group_id));
-
-  // Filtrage des Activités
   const filteredActivities = curriculum.activities.filter((a: any) => {
     if (!studentGroup) return false;
     return a.level === studentGroup.year && (a.pathway === 'Tronc Commun' || a.pathway === studentGroup.pathway);
@@ -169,7 +177,9 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
                 </Alert>
             ) : (
                 <Stack gap="md">
-                    {portfolioPages.map(page => (
+                    {portfolioPages.map(page => {
+                        const linkedFileIds = getLinkedFileIds(page.content_json);
+                        return (
                         <Paper key={page.id} withBorder p="md" radius="md" shadow="xs" className="hover-card">
                             <Group justify="space-between">
                                 <Group onClick={() => { setSelectedPageId(page.id); setView('editor'); }} style={{ cursor: 'pointer', flexGrow: 1 }}>
@@ -181,11 +191,40 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
                                 </Group>
                                 <Group>
                                     <Badge variant="light" color="gray">{page.academic_year}</Badge>
+                                    
+                                    {linkedFileIds.length > 0 && (
+                                        <Menu shadow="md" width={250}>
+                                            <Menu.Target>
+                                                <ActionIcon color="blue" variant="light" size="lg" title={`${linkedFileIds.length} preuve(s) liée(s)`}>
+                                                    <IconPaperclip size={18} />
+                                                </ActionIcon>
+                                            </Menu.Target>
+                                            <Menu.Dropdown>
+                                                <Menu.Label>Preuves de cette page</Menu.Label>
+                                                {linkedFileIds.map(fid => {
+                                                    const file = uploadedFiles.find(f => f.id.toString() === fid);
+                                                    return (
+                                                        <Menu.Item 
+                                                            key={fid} 
+                                                            leftSection={<IconCloudDownload size={14}/>}
+                                                            component="a"
+                                                            href={`/api/portfolio/download/${fid}`}
+                                                            target="_blank"
+                                                        >
+                                                            {file ? file.filename : `Fichier #${fid}`}
+                                                        </Menu.Item>
+                                                    );
+                                                })}
+                                            </Menu.Dropdown>
+                                        </Menu>
+                                    )}
+
                                     <ActionIcon color="red" variant="subtle" onClick={() => handleDeletePage(page.id)}><IconTrash size={18}/></ActionIcon>
                                 </Group>
                             </Group>
                         </Paper>
-                    ))}
+                        );
+                    })}
                 </Stack>
             )}
         </Paper>
@@ -199,7 +238,7 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
                 </Group>
                 <Select 
                     size="xs" 
-                    data={['2023-2024', '2024-2025', '2025-2026']} 
+                    data={['2023-2024', '2024-2025', '2025-2026']}
                     value={academicYear} 
                     onChange={(v) => setAcademicYear(v || '2025-2026')} 
                     w={120} 
@@ -223,10 +262,10 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
                             <Accordion.Panel>
                                 <Stack gap="md">
                                     <FileInput 
-                                        label="Ajouter une preuve (PDF, PNG, JPG...)"
+                                        label="Ajouter une preuve"
                                         placeholder="Choisir un fichier" 
                                         size="xs" 
-                                        leftSection={<IconFileUpload size={14} />}
+                                        leftSection={<IconFileUpload size={14} />} 
                                         onChange={(file) => handleUpload(file, 'ACTIVITY', act.id.toString())}
                                         disabled={uploading === act.id.toString()}
                                     />
@@ -248,7 +287,7 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
                                                 </Paper>
                                             ))}
                                         </div>
-                                    ) : <Text size="xs" c="dimmed" fs="italic" ta="center">Aucun document déposé pour cette activité.</Text>}
+                                    ) : <Text size="xs" c="dimmed" fs="italic" ta="center">Aucun document déposé.</Text>}
                                 </Stack>
                             </Accordion.Panel>
                         </Accordion.Item>
