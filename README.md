@@ -1,133 +1,77 @@
 # Skills Hub - BUT Techniques de Commercialisation
 
-Application de gestion des compétences et du référentiel pédagogique pour le BUT TC.
+Application de gestion des compétences, du référentiel pédagogique et de la valorisation du parcours étudiant pour le BUT TC.
 
-## 🚀 Fonctionnalités
+## 🚀 Fonctionnalités Majeures
 
-### 📚 Référentiel Digitalisé Complet
-- **Couverture Totale** : BUT 1, BUT 2 et BUT 3 (Niveaux 1, 2, 3).
-- **Parcours Spécialisés** :
-  - Stratégie de Marque et Événementiel (SME)
-  - Marketing et Management du Point de Vente (MMPV)
-  - Marketing Digital, E-Business et Entrepreneuriat (MDEE)
-  - Business International (BI)
-  - Business Développement et Management de la Relation Client (BDMRC)
-- **Contenu Riche** :
-  - Fiches Ressources détaillées (Objectifs, Contenus pédagogiques, Mots clés).
-  - Volumes horaires précis (ex: "24h dont 20h TP").
-  - Lien direct entre Activités (SAÉ), Ressources et Compétences (AC).
+### 📚 Référentiel & Pédagogie
+- **Référentiel Digitalisé** : BUT 1 à 3, tous parcours (SME, MMPV, MDEE, BI, BDMRC).
+- **Roadmap Interactive** : Visualisation matricielle de la progression des compétences.
+- **Génération PDF Dynamique** : Création automatique de fiches ressources et SAÉ rigoureuses (ReportLab).
+- **Gouvernance** : Matrice des responsabilités (Ressources, SAÉ, Tutorat) avec exports PDF/CSV/JSON.
 
-### 🗺️ Roadmap & Découverte
-- **Visualisation Stratégique** : Nouvelle vue Roadmap interactive présentant la progression des compétences (BUT 1 à 3) sous forme de matrice.
-- **Génération PDF à la volée** : Moteur dynamique (`ReportLab`) créant des fiches interactives pour les Activités et Ressources.
-  - **Sommaire Interactif** : Navigation par liens internes dans le PDF.
-  - **Grille d'Auto-évaluation** : Page dédiée en mode paysage pour une utilisation optimale à l'impression.
-- **Rendu Riche** : Support des badges interactifs et nettoyage automatique des caractères spéciaux (ligatures).
+### 📄 Super Portfolio de Compétences
+- **Éditeur de Blocs** : Interface moderne (style Notion via Editor.js) pour la rédaction des réflexions.
+- **Coffre-fort des Preuves** : Dépôt sécurisé de documents (PDF, images) liés aux activités académiques.
+- **Liaison Intelligente** : Insertion directe des preuves du coffre-fort dans les pages de réflexion.
+- **Assistant d'Exportation** : Wizard par étapes pour générer un **Web-Book (HTML)** ou un **Book Officiel (PDF)** personnalisable.
+- **Projet Personnel (PPP)** : Section dédiée à la réflexion post-BUT et aux ambitions de carrière.
 
-### 🖥️ Interface Utilisateur
-- **Dashboard Central** : Point d'entrée unique sur le port 80 pour accéder à tous les services (Admin, Nextcloud, Mattermost, LDAP).
-- **Filtrage Avancé** : Recherche et filtres par semestre, type et parcours pour la génération de documents.
-- **Configuration d'Identité** : Gestion dynamique du logo, de l'adresse et des contacts de l'établissement.
+### 🎓 Suivi du Terrain
+- **Tutorat de Stage** : Cycle complet d'évaluation tripartite (Étudiant, Pro, Prof).
+- **Graphiques Radar** : Visualisation croisée des compétences acquises en stage.
+- **Magic Links** : Accès sans mot de passe pour les tuteurs en entreprise.
 
-### 🎓 Suivi des Stages & Évaluation Tripartite
-- **Cycle Complet** : Gestion de l'assignation des tuteurs, programmation des visites et rapports de suivi (Site, Tél, Visio).
-- **Évaluation Tripartite** : Système de notation et commentaires croisés entre l'Étudiant, le Maître de Stage (Pro) et le Tuteur Enseignant.
-- **Magic Links** : Accès sécurisé sans authentification pour les tuteurs en entreprise via UUID unique.
-- **Bilan de Stage PDF** : Document officiel rigoureux incluant :
-  - **Graphique Radar** généré dynamiquement (`Matplotlib`) comparant les 3 regards.
-  - **Détail des scores** par critère avec code couleur (Élève: Bleu, Pro: Orange, Prof: Vert).
-  - **Synthèse des commentaires** détaillés pour chaque compétence.
-- **Gestion de l'Historique** : Archivage des anciens stages et possibilité de réinitialiser un parcours en cas de changement d'entreprise.
+### 🛠️ Pilotage & Collaboration
+- **Boîte à Idées Staff** : Hub de retours (Bugs, Idées, Demandes) avec système de vote (pouce jaune).
+- **Transition Année** : Module de bascule académique avec archivage (5 ans) et promotion des cohortes.
+- **Assistant IA** : Aide à la rédaction et analyse des fiches pédagogiques.
 
-### 📊 Pilotage & Gouvernance
-- **Rapport de Gouvernance** : Vue centralisée des responsabilités segmentée par Ressources (R), SAÉ et Tutorat.
-- **Exports Administratifs** : Génération de rapports PDF paysages filtrés pour le pilotage du département.
-- **Recherche Instantanée** : Filtres temps-réel par enseignant, code d'activité ou email.
+## 🏗️ Infrastructure & Résilience
 
-### 🛠️ Outils d'Administration & Sécurité
-- **Provisioning Nextcloud** : Création automatique de dossiers sécurisés en "Lecture Seule" pour les élèves via l'API.
-- **Configuration SMTP** : Support des e-mails réels (OVH ssl0.ovh.net) pour les notifications et les futurs Magic Links.
-- **Sauvegarde & Reset** : Procédure "bulletproof" pour une réinstallation complète automatisée avec restauration des données SQL et LDAP.
+La plateforme repose sur une architecture robuste séparant les environnements.
 
-## 📦 Installation & Lancement
-
-### Pré-requis
-- Docker & Docker Compose
-
-### Démarrage Rapide
-```bash
-# 1. Lancer l'infrastructure complète
-npm run infra:up
-
-# 2. Accéder au Tableau de Bord
-# URL : http://projet-edu.eu/ (ou http://localhost)
-```
-
-### Services Disponibles (Production)
-| Service | URL | Description |
-| :--- | :--- | :--- |
-| **Dashboard** | https://home.educ-ai.fr/ | Portail central |
-| **Skills Hub Admin** | https://home.educ-ai.fr/app/ | Gestion du référentiel (SSO) |
-| **Nextcloud** | https://nextcloud.educ-ai.fr/ | Stockage & Édition (SSO) |
-| **Keycloak** | https://keycloak.educ-ai.fr/ | Identité & SSO |
-| **Mattermost** | https://home.educ-ai.fr/mattermost/ | Collaboration |
-| **LDAP Admin** | http://projet-edu.eu:8081/ | Gestion des comptes (Local) |
-
-## ☁️ Configuration Cloudflare Tunnel
-
-Pour exposer le projet via Cloudflare Zero Trust (domaine `educ-ai.fr`), configurez vos **Public Hostnames** comme suit :
-
-| Subdomain | Domain | Service | Origin Settings |
+### Environnements
+| Environnement | URL | Port | Rôle |
 | :--- | :--- | :--- | :--- |
-| `home` | `educ-ai.fr` | `http://localhost:80` | Default |
-| `nextcloud` | `educ-ai.fr` | `http://localhost:8082` | Default |
-| `keycloak` | `educ-ai.fr` | `http://localhost:8080` | Default |
-| `only-office`| `educ-ai.fr` | `http://localhost:8083` | Default |
+| **Production** | https://home.educ-ai.fr | 80/443 | Utilisation réelle |
+| **Développement** | https://dev.educ-ai.fr | 8081 | Bac à sable & Tests |
 
-**Note :** Si vous pointez vers le port `443` de la machine hôte au lieu des ports directs, activez l'option **"No TLS Verify"** dans les *Origin Settings* pour accepter le certificat auto-signé de Nginx.
+### Stratégie de Sauvegarde (BCP)
+- **Cible** : Serveur distant `tc-portail` (172.16.95.98) sur partition de **4 To**.
+- **Sécurité** : Transfert par clé SSH RSA 4096 (port 4660).
+- **Rétention** : Sauvegarde quotidienne avec historique sur **5 ans**.
+- **Contenu** : Full SQL (App, Keycloak, Odoo, Mattermost) + Volumes de fichiers étudiants.
 
-## 🔑 Identification Unique (SSO)
+## 📦 Commandes de Gestion
 
-Le projet utilise **Keycloak** comme Identity Provider centralisé.
-- **Login unique** : Connectez-vous une fois sur le Dashboard pour accéder à toutes les applications.
-- **Source d'utilisateurs** : Fédération LDAP (Université) + Utilisateurs locaux Keycloak (Intervenants).
-- **Compte Admin par défaut** : `admin` / `Rangetachambre76*`
-- **Comptes de Test (Local)** : 
-  - Admin : `tata` / `tata`
-  - Directeur d'Études : `tbtb` / `tbtb`
-  - Enseignant : `tctc` / `tctc`
-  - Étudiant : `tdtd` / `tdtd`
-
-### Commandes Utiles
-
-**Purger et reconstruire (Full Reset) :**
+### Lancement
 ```bash
-# Cette commande efface TOUS les volumes et réinitialise LDAP/Nextcloud/Keycloak
-npm run infra:reset
+# Lancer la production
+./start.sh
+
+# Lancer l'environnement de développement (Sandbox)
+npm run dev:start
 ```
 
-**Sauvegarder les données (BDD) :**
+### Maintenance & Sauvegarde
 ```bash
-docker exec but_tc_db pg_dump -U app_user skills_db > backup_data.sql
-```
+# Effectuer une sauvegarde manuelle vers le serveur de 4To
+npm run prod:backup
 
-**Restaurer les données :**
-```bash
-docker exec -i but_tc_db psql -U app_user skills_db < backup_data.sql
+# Verifier l'etat de l'espace et des archives sur le serveur de backup
+npm run prod:check-backup
+
+# Restaurer une archive (Rollback complet données + fichiers)
+npm run prod:restore <nom_archive.tar.gz>
 ```
 
 ## 📂 Structure du Projet
 
-- `apps/api` : Backend FastAPI (SQLModel, PostgreSQL), refactorisé avec des routeurs modulaires.
-- `apps/web` : Frontend React (Mantine UI, Vite), avec gestion d'état centralisée (Zustand) et composants modulaires.
-- `apps/api/app/data/referentiel_final.json` : Fichier maître des données pédagogiques.
-- `infrastructure` : Configuration Docker et scripts de déploiement.
-- `docs` : Documentation technique. Les archives sont dans `docs/archive`.
-
-## 🛠 Maintenance
-
-Les scripts de maintenance (ex: extraction PDF) sont situés dans `apps/api/scripts/`.
-- `ai_parser.py` : Script d'extraction assisté par IA (Codestral).
+- `apps/api` : Backend FastAPI (PostgreSQL / SQLModel).
+- `apps/web` : Frontend React (Mantine UI / Vite).
+- `infrastructure` : Scripts critiques de sauvegarde, restauration et déploiement.
+- `docs` : Documentation technique incluant le **Manuel d'Exploitation LaTeX**.
 
 ---
-*Projet développé avec l'assistance de Gemini CLI.*
+*Plateforme sécurisée et pérennisée pour le BUT Techniques de Commercialisation.*
