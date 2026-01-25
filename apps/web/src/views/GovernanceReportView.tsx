@@ -28,7 +28,7 @@ export function GovernanceReportView() {
             (item.user_name.toLowerCase().includes(search.toLowerCase()) || 
              item.entity_label.toLowerCase().includes(search.toLowerCase()) ||
              item.entity_id.toLowerCase().includes(search.toLowerCase()))
-        );
+        ).sort((a, b) => a.entity_label.localeCompare(b.entity_label));
 
         return (
             <Stack gap="md" mt="md">
