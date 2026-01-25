@@ -112,10 +112,8 @@ def unassign_user(ldap_uid: str, session: Session = Depends(get_session), curren
         for r in resps:
             session.delete(r)
             
-        # 2. Retirer du groupe et FORCER le rôle GUEST (bloque l'accès via dependencies.py)
-        user.group_id = None
-        user.role = UserRole.GUEST
-        session.add(user)
+        # 2. Supprimer l'utilisateur de la table locale (Libère pour le dispatching)
+        session.delete(user)
         session.commit()
         return {"status": "success"}
     raise HTTPException(status_code=404, detail="User not found")
