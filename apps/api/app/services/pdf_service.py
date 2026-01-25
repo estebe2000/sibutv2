@@ -318,15 +318,139 @@ def generate_internship_report(session: Session, student_uid: str):
     return buffer
 
 def generate_governance_report_pdf(session: Session, filter_type: str = None):
-    from ..models import ResponsibilityMatrix, User, ResponsibilityEntityType
-    matrix = session.exec(select(ResponsibilityMatrix).where(ResponsibilityMatrix.entity_type == filter_type) if filter_type else select(ResponsibilityMatrix)).all()
-    buffer = BytesIO(); primary_color = get_config_value(session, "APP_PRIMARY_COLOR", "#1971c2"); styles = get_styles(primary_color)
-    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=1*cm, leftMargin=1*cm); story = []
-    story.append(Paragraph("RAPPORT DE GOUVERNANCE", styles['TitleStyle']))
-    table_data = [["Type", "Entité", "Rôle", "Nom", "Email"]]
+
+    from ..models import ResponsibilityMatrix, User, ResponsibilityEntityType, Resource, Activity
+
+    
+
+    # Filtrage
+
+    if filter_type:
+
+        matrix = session.exec(select(ResponsibilityMatrix).where(ResponsibilityMatrix.entity_type == filter_type)).all()
+
+    else:
+
+        matrix = session.exec(select(ResponsibilityMatrix)).all()
+
+        
+
+    buffer = BytesIO()
+
+    primary_color = get_config_value(session, "APP_PRIMARY_COLOR", "#1971c2")
+
+    styles = get_styles(primary_color)
+
+    
+
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=1*cm, leftMargin=1*cm, topMargin=1*cm, bottomMargin=1*cm)
+
+    story = []
+
+    
+
+    title = "RAPPORT DE GOUVERNANCE PÉDAGOGIQUE"
+
+    if filter_type == "RESOURCE": title += " : RESSOURCES"
+
+    elif filter_type == "ACTIVITY": title += " : SAÉ & ACTIVITÉS"
+
+    
+
+    story.append(Paragraph(title, styles['TitleStyle']))
+
+    story.append(Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}", styles['NormalStyle']))
+
+    story.append(Spacer(1, 1*cm))
+
+    
+
+    # Préparation des données avec labels réels
+
+    table_data = [["Type", "Entité (Code & Libellé)", "Rôle", "Intervenant", "Email"]]
+
+    
+
+    type_map = {"RESOURCE": "Ressource", "ACTIVITY": "SAÉ / Activité", "STUDENT": "Tutorat"}
+
+    role_map = {"OWNER": "Responsable", "INTERVENANT": "Intervenant", "TUTOR": "Tuteur"}
+
+
+
     for entry in matrix:
+
         user = session.exec(select(User).where(User.ldap_uid == entry.user_id)).first()
-        table_data.append([str(entry.entity_type), entry.entity_id, str(entry.role_type), user.full_name if user else entry.user_id, user.email if user else "N/A"])
-    t = Table(table_data, colWidths=[3.5*cm, 4.5*cm, 3*cm, 7*cm, 9*cm]); t.setStyle(TableStyle([('GRID', (0,0), (-1,-1), 0.5, colors.grey), ('BACKGROUND', (0,0), (-1,0), colors.HexColor(primary_color)), ('TEXTCOLOR', (0,0), (-1,0), colors.white)]))
-    story.append(t); doc.build(story); buffer.seek(0)
+
+        
+
+        # Traduction des types
+
+        e_type_str = str(entry.entity_type).split('.')[-1]
+
+        r_type_str = str(entry.role_type).split('.')[-1]
+
+        
+
+        # Récupération du libellé de l'entité
+
+        label = entry.entity_id
+
+        if e_type_str == "RESOURCE":
+
+            res = session.exec(select(Resource).where(Resource.code == entry.entity_id)).first()
+
+            if res: label = f"{res.code} : {res.label}"
+
+        elif e_type_str == "ACTIVITY":
+
+            act = session.get(Activity, int(entry.entity_id)) if entry.entity_id.isdigit() else None
+
+            if act: label = f"{act.code} : {act.label}"
+
+            
+
+        table_data.append([
+
+            type_map.get(e_type_str, e_type_str),
+
+            Paragraph(label, styles['TableTextStyle']),
+
+            role_map.get(r_type_str, r_type_str),
+
+            user.full_name if user else entry.user_id,
+
+            user.email if user else "N/A"
+
+        ])
+
+        
+
+    t = Table(table_data, colWidths=[3*cm, 9*cm, 3*cm, 6*cm, 6*cm])
+
+    t.setStyle(TableStyle([
+
+        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor(primary_color)),
+
+        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+
+        ('ALIGN', (0,0), (0,-1), 'CENTER'),
+
+        ('ALIGN', (2,0), (2,-1), 'CENTER'),
+
+    ]))
+
+    
+
+    story.append(t)
+
+    doc.build(story)
+
+    buffer.seek(0)
+
     return buffer
