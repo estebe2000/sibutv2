@@ -32,18 +32,46 @@ export function GovernanceReportView() {
 
         return (
             <Stack gap="md" mt="md">
+import { IconFileSpreadsheet, IconDownload, IconSearch, IconShieldLock, IconBook, IconSchool, IconUsers, IconDatabase, IconTable } from '@tabler/icons-react';
+import { Tabs, Menu } from '@mantine/core';
+--
                 <Group justify="space-between">
                     <Text size="sm" c="dimmed">{filtered.length} élément(s) trouvé(s)</Text>
-                    <Button 
-                        color="red" 
-                        size="xs"
-                        leftSection={<IconDownload size={14}/>}
-                        component="a"
-                        href={`/api/pedagogy/governance-report/pdf?type=${type}`}
-                        target="_blank"
-                    >
-                        Exporter ce rapport PDF
-                    </Button>
+                    <Group>
+                        <Menu shadow="md" width={200}>
+                            <Menu.Target>
+                                <Button variant="outline" color="blue" size="xs" leftSection={<IconDownload size={14}/>}>Exporter les données</Button>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                <Menu.Label>Format de fichier</Menu.Label>
+                                <Menu.Item 
+                                    leftSection={<IconFileSpreadsheet size={14} />} 
+                                    component="a" 
+                                    href={`/api/pedagogy/governance-report/export/csv?type=${type}`}
+                                >
+                                    Fichier CSV (Excel)
+                                </Menu.Item>
+                                <Menu.Item 
+                                    leftSection={<IconDatabase size={14} />} 
+                                    component="a" 
+                                    href={`/api/pedagogy/governance-report/export/json?type=${type}`}
+                                >
+                                    Fichier JSON
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
+
+                        <Button 
+                            color="red" 
+                            size="xs"
+                            leftSection={<IconDownload size={14}/>}
+                            component="a"
+                            href={`/api/pedagogy/governance-report/pdf?type=${type}`}
+                            target="_blank"
+                        >
+                            Exporter Rapport PDF
+                        </Button>
+                    </Group>
                 </Group>
                 <Paper withBorder p="md" radius="md">
                     <Table striped highlightOnHover>
