@@ -26,6 +26,7 @@ export function GovernanceReportView() {
         const filtered = data.filter(item => 
             item.entity_type === type &&
             (item.user_name.toLowerCase().includes(search.toLowerCase()) || 
+             item.entity_label.toLowerCase().includes(search.toLowerCase()) ||
              item.entity_id.toLowerCase().includes(search.toLowerCase()))
         );
 
@@ -57,7 +58,7 @@ export function GovernanceReportView() {
                         <Table.Tbody>
                             {filtered.map((item, i) => (
                                 <Table.Tr key={i}>
-                                    <Table.Td><Text fw={700} size="sm">{item.entity_id}</Text></Table.Td>
+                                    <Table.Td><Text fw={700} size="sm">{item.entity_label}</Text></Table.Td>
                                     <Table.Td>
                                         <Badge color={item.role === 'OWNER' ? 'blue' : 'gray'} size="xs">
                                             {item.role === 'OWNER' ? 'Responsable' : item.role === 'TUTOR' ? 'Tuteur' : 'Intervenant'}

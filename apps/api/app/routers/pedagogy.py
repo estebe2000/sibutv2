@@ -2,21 +2,36 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 from typing import List, Optional
 from ..database import get_session
-from ..models import User, Group, PromotionResponsibility, UserRole, ResponsibilityMatrix, ResponsibilityType
+from ..models import User, Group, PromotionResponsibility, UserRole, ResponsibilityMatrix, ResponsibilityType, Resource, Activity
 from ..dependencies import require_staff
 
 router = APIRouter()
 
 @router.get("/governance-report")
 async def get_governance_report(session: Session = Depends(get_session)):
-    """Retourne la liste complète des responsabilités avec détails utilisateurs"""
+    """Retourne la liste complète des responsabilités avec détails utilisateurs et libellés réels"""
     matrix = session.exec(select(ResponsibilityMatrix)).all()
     report = []
     for entry in matrix:
         user = session.exec(select(User).where(User.ldap_uid == entry.user_id)).first()
+        
+        # Récupération du libellé de l'entité
+        entity_label = entry.entity_id
+        if entry.entity_type == "RESOURCE":
+            res = session.exec(select(Resource).where(Resource.code == entry.entity_id)).first()
+            if res: entity_label = f"{res.code} : {res.label}"
+        elif entry.entity_type == "ACTIVITY":
+            if entry.entity_id.isdigit():
+                act = session.get(Activity, int(entry.entity_id))
+                if act: entity_label = f"{act.code} : {act.label}"
+        elif entry.entity_type == "STUDENT":
+            student = session.exec(select(User).where(User.ldap_uid == entry.entity_id)).first()
+            if student: entity_label = student.full_name
+
         report.append({
             "entity_type": entry.entity_type,
             "entity_id": entry.entity_id,
+            "entity_label": entity_label,
             "role": entry.role_type,
             "user_name": user.full_name if user else entry.user_id,
             "user_email": user.email if user else "N/A"
