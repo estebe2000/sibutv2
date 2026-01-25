@@ -92,3 +92,23 @@ def delete_local_user(user_id):
     
     response = requests.delete(url, headers=headers, timeout=10)
     return response.status_code == 204
+
+def reset_user_password(user_id, new_password):
+    """Réinitialise le mot de passe d'un utilisateur Keycloak."""
+    token = get_admin_token()
+    if not token: raise HTTPException(status_code=500, detail="Could not connect to Keycloak")
+    
+    url = f"{KC_URL}/admin/realms/{KC_REALM}/users/{user_id}/reset-password"
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    
+    data = {
+        "type": "password",
+        "value": new_password,
+        "temporary": False
+    }
+    
+    response = requests.put(url, json=data, headers=headers, timeout=10)
+    if response.status_code == 204:
+        return True
+    else:
+        raise HTTPException(status_code=response.status_code, detail=response.text)

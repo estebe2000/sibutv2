@@ -15,7 +15,7 @@ import {
   LoadingOverlay,
   Switch
 } from '@mantine/core';
-import { IconPlus, IconTrash, IconUser, IconRefresh } from '@tabler/icons-react';
+import { IconPlus, IconTrash, IconUser, IconRefresh, IconKey } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from '../services/api';
 
@@ -25,6 +25,9 @@ export function KeycloakUserManagement() {
   const [showLdap, setShowLdap] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [newPassword, setNewPassword] = useState('');
   const [newUser, setNewUser] = useState({
     username: '',
     email: '',
@@ -37,7 +40,7 @@ export function KeycloakUserManagement() {
     if (loading) return;
     setLoading(true);
     try {
-      const url = query ? `/keycloak/users?q=${query}` : '/keycloak/users';
+      const url = query ? `/keycloak/users?q=${query.trim()}` : '/keycloak/users';
       const res = await api.get(url);
       setUsers(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
@@ -46,18 +49,15 @@ export function KeycloakUserManagement() {
     setLoading(false);
   };
 
-  // Fetch initial au montage
   useEffect(() => {
     fetchUsers('');
   }, []);
 
-  // On fetch quand la recherche change (avec debounce)
   useEffect(() => {
-    if (search === '') return; // On laisse le premier useEffect gérer le vide
+    if (search === '') return;
     const delayDebounceFn = setTimeout(() => {
       fetchUsers(search);
     }, 500);
-
     return () => clearTimeout(delayDebounceFn);
   }, [search]);
 
@@ -67,7 +67,7 @@ export function KeycloakUserManagement() {
       notifications.show({ color: 'green', title: 'Succès', message: 'Utilisateur créé' });
       setIsModalOpen(false);
       setNewUser({ username: '', email: '', first_name: '', last_name: '', password: '' });
-      fetchUsers(search); // On rafraichit avec la recherche actuelle
+      fetchUsers(search);
     } catch (e) {
       notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de la création' });
     }
@@ -78,12 +78,23 @@ export function KeycloakUserManagement() {
     try {
       await api.delete(`/keycloak/users/${id}`);
       notifications.show({ color: 'green', title: 'Succès', message: 'Utilisateur supprimé' });
-      fetchUsers(search); // On rafraichit avec la recherche actuelle
+      fetchUsers(search);
     } catch (e) {
       notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de la suppression' });
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!newPassword) return;
+    try {
+      await api.put(`/keycloak/users/${selectedUser.id}/reset-password`, { password: newPassword });
+      notifications.show({ color: 'green', title: 'Succès', message: 'Mot de passe réinitialisé' });
+      setIsResetModalOpen(false);
+      setNewPassword('');
+    } catch (e) {
+      notifications.show({ color: 'red', title: 'Erreur', message: 'Échec de la réinitialisation' });
+    }
+  };
 
   return (
     <Paper withBorder p="md" shadow="xs" style={{ position: 'relative' }}>
@@ -92,23 +103,23 @@ export function KeycloakUserManagement() {
         <Title order={4}>Comptes Locaux (Keycloak)</Title>
         <Group>
           <TextInput 
-            placeholder="Rechercher par identifiant ou nom..." 
+            placeholder="Rechercher..." 
             size="xs" 
-            w={250}
+            w={200}
             value={search}
             onChange={(e) => setSearch(e.currentTarget.value)}
           />
           <Switch 
-            label="Afficher les comptes LDAP" 
+            label="LDAP" 
             checked={showLdap} 
             onChange={(event) => setShowLdap(event.currentTarget.checked)} 
           />
-          <Button variant="light" leftSection={<IconRefresh size={16} />} onClick={fetchUsers}>Actualiser</Button>
-          <Button leftSection={<IconPlus size={16} />} onClick={() => setIsModalOpen(true)}>Nouvel Utilisateur</Button>
+          <Button variant="light" size="xs" leftSection={<IconRefresh size={14} />} onClick={() => fetchUsers(search)}>Actualiser</Button>
+          <Button size="xs" leftSection={<IconPlus size={14} />} onClick={() => setIsModalOpen(true)}>Nouvel Utilisateur</Button>
         </Group>
       </Group>
 
-      <Table highlightOnHover verticalSpacing="sm">
+      <Table highlightOnHover verticalSpacing="xs">
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Identifiant</Table.Th>
@@ -120,9 +131,9 @@ export function KeycloakUserManagement() {
         </Table.Thead>
         <Table.Tbody>
           {users
-            .filter(user => showLdap || !(user.federationLink !== undefined && user.federationLink !== null))
+            .filter(user => showLdap || !user.federationLink)
             .map((user) => {
-              const isLdap = user.federationLink !== undefined && user.federationLink !== null;
+              const isLdap = !!user.federationLink;
               return (
               <Table.Tr key={user.id}>
                 <Table.Td><Group gap="xs"><IconUser size={14} color="gray" /><Text size="sm">{user.username}</Text></Group></Table.Td>
@@ -132,11 +143,16 @@ export function KeycloakUserManagement() {
                   {isLdap ? <Badge color="blue" size="xs">LDAP</Badge> : <Badge color="green" size="xs">Local</Badge>}
                 </Table.Td>
                 <Table.Td>
-                  <Group justify="flex-end">
+                  <Group justify="flex-end" gap={5}>
                     {!isLdap && (
-                      <ActionIcon color="red" variant="subtle" onClick={() => handleDelete(user.id)}>
-                        <IconTrash size={16} />
-                      </ActionIcon>
+                      <>
+                        <ActionIcon color="blue" variant="subtle" size="sm" onClick={() => { setSelectedUser(user); setIsResetModalOpen(true); }} title="Réinitialiser le mot de passe">
+                          <IconKey size={14} />
+                        </ActionIcon>
+                        <ActionIcon color="red" variant="subtle" size="sm" onClick={() => handleDelete(user.id)} title="Supprimer">
+                          <IconTrash size={14} />
+                        </ActionIcon>
+                      </>
                     )}
                   </Group>
                 </Table.Td>
@@ -154,6 +170,13 @@ export function KeycloakUserManagement() {
           <TextInput label="Email" placeholder="john.doe@example.com" value={newUser.email} onChange={(e) => setNewUser({...newUser, email: e.target.value})} required />
           <PasswordInput label="Mot de passe" value={newUser.password} onChange={(e) => setNewUser({...newUser, password: e.target.value})} required />
           <Button fullWidth mt="md" onClick={handleCreate}>Créer l'utilisateur</Button>
+        </Stack>
+      </Modal>
+
+      <Modal opened={isResetModalOpen} onClose={() => setIsResetModalOpen(false)} title={`Réinitialiser le mot de passe : ${selectedUser?.username}`}>
+        <Stack>
+          <PasswordInput label="Nouveau mot de passe" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+          <Button fullWidth mt="md" onClick={handleResetPassword}>Valider le nouveau mot de passe</Button>
         </Stack>
       </Modal>
     </Paper>
