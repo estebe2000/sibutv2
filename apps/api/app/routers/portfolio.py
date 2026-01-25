@@ -3,7 +3,7 @@ from fastapi.responses import StreamingResponse, FileResponse
 from sqlmodel import Session, select
 from typing import List, Optional
 from ..database import get_session
-from ..models import User, PortfolioPage, StudentFile, ResponsibilityEntityType
+from ..models import User, PortfolioPage, StudentFile, ResponsibilityEntityType, StudentPPP
 from ..dependencies import get_current_user
 from datetime import datetime
 import os
@@ -127,3 +127,31 @@ async def download_portfolio_file(file_id: int, session: Session = Depends(get_s
         raise HTTPException(status_code=404, detail="File not found on disk")
         
     return FileResponse(db_file.nc_path, filename=db_file.filename)
+
+# --- PPP ---
+
+@router.get("/ppp", response_model=StudentPPP)
+async def get_my_ppp(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+    ppp = session.exec(select(StudentPPP).where(StudentPPP.student_uid == current_user.ldap_uid)).first()
+    if not ppp:
+        # Création automatique d'un PPP vide si inexistant
+        ppp = StudentPPP(student_uid=current_user.ldap_uid)
+        session.add(ppp)
+        session.commit()
+        session.refresh(ppp)
+    return ppp
+
+@router.patch("/ppp", response_model=StudentPPP)
+async def update_my_ppp(data: dict, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+    ppp = session.exec(select(StudentPPP).where(StudentPPP.student_uid == current_user.ldap_uid)).first()
+    if not ppp: raise HTTPException(status_code=404)
+    
+    for key, value in data.items():
+        if hasattr(ppp, key):
+            setattr(ppp, key, value)
+            
+    ppp.updated_at = datetime.now()
+    session.add(ppp)
+    session.commit()
+    session.refresh(ppp)
+    return ppp
