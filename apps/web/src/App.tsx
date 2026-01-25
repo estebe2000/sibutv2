@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput, Divider, Alert } from '@mantine/core';
-import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp } from '@tabler/icons-react';
+import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp, IconMessageDots } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
 import { useStore } from './store/useStore';
@@ -22,6 +22,7 @@ import { GovernanceReportView } from './views/GovernanceReportView';
 import { AdminPortfolioBrowserView } from './views/AdminPortfolioBrowserView';
 import { NewYearTransitionView } from './views/NewYearTransitionView';
 import { ExternalServicesProposalsView } from './views/ExternalServicesProposalsView';
+import { FeedbackHubView } from './views/FeedbackHubView';
 import { useMediaQuery } from '@mantine/hooks';
 
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
@@ -218,6 +219,7 @@ function App() {
             <Paper p={5} radius="sm" bg="yellow.0" withBorder style={{ borderColor: 'var(--mantine-color-yellow-2)' }}>
               <Text size="10px" fw={700} c="yellow.9" px="xs" mb={5} tt="uppercase">Idées</Text>
               <Stack gap={2}>
+                <Button variant={activeTab === 'feedback' ? 'filled' : 'subtle'} onClick={() => setActiveTab('feedback')} leftSection={<IconMessageDots size={18} />} justify="start" size="compact-sm" color="yellow">Boîte à Idées</Button>
                 <Button variant={activeTab === 'idea-calendar' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-calendar')} leftSection={<IconCalendar size={18} />} justify="start" size="compact-sm" color="yellow">Calendrier</Button>
                 <Button variant={activeTab === 'idea-mail' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-mail')} leftSection={<IconMail size={18} />} justify="start" size="compact-sm" color="yellow">Mail</Button>
                 <Button variant={activeTab === 'idea-chat' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-chat')} leftSection={<IconMessages size={18} />} justify="start" size="compact-sm" color="yellow">Canaux Discussion</Button>
@@ -269,6 +271,7 @@ function App() {
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
         {activeTab === 'keycloak' && !isMobile && <KeycloakUserManagement />}
         {activeTab === 'new-year' && !isMobile && <NewYearTransitionView />}
+        {activeTab === 'feedback' && <FeedbackHubView />}
         {activeTab === 'idea-calendar' && <ExternalServicesProposalsView type="calendar" />}
         {activeTab === 'idea-mail' && <ExternalServicesProposalsView type="mail" />}
         {activeTab === 'idea-chat' && <ExternalServicesProposalsView type="chat" />}
