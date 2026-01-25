@@ -1,65 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Title, Text, Group, Stack, Badge, ThemeIcon, Alert, ActionIcon, Loader, Center, Divider, Accordion, FileInput } from '@mantine/core';
-import { IconUser, IconSchool, IconInfoCircle, IconTimeline, IconFileText, IconDownload, IconBook, IconFolder, IconFileUpload, IconBriefcase, IconTrash, IconLock } from '@tabler/icons-react';
+import { Container, Paper, Title, Text, Group, Stack, Badge, ThemeIcon, Alert, ActionIcon, Loader, Center, Divider, Accordion, FileInput, Button, Select } from '@mantine/core';
+import { IconUser, IconSchool, IconInfoCircle, IconTimeline, IconFileText, IconDownload, IconBook, IconFolder, IconFileUpload, IconBriefcase, IconTrash, IconLock, IconPencil, IconPlus, IconHistory } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from '../services/api';
 import OdooWidget from '../components/OdooWidget';
-
 import { useMediaQuery } from '@mantine/hooks';
-
-interface StudentDashboardProps {
-  user: any;
-  groups: any[];
-  curriculum: any;
-}
-
 import { InternshipForm } from '../components/InternshipForm';
 import { InternshipSelfEvaluation } from '../components/InternshipSelfEvaluation';
-
+import { PortfolioEditor } from '../components/PortfolioEditor';
 
 export function StudentDashboard({ user, curriculum, groups }: any) {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [tutor, setTutor] = useState<any>(null);
   const [internship, setInternship] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const [tutorRes, internRes] = await Promise.all([
-                api.get(`/activity-management/student/${user.ldap_uid}/tutor`),
-                api.get(`/internships/${user.ldap_uid}`)
-            ]);
-            setTutor(tutorRes.data);
-            setInternship(internRes.data);
-        } catch(e) {}
-    };
-    fetchData();
-  }, [user.ldap_uid]);
-
-
+  const [view, setView] = useState<'dashboard' | 'editor'>('dashboard');
+  const [selectedPageId, setSelectedPageId] = useState<number | undefined>();
+  const [portfolioPages, setPortfolioPages] = useState<any[]>([]);
   const [fiches, setFiches] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState<string | null>(null); // ID de l'entité en cours d'upload
-
-  // Trouver le groupe de l'étudiant
-  const studentGroup = groups?.find(g => Number(g.id) === Number(user?.group_id));
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [academicYear, setAcademicYear] = useState('2025-2026');
 
   const fetchStudentData = async () => {
     try {
-      const [fichesRes, filesRes] = await Promise.all([
+      const [tutorRes, internRes, fichesRes, filesRes, pagesRes] = await Promise.all([
+        api.get(`/activity-management/student/${user.ldap_uid}/tutor`),
+        api.get(`/internships/${user.ldap_uid}`),
         api.get('/fiches/list'),
-        api.get('/portfolio/files')
+        api.get('/portfolio/files'),
+        api.get('/portfolio/pages')
       ]);
+      setTutor(tutorRes.data);
+      setInternship(internRes.data);
       setFiches(fichesRes.data);
       setUploadedFiles(filesRes.data);
+      setPortfolioPages(pagesRes.data);
     } catch (e) { console.error("Error fetching data", e); }
     setLoading(false);
   };
 
   useEffect(() => {
     fetchStudentData();
-  }, []);
+  }, [user.ldap_uid]);
 
   const handleUpload = async (file: File | null, entityType: string, entityId: string) => {
     if (!file) return;
@@ -67,7 +50,7 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await api.post(`/portfolio/upload?entity_type=${entityType}&entity_id=${entityId}`, formData);
+      await api.post(`/portfolio/upload?entity_type=${entityType}&entity_id=${entityId}&academic_year=${academicYear}`, formData);
       notifications.show({ title: 'Succès', message: 'Fichier déposé', color: 'green' });
       fetchStudentData();
     } catch (e) {
@@ -88,29 +71,32 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
     }
   };
 
-  if (!curriculum || !curriculum.activities || !groups) {
+  const handleDeletePage = async (id: number) => {
+    if (!window.confirm("Supprimer cette page de réflexion ?")) return;
+    try {
+        await api.delete(`/portfolio/pages/${id}`);
+        fetchStudentData();
+    } catch (e) { notifications.show({ title: 'Erreur', color: 'red' }); }
+  };
+
+  if (view === 'editor') {
+    return (
+        <Container size="lg" py="xl">
+            <PortfolioEditor studentUid={user.ldap_uid} pageId={selectedPageId} onBack={() => { setView('dashboard'); fetchStudentData(); }} />
+        </Container>
+    );
+  }
+
+  if (!curriculum || !curriculum.activities || !groups || loading) {
     return <Center h="50vh"><Loader size="lg" /></Center>;
   }
 
-  // 1. Filtrage des Activités (SAÉ, Stages, etc.)
+  const studentGroup = groups?.find((g:any) => Number(g.id) === Number(user?.group_id));
+
+  // Filtrage des Activités
   const filteredActivities = curriculum.activities.filter((a: any) => {
     if (!studentGroup) return false;
-    return a.level === studentGroup.year && 
-           (a.pathway === 'Tronc Commun' || a.pathway.toLowerCase() === studentGroup.pathway.toLowerCase());
-  });
-
-  // 2. Filtrage des Ressources
-  const filteredResources = curriculum.resources.filter((r: any) => {
-    if (!studentGroup || !r.code) return false;
-    const codePrefix = parseInt(r.code.replace('R', '').split('.')[0]);
-    let matchLevel = false;
-    if (studentGroup.year === 1 && (codePrefix === 1 || codePrefix === 2)) matchLevel = true;
-    if (studentGroup.year === 2 && (codePrefix === 3 || codePrefix === 4)) matchLevel = true;
-    if (studentGroup.year === 3 && (codePrefix === 5 || codePrefix === 6)) matchLevel = true;
-    
-    if (!matchLevel) return false;
-
-    return r.pathway === 'Tronc Commun' || r.pathway.toLowerCase() === studentGroup.pathway.toLowerCase();
+    return a.level === studentGroup.year && (a.pathway === 'Tronc Commun' || a.pathway === studentGroup.pathway);
   });
 
   return (
@@ -130,375 +116,146 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
           <Paper withBorder p="lg" radius="md" shadow="xs">
-            <Group mb="md">
-              <IconSchool color="var(--mantine-color-blue-6)" />
-              <Title order={4}>Ma Scolarité</Title>
-            </Group>
+            <Group mb="md"><IconSchool color="blue" /><Title order={4}>Ma Scolarité</Title></Group>
             {studentGroup ? (
               <Stack gap="xs">
-                <Group justify="space-between">
-                  <Text size="sm" fw={500}>Groupe :</Text>
-                  <Badge size="lg">{studentGroup.name}</Badge>
-                </Group>
-                <Group justify="space-between">
-                  <Text size="sm" fw={500}>Année :</Text>
-                  <Badge variant="outline" color="blue">BUT {studentGroup.year}</Badge>
-                </Group>
+                <Group justify="space-between"><Text size="sm">Groupe :</Text><Badge size="lg">{studentGroup.name}</Badge></Group>
+                <Group justify="space-between"><Text size="sm">Année :</Text><Badge variant="outline">BUT {studentGroup.year}</Badge></Group>
               </Stack>
-            ) : (
-              <Text size="sm" c="orange" fs="italic">Non assigné.</Text>
-            )}
+            ) : <Text size="sm" c="orange" fs="italic">Non assigné.</Text>}
           </Paper>
 
           <Paper withBorder p="lg" radius="md" shadow="xs" bg="blue.0">
-            <Group mb="md">
-              <IconBriefcase color="var(--mantine-color-blue-6)" />
-              <Title order={4}>Mon Tutorat</Title>
-            </Group>
+            <Group mb="md"><IconBriefcase color="blue" /><Title order={4}>Mon Tutorat</Title></Group>
             <Stack gap="xs">
                 <Text size="xs" c="dimmed" fw={700}>TUTEUR DE STAGE</Text>
                 {tutor ? (
-                    <div>
-                        <Text fw={600} size="sm">{tutor.full_name}</Text>
-                        <Text size="xs" c="blue">{tutor.email}</Text>
-                    </div>
-                ) : (
-                    <Text size="xs" c="dimmed" fs="italic">Non assigné</Text>
-                )}
+                    <div><Text fw={600} size="sm">{tutor.full_name}</Text><Text size="xs" c="blue">{tutor.email}</Text></div>
+                ) : <Text size="xs" c="dimmed" fs="italic">Non assigné</Text>}
             </Stack>
           </Paper>
 
           <Paper withBorder p="lg" radius="md" shadow="xs">
-            <Group mb="md">
-              <IconTimeline color="var(--mantine-color-indigo-6)" />
-              <Title order={4}>Mon Profil</Title>
-            </Group>
+            <Group mb="md"><IconTimeline color="indigo" /><Title order={4}>Mon Profil</Title></Group>
             <Stack gap="xs">
-              <Group justify="space-between">
-                <Text size="sm" fw={500}>Identifiant :</Text>
-                <Text size="sm">{user?.ldap_uid}</Text>
-              </Group>
-              <Group justify="space-between">
-                <Text size="sm" fw={500}>Email :</Text>
-                <Text size="sm" truncate>{user?.email || 'N/A'}</Text>
-              </Group>
+              <Group justify="space-between"><Text size="sm">ID :</Text><Text size="sm">{user?.ldap_uid}</Text></Group>
+              <Group justify="space-between"><Text size="sm">Email :</Text><Text size="sm" truncate>{user?.email || 'N/A'}</Text></Group>
             </Stack>
           </Paper>
         </div>
 
-                {!isMobile && <OdooWidget />}
-
-        
-
-                {internship && !internship.is_finalized && <InternshipForm studentUid={user.ldap_uid} />}
-
-        
-
-                <InternshipSelfEvaluation studentUid={user.ldap_uid} />
-
-        
-
-                {!isMobile && (
-
-                  <>
-
-                    <Alert variant="light" color="indigo" title="Suivi des Compétences" icon={<IconInfoCircle />}>
-
-                      Votre espace de suivi des compétences et votre portfolio Nextcloud sont en cours de configuration. 
-
-                      Bientôt, vous pourrez uploader vos preuves et suivre l'acquisition de vos apprentissages critiques ici.
-
-                    </Alert>
-
-        
-
-                    <Paper withBorder p="lg" radius="md" shadow="xs">
-
-                      <Group mb="md" justify="space-between">
-
-                        <Group>
-
-                          <IconFileText color="var(--mantine-color-blue-6)" />
-
-                          <Title order={4}>Mes Fiches de Formation (PDF)</Title>
-
-                        </Group>
-
-                        <Badge variant="light">{filteredActivities.length + filteredResources.length} documents</Badge>
-
-                      </Group>
-
-                      
-
-                      <Divider mb="md" />
-
-        
-
-                      <Accordion variant="separated">
-
-                        <Accordion.Item value="activities">
-
-                          <Accordion.Control icon={<IconSchool size={18} color="orange" />}>
-
-                            <Text fw={700}>SAÉ & Activités ({filteredActivities.length})</Text>
-
-                          </Accordion.Control>
-
-                          <Accordion.Panel>
-
-                            <Stack gap="xs">
-
-                              {filteredActivities.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((act: any) => (
-
-                                <Paper key={act.id} withBorder p="xs" radius="sm" bg="gray.0">
-
-                                  <Group justify="space-between">
-
-                                    <Group gap="xs">
-
-                                      <Badge size="xs" variant="filled" color="orange">{act.code}</Badge>
-
-                                      <Text size="sm" fw={500}>{act.label}</Text>
-
-                                    </Group>
-
-                                    <ActionIcon 
-
-                                      component="a" 
-
-                                      href={`/api/activities/${act.id}/pdf`}
-
-                                      target="_blank"
-
-                                      variant="light" 
-
-                                      color="orange" 
-
-                                      size="md"
-
-                                    >
-
-                                      <IconDownload size={16} />
-
-                                    </ActionIcon>
-
-                                  </Group>
-
-                                </Paper>
-
-                              ))}
-
-                            </Stack>
-
-                          </Accordion.Panel>
-
-                        </Accordion.Item>
-
-        
-
-                        <Accordion.Item value="resources">
-
-                          <Accordion.Control icon={<IconBook size={18} color="teal" />}>
-
-                            <Text fw={700}>Ressources ({filteredResources.length})</Text>
-
-                          </Accordion.Control>
-
-                          <Accordion.Panel>
-
-                            <Stack gap="xs">
-
-                              {filteredResources.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((res: any) => (
-
-                                <Paper key={res.id} withBorder p="xs" radius="sm" bg="gray.0">
-
-                                  <Group justify="space-between">
-
-                                    <Group gap="xs">
-
-                                      <Badge size="xs" variant="filled" color="teal">{res.code}</Badge>
-
-                                      <Text size="sm" fw={500}>{res.label}</Text>
-
-                                    </Group>
-
-                                    <ActionIcon 
-
-                                      component="a" 
-
-                                      href={`/api/resources/${res.id}/pdf`}
-
-                                      target="_blank"
-
-                                      variant="light" 
-
-                                      color="teal" 
-
-                                      size="md"
-
-                                    >
-
-                                      <IconDownload size={16} />
-
-                                    </ActionIcon>
-
-                                  </Group>
-
-                                </Paper>
-
-                              ))}
-
-                            </Stack>
-
-                          </Accordion.Panel>
-
-                        </Accordion.Item>
-
-                      </Accordion>
-
-                    </Paper>
-
-        
-
-                    <Paper withBorder p="lg" radius="md" shadow="xs">
-
-                      <Group mb="md">
-
-                        <IconFolder color="var(--mantine-color-indigo-6)" />
-
-                        <Title order={4}>Mon Portfolio & Preuves</Title>
-
-                      </Group>
-
-                      
-
-                      <Divider mb="md" />
-
-        
-
-                      <Stack gap="md">
-
-                        <Alert variant="outline" color="gray" icon={<IconBriefcase size={16} />}>
-
-                          <Text size="sm" fw={500}>Gestionnaire de Portfolio (Bientôt disponible)</Text>
-
-                          <Text size="xs" c="dimmed">Espace centralisé pour gérer l'ensemble de vos documents et preuves de compétences.</Text>
-
-                        </Alert>
-
-        
-
-                        <Text size="xs" fw={700} c="dimmed" tt="uppercase">Dépôts par Activité</Text>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '15px' }}>
-
-                          {filteredActivities.map((act: any) => {
-
-                            const files = uploadedFiles.filter(f => f.entity_type === 'ACTIVITY' && f.entity_id === act.id.toString());
-
-                            return (
-
-                              <Paper key={`upload-${act.id}`} withBorder p="md" radius="md" bg="white">
-
-                                <Stack gap="xs">
-
-                                  <Group justify="space-between" wrap="nowrap">
-
-                                    <Stack gap={0} style={{ flexGrow: 1, minWidth: 0 }}>
-
-                                      <Text size="xs" fw={700} c="blue">{act.code}</Text>
-
-                                      <Text size="xs" truncate fw={500}>{act.label}</Text>
-
-                                    </Stack>
-
+        {!isMobile && <OdooWidget />}
+        {internship && !internship.is_finalized && <InternshipForm studentUid={user.ldap_uid} />}
+        <InternshipSelfEvaluation studentUid={user.ldap_uid} />
+
+        {/* SECTION PORTFOLIO & RÉFLEXION */}
+        <Paper withBorder p="lg" radius="md" shadow="md">
+            <Group justify="space-between" mb="xl">
+                <Group>
+                    <IconFolder size={28} color="var(--mantine-color-blue-6)" />
+                    <div>
+                        <Title order={3}>Mon Portfolio de Compétences</Title>
+                        <Text size="sm" c="dimmed">Rédigez vos réflexions et liez vos preuves d\'apprentissage.</Text>
+                    </div>
+                </Group>
+                <Button leftSection={<IconPlus size={18}/>} onClick={() => { setSelectedPageId(undefined); setView('editor'); }}>
+                    Nouvelle Page
+                </Button>
+            </Group>
+
+            {portfolioPages.length === 0 ? (
+                <Alert color="blue" icon={<IconInfoCircle />}>
+                    Vous n\'avez pas encore créé de page de réflexion. Commencez par en créer une pour illustrer vos compétences.
+                </Alert>
+            ) : (
+                <Stack gap="md">
+                    {portfolioPages.map(page => (
+                        <Paper key={page.id} withBorder p="md" radius="md" shadow="xs" className="hover-card">
+                            <Group justify="space-between">
+                                <Group onClick={() => { setSelectedPageId(page.id); setView('editor'); }} style={{ cursor: 'pointer', flexGrow: 1 }}>
+                                    <ThemeIcon variant="light" size="lg"><IconFileText size={20}/></ThemeIcon>
+                                    <div>
+                                        <Text fw={700}>{page.title}</Text>
+                                        <Text size="xs" c="dimmed">Dernière modification : {new Date(page.updated_at).toLocaleDateString()}</Text>
+                                    </div>
+                                </Group>
+                                <Group>
+                                    <Badge variant="light" color="gray">{page.academic_year}</Badge>
+                                    <ActionIcon color="red" variant="subtle" onClick={() => handleDeletePage(page.id)}><IconTrash size={18}/></ActionIcon>
+                                </Group>
+                            </Group>
+                        </Paper>
+                    ))}
+                </Stack>
+            )}
+        </Paper>
+
+        {/* COFFRE-FORT NUMÉRIQUE (PREUVES) */}
+        <Paper withBorder p="lg" radius="md" shadow="xs">
+            <Group justify="space-between" mb="md">
+                <Group>
+                    <IconLock size={24} color="orange" />
+                    <Title order={4}>Coffre-fort des Preuves (SAÉ)</Title>
+                </Group>
+                <Select 
+                    size="xs" 
+                    data={['2023-2024', '2024-2025', '2025-2026']} 
+                    value={academicYear} 
+                    onChange={(v) => setAcademicYear(v || '2025-2026')} 
+                    w={120} 
+                />
+            </Group>
+            <Text size="xs" c="dimmed" mb="xl">Déposez ici les documents attestant de vos réalisations pour chaque activité.</Text>
+
+            <Accordion variant="separated">
+                {filteredActivities.sort((a: any, b: any) => a.code.localeCompare(b.code)).map((act: any) => {
+                    const files = uploadedFiles.filter(f => f.entity_type === 'ACTIVITY' && f.entity_id === act.id.toString());
+                    return (
+                        <Accordion.Item key={act.id} value={act.code}>
+                            <Accordion.Control icon={<Badge color="orange" size="xs">{act.type}</Badge>}>
+                                <Group justify="space-between" pr="md">
+                                    <Text size="sm" fw={600}>{act.code} : {act.label}</Text>
+                                    <Badge size="xs" variant="light" color={files.length > 0 ? 'green' : 'gray'}>
+                                        {files.length} preuve(s)
+                                    </Badge>
+                                </Group>
+                            </Accordion.Control>
+                            <Accordion.Panel>
+                                <Stack gap="md">
                                     <FileInput 
-
-                                      placeholder="Déposer" 
-
-                                      size="xs" 
-
-                                      variant="filled"
-
-                                      leftSection={<IconFileUpload size={14} />} 
-
-                                      onChange={(file) => handleUpload(file, 'ACTIVITY', act.id.toString())}
-
-                                      disabled={uploading === act.id.toString()}
-
-                                      style={{ width: 100 }}
-
+                                        label="Ajouter une preuve (PDF, PNG, JPG...)"
+                                        placeholder="Choisir un fichier" 
+                                        size="xs" 
+                                        leftSection={<IconFileUpload size={14} />}
+                                        onChange={(file) => handleUpload(file, 'ACTIVITY', act.id.toString())}
+                                        disabled={uploading === act.id.toString()}
                                     />
-
-                                  </Group>
-
-        
-
-                                  {files.length > 0 ? (
-
-                                    <Stack gap={4} mt="xs">
-
-                                      {files.map(file => (
-
-                                        <Paper key={file.id} withBorder p={5} bg="gray.0" radius="xs">
-
-                                          <Group justify="space-between">
-
-                                            <Group gap={5} wrap="nowrap" style={{ flexGrow: 1, minWidth: 0 }}>
-
-                                              {file.is_locked ? <IconLock size={12} color="orange" /> : <IconFileText size={12} color="gray" />}
-
-                                              <Text size="10px" truncate>{file.filename}</Text>
-
-                                            </Group>
-
-                                            <Group gap={2}>
-
-                                              {!file.is_locked && (
-
-                                                <ActionIcon size="xs" color="red" variant="subtle" onClick={() => handleDeleteFile(file.id)}>
-
-                                                  <IconTrash size={12} />
-
-                                                </ActionIcon>
-
-                                              )}
-
-                                            </Group>
-
-                                          </Group>
-
-                                        </Paper>
-
-                                      ))}
-
-                                    </Stack>
-
-                                  ) : (
-
-                                    <Text size="10px" c="dimmed" fs="italic" ta="center">Aucun document</Text>
-
-                                  )}
-
+                                    {files.length > 0 ? (
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px' }}>
+                                            {files.map(file => (
+                                                <Paper key={file.id} withBorder p="xs" bg="gray.0" radius="xs">
+                                                    <Group justify="space-between">
+                                                        <Group gap={5} wrap="nowrap" style={{ flexGrow: 1, minWidth: 0 }}>
+                                                            {file.is_locked ? <IconLock size={12} color="orange" /> : <IconFileText size={12} color="gray" />}
+                                                            <Text size="xs" truncate>{file.filename}</Text>
+                                                        </Group>
+                                                        {!file.is_locked && (
+                                                            <ActionIcon size="xs" color="red" variant="subtle" onClick={() => handleDeleteFile(file.id)}>
+                                                                <IconTrash size={12} />
+                                                            </ActionIcon>
+                                                        )}
+                                                    </Group>
+                                                </Paper>
+                                            ))}
+                                        </div>
+                                    ) : <Text size="xs" c="dimmed" fs="italic" ta="center">Aucun document déposé pour cette activité.</Text>}
                                 </Stack>
-
-                              </Paper>
-
-                            );
-
-                          })}
-
-                        </div>
-
-                      </Stack>
-
-                    </Paper>
-
-                  </>
-
-                )}
-
-        
+                            </Accordion.Panel>
+                        </Accordion.Item>
+                    );
+                })}
+            </Accordion>
+        </Paper>
       </Stack>
     </Container>
   );

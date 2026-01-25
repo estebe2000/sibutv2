@@ -175,11 +175,25 @@ class StudentFile(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     student_uid: str = Field(index=True)
     filename: str
-    nc_path: str # Chemin sur Nextcloud
-    entity_type: ResponsibilityEntityType # ACTIVITY ou RESOURCE
-    entity_id: str # ID de l'activité ou code ressource
+    nc_path: str 
+    entity_type: ResponsibilityEntityType 
+    entity_id: str 
     is_locked: bool = Field(default=False)
+    academic_year: str = Field(default="2025-2026") # Pour l'historique
     uploaded_at: datetime = Field(default_factory=datetime.now)
+
+class PortfolioPage(SQLModel, table=True):
+    """Page de réflexion du portfolio (Editor.js)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_uid: str = Field(index=True, foreign_key="user.ldap_uid")
+    title: str
+    content_json: str = Field(default="{}") # Données Editor.js
+    academic_year: str = Field(default="2025-2026")
+    year_of_study: int = Field(default=1) # 1, 2 ou 3
+    is_public: bool = Field(default=False)
+    share_token: Optional[str] = Field(default=None, index=True)
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
 
 # --- CURRICULUM MODELS ---
 
