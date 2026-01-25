@@ -19,22 +19,24 @@ async def get_enriched_matrix(session: Session):
         user = session.exec(select(User).where(User.ldap_uid == entry.user_id)).first()
         
         entity_label = entry.entity_id
-        if entry.entity_type == "RESOURCE":
+        e_type = entry.entity_type.value if hasattr(entry.entity_type, 'value') else str(entry.entity_type)
+        
+        if e_type == "RESOURCE":
             res = session.exec(select(Resource).where(Resource.code == entry.entity_id)).first()
             if res: entity_label = f"{res.code} : {res.label}"
-        elif entry.entity_type == "ACTIVITY":
+        elif e_type == "ACTIVITY":
             if entry.entity_id.isdigit():
                 act = session.get(Activity, int(entry.entity_id))
                 if act: entity_label = f"{act.code} : {act.label}"
-        elif entry.entity_type == "STUDENT":
+        elif e_type == "STUDENT":
             student = session.exec(select(User).where(User.ldap_uid == entry.entity_id)).first()
             if student: entity_label = student.full_name
 
         report.append({
-            "type": str(entry.entity_type),
+            "type": e_type,
             "id": entry.entity_id,
             "label": entity_label,
-            "role": str(entry.role_type),
+            "role": entry.role_type.value if hasattr(entry.role_type, 'value') else str(entry.role_type),
             "name": user.full_name if user else entry.user_id,
             "email": user.email if user else "N/A"
         })
