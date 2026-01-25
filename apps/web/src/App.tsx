@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput } from '@mantine/core';
-import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase } from '@tabler/icons-react';
+import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput, Divider, Alert } from '@mantine/core';
+import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
 import { useStore } from './store/useStore';
@@ -20,8 +20,6 @@ import { PublicEvaluationView } from './views/PublicEvaluationView';
 import { InternshipManagementView } from './views/InternshipManagementView';
 import { GovernanceReportView } from './views/GovernanceReportView';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { Alert } from '@mantine/core';
 
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
 
@@ -145,7 +143,6 @@ function App() {
 
   if (!user) return <Center h="100vh"><Loader /></Center>;
 
-  // --- VUE ÉTUDIANT ---
   if (user.role === 'STUDENT') {
     return (
       <AppShell header={{ height: 60 }} padding="md">
@@ -170,11 +167,9 @@ function App() {
     );
   }
 
-  // --- VUE STAFF ---
   const isEnseignant = user.role === 'PROFESSOR' || user.role === 'STUDY_DIRECTOR';
   const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'DEPT_HEAD', 'ADMIN_STAFF'].includes(user.role);
   const staffUsers = assignedUsers.filter(u => ['PROFESSOR', 'ADMIN', 'SUPER_ADMIN', 'DEPT_HEAD', 'ADMIN_STAFF', 'STUDY_DIRECTOR'].includes(u.role));
-
   const showMobileMessage = isMobile && !['dashboard', 'internships'].includes(activeTab || '');
 
   return (
@@ -189,7 +184,6 @@ function App() {
       {!isMobile && (
         <AppShell.Navbar p="md">
           <Stack gap="sm">
-            {/* ZONE PILOTAGE */}
             <Paper p={5} radius="sm" bg="indigo.0" withBorder style={{ borderColor: 'var(--mantine-color-indigo-2)' }}>
               <Text size="10px" fw={700} c="indigo.9" px="xs" mb={5} tt="uppercase">Pilotage</Text>
               <Stack gap={2}>
@@ -199,7 +193,6 @@ function App() {
               </Stack>
             </Paper>
 
-            {/* ZONE PÉDAGOGIE */}
             <Paper p={5} radius="sm" bg="grape.0" withBorder style={{ borderColor: 'var(--mantine-color-grape-2)' }}>
               <Text size="10px" fw={700} c="grape.9" px="xs" mb={5} tt="uppercase">Référentiel & Contenus</Text>
               <Stack gap={2}>
@@ -210,7 +203,6 @@ function App() {
               </Stack>
             </Paper>
 
-            {/* ZONE TERRAIN */}
             <Paper p={5} radius="sm" bg="blue.0" withBorder style={{ borderColor: 'var(--mantine-color-blue-2)' }}>
               <Text size="10px" fw={700} c="blue.9" px="xs" mb={5} tt="uppercase">Suivi & Terrain</Text>
               <Stack gap={2}>
@@ -219,12 +211,7 @@ function App() {
                 <Button variant={activeTab === 'ai-assistant' ? 'filled' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={18} />} justify="start" size="compact-sm" color="blue">Assistant IA</Button>
               </Stack>
             </Paper>
---
-        {activeTab === 'internships' && <InternshipManagementView user={user} />}
-        {activeTab === 'admin-portfolios' && !isMobile && <Container py="xl"><Title order={2}>Consultation des Portfolios</Title><Text c="dimmed">Cette section est en cours de développement.</Text></Container>}
-        {activeTab === 'odoo-admin' && !isMobile && <OdooAdminView />}
             
-            {/* ZONE ADMIN */}
             {isAdmin && (
               <Paper p={5} radius="sm" bg="gray.1" withBorder style={{ borderColor: 'var(--mantine-color-gray-3)' }}>
                 <Text size="10px" fw={700} c="gray.9" px="xs" mb={5} tt="uppercase">Administration</Text>
@@ -262,6 +249,7 @@ function App() {
         {activeTab === 'fiches2' && <FichesPDF2View curriculum={curriculum} />}
         {activeTab === 'governance-report' && !isMobile && <GovernanceReportView />}
         {activeTab === 'internships' && <InternshipManagementView user={user} />}
+        {activeTab === 'admin-portfolios' && !isMobile && <Container py="xl"><Title order={2}>Consultation des Portfolios</Title><Text c="dimmed">Cette section est en cours de développement.</Text></Container>}
         {activeTab === 'odoo-admin' && !isMobile && <OdooAdminView />}
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
         {activeTab === 'keycloak' && !isMobile && <KeycloakUserManagement />}
