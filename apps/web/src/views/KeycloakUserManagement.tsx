@@ -34,7 +34,7 @@ export function KeycloakUserManagement() {
   });
 
   const fetchUsers = async (query: string = '') => {
-    if (loading) return; // Prevent concurrent requests
+    if (loading) return;
     setLoading(true);
     try {
       const url = query ? `/keycloak/users?q=${query}` : '/keycloak/users';
@@ -46,8 +46,14 @@ export function KeycloakUserManagement() {
     setLoading(false);
   };
 
-  // On fetch au montage et quand la recherche change
+  // Fetch initial au montage
   useEffect(() => {
+    fetchUsers('');
+  }, []);
+
+  // On fetch quand la recherche change (avec debounce)
+  useEffect(() => {
+    if (search === '') return; // On laisse le premier useEffect gérer le vide
     const delayDebounceFn = setTimeout(() => {
       fetchUsers(search);
     }, 500);
