@@ -17,7 +17,8 @@ import {
   Container,
   Accordion,
   Center,
-  Tabs
+  Tabs,
+  Loader
 } from '@mantine/core';
 import {
   IconUsers,
@@ -36,24 +37,16 @@ import api from '../services/api';
 import { ResponsibilitySelector } from '../components/ResponsibilitySelector';
 import { PedagogicalTeamManager } from '../components/PedagogicalTeamManager';
 
-interface DispatcherViewProps {
-  fetchData: () => Promise<void>;
-  ldapUsers: any[];
-  setLdapUsers: (users: any[]) => void;
-  localGroups: any[];
-  assignedUsers: any[];
-  YEAR_COLORS: Record<number, string>;
-}
+const YEAR_COLORS: any = { 1: 'blue', 2: 'grape', 3: 'teal' };
 
-export function DispatcherView({
-  fetchData,
-  ldapUsers,
-  setLdapUsers,
-  localGroups,
-  assignedUsers,
-  YEAR_COLORS
-}: DispatcherViewProps) {
+export function DispatcherView() {
   const [activeTab, setActiveTab] = useState<string | null>('dispatch');
+  const [ldapUsers, setLdapUsers] = useState<any[]>([]);
+  const [localKeycloakUsers, setLocalKeycloakUsers] = useState<any[]>([]);
+  const [localGroups, setLocalGroups] = useState<any[]>([]);
+  const [assignedUsers, setAssignedUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
   const [ldapSearchQuery, setLdapSearchQuery] = useState('');
   const [ldapLoading, setLdapLoading] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
@@ -63,17 +56,35 @@ export function DispatcherView({
   const [importOptions, setImportOptions] = useState({ year: 1, formation_type: 'FI' });
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
 
+  const fetchData = async () => {
+    try {
+      const [groupsRes, usersRes, kcRes] = await Promise.all([
+        api.get('/groups'),
+        api.get('/users'),
+        api.get('/keycloak/users')
+      ]);
+      setLocalGroups(groupsRes.data || []);
+      setAssignedUsers(usersRes.data || []);
+      setLocalKeycloakUsers((kcRes.data || []).filter((u: any) => !u.federationLink));
+    } catch (e) { console.error(e); }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (ldapSearchQuery.length >= 3) {
         setLdapLoading(true);
         try {
           const res = await api.get(`/ldap-users/search?q=${ldapSearchQuery}`);
-          setLdapUsers(res.data);
+          setLdapUsers(res.data || []);
         } catch (e) { console.error("Search error", e); }
         setLdapLoading(false);
       } else if (ldapSearchQuery.length === 0) {
-        fetchData();
+        setLdapUsers([]);
       }
     }, 500);
     return () => clearTimeout(delayDebounceFn);
@@ -124,11 +135,30 @@ export function DispatcherView({
     if (isNaN(destGroupId)) return;
 
     if (source.droppableId === 'ldap-list') {
-      const user = ldapUsers.find(u => u.uid === draggableId);
+      // On cherche d'abord dans les locaux Keycloak
+      let user = localKeycloakUsers.find(u => u.username === draggableId);
       if (user) {
-        await api.post('/users/assign', { ldap_uid: user.uid, email: user.email, full_name: user.full_name, role: 'STUDENT', group_id: destGroupId });
-        fetchData();
+        await api.post('/users/assign', { 
+            ldap_uid: user.username, 
+            email: user.email, 
+            full_name: `${user.firstName} ${user.lastName}`, 
+            role: 'STUDENT', 
+            group_id: destGroupId 
+        });
+      } else {
+        // Sinon dans les résultats LDAP
+        user = ldapUsers.find(u => u.uid === draggableId);
+        if (user) {
+            await api.post('/users/assign', { 
+                ldap_uid: user.uid, 
+                email: user.email, 
+                full_name: user.full_name, 
+                role: 'STUDENT', 
+                group_id: destGroupId 
+            });
+        }
       }
+      fetchData();
     } else if (source.droppableId.startsWith('group-')) {
       const user = assignedUsers.find(u => u.ldap_uid === draggableId);
       if (user) {
@@ -142,12 +172,7 @@ export function DispatcherView({
     try { await api.post(`/users/unassign?ldap_uid=${ldapUid}`); fetchData(); } catch (e) { fetchData(); }
   };
 
-  const handleSetQuota = async (ldapUid: string) => {
-    try {
-      await api.post(`/users/${ldapUid}/quota?quota=100 GB`);
-      notifications.show({ title: 'Quota mis à jour', color: 'green' });
-    } catch (e) { notifications.show({ color: 'red', title: 'Erreur' }); }
-  };
+  if (loading) return <Center h="100vh"><Loader size="lg" /></Center>;
 
   return (
     <Container size="xl" h="calc(100vh - 100px)">
@@ -190,19 +215,52 @@ export function DispatcherView({
           </Group>
 
           <Grid h="calc(100% - 100px)">
-            <Grid.Col span={4} h="100%">
+            <Grid.Col span={4} h={500}>
               <Paper withBorder p="md" h="100%" bg="gray.0">
-                <Title order={5} mb="xs">Annuaire LDAP</Title>
-                <TextInput placeholder="Chercher..." mb="md" value={ldapSearchQuery} onChange={(e) => setLdapSearchQuery(e.target.value)} />
+                <Title order={5} mb="xs">Utilisateurs Disponibles</Title>
+                <Text size="10px" c="dimmed" mb="md">Comptes locaux et recherche LDAP (min. 3 car.)</Text>
+                <TextInput placeholder="Chercher dans LDAP..." mb="md" value={ldapSearchQuery} onChange={(e) => setLdapSearchQuery(e.target.value)} />
                 <Droppable droppableId="ldap-list" isDropDisabled={true}>
                   {(provided) => (
-                    <ScrollArea h={500} ref={provided.innerRef} {...provided.droppableProps}>
+                    <ScrollArea h={400} ref={provided.innerRef} {...provided.droppableProps}>
                       <Stack gap="xs">
+                        {/* 1. Comptes Locaux Keycloak */}
+                        {localKeycloakUsers
+                          .filter(lu => !assignedUsers.find(au => au.ldap_uid === lu.username))
+                          .map((user, index) => (
+                          <Draggable key={user.username} draggableId={user.username} index={index}>
+                            {(p) => (
+                              <Paper withBorder p="sm" ref={p.innerRef} {...p.draggableProps} {...p.dragHandleProps} bg="green.0" style={{ ...p.draggableProps.style, borderColor: 'var(--mantine-color-green-2)' }}>
+                                <Group justify="space-between">
+                                  <Group gap="xs">
+                                    <IconGripVertical size={16} color="gray" />
+                                    <div>
+                                      <Text size="sm" fw={700}>{user.username}</Text>
+                                      <Text size="xs" c="dimmed">{user.firstName} {user.lastName}</Text>
+                                    </div>
+                                  </Group>
+                                  <Badge size="xs" color="green">Local</Badge>
+                                </Group>
+                              </Paper>
+                            )}
+                          </Draggable>
+                        ))}
+
+                        {/* 2. Résultats LDAP */}
                         {ldapUsers.filter(lu => !assignedUsers.find(au => au.ldap_uid === lu.uid)).map((user, index) => (
-                          <Draggable key={user.uid} draggableId={user.uid} index={index}>
+                          <Draggable key={user.uid} draggableId={user.uid} index={localKeycloakUsers.length + index}>
                             {(p) => (
                               <Paper withBorder p="sm" ref={p.innerRef} {...p.draggableProps} {...p.dragHandleProps} bg="white">
-                                <Group><IconGripVertical size={16} color="gray" /><div><Text size="sm" fw={500}>{user.full_name}</Text><Text size="xs" c="dimmed">{user.email}</Text></div></Group>
+                                <Group justify="space-between">
+                                  <Group gap="xs">
+                                    <IconGripVertical size={16} color="gray" />
+                                    <div>
+                                      <Text size="sm" fw={500}>{user.full_name}</Text>
+                                      <Text size="xs" c="dimmed">{user.email}</Text>
+                                    </div>
+                                  </Group>
+                                  <Badge size="xs" color="blue">LDAP</Badge>
+                                </Group>
                               </Paper>
                             )}
                           </Draggable>
@@ -215,11 +273,11 @@ export function DispatcherView({
               </Paper>
             </Grid.Col>
             <Grid.Col span={8} h="100%">
-              <ScrollArea h="100%">
+              <ScrollArea h={600}>
                 <Accordion variant="separated">
-                  {localGroups.sort((a, b) => a.year - b.year || a.name.localeCompare(b.name)).map(group => (
+                  {(localGroups || []).sort((a, b) => a.year - b.year || a.name.localeCompare(b.name)).map(group => (
                     <Accordion.Item key={group.id} value={`group-${group.id}`} mb="xs">
-                      <Accordion.Control bg={`${YEAR_COLORS[group.year]}.0`}>
+                      <Accordion.Control bg={`${YEAR_COLORS[group.year] || 'blue'}.0`}>
                         <Group justify="space-between">
                           <Group gap="xs">
                             <Text fw={700} size="sm">{group.name}</Text>

@@ -13,6 +13,9 @@ class UserCreate(BaseModel):
     last_name: str
     password: str
 
+class PasswordReset(BaseModel):
+    password: str
+
 @router.get("/keycloak/users")
 def get_keycloak_users(q: str = None, current_user: any = Depends(require_staff)):
     return list_local_users(search_query=q)
@@ -26,3 +29,9 @@ def remove_keycloak_user(user_id: str, current_user: any = Depends(require_staff
     if delete_local_user(user_id):
         return {"status": "deleted"}
     raise HTTPException(status_code=400, detail="Delete failed")
+
+@router.put("/keycloak/users/{user_id}/reset-password")
+def reset_kc_password(user_id: str, data: PasswordReset, current_user: any = Depends(require_staff)):
+    if reset_user_password(user_id, data.password):
+        return {"status": "success"}
+    raise HTTPException(status_code=400, detail="Reset failed")
