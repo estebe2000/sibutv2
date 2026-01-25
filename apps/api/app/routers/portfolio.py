@@ -220,5 +220,19 @@ async def export_portfolio_html(student_uid: str, color: str = "#1971c2", sessio
 
 @router.get("/export/pdf")
 async def export_portfolio_pdf(student_uid: str, color: str = "#1971c2", session: Session = Depends(get_session)):
-    # Simulation PDF pour l'instant (à câbler avec ReportLab proprement)
-    raise HTTPException(status_code=501, detail="Le moteur PDF est en cours de configuration. Utilisez l'export HTML pour l'instant.")
+    user = session.exec(select(User).where(User.ldap_uid == student_uid)).first()
+    if not user: raise HTTPException(status_code=404)
+    
+    ppp = session.exec(select(StudentPPP).where(StudentPPP.student_uid == student_uid)).first()
+    pages = session.exec(select(PortfolioPage).where(PortfolioPage.student_uid == student_uid)).all()
+    internships = session.exec(select(Internship).where(Internship.student_uid == student_uid)).all()
+
+    from ..services.pdf_portfolio_service import generate_portfolio_pdf
+    pdf_buffer = generate_portfolio_pdf(user, ppp, pages, internships, accent_color=color)
+    
+    filename = f"Portfolio_{user.full_name.replace(' ', '_')}.pdf"
+    return StreamingResponse(
+        pdf_buffer, 
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
