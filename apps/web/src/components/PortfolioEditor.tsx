@@ -13,10 +13,11 @@ import Quote from '@editorjs/quote';
 // @ts-ignore
 import LinkTool from '@editorjs/link';
 
-import { Paper, Title, Button, Group, TextInput, Stack, Text, ActionIcon, Tooltip, LoadingOverlay, Badge } from '@mantine/core';
-import { IconDeviceFloppy, IconArrowLeft, IconShare, IconEye, IconHistory } from '@tabler/icons-react';
+import { Paper, Title, Button, Group, TextInput, Stack, Text, ActionIcon, Tooltip, LoadingOverlay, Badge, Drawer, ScrollArea, ThemeIcon, Divider } from '@mantine/core';
+import { IconDeviceFloppy, IconArrowLeft, IconShare, IconEye, IconHistory, IconFolder, IconFileDownload, IconPlus } from '@tabler/icons-react';
 import api from '../services/api';
 import { notifications } from '@mantine/notifications';
+import { useDisclosure } from '@mantine/hooks';
 
 interface PortfolioEditorProps {
     pageId?: number;
@@ -30,6 +31,19 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [opened, { open, close }] = useDisclosure(false);
+    const [availableFiles, setAvailableFiles] = useState<any[]>([]);
+
+    const fetchFiles = async () => {
+        try {
+            const res = await api.get('/portfolio/files');
+            setAvailableFiles(res.data);
+        } catch (e) {}
+    };
+
+    useEffect(() => {
+        fetchFiles();
+    }, []);
 
     useEffect(() => {
         const initEditor = async () => {
@@ -57,9 +71,6 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
                     checklist: { class: Checklist, inlineToolbar: true },
                     quote: { class: Quote, inlineToolbar: true },
                     link: { class: LinkTool, inlineToolbar: true }
-                },
-                onChange: () => {
-                    // Possibilité d'implémenter une sauvegarde automatique ici
                 }
             });
             setLoading(false);
@@ -91,8 +102,7 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
             if (pageId) {
                 await api.patch(`/portfolio/pages/${pageId}`, payload);
             } else {
-                const res = await api.post('/portfolio/pages', payload);
-                // Si c'est une création, on pourrait rediriger ou mettre à jour l'ID
+                await api.post('/portfolio/pages', payload);
             }
 
             setLastSaved(new Date());
@@ -101,6 +111,19 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
             notifications.show({ title: 'Erreur', message: 'Échec de la sauvegarde', color: 'red' });
         }
         setSaving(false);
+    };
+
+    const insertProof = (file: any) => {
+        if (!editorInstance.current) return;
+        
+        // On insère une citation stylisée pour la preuve
+        editorInstance.current.blocks.insert('quote', {
+            text: `Preuve : ${file.filename}`,
+            caption: `Document issu de l'activité ${file.entity_id}. [Lien de téléchargement sécurisé]`
+        });
+        
+        notifications.show({ title: 'Preuve liée', message: file.filename, color: 'blue' });
+        close();
     };
 
     return (
@@ -124,6 +147,13 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
                     <Group>
                         {lastSaved && <Text size="xs" c="dimmed">Enregistré à {lastSaved.toLocaleTimeString()}</Text>}
                         <Button 
+                            variant="outline" 
+                            leftSection={<IconFolder size={18} />} 
+                            onClick={open}
+                        >
+                            Ma Bibliothèque
+                        </Button>
+                        <Button 
                             leftSection={<IconDeviceFloppy size={18} />} 
                             onClick={handleSave} 
                             loading={saving}
@@ -136,6 +166,33 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
                 </Group>
             </Paper>
 
+            <Drawer opened={opened} onClose={close} title="Bibliothèque de Preuves" position="right" size="md">
+                <ScrollArea h="calc(100vh - 80px)" p="md">
+                    <Text size="xs" c="dimmed" mb="lg">Cliquez sur une preuve pour l'insérer dans votre réflexion à l'endroit du curseur.</Text>
+                    
+                    <Stack gap="md">
+                        {availableFiles.length === 0 ? (
+                            <Text size="sm" ta="center" py="xl" c="dimmed">Aucune preuve dans votre coffre-fort.</Text>
+                        ) : (
+                            availableFiles.map(file => (
+                                <Paper key={file.id} withBorder p="sm" radius="md" className="hover-card" onClick={() => insertProof(file)} style={{ cursor: 'pointer' }}>
+                                    <Group justify="space-between" wrap="nowrap">
+                                        <Group gap="sm" wrap="nowrap">
+                                            <ThemeIcon variant="light" color="orange"><IconFileDownload size={16}/></ThemeIcon>
+                                            <div style={{ overflow: 'hidden' }}>
+                                                <Text size="sm" fw={700} truncate>{file.filename}</Text>
+                                                <Text size="10px" c="dimmed">{file.entity_id} - {file.academic_year}</Text>
+                                            </div>
+                                        </Group>
+                                        <IconPlus size={16} color="gray" />
+                                    </Group>
+                                </Paper>
+                            ))
+                        )}
+                    </Stack>
+                </ScrollArea>
+            </Drawer>
+
             <Paper withBorder p="xl" radius="md" bg="white" shadow="md">
                 <div id="editorjs-container" style={{ minHeight: 500 }} />
             </Paper>
@@ -145,7 +202,7 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
                     <IconHistory size={20} color="var(--mantine-color-blue-6)" />
                     <div>
                         <Text fw={700} size="sm">Conseil Académique</Text>
-                        <Text size="xs" c="dimmed">Utilisez les "Preuves du Coffre-fort" pour illustrer vos propos. Liez vos documents SAÉ directement dans votre rédaction.</Text>
+                        <Text size="xs" c="dimmed">Utilisez le bouton "Ma Bibliothèque" pour lier vos documents SAÉ directement dans votre rédaction.</Text>
                     </div>
                 </Group>
             </Paper>
