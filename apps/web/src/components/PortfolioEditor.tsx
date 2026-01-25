@@ -116,10 +116,17 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
     const insertProof = (file: any) => {
         if (!editorInstance.current) return;
         
-        // On insère une citation avec un vrai lien HTML détectable
+        // 1. Insérer un bloc de citation pour le style
         editorInstance.current.blocks.insert('quote', {
             text: `Preuve : ${file.filename}`,
-            caption: `Document issu de l'activité ${file.entity_id}. <a href="/api/portfolio/download/${file.id}">Télécharger la preuve</a>`
+            caption: `Document lié à l'activité ${file.entity_id}`,
+            alignment: 'left'
+        });
+
+        // 2. Insérer un bloc paragraphe avec le lien HTML RÉEL (accepté par le plugin paragraph)
+        // C'est ce lien qui sera détecté par le Dashboard pour afficher le trombone
+        editorInstance.current.blocks.insert('paragraph', {
+            text: `Lien de la preuve : <a href="/api/portfolio/download/${file.id}">${file.filename}</a>`
         });
         
         notifications.show({ title: 'Preuve liée', message: file.filename, color: 'blue' });
