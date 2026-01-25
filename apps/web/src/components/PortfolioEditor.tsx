@@ -116,10 +116,10 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
     const insertProof = (file: any) => {
         if (!editorInstance.current) return;
         
-        // On insère une citation stylisée pour la preuve
+        // On insère une citation avec un vrai lien HTML détectable
         editorInstance.current.blocks.insert('quote', {
             text: `Preuve : ${file.filename}`,
-            caption: `Document issu de l'activité ${file.entity_id}. [Lien de téléchargement sécurisé]`
+            caption: `Document issu de l'activité ${file.entity_id}. <a href="/api/portfolio/download/${file.id}">Télécharger la preuve</a>`
         });
         
         notifications.show({ title: 'Preuve liée', message: file.filename, color: 'blue' });
