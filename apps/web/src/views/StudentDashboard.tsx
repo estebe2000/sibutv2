@@ -164,7 +164,7 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
                     <IconFolder size={28} color="var(--mantine-color-blue-6)" />
                     <div>
                         <Title order={3}>Mon Portfolio de Compétences</Title>
-                        <Text size="sm" c="dimmed">Rédigez vos réflexions et liez vos preuves d\'apprentissage.</Text>
+                        <Text size="sm" c="dimmed">Rédigez vos réflexions et liez vos preuves d'apprentissage.</Text>
                     </div>
                 </Group>
                 <Button leftSection={<IconPlus size={18}/>} onClick={() => { setSelectedPageId(undefined); setView('editor'); }}>
@@ -266,7 +266,7 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
                                         label="Ajouter une preuve"
                                         placeholder="Choisir un fichier" 
                                         size="xs" 
-                                        leftSection={<IconFileUpload size={14} />} 
+                                        leftSection={<IconFileUpload size={14} />}
                                         onChange={(file) => handleUpload(file, 'ACTIVITY', act.id.toString())}
                                         disabled={uploading === act.id.toString()}
                                     />

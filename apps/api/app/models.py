@@ -188,6 +188,7 @@ class PortfolioPage(SQLModel, table=True):
     student_uid: str = Field(index=True, foreign_key="user.ldap_uid")
     title: str
     content_json: str = Field(default="{}") # Données Editor.js
+    linked_file_ids: Optional[str] = Field(default="") # IDs des fichiers liés (ex: "1,2,5")
     academic_year: str = Field(default="2025-2026")
     year_of_study: int = Field(default=1) # 1, 2 ou 3
     is_public: bool = Field(default=False)
