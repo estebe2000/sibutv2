@@ -1,7 +1,7 @@
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Frame, PageTemplate, NextPageTemplate, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Frame, PageTemplate, NextPageTemplate, Image, Flowable
 from reportlab.lib.units import cm
 from io import BytesIO
 from ..models import Activity, Resource, LearningOutcome, User, ResponsibilityMatrix, ResponsibilityEntityType, ResponsibilityType, SystemConfig, EvaluationRubric, Internship, InternshipEvaluation, ActivityType
@@ -49,6 +49,7 @@ def get_styles(primary_color="#1971c2"):
     styles.add(ParagraphStyle(name='NormalStyle', fontSize=10, leading=14, spaceAfter=6))
     styles.add(ParagraphStyle(name='CommentStyle', fontSize=9, leading=12, leftIndent=10, textColor=colors.grey, fontName='Helvetica-Oblique'))
     styles.add(ParagraphStyle(name='TableTextStyle', fontSize=9, leading=11))
+    styles.add(ParagraphStyle(name='GroupHeaderStyle', fontSize=12, leading=14, spaceBefore=10, spaceAfter=5, textColor=colors.HexColor(primary_color), fontWeight='Bold'))
     return styles
 
 def clean_markdown(text):
@@ -94,18 +95,18 @@ def generate_radar_chart(labels, student_scores, pro_scores, teacher_scores):
     img_buffer.seek(0)
     return img_buffer
 
-def Divider(color=colors.black, thickness=1):
-    from reportlab.platypus import Flowable
+def Divider(color=colors.black, thickness=1, width=16):
     class _Divider(Flowable):
-        def __init__(self, color, thickness):
+        def __init__(self, color, thickness, width):
             Flowable.__init__(self)
             self.color = color
             self.thickness = thickness
+            self.width = width
         def draw(self):
             self.canv.setStrokeColor(self.color)
             self.canv.setLineWidth(self.thickness)
-            self.canv.line(0, 0, 16*cm, 0)
-    return _Divider(color, thickness)
+            self.canv.line(0, 0, self.width*cm, 0)
+    return _Divider(color, thickness, width)
 
 # --- FICHES ACTIVITÉS (VERSION RICHE RESTAURÉE) ---
 def generate_activity_pdf(activity: Activity, session: Session):
@@ -318,139 +319,114 @@ def generate_internship_report(session: Session, student_uid: str):
     return buffer
 
 def generate_governance_report_pdf(session: Session, filter_type: str = None):
-
     from ..models import ResponsibilityMatrix, User, ResponsibilityEntityType, Resource, Activity
-
     
-
-    # Filtrage
-
-    if filter_type:
-
-        matrix = session.exec(select(ResponsibilityMatrix).where(ResponsibilityMatrix.entity_type == filter_type)).all()
-
-    else:
-
-        matrix = session.exec(select(ResponsibilityMatrix)).all()
-
-        
-
-    buffer = BytesIO()
-
+    # Configuration
     primary_color = get_config_value(session, "APP_PRIMARY_COLOR", "#1971c2")
-
+    logo_url = get_config_value(session, "APP_LOGO_URL", "")
     styles = get_styles(primary_color)
-
     
-
-    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=1*cm, leftMargin=1*cm, topMargin=1*cm, bottomMargin=1*cm)
-
+    # 1. Fetch Data
+    stmt = select(ResponsibilityMatrix)
+    if filter_type:
+        stmt = stmt.where(ResponsibilityMatrix.entity_type == filter_type)
+    matrix = session.exec(stmt).all()
+    
+    # 2. Group by Entity
+    grouped_data = {}
+    for entry in matrix:
+        e_type = str(entry.entity_type).split('.')[-1]
+        key = (e_type, entry.entity_id)
+        if key not in grouped_data: grouped_data[key] = []
+        grouped_data[key].append(entry)
+        
+    # 3. Sort entities by type then ID
+    sorted_keys = sorted(grouped_data.keys(), key=lambda x: (x[0], x[1]))
+    
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=1.5*cm, leftMargin=1.5*cm, topMargin=1.5*cm, bottomMargin=1.5*cm)
     story = []
-
     
+    # Header with Logo (consistent with other fiches)
+    header_data = []
+    logo_path = logo_url
+    if logo_url and logo_url.startswith("http"):
+        try:
+            response = requests.get(logo_url, timeout=5, verify=False)
+            if response.status_code == 200:
+                temp_logo = f"/tmp/logo_gov_{datetime.now().timestamp()}.png"
+                with open(temp_logo, 'wb') as f: f.write(response.content)
+                logo_path = temp_logo
+        except: pass
 
-    title = "RAPPORT DE GOUVERNANCE PÉDAGOGIQUE"
+    if logo_path and os.path.exists(logo_path):
+        try:
+            img = Image(logo_path)
+            aspect = img.imageWidth / img.imageHeight
+            img.drawHeight = 1.5*cm
+            img.drawWidth = 1.5*cm * aspect
+            header_data.append([img, Paragraph(f"Rapport de Gouvernance Pédagogique<br/>Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}", styles['NormalStyle'])])
+        except:
+            header_data.append([Paragraph("Skills Hub", styles['TitleStyle']), Paragraph(f"Gouvernance - Généré le {datetime.now().strftime('%d/%m/%Y')}", styles['NormalStyle'])])
+    else:
+        header_data.append([Paragraph("Skills Hub BUT TC", styles['TitleStyle']), Paragraph(f"Gouvernance - Généré le {datetime.now().strftime('%d/%m/%Y')}", styles['NormalStyle'])])
 
-    if filter_type == "RESOURCE": title += " : RESSOURCES"
-
-    elif filter_type == "ACTIVITY": title += " : SAÉ & ACTIVITÉS"
-
-    
-
-    story.append(Paragraph(title, styles['TitleStyle']))
-
-    story.append(Paragraph(f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}", styles['NormalStyle']))
-
+    t_header = Table(header_data, colWidths=[18*cm, 8.7*cm])
+    t_header.setStyle(TableStyle([('VALIGN', (0,0), (-1,-1), 'MIDDLE'), ('ALIGN', (1,0), (1,0), 'RIGHT')]))
+    story.append(t_header)
+    story.append(Spacer(1, 0.5*cm))
+    story.append(Divider(colors.HexColor(primary_color), 2, width=26.7))
     story.append(Spacer(1, 1*cm))
-
     
-
-    # Préparation des données avec labels réels
-
-    table_data = [["Type", "Entité (Code & Libellé)", "Rôle", "Intervenant", "Email"]]
-
+    title = "RAPPORT DE GOUVERNANCE PÉDAGOGIQUE"
+    if filter_type == "RESOURCE": title += " : RESSOURCES"
+    elif filter_type == "ACTIVITY": title += " : SAÉ & ACTIVITÉS"
+    story.append(Paragraph(title, styles['TitleStyle']))
+    story.append(Spacer(1, 0.5*cm))
     
-
     type_map = {"RESOURCE": "Ressource", "ACTIVITY": "SAÉ / Activité", "STUDENT": "Tutorat"}
-
     role_map = {"OWNER": "Responsable", "INTERVENANT": "Intervenant", "TUTOR": "Tuteur"}
 
-
-
-    for entry in matrix:
-
-        user = session.exec(select(User).where(User.ldap_uid == entry.user_id)).first()
-
-        
-
-        # Traduction des types
-
-        e_type_str = str(entry.entity_type).split('.')[-1]
-
-        r_type_str = str(entry.role_type).split('.')[-1]
-
-        
-
-        # Récupération du libellé de l'entité
-
-        label = entry.entity_id
-
+    for e_type_str, e_id in sorted_keys:
+        # Get entity Label
+        label = e_id
         if e_type_str == "RESOURCE":
-
-            res = session.exec(select(Resource).where(Resource.code == entry.entity_id)).first()
-
-            if res: label = f"{res.code} : {res.label}"
-
+            res = session.exec(select(Resource).where(Resource.code == e_id)).first()
+            if res: label = f"Ressource {res.code} : {res.label}"
         elif e_type_str == "ACTIVITY":
-
-            act = session.get(Activity, int(entry.entity_id)) if entry.entity_id.isdigit() else None
-
-            if act: label = f"{act.code} : {act.label}"
-
+            act = session.get(Activity, int(e_id)) if e_id.isdigit() else None
+            if act: label = f"{act.type} {act.code} : {act.label}"
             
-
-        table_data.append([
-
-            type_map.get(e_type_str, e_type_str),
-
-            Paragraph(label, styles['TableTextStyle']),
-
-            role_map.get(r_type_str, r_type_str),
-
-            user.full_name if user else entry.user_id,
-
-            user.email if user else "N/A"
-
-        ])
-
+        story.append(Paragraph(label, styles['GroupHeaderStyle']))
+        story.append(Divider(colors.grey, 0.5, width=26.7))
+        story.append(Spacer(1, 0.2*cm))
         
-
-    t = Table(table_data, colWidths=[3*cm, 9*cm, 3*cm, 6*cm, 6*cm])
-
-    t.setStyle(TableStyle([
-
-        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-
-        ('BACKGROUND', (0,0), (-1,0), colors.HexColor(primary_color)),
-
-        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
-
-        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-
-        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-
-        ('ALIGN', (0,0), (0,-1), 'CENTER'),
-
-        ('ALIGN', (2,0), (2,-1), 'CENTER'),
-
-    ]))
-
-    
-
-    story.append(t)
-
+        # Sort responsibilities: OWNER first
+        resps = sorted(grouped_data[(e_type_str, e_id)], key=lambda x: 0 if x.role_type == ResponsibilityType.OWNER else 1)
+        
+        table_data = [["Rôle", "Intervenant", "Email"]]
+        for entry in resps:
+            user = session.exec(select(User).where(User.ldap_uid == entry.user_id)).first()
+            r_type_str = str(entry.role_type).split('.')[-1]
+            table_data.append([
+                role_map.get(r_type_str, r_type_str),
+                user.full_name if user else entry.user_id,
+                user.email if user else "N/A"
+            ])
+            
+        t = Table(table_data, colWidths=[5*cm, 10*cm, 11.7*cm])
+        t.setStyle(TableStyle([
+            ('GRID', (0,0), (-1,-1), 0.2, colors.grey),
+            ('BACKGROUND', (0,0), (-1,0), colors.HexColor(primary_color + "22")), # Light version of primary
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            # Highlight OWNER row
+            ('BACKGROUND', (0,1), (-1,1), colors.HexColor("#fff9db")), # Light yellow for owner
+            ('FONTNAME', (0,1), (-1,1), 'Helvetica-Bold'),
+        ]))
+        story.append(t)
+        story.append(Spacer(1, 0.8*cm))
+        
     doc.build(story)
-
     buffer.seek(0)
-
     return buffer
