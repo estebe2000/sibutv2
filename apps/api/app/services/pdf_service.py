@@ -132,7 +132,7 @@ def generate_activity_pdf(activity: Activity, session: Session):
         try:
             response = requests.get(logo_url, timeout=5, verify=False)
             if response.status_code == 200:
-                temp_logo = f"/tmp/logo_{datetime.now().timestamp()}.png"
+                temp_logo = f"/tmp/logo_{{datetime.now().timestamp()}}.png"
                 with open(temp_logo, 'wb') as f: f.write(response.content)
                 logo_path = temp_logo
         except: pass
@@ -319,7 +319,7 @@ def generate_internship_report(session: Session, student_uid: str):
     return buffer
 
 def generate_governance_report_pdf(session: Session, filter_type: str = None):
-    from ..models import ResponsibilityMatrix, User, ResponsibilityEntityType, Resource, Activity
+    from ..models import ResponsibilityMatrix, User, ResponsibilityEntityType, Resource, Activity, Internship
     
     # Configuration
     primary_color = get_config_value(session, "APP_PRIMARY_COLOR", "#1971c2")
@@ -332,29 +332,36 @@ def generate_governance_report_pdf(session: Session, filter_type: str = None):
         stmt = stmt.where(ResponsibilityMatrix.entity_type == filter_type)
     matrix = session.exec(stmt).all()
     
-    # 2. Group by Entity
+    # 2. Grouping Logic
+    # For STUDENT filter, group by Tutor (user_id). For others, group by Entity (entity_id)
     grouped_data = {}
     for entry in matrix:
         e_type = str(entry.entity_type).split('.')[-1]
-        key = (e_type, entry.entity_id)
+        
+        if filter_type == "STUDENT":
+            # Key is the Tutor (user_id)
+            key = ("TUTOR", entry.user_id)
+        else:
+            # Key is the Entity (e_type, entity_id)
+            key = (e_type, entry.entity_id)
+            
         if key not in grouped_data: grouped_data[key] = []
         grouped_data[key].append(entry)
         
-    # 3. Sort entities by type then ID
     sorted_keys = sorted(grouped_data.keys(), key=lambda x: (x[0], x[1]))
     
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=landscape(A4), rightMargin=1.5*cm, leftMargin=1.5*cm, topMargin=1.5*cm, bottomMargin=1.5*cm)
     story = []
     
-    # Header with Logo (consistent with other fiches)
+    # Header with Logo
     header_data = []
     logo_path = logo_url
     if logo_url and logo_url.startswith("http"):
         try:
             response = requests.get(logo_url, timeout=5, verify=False)
             if response.status_code == 200:
-                temp_logo = f"/tmp/logo_gov_{datetime.now().timestamp()}.png"
+                temp_logo = f"/tmp/logo_gov_{{datetime.now().timestamp()}}.png"
                 with open(temp_logo, 'wb') as f: f.write(response.content)
                 logo_path = temp_logo
         except: pass
@@ -381,49 +388,72 @@ def generate_governance_report_pdf(session: Session, filter_type: str = None):
     title = "RAPPORT DE GOUVERNANCE PÉDAGOGIQUE"
     if filter_type == "RESOURCE": title += " : RESSOURCES"
     elif filter_type == "ACTIVITY": title += " : SAÉ & ACTIVITÉS"
+    elif filter_type == "STUDENT": title += " : TUTORAT DE STAGE"
     story.append(Paragraph(title, styles['TitleStyle']))
     story.append(Spacer(1, 0.5*cm))
     
-    type_map = {"RESOURCE": "Ressource", "ACTIVITY": "SAÉ / Activité", "STUDENT": "Tutorat"}
-    role_map = {"OWNER": "Responsable", "INTERVENANT": "Intervenant", "TUTOR": "Tuteur"}
-
-    for e_type_str, e_id in sorted_keys:
-        # Get entity Label
-        label = e_id
-        if e_type_str == "RESOURCE":
-            res = session.exec(select(Resource).where(Resource.code == e_id)).first()
-            if res: label = f"Ressource {res.code} : {res.label}"
-        elif e_type_str == "ACTIVITY":
-            act = session.get(Activity, int(e_id)) if e_id.isdigit() else None
-            if act: label = f"{act.type} {act.code} : {act.label}"
+    for key_type, key_id in sorted_keys:
+        if filter_type == "STUDENT":
+            # Section Header: Tutor Name
+            tutor = session.exec(select(User).where(User.ldap_uid == key_id)).first()
+            label = f"Tuteur : {tutor.full_name if tutor else key_id}"
+            table_header = ["Étudiant", "Email", "Entreprise d\'accueil"]
+            col_widths = [8*cm, 8*cm, 10.7*cm]
+        else:
+            # Section Header: Entity Label
+            label = key_id
+            if key_type == "RESOURCE":
+                res = session.exec(select(Resource).where(Resource.code == key_id)).first()
+                if res: label = f"Ressource {res.code} : {res.label}"
+            elif key_type == "ACTIVITY":
+                act = session.get(Activity, int(key_id)) if key_id.isdigit() else None
+                if act: label = f"{act.type} {act.code} : {act.label}"
+            table_header = ["Rôle", "Intervenant", "Email"]
+            col_widths = [5*cm, 10*cm, 11.7*cm]
             
         story.append(Paragraph(label, styles['GroupHeaderStyle']))
         story.append(Divider(colors.grey, 0.5, width=26.7))
         story.append(Spacer(1, 0.2*cm))
         
-        # Sort responsibilities: OWNER first
-        resps = sorted(grouped_data[(e_type_str, e_id)], key=lambda x: 0 if x.role_type == ResponsibilityType.OWNER else 1)
+        # Table Data
+        table_data = [table_header]
+        resps = grouped_data[(key_type, key_id)]
         
-        table_data = [["Rôle", "Intervenant", "Email"]]
+        if filter_type != "STUDENT":
+            resps = sorted(resps, key=lambda x: 0 if x.role_type == ResponsibilityType.OWNER else 1)
+
         for entry in resps:
-            user = session.exec(select(User).where(User.ldap_uid == entry.user_id)).first()
-            r_type_str = str(entry.role_type).split('.')[-1]
-            table_data.append([
-                role_map.get(r_type_str, r_type_str),
-                user.full_name if user else entry.user_id,
-                user.email if user else "N/A"
-            ])
+            if filter_type == "STUDENT":
+                # Entry is a student UID (entity_id)
+                student = session.exec(select(User).where(User.ldap_uid == entry.entity_id)).first()
+                intern = session.exec(select(Internship).where(Internship.student_uid == entry.entity_id, Internship.is_active == True)).first()
+                table_data.append([
+                    student.full_name if student else entry.entity_id,
+                    student.email if student else "N/A",
+                    intern.company_name if intern else "Non renseignée"
+                ])
+            else:
+                user = session.exec(select(User).where(User.ldap_uid == entry.user_id)).first()
+                r_type_str = str(entry.role_type).split('.')[-1]
+                role_map = {"OWNER": "Responsable", "INTERVENANT": "Intervenant", "TUTOR": "Tuteur"}
+                table_data.append([
+                    role_map.get(r_type_str, r_type_str),
+                    user.full_name if user else entry.user_id,
+                    user.email if user else "N/A"
+                ])
             
-        t = Table(table_data, colWidths=[5*cm, 10*cm, 11.7*cm])
-        t.setStyle(TableStyle([
+        t = Table(table_data, colWidths=col_widths)
+        t_style = [
             ('GRID', (0,0), (-1,-1), 0.2, colors.grey),
-            ('BACKGROUND', (0,0), (-1,0), colors.HexColor(primary_color + "22")), # Light version of primary
+            ('BACKGROUND', (0,0), (-1,0), colors.HexColor(primary_color + "22")),
             ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
             ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-            # Highlight OWNER row
-            ('BACKGROUND', (0,1), (-1,1), colors.HexColor("#fff9db")), # Light yellow for owner
-            ('FONTNAME', (0,1), (-1,1), 'Helvetica-Bold'),
-        ]))
+        ]
+        if filter_type != "STUDENT":
+            t_style.append(('BACKGROUND', (0,1), (-1,1), colors.HexColor("#fff9db")))
+            t_style.append(('FONTNAME', (0,1), (-1,1), 'Helvetica-Bold'))
+            
+        t.setStyle(TableStyle(t_style))
         story.append(t)
         story.append(Spacer(1, 0.8*cm))
         
