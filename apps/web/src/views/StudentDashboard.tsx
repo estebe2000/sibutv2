@@ -19,22 +19,26 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
   const [selectedPageId, setSelectedPageId] = useState<number | undefined>();
   const [portfolioPages, setPortfolioPages] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [ppp, setPpp] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState<string | null>(null);
+  const [savingPpp, setSavingPpp] = useState(false);
   const [academicYear, setAcademicYear] = useState('2025-2026');
 
   const fetchStudentData = async () => {
     try {
-      const [tutorRes, internRes, filesRes, pagesRes] = await Promise.all([
+      const [tutorRes, internRes, filesRes, pagesRes, pppRes] = await Promise.all([
         api.get(`/activity-management/student/${user.ldap_uid}/tutor`),
         api.get(`/internships/${user.ldap_uid}`),
         api.get('/portfolio/files'),
-        api.get('/portfolio/pages')
+        api.get('/portfolio/pages'),
+        api.get('/portfolio/ppp')
       ]);
       setTutor(tutorRes.data);
       setInternship(internRes.data);
       setUploadedFiles(filesRes.data);
       setPortfolioPages(pagesRes.data);
+      setPpp(pppRes.data);
     } catch (e) { console.error("Error fetching data", e); }
     setLoading(false);
   };
@@ -42,6 +46,17 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
   useEffect(() => {
     fetchStudentData();
   }, [user.ldap_uid]);
+
+  const handleSavePpp = async () => {
+    setSavingPpp(true);
+    try {
+        await api.patch('/portfolio/ppp', ppp);
+        notifications.show({ title: 'Succès', message: 'Votre PPP a été mis à jour', color: 'green' });
+    } catch (e) {
+        notifications.show({ title: 'Erreur', message: 'Échec de la sauvegarde', color: 'red' });
+    }
+    setSavingPpp(false);
+  };
 
   const handleUpload = async (file: File | null, entityType: string, entityId: string) => {
     if (!file) return;
@@ -240,11 +255,42 @@ export function StudentDashboard({ user, curriculum, groups }: any) {
 
             <Tabs.Panel value="ppp">
                 <Stack mt="xl">
-                    <Paper withBorder p="xl" radius="md">
-                        <Title order={3} mb="md">Mon Projet Personnel et Professionnel (PPP)</Title>
-                        <Text size="sm" c="dimmed" mb="xl">Décrivez vos ambitions après le BUT et votre réflexion sur votre projet de carrière.</Text>
-                        <Textarea label="Mes ambitions et objectifs de carrière" placeholder="Ex: Master en Marketing Digital, Licence Pro..." minRows={10} description="Cette section sera incluse dans votre book final." />
-                        <Button mt="md" leftSection={<IconDeviceFloppy size={18}/>}>Sauvegarder mon PPP</Button>
+                    <Paper withBorder p="xl" radius="md" shadow="sm">
+                        <Group mb="md">
+                            <IconCompass size={28} color="blue" />
+                            <Title order={3}>Mon Projet Personnel et Professionnel (PPP)</Title>
+                        </Group>
+                        <Text size="sm" c="dimmed" mb="xl">Anticipez la suite : poursuite d'études ou insertion professionnelle.</Text>
+                        
+                        <Stack gap="md">
+                            <Textarea 
+                                label="Mes ambitions et objectifs de carrière"
+                                placeholder="Ex: Master Marketing, Licence Pro, Création d'entreprise..."
+                                minRows={4}
+                                value={ppp?.career_goals || ''}
+                                onChange={(e) => setPpp({...ppp, career_goals: e.target.value})}
+                            />
+                            
+                            <Text size="sm" fw={500}>Réflexion approfondie :</Text>
+                            <Alert color="indigo" icon={<IconInfoCircle />}>
+                                Conseil : Décrivez ici les étapes concrètes que vous envisagez pour atteindre vos objectifs (recherche de stage, spécialisation, etc.).
+                            </Alert>
+                            <Textarea 
+                                placeholder="Votre réflexion ici..."
+                                minRows={10}
+                                value={ppp?.content_json || ''} // On utilise content_json comme texte simple pour le PPP pour l'instant
+                                onChange={(e) => setPpp({...ppp, content_json: e.target.value})}
+                            />
+                            
+                            <Button 
+                                leftSection={<IconDeviceFloppy size={18}/>} 
+                                onClick={handleSavePpp} 
+                                loading={savingPpp}
+                                size="md"
+                            >
+                                Sauvegarder mon PPP
+                            </Button>
+                        </Stack>
                     </Paper>
                 </Stack>
             </Tabs.Panel>
