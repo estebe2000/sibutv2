@@ -285,8 +285,12 @@ export function DispatcherView() {
                             <Text size="xs" c="dimmed">({assignedUsers.filter(u => u.group_id === group.id).length} étudiants)</Text>
                           </Group>
                           <Group gap={5} onClick={(e) => e.stopPropagation()}>
-                            <ActionIcon size="xs" variant="subtle" color="blue" onClick={() => { setNewGroup(group); setIsGroupModalOpen(true); }}><IconPencil size={12} /></ActionIcon>
-                            <ActionIcon size="xs" variant="subtle" color="red" onClick={() => deleteGroup(group.id)}><IconTrash size={12} /></ActionIcon>
+                            {group.name !== 'Enseignants' && (
+                              <>
+                                <ActionIcon size="xs" variant="subtle" color="blue" onClick={() => { setNewGroup(group); setIsGroupModalOpen(true); }}><IconPencil size={12} /></ActionIcon>
+                                <ActionIcon size="xs" variant="subtle" color="red" onClick={() => deleteGroup(group.id)}><IconTrash size={12} /></ActionIcon>
+                              </>
+                            )}
                           </Group>
                         </Group>
                       </Accordion.Control>
