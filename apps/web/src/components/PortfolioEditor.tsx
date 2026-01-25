@@ -33,6 +33,7 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const [opened, { open, close }] = useDisclosure(false);
     const [availableFiles, setAvailableFiles] = useState<any[]>([]);
+    const [linkedFileIds, setLinkedFileIds] = useState<string[]>([]);
 
     const fetchFiles = async () => {
         try {
@@ -55,6 +56,8 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
                     const res = await api.get(`/portfolio/pages/${pageId}`);
                     setTitle(res.data.title);
                     initialData = JSON.parse(res.data.content_json);
+                    const ids = res.data.linked_file_ids ? res.data.linked_file_ids.split(',') : [];
+                    setLinkedFileIds(ids);
                 } catch (e) {
                     notifications.show({ title: 'Erreur', message: 'Impossible de charger la page', color: 'red' });
                 }
@@ -96,6 +99,7 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
             const payload = {
                 title,
                 content_json: JSON.stringify(outputData),
+                linked_file_ids: linkedFileIds.join(','),
                 student_uid: studentUid
             };
 
@@ -123,11 +127,15 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
             alignment: 'left'
         });
 
-        // 2. Insérer un bloc paragraphe avec le lien HTML RÉEL (accepté par le plugin paragraph)
-        // C'est ce lien qui sera détecté par le Dashboard pour afficher le trombone
+        // 2. Insérer un bloc paragraphe explicite
         editorInstance.current.blocks.insert('paragraph', {
-            text: `Lien de la preuve : <a href="/api/portfolio/download/${file.id}">${file.filename}</a>`
+            text: `Référence : ${file.filename}`
         });
+
+        // 3. Ajouter l'ID à la liste des fichiers liés pour le dashboard
+        if (!linkedFileIds.includes(file.id.toString())) {
+            setLinkedFileIds([...linkedFileIds, file.id.toString()]);
+        }
         
         notifications.show({ title: 'Preuve liée', message: file.filename, color: 'blue' });
         close();
@@ -175,7 +183,7 @@ export function PortfolioEditor({ pageId, onBack, studentUid }: PortfolioEditorP
 
             <Drawer opened={opened} onClose={close} title="Bibliothèque de Preuves" position="right" size="md">
                 <ScrollArea h="calc(100vh - 80px)" p="md">
-                    <Text size="xs" c="dimmed" mb="lg">Cliquez sur une preuve pour l'insérer dans votre réflexion à l'endroit du curseur.</Text>
+                    <Text size="xs" c="dimmed" mb="lg">Cliquez sur une preuve pour l'insérer dans votre réflexion.</Text>
                     
                     <Stack gap="md">
                         {availableFiles.length === 0 ? (
