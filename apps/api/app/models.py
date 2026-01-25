@@ -205,7 +205,15 @@ class StudentPPP(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.now)
 
 class PortfolioExportConfig(SQLModel, table=True):
---
+    """Configuration personnalisée d'un export de portfolio"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_uid: str = Field(index=True, foreign_key="user.ldap_uid")
+    preamble: Optional[str] = None
+    selected_pages: str = Field(default="") # IDs séparés par virgules
+    include_internships: bool = Field(default=True)
+    include_sae: bool = Field(default=True)
+    include_radar: bool = Field(default=True)
+    theme_color: str = Field(default="#1971c2")
     created_at: datetime = Field(default_factory=datetime.now)
 
 class FeedbackType(str, Enum):
