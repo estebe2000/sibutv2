@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput, Divider, Alert } from '@mantine/core';
-import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus } from '@tabler/icons-react';
+import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
 import { useStore } from './store/useStore';
@@ -21,6 +21,7 @@ import { InternshipManagementView } from './views/InternshipManagementView';
 import { GovernanceReportView } from './views/GovernanceReportView';
 import { AdminPortfolioBrowserView } from './views/AdminPortfolioBrowserView';
 import { NewYearTransitionView } from './views/NewYearTransitionView';
+import { ExternalServicesProposalsView } from './views/ExternalServicesProposalsView';
 import { useMediaQuery } from '@mantine/hooks';
 
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
@@ -213,6 +214,17 @@ function App() {
                 <Button variant={activeTab === 'ai-assistant' ? 'filled' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={18} />} justify="start" size="compact-sm" color="blue">Assistant IA</Button>
               </Stack>
             </Paper>
+
+            <Paper p={5} radius="sm" bg="yellow.0" withBorder style={{ borderColor: 'var(--mantine-color-yellow-2)' }}>
+              <Text size="10px" fw={700} c="yellow.9" px="xs" mb={5} tt="uppercase">Idées</Text>
+              <Stack gap={2}>
+                <Button variant={activeTab === 'idea-calendar' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-calendar')} leftSection={<IconCalendar size={18} />} justify="start" size="compact-sm" color="yellow">Calendrier</Button>
+                <Button variant={activeTab === 'idea-mail' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-mail')} leftSection={<IconMail size={18} />} justify="start" size="compact-sm" color="yellow">Mail</Button>
+                <Button variant={activeTab === 'idea-chat' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-chat')} leftSection={<IconMessages size={18} />} justify="start" size="compact-sm" color="yellow">Canaux Discussion</Button>
+                <Button variant={activeTab === 'idea-cloud' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-cloud')} leftSection={<IconCloud size={18} />} justify="start" size="compact-sm" color="yellow">Cloud</Button>
+                <Button variant={activeTab === 'idea-alumni' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-alumni')} leftSection={<IconUsers size={18} />} justify="start" size="compact-sm" color="yellow">Réseau Alumni</Button>
+              </Stack>
+            </Paper>
             
             {isAdmin && (
               <Paper p={5} radius="sm" bg="gray.1" withBorder style={{ borderColor: 'var(--mantine-color-gray-3)' }}>
@@ -257,6 +269,11 @@ function App() {
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
         {activeTab === 'keycloak' && !isMobile && <KeycloakUserManagement />}
         {activeTab === 'new-year' && !isMobile && <NewYearTransitionView />}
+        {activeTab === 'idea-calendar' && <ExternalServicesProposalsView type="calendar" />}
+        {activeTab === 'idea-mail' && <ExternalServicesProposalsView type="mail" />}
+        {activeTab === 'idea-chat' && <ExternalServicesProposalsView type="chat" />}
+        {activeTab === 'idea-cloud' && <ExternalServicesProposalsView type="cloud" />}
+        {activeTab === 'idea-alumni' && <ExternalServicesProposalsView type="alumni" />}
         {activeTab === 'settings' && !isMobile && <SettingsView config={config} onSave={(vals) => api.post('/config', vals).then(() => fetchData())} />}
       </AppShell.Main>
     </AppShell>
