@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput, Divider, Alert } from '@mantine/core';
-import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle } from '@tabler/icons-react';
+import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
 import { useStore } from './store/useStore';
@@ -20,6 +20,7 @@ import { PublicEvaluationView } from './views/PublicEvaluationView';
 import { InternshipManagementView } from './views/InternshipManagementView';
 import { GovernanceReportView } from './views/GovernanceReportView';
 import { AdminPortfolioBrowserView } from './views/AdminPortfolioBrowserView';
+import { NewYearTransitionView } from './views/NewYearTransitionView';
 import { useMediaQuery } from '@mantine/hooks';
 
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
@@ -219,6 +220,7 @@ function App() {
                 <Stack gap={2}>
                   <Button variant={activeTab === 'keycloak' ? 'filled' : 'subtle'} onClick={() => setActiveTab('keycloak')} leftSection={<IconKey size={18} />} justify="start" size="compact-sm" color="gray">Comptes Locaux</Button>
                   <Button variant={activeTab === 'odoo-admin' ? 'filled' : 'subtle'} onClick={() => setActiveTab('odoo-admin')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="gray">Gestion Odoo</Button>
+                  <Button variant={activeTab === 'new-year' ? 'filled' : 'subtle'} onClick={() => setActiveTab('new-year')} leftSection={<IconCalendarPlus size={18} />} justify="start" size="compact-sm" color="gray">Transition Année</Button>
                   <Button variant={activeTab === 'settings' ? 'filled' : 'subtle'} onClick={() => setActiveTab('settings')} leftSection={<IconSettings size={18} />} justify="start" size="compact-sm" color="gray">Configuration</Button>
                 </Stack>
               </Paper>
@@ -254,6 +256,7 @@ function App() {
         {activeTab === 'odoo-admin' && !isMobile && <OdooAdminView />}
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
         {activeTab === 'keycloak' && !isMobile && <KeycloakUserManagement />}
+        {activeTab === 'new-year' && !isMobile && <NewYearTransitionView />}
         {activeTab === 'settings' && !isMobile && <SettingsView config={config} onSave={(vals) => api.post('/config', vals).then(() => fetchData())} />}
       </AppShell.Main>
     </AppShell>
