@@ -11,5 +11,5 @@
     "prod:restore": "./infrastructure/restore_backup.sh",
     "prod:check-backup": "./infrastructure/check_backup_status.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  }
 }
