@@ -41,20 +41,21 @@ def list_local_users(search_query: str = None):
             print(f"Keycloak Search Error: {e}")
             return []
 
-    # 2. Par défaut, on récupère un nombre important pour filtrer les locaux
-    # On utilise max=500 pour être sûr de capter tous les locaux créés manuellement
-    url = f"{KC_URL}/admin/realms/{KC_REALM}/users?max=500&briefRepresentation=false"
+    # 2. Par défaut, on récupère un grand nombre pour être sûr de trouver tous les locaux
+    # On monte à 10000 car les environnements universitaires ont beaucoup d'utilisateurs LDAP
+    url = f"{KC_URL}/admin/realms/{KC_REALM}/users?max=10000"
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=15)
         all_users = response.json()
         
-        # On sépare locaux et LDAP
-        # federationLink est absent pour les comptes créés manuellement dans Keycloak
+        # Filtrage strict : on veut uniquement ceux qui n'ont AUCUN lien de fédération
+        # et on s'assure de ne pas rater intervenant.exterieur
         locals = [u for u in all_users if u.get("federationLink") is None]
         ldaps = [u for u in all_users if u.get("federationLink") is not None]
         
-        # On renvoie les locaux en priorité, complété par quelques LDAP pour la forme
-        return locals + ldaps[:20]
+        # On renvoie TOUS les locaux trouvés (très important pour l'utilisateur)
+        # et on complète avec un petit échantillon de LDAP pour ne pas saturer l'UI
+        return locals + ldaps[:10]
     except Exception as e:
         print(f"Keycloak List Users Error: {e}")
         return []
