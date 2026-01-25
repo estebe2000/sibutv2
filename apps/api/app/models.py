@@ -183,18 +183,28 @@ class StudentFile(SQLModel, table=True):
     uploaded_at: datetime = Field(default_factory=datetime.now)
 
 class PortfolioPage(SQLModel, table=True):
-    """Page de réflexion du portfolio (Editor.js)"""
+--
+    updated_at: datetime = Field(default_factory=datetime.now)
+
+class StudentPPP(SQLModel, table=True):
+    """Projet Personnel et Professionnel (PPP)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_uid: str = Field(unique=True, index=True, foreign_key="user.ldap_uid")
+    content_json: str = Field(default="{}") # Structure Editor.js pour le PPP
+    career_goals: Optional[str] = None # Texte court sur les ambitions
+    updated_at: datetime = Field(default_factory=datetime.now)
+
+class PortfolioExportConfig(SQLModel, table=True):
+    """Configuration personnalisée d'un export de portfolio"""
     id: Optional[int] = Field(default=None, primary_key=True)
     student_uid: str = Field(index=True, foreign_key="user.ldap_uid")
-    title: str
-    content_json: str = Field(default="{}") # Données Editor.js
-    linked_file_ids: Optional[str] = Field(default="") # IDs des fichiers liés (ex: "1,2,5")
-    academic_year: str = Field(default="2025-2026")
-    year_of_study: int = Field(default=1) # 1, 2 ou 3
-    is_public: bool = Field(default=False)
-    share_token: Optional[str] = Field(default=None, index=True)
+    preamble: Optional[str] = None
+    selected_pages: str = Field(default="") # IDs séparés par virgules
+    include_internships: bool = Field(default=True)
+    include_sae: bool = Field(default=True)
+    include_radar: bool = Field(default=True)
+    theme_color: str = Field(default="#1971c2")
     created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
 
 # --- CURRICULUM MODELS ---
 
