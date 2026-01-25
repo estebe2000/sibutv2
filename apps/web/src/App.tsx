@@ -188,24 +188,47 @@ function App() {
       
       {!isMobile && (
         <AppShell.Navbar p="md">
-          <Stack gap="xs">
-            {/* Menu Complet Desktop */}
-            <Button variant={activeTab === 'dashboard' ? 'light' : 'subtle'} onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={20} />} justify="start">Tableau de Bord</Button>
-            {isAdmin && <Button variant={activeTab === 'dispatcher' ? 'light' : 'subtle'} onClick={() => setActiveTab('dispatcher')} leftSection={<IconUsers size={20} />} justify="start">Dispatching</Button>}
-            <Button variant={activeTab === 'curriculum' ? 'light' : 'subtle'} onClick={() => setActiveTab('curriculum')} leftSection={<IconBook size={20} />} color="grape" justify="start">Référentiel</Button>
-            <Button variant={activeTab === 'discovery' ? 'light' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={20} />} color="teal" justify="start">Découverte</Button>
-            <Button variant={activeTab === 'repartition' ? 'light' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={20} />} color="orange" justify="start">Répartition</Button>
-            <Button variant={activeTab === 'fiches2' ? 'light' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={20} />} color="cyan" justify="start">Fiches PDF</Button>
-            <Button variant={activeTab === 'governance-report' ? 'light' : 'subtle'} onClick={() => setActiveTab('governance-report')} leftSection={<IconShieldCheck size={20} />} color="indigo" justify="start">Rapport Gouvernance</Button>
-            <Button variant={activeTab === 'internships' ? 'light' : 'subtle'} onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={20} />} color="blue" justify="start">Tutorat de Stage</Button>
-            <Button variant={activeTab === 'ai-assistant' ? 'light' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={20} />} color="indigo" justify="start">Assistant IA</Button>
+          <Stack gap="sm">
+            {/* ZONE PILOTAGE */}
+            <Paper p={5} radius="sm" bg="indigo.0" withBorder style={{ borderColor: 'var(--mantine-color-indigo-2)' }}>
+              <Text size="10px" fw={700} c="indigo.9" px="xs" mb={5} tt="uppercase">Pilotage</Text>
+              <Stack gap={2}>
+                <Button variant={activeTab === 'dashboard' ? 'filled' : 'subtle'} onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={18} />} justify="start" size="compact-sm" color="indigo">Tableau de Bord</Button>
+                <Button variant={activeTab === 'governance-report' ? 'filled' : 'subtle'} onClick={() => setActiveTab('governance-report')} leftSection={<IconShieldCheck size={18} />} justify="start" size="compact-sm" color="indigo">Rapport Gouvernance</Button>
+                {isAdmin && <Button variant={activeTab === 'dispatcher' ? 'filled' : 'subtle'} onClick={() => setActiveTab('dispatcher')} leftSection={<IconUsers size={18} />} justify="start" size="compact-sm" color="indigo">Dispatching</Button>}
+              </Stack>
+            </Paper>
+
+            {/* ZONE PÉDAGOGIE */}
+            <Paper p={5} radius="sm" bg="grape.0" withBorder style={{ borderColor: 'var(--mantine-color-grape-2)' }}>
+              <Text size="10px" fw={700} c="grape.9" px="xs" mb={5} tt="uppercase">Référentiel & Contenus</Text>
+              <Stack gap={2}>
+                <Button variant={activeTab === 'curriculum' ? 'filled' : 'subtle'} onClick={() => setActiveTab('curriculum')} leftSection={<IconBook size={18} />} justify="start" size="compact-sm" color="grape">Référentiel</Button>
+                <Button variant={activeTab === 'discovery' ? 'filled' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={18} />} justify="start" size="compact-sm" color="grape">Découverte</Button>
+                <Button variant={activeTab === 'repartition' ? 'filled' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="grape">Répartition</Button>
+                <Button variant={activeTab === 'fiches2' ? 'filled' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={18} />} justify="start" size="compact-sm" color="grape">Fiches PDF</Button>
+              </Stack>
+            </Paper>
+
+            {/* ZONE TERRAIN */}
+            <Paper p={5} radius="sm" bg="blue.0" withBorder style={{ borderColor: 'var(--mantine-color-blue-2)' }}>
+              <Text size="10px" fw={700} c="blue.9" px="xs" mb={5} tt="uppercase">Suivi & Terrain</Text>
+              <Stack gap={2}>
+                <Button variant={activeTab === 'internships' ? 'filled' : 'subtle'} onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={18} />} justify="start" size="compact-sm" color="blue">Tutorat de Stage</Button>
+                <Button variant={activeTab === 'ai-assistant' ? 'filled' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={18} />} justify="start" size="compact-sm" color="blue">Assistant IA</Button>
+              </Stack>
+            </Paper>
             
+            {/* ZONE ADMIN */}
             {isAdmin && (
-              <>
-                <Button variant={activeTab === 'keycloak' ? 'light' : 'subtle'} onClick={() => setActiveTab('keycloak')} leftSection={<IconKey size={20} />} color="orange" justify="start">Comptes Locaux</Button>
-                <Button variant={activeTab === 'odoo-admin' ? 'light' : 'subtle'} onClick={() => setActiveTab('odoo-admin')} leftSection={<IconDatabase size={20} />} color="indigo" justify="start">Gestion Odoo</Button>
-                <Button variant={activeTab === 'settings' ? 'light' : 'subtle'} onClick={() => setActiveTab('settings')} color="gray" leftSection={<IconSettings size={20} />} justify="start">Configuration</Button>
-              </>
+              <Paper p={5} radius="sm" bg="gray.1" withBorder style={{ borderColor: 'var(--mantine-color-gray-3)' }}>
+                <Text size="10px" fw={700} c="gray.9" px="xs" mb={5} tt="uppercase">Administration</Text>
+                <Stack gap={2}>
+                  <Button variant={activeTab === 'keycloak' ? 'filled' : 'subtle'} onClick={() => setActiveTab('keycloak')} leftSection={<IconKey size={18} />} justify="start" size="compact-sm" color="gray">Comptes Locaux</Button>
+                  <Button variant={activeTab === 'odoo-admin' ? 'filled' : 'subtle'} onClick={() => setActiveTab('odoo-admin')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="gray">Gestion Odoo</Button>
+                  <Button variant={activeTab === 'settings' ? 'filled' : 'subtle'} onClick={() => setActiveTab('settings')} leftSection={<IconSettings size={18} />} justify="start" size="compact-sm" color="gray">Configuration</Button>
+                </Stack>
+              </Paper>
             )}
           </Stack>
         </AppShell.Navbar>
