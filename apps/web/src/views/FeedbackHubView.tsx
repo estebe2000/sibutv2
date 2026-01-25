@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Title, Text, Stack, Group, Button, TextInput, Textarea, Badge, ActionIcon, Loader, Center, Card, Divider, Select, Modal } from '@mantine/core';
+import { Container, Paper, Title, Text, Stack, Group, Button, TextInput, Textarea, Badge, ActionIcon, Loader, Center, Card, Divider, Select, Modal, ThemeIcon } from '@mantine/core';
 import { IconMessagePlus, IconThumbUp, IconBug, IconBulb, IconMessageDots, IconTrash, IconPlus, IconUser } from '@tabler/icons-react';
 import api from '../services/api';
 import { notifications } from '@mantine/notifications';
@@ -69,11 +69,11 @@ export function FeedbackHubView() {
                                 <IconMessagePlus size={24} />
                             </ThemeIcon>
                             <div>
-                                <Title order={3}>Boîte à Idées & Retours</Title>
+                                <Title order={3}>Boîte à Idées & Retours Staff</Title>
                                 <Text size="xs" c="dimmed">Partagez vos bugs, demandes ou idées pour améliorer Skills Hub.</Text>
                             </div>
                         </Group>
-                        <Button leftSection={<IconPlus size={18}/>} color="yellow" onClick={open} c="black">Nouveau Retour</Button>
+                        <Button leftSection={<IconPlus size={18}/>} color="yellow" onClick={open} variant="filled" c="black">Nouveau Retour</Button>
                     </Group>
                 </Paper>
 
@@ -152,8 +152,3 @@ export function FeedbackHubView() {
     );
 }
 
-// Helper local
-const ThemeIcon = ({ children, color, size, radius, variant }: any) => {
-    const { ThemeIcon: MantineThemeIcon } = require('@mantine/core');
-    return <MantineThemeIcon color={color} size={size} radius={radius} variant={variant}>{children}</MantineThemeIcon>;
-};
