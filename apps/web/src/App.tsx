@@ -19,6 +19,7 @@ import { AdminDashboardView } from './views/AdminDashboardView';
 import { PublicEvaluationView } from './views/PublicEvaluationView';
 import { InternshipManagementView } from './views/InternshipManagementView';
 import { GovernanceReportView } from './views/GovernanceReportView';
+import { AdminPortfolioBrowserView } from './views/AdminPortfolioBrowserView';
 import { useMediaQuery } from '@mantine/hooks';
 
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
@@ -249,7 +250,7 @@ function App() {
         {activeTab === 'fiches2' && <FichesPDF2View curriculum={curriculum} />}
         {activeTab === 'governance-report' && !isMobile && <GovernanceReportView />}
         {activeTab === 'internships' && <InternshipManagementView user={user} />}
-        {activeTab === 'admin-portfolios' && !isMobile && <Container py="xl"><Title order={2}>Consultation des Portfolios</Title><Text c="dimmed">Cette section est en cours de développement.</Text></Container>}
+        {activeTab === 'admin-portfolios' && !isMobile && <AdminPortfolioBrowserView />}
         {activeTab === 'odoo-admin' && !isMobile && <OdooAdminView />}
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
         {activeTab === 'keycloak' && !isMobile && <KeycloakUserManagement />}
