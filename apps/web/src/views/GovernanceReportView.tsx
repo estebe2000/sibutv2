@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Title, Text, Stack, Group, Table, Button, Loader, Center, Badge, ActionIcon, TextInput } from '@mantine/core';
-import { IconFileSpreadsheet, IconDownload, IconSearch, IconShieldLock, IconBook, IconSchool, IconUsers } from '@tabler/icons-react';
+import { Container, Paper, Title, Text, Stack, Group, Table, Button, Loader, Center, Badge, TextInput, Menu, Divider } from '@mantine/core';
+import { 
+    IconFileSpreadsheet, 
+    IconDownload, 
+    IconSearch, 
+    IconShieldLock, 
+    IconBook, 
+    IconSchool, 
+    IconUsers, 
+    IconDatabase 
+} from '@tabler/icons-react';
 import { Tabs } from '@mantine/core';
 import api from '../services/api';
 
@@ -17,7 +26,7 @@ export function GovernanceReportView() {
     const fetchData = async () => {
         try {
             const res = await api.get('/pedagogy/governance-report');
-            setData(res.data);
+            setData(Array.isArray(res.data) ? res.data : []);
             setLoading(false);
         } catch (e) { console.error(e); setLoading(false); }
     };
@@ -25,16 +34,15 @@ export function GovernanceReportView() {
     const renderTable = (type: string) => {
         const filtered = data.filter(item => 
             item.entity_type === type &&
-            (item.user_name.toLowerCase().includes(search.toLowerCase()) || 
-             item.entity_label.toLowerCase().includes(search.toLowerCase()) ||
-             item.entity_id.toLowerCase().includes(search.toLowerCase()))
-        ).sort((a, b) => a.entity_label.localeCompare(b.entity_label));
+            (
+                (item.user_name || '').toLowerCase().includes(search.toLowerCase()) || 
+                (item.entity_label || '').toLowerCase().includes(search.toLowerCase()) ||
+                (item.entity_id || '').toLowerCase().includes(search.toLowerCase())
+            )
+        ).sort((a, b) => (a.entity_label || '').localeCompare(b.entity_label || ''));
 
         return (
             <Stack gap="md" mt="md">
-import { IconFileSpreadsheet, IconDownload, IconSearch, IconShieldLock, IconBook, IconSchool, IconUsers, IconDatabase, IconTable } from '@tabler/icons-react';
-import { Tabs, Menu } from '@mantine/core';
---
                 <Group justify="space-between">
                     <Text size="sm" c="dimmed">{filtered.length} élément(s) trouvé(s)</Text>
                     <Group>
