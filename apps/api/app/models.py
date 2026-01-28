@@ -92,6 +92,19 @@ class PromotionResponsibility(SQLModel, table=True):
     group_id: int = Field(index=True, foreign_key="group.id")
     academic_year: str = "2025-2026"
 
+class Company(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True)
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    website: Optional[str] = None
+    
+    accepts_interns: bool = Field(default=True)
+    visible_to_students: bool = Field(default=True)
+    
+    internships: List["Internship"] = Relationship(back_populates="company")
+
 class Internship(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     student_uid: str = Field(index=True, foreign_key="user.ldap_uid")
@@ -101,7 +114,11 @@ class Internship(SQLModel, table=True):
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     
-    # Informations Entreprise (gérées par l'étudiant)
+    # Lien Codex
+    company_id: Optional[int] = Field(default=None, foreign_key="company.id")
+    company: Optional[Company] = Relationship(back_populates="internships")
+
+    # Informations Entreprise (gérées par l'étudiant - conservées pour compatibilité/cache)
     company_name: Optional[str] = None
     company_address: Optional[str] = None
     company_phone: Optional[str] = None
