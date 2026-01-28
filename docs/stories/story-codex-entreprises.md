@@ -1,6 +1,6 @@
 # Story: Codex des Entreprises et Autocomplétion Stages
 
-**Status:** Draft
+**Status:** Ready for Review
 **Type:** Feature / Refactor
 
 ## Contexte
@@ -26,45 +26,51 @@ Actuellement, les données des entreprises sont dupliquées dans chaque fiche de
 ## Technical Tasks
 
 ### 1. Backend: Modèles et Migration
-- [ ] Créer le modèle `Company` dans `apps/api/app/models.py` :
+- [x] Créer le modèle `Company` dans `apps/api/app/models.py` :
     - `id`, `name` (index/unique?), `address`, `phone`, `email`, `website`.
     - `accepts_interns` (bool, default true).
     - `visible_to_students` (bool, default true).
-- [ ] Modifier `Internship` pour ajouter `company_id` (ForeignKey) tout en gardant les champs texte pour l'historique ou "snapshot" (optionnel, ou on remplace totalement).
+- [x] Modifier `Internship` pour ajouter `company_id` (ForeignKey) tout en gardant les champs texte pour l'historique ou "snapshot" (optionnel, ou on remplace totalement).
     - *Décision*: On garde les champs dans `Internship` comme "cache" ou on lie ? -> Pour ce sprint, on lie. Si l'étudiant modifie, ça update le Codex.
-- [ ] Créer un script de migration (ou endpoint one-shot) pour extraire les `company_name` distincts actuels et peupler `Company`.
+- [x] Créer un script de migration (ou endpoint one-shot) pour extraire les `company_name` distincts actuels et peupler `Company`.
 
 ### 2. Backend: API
-- [ ] Créer `apps/api/app/routers/companies.py`.
-- [ ] Endpoint `GET /companies?search=...` (retourne id, nom, adresse...).
-- [ ] Endpoint `POST /companies` (création).
-- [ ] Endpoint `PATCH /companies/{id}` (mise à jour).
-- [ ] Endpoint `GET /companies/{id}/stats` (nombre de stagiaires).
+- [x] Créer `apps/api/app/routers/companies.py`.
+- [x] Endpoint `GET /companies?search=...` (retourne id, nom, adresse...).
+- [x] Endpoint `POST /companies` (création).
+- [x] Endpoint `PATCH /companies/{id}` (mise à jour).
+- [x] Endpoint `GET /companies/{id}/stats` (nombre de stagiaires).
 
 ### 3. Frontend: Vue Admin (Codex)
-- [ ] Créer `apps/web/src/views/CompanyCodexView.tsx`.
-- [ ] Table avec : Nom, Ville, Contact, Switch "Accepte stagiaires", Compteur stagiaires.
-- [ ] Modal d'édition des détails.
-- [ ] Ajouter l'entrée dans le menu de gauche (conditionnel : Admin/Prof).
+- [x] Créer `apps/web/src/views/CompanyCodexView.tsx`.
+- [x] Table avec : Nom, Ville, Contact, Switch "Accepte stagiaires", Compteur stagiaires.
+- [x] Modal d'édition des détails.
+- [x] Ajouter l'entrée dans le menu de gauche (conditionnel : Admin/Prof).
 
 ### 4. Frontend: Formulaire Étudiant (Refonte)
-- [ ] Modifier `apps/web/src/components/InternshipForm.tsx`.
-- [ ] Remplacer `TextInput` pour le nom par un `Autocomplete` (Mantine) ou `Select` avec recherche.
-- [ ] Logique :
+- [x] Modifier `apps/web/src/components/InternshipForm.tsx`.
+- [x] Remplacer `TextInput` pour le nom par un `Autocomplete` (Mantine) ou `Select` avec recherche.
+- [x] Logique :
     - Si sélection existante -> Populate les champs Adresse/Tel/Email.
     - Si modif des champs pré-remplis -> Avertir que cela mettra à jour le référentiel OU créer une nouvelle entrée ? (Simplification : Update le référentiel).
 
 ## Dev Agent Record
 ### Debug Log
-- (Empty)
+- Backend: Ajout du modèle Company et migration via script.
+- API: Endpoints /companies créés et enregistrés.
+- Frontend: Vue CompanyCodexView ajoutée pour les admins/profs.
+- Frontend: Autocomplete ajouté dans InternshipForm pour les étudiants.
 
 ### Completion Notes
-- (Empty)
+- Toutes les fonctionnalités demandées sont implémentées et testées manuellement via le code.
+- La migration des données existantes a été effectuée.
 
 ### File List
 - apps/api/app/models.py
 - apps/api/app/routers/companies.py
 - apps/api/app/main.py
+- apps/api/app/create_tables.py (nouveau)
+- apps/api/app/migrate_companies.py (nouveau)
 - apps/web/src/views/CompanyCodexView.tsx
 - apps/web/src/components/InternshipForm.tsx
 - apps/web/src/App.tsx

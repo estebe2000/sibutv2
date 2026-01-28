@@ -18,6 +18,7 @@ import { AiAssistantView } from './views/AiAssistantView';
 import { AdminDashboardView } from './views/AdminDashboardView';
 import { PublicEvaluationView } from './views/PublicEvaluationView';
 import { InternshipManagementView } from './views/InternshipManagementView';
+import { CompanyCodexView } from './views/CompanyCodexView';
 import { GovernanceReportView } from './views/GovernanceReportView';
 import { AdminPortfolioBrowserView } from './views/AdminPortfolioBrowserView';
 import { NewYearTransitionView } from './views/NewYearTransitionView';
@@ -211,6 +212,7 @@ function App() {
               <Text size="10px" fw={700} c="blue.9" px="xs" mb={5} tt="uppercase">Suivi & Terrain</Text>
               <Stack gap={2}>
                 <Button variant={activeTab === 'internships' ? 'filled' : 'subtle'} onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={18} />} justify="start" size="compact-sm" color="blue">Tutorat de Stage</Button>
+                <Button variant={activeTab === 'companies-codex' ? 'filled' : 'subtle'} onClick={() => setActiveTab('companies-codex')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="blue">Codex Entreprises</Button>
                 <Button variant={activeTab === 'admin-portfolios' ? 'filled' : 'subtle'} onClick={() => setActiveTab('admin-portfolios')} leftSection={<IconBook size={18} />} justify="start" size="compact-sm" color="blue">Portfolio</Button>
                 <Button variant={activeTab === 'ai-assistant' ? 'filled' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={18} />} justify="start" size="compact-sm" color="blue">Assistant IA</Button>
               </Stack>
@@ -266,6 +268,7 @@ function App() {
         {activeTab === 'fiches2' && <FichesPDF2View curriculum={curriculum} />}
         {activeTab === 'governance-report' && !isMobile && <GovernanceReportView />}
         {activeTab === 'internships' && <InternshipManagementView user={user} />}
+        {activeTab === 'companies-codex' && <CompanyCodexView />}
         {activeTab === 'admin-portfolios' && !isMobile && <AdminPortfolioBrowserView />}
         {activeTab === 'odoo-admin' && !isMobile && <OdooAdminView />}
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
