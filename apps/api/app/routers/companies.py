@@ -85,3 +85,62 @@ async def get_company_stats(company_id: int, session: Session = Depends(get_sess
     """Nombre de stagiaires total pour cette entreprise"""
     count = session.exec(select(func.count(Internship.id)).where(Internship.company_id == company_id)).one()
     return {"total_interns": count}
+
+@router.get("/{company_id}/internships")
+async def get_company_internships(
+    company_id: int, 
+    session: Session = Depends(get_session),
+    current_user: Any = Depends(get_current_user)
+):
+    """Récupère l'historique des stages pour une entreprise"""
+    role = current_user["role"] if isinstance(current_user, dict) else current_user.role
+    if role == UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Accès réservé au personnel")
+
+    # Jointure pour avoir le nom de l'étudiant
+    statement = select(Internship, User).join(User, Internship.student_uid == User.ldap_uid).where(Internship.company_id == company_id).order_by(Internship.academic_year.desc())
+    results = session.exec(statement).all()
+    
+    # On retourne un format simplifié
+    return [
+        {
+            "id": i.id,
+            "academic_year": i.academic_year,
+            "student_name": u.full_name,
+            "student_uid": i.student_uid,
+            "start_date": i.start_date,
+            "end_date": i.end_date,
+            "supervisor_name": i.supervisor_name,
+            "is_active": i.is_active
+        } 
+        for i, u in results
+    ]
+
+
+@router.delete("/{company_id}")
+async def delete_company(
+    company_id: int, 
+    session: Session = Depends(get_session),
+    current_user: Any = Depends(get_current_user)
+):
+    """Supprime une entreprise SI elle n'a aucun stage lié"""
+    # Vérification Staff
+    role = current_user["role"] if isinstance(current_user, dict) else current_user.role
+    if role == UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Accès réservé au personnel")
+
+    company = session.get(Company, company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Entreprise non trouvée")
+
+    # Vérifier s'il y a des stages liés
+    count = session.exec(select(func.count(Internship.id)).where(Internship.company_id == company_id)).one()
+    if count > 0:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Impossible de supprimer : cette entreprise est liée à {count} stage(s)."
+        )
+
+    session.delete(company)
+    session.commit()
+    return {"status": "success", "message": "Entreprise supprimée"}

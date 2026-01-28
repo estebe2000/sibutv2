@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Group, TextInput, Button, Divider, Text, Paper, Title, Select, Textarea, Timeline, Alert, Slider, Badge, ThemeIcon, Anchor, Box } from '@mantine/core';
+import { Stack, Group, TextInput, Button, Divider, Text, Paper, Title, Select, Textarea, Timeline, Alert, Slider, Badge, ThemeIcon, Anchor, Box, Avatar } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { DateInput } from '@mantine/dates';
 import { IconDeviceFloppy, IconPlus, IconTruck, IconPhone, IconVideo, IconLink, IconMail, IconTrash, IconCirclePlus, IconBriefcase, IconShare } from '@tabler/icons-react';
@@ -17,6 +17,37 @@ export function ProfessorInternshipManager({ student }: { student: any }) {
     const [rubric, setRubric] = useState<any>(null);
     const [teacherScores, setTeacherScores] = useState<any[]>([]);
     const [history, setHistory] = useState<any[]>([]);
+
+    const CompanyLogo = ({ email }: { email?: string }) => {
+        const [src, setSrc] = useState<string | null>(null);
+        const [domain, setDomain] = useState<string | null>(null);
+
+        useEffect(() => {
+            if (!email) { setSrc(null); return; }
+            const d = email.split('@')[1];
+            const generic = ['gmail.com', 'outlook.fr', 'orange.fr', 'wanadoo.fr', 'yahoo.fr', 'hotmail.com'];
+            if (d && !generic.includes(d)) {
+                setDomain(d);
+                setSrc(`https://logo.clearbit.com/${d}`);
+            } else {
+                setSrc(null);
+            }
+        }, [email]);
+
+        const handleError = () => {
+            if (src && src.includes('clearbit') && domain) {
+                setSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=64`);
+            } else {
+                setSrc(null);
+            }
+        };
+
+        return (
+            <Avatar src={src} size="lg" radius="md" onError={handleError}>
+                <IconBriefcase size={30} />
+            </Avatar>
+        );
+    };
 
     const fetchData = async () => {
         setLoading(true);
@@ -202,15 +233,20 @@ export function ProfessorInternshipManager({ student }: { student: any }) {
                         </Paper>
                         <Paper p="md" radius="sm" withBorder bg="white">
                             <Text size="xs" fw={700} c="dimmed" mb={5}>ENTREPRISE & TUTEUR PRO</Text>
-                            <Text size="lg" fw={700}>{data.company_name || 'N/A'}</Text>
-                            <Text size="md" fw={600}>{data.supervisor_name || 'Maître de stage non renseigné'}</Text>
-                            <Anchor href={`mailto:${data.company_email}`} size="md" display="block">{data.company_email}</Anchor>
-                            {(data.supervisor_phone || data.company_phone) && (
-                                <Anchor href={`tel:${(data.supervisor_phone || data.company_phone).replace(/\s/g, '')}`} size="lg" fw={700} color="green" display="block" mt={5}>
-                                    <IconPhone size={18} style={{ verticalAlign: 'middle', marginRight: 8 }} />
-                                    {data.supervisor_phone || data.company_phone}
-                                </Anchor>
-                            )}
+                            <Group align="flex-start" wrap="nowrap">
+                                <CompanyLogo email={data.company_email} />
+                                <Box style={{ flex: 1 }}>
+                                    <Text size="lg" fw={700}>{data.company_name || 'N/A'}</Text>
+                                    <Text size="md" fw={600}>{data.supervisor_name || 'Maître de stage non renseigné'}</Text>
+                                    <Anchor href={`mailto:${data.company_email}`} size="md" display="block">{data.company_email}</Anchor>
+                                    {(data.supervisor_phone || data.company_phone) && (
+                                        <Anchor href={`tel:${(data.supervisor_phone || data.company_phone).replace(/\s/g, '')}`} size="lg" fw={700} color="green" display="block" mt={5}>
+                                            <IconPhone size={18} style={{ verticalAlign: 'middle', marginRight: 8 }} />
+                                            {data.supervisor_phone || data.company_phone}
+                                        </Anchor>
+                                    )}
+                                </Box>
+                            </Group>
                         </Paper>
                     </Stack>
                     
