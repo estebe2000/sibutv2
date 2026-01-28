@@ -22,15 +22,50 @@ export function InternshipForm({ studentUid }: { studentUid: string }) {
     }, [studentUid]);
 
     useEffect(() => {
-        if (companySearch.length > 1) {
+        if (companySearch.length > 2) {
             setSuggestionsLoading(true);
             const timer = setTimeout(async () => {
                 try {
-                    const res = await api.get(`/companies/?search=${companySearch}`);
-                    setCompanySuggestions(res.data);
+                    // 1. Recherche Locale (Codex)
+                    const localReq = api.get(`/companies/?search=${companySearch}`);
+                    
+                    // 2. Recherche API Sirene (Publique)
+                    const extReq = fetch(`https://recherche-entreprises.api.gouv.fr/search?q=${companySearch}&per_page=5`);
+
+                    const [localRes, extRes] = await Promise.allSettled([localReq, extReq]);
+
+                    let mergedResults: any[] = [];
+
+                    // Traitement résultats locaux
+                    if (localRes.status === 'fulfilled') {
+                        mergedResults = [...localRes.value.data.map((c: any) => ({ ...c, source: 'local' }))];
+                    }
+
+                    // Traitement résultats API Sirene
+                    if (extRes.status === 'fulfilled') {
+                        const extData = await extRes.value.json();
+                        const sirenResults = extData.results.map((r: any) => ({
+                            name: r.nom_complet,
+                            address: r.siege.adresse,
+                            source: 'sirene',
+                            siret: r.siren,
+                            // On ajoute un label unique pour l'affichage (avec CP)
+                            uniqueLabel: `🌍 ${r.nom_complet} (${r.siege.code_postal || '?'} ${r.siege.libelle_commune || ''})`
+                        }));
+                        
+                        // Filtrer les doublons (si le nom existe déjà en local, on ne l'affiche pas deux fois)
+                        const localNames = new Set(mergedResults.map(l => l.name.toLowerCase()));
+                        sirenResults.forEach((s: any) => {
+                            if (!localNames.has(s.name.toLowerCase())) {
+                                mergedResults.push(s);
+                            }
+                        });
+                    }
+
+                    setCompanySuggestions(mergedResults);
                 } catch (e) { console.error(e); }
                 setSuggestionsLoading(false);
-            }, 300);
+            }, 400); // Debounce un peu plus long (400ms) pour éviter de spammer l'API publique
             return () => clearTimeout(timer);
         } else {
             setCompanySuggestions([]);
@@ -38,17 +73,22 @@ export function InternshipForm({ studentUid }: { studentUid: string }) {
     }, [companySearch]);
 
     const handleSelectCompany = (val: string) => {
-        const company = companySuggestions.find(c => c.name === val);
+        // Recherche dans les suggestions par label affiché OU par nom (pour fallback)
+        const company = companySuggestions.find(c => {
+             const label = c.source === 'local' ? c.name : c.uniqueLabel;
+             return label === val || c.name === val;
+        });
+
         if (company) {
             setData({
                 ...data,
-                company_id: company.id,
+                company_id: company.source === 'local' ? company.id : null, 
                 company_name: company.name,
                 company_address: company.address || data.company_address,
-                company_phone: company.phone || data.company_phone,
-                company_email: company.email || data.company_email
+                company_phone: company.source === 'local' ? (company.phone || data.company_phone) : data.company_phone, 
+                company_email: company.source === 'local' ? (company.email || data.company_email) : data.company_email
             });
-            setCompanySearch(company.name);
+            setCompanySearch(company.name); // On remet le vrai nom propre dans le champ
         }
     };
 
@@ -99,7 +139,7 @@ export function InternshipForm({ studentUid }: { studentUid: string }) {
                 <Autocomplete
                     label="Nom de l'entreprise"
                     placeholder="Tapez le nom pour rechercher ou ajouter..."
-                    data={companySuggestions.map(c => c.name)}
+                    data={companySuggestions.map(c => c.source === 'local' ? c.name : c.uniqueLabel)}
                     value={companySearch}
                     onChange={setCompanySearch}
                     onOptionSubmit={handleSelectCompany}

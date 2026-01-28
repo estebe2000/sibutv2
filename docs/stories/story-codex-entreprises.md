@@ -14,14 +14,18 @@ Actuellement, les données des entreprises sont dupliquées dans chaque fiche de
 2. **En tant qu'étudiant**, si l'entreprise est nouvelle, je veux pouvoir saisir ses informations pour qu'elle soit ajoutée au Codex.
 3. **En tant qu'enseignant/admin**, je veux accéder à la liste des entreprises (Codex) pour voir les coordonnées et le nombre de stagiaires accueillis.
 4. **En tant qu'admin**, je veux pouvoir décocher "Accepte des stagiaires" pour une entreprise, afin qu'elle n'apparaisse plus en suggestion prioritaire ou soit signalée.
+5. **[NOUVEAU] En tant qu'étudiant**, je veux voir des suggestions issues de l'API Sirene (Gouv.fr) si l'entreprise n'est pas dans le Codex local, afin de pré-remplir l'adresse officielle automatiquement.
 
 ## Acceptance Criteria
-- [ ] Une table `Company` existe en base de données.
-- [ ] Les données existantes des stages sont migrées vers cette table (dédoublonnage sur le nom).
-- [ ] Le formulaire de stage propose une autocomplétion sur le champ "Entreprise".
-- [ ] Si l'utilisateur modifie l'adresse d'une entreprise existante, cela met à jour le Codex (ou propose le choix).
-- [ ] Une nouvelle vue "Codex Entreprises" est accessible dans le menu Admin.
-- [ ] Cette vue permet de filtrer par nom et de voir le compteur de stages.
+- [x] Une table `Company` existe en base de données.
+- [x] Les données existantes des stages sont migrées vers cette table (dédoublonnage sur le nom).
+- [x] Le formulaire de stage propose une autocomplétion sur le champ "Entreprise".
+- [x] Si l'utilisateur modifie l'adresse d'une entreprise existante, cela met à jour le Codex (ou propose le choix).
+- [x] Une nouvelle vue "Codex Entreprises" est accessible dans le menu Admin.
+- [x] Cette vue permet de filtrer par nom et de voir le compteur de stages.
+- [ ] L'autocomplétion interroge l'API `recherche-entreprises.api.gouv.fr` en parallèle du Codex.
+- [ ] Les résultats du Codex apparaissent en priorité (avec un indicateur visuel ou ordre).
+- [ ] Sélectionner une entreprise "Sirene" remplit le nom et l'adresse.
 
 ## Technical Tasks
 
@@ -54,12 +58,18 @@ Actuellement, les données des entreprises sont dupliquées dans chaque fiche de
     - Si sélection existante -> Populate les champs Adresse/Tel/Email.
     - Si modif des champs pré-remplis -> Avertir que cela mettra à jour le référentiel OU créer une nouvelle entrée ? (Simplification : Update le référentiel).
 
+### 5. Frontend: Intégration API Sirene
+- [ ] Modifier `apps/web/src/components/InternshipForm.tsx` pour faire une requête fetch vers `recherche-entreprises.api.gouv.fr`.
+- [ ] Merger les résultats (Locaux + API).
+- [ ] Mapper les données API (nom_complet, adresse) vers le formulaire.
+
 ## Dev Agent Record
 ### Debug Log
 - Backend: Ajout du modèle Company et migration via script.
 - API: Endpoints /companies créés et enregistrés.
 - Frontend: Vue CompanyCodexView ajoutée pour les admins/profs.
 - Frontend: Autocomplete ajouté dans InternshipForm pour les étudiants.
+- Fix: Gestion des headers Proxy et Trailing Slashes.
 
 ### Completion Notes
 - Toutes les fonctionnalités demandées sont implémentées et testées manuellement via le code.
