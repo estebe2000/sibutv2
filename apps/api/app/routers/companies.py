@@ -44,14 +44,14 @@ async def create_company(
     session.refresh(company)
     return company
 
-@router.get("/{company_id}", response_model=Company)
+@router.get("/{company_id}/", response_model=Company)
 async def get_company(company_id: int, session: Session = Depends(get_session)):
     company = session.get(Company, company_id)
     if not company:
         raise HTTPException(status_code=404, detail="Entreprise non trouvée")
     return company
 
-@router.patch("/{company_id}", response_model=Company)
+@router.patch("/{company_id}/", response_model=Company)
 async def update_company(
     company_id: int, 
     data: dict, 
@@ -80,13 +80,13 @@ async def update_company(
     session.refresh(company)
     return company
 
-@router.get("/{company_id}/stats")
+@router.get("/{company_id}/stats/")
 async def get_company_stats(company_id: int, session: Session = Depends(get_session)):
     """Nombre de stagiaires total pour cette entreprise"""
     count = session.exec(select(func.count(Internship.id)).where(Internship.company_id == company_id)).one()
     return {"total_interns": count}
 
-@router.get("/{company_id}/internships")
+@router.get("/{company_id}/internships/")
 async def get_company_internships(
     company_id: int, 
     session: Session = Depends(get_session),
@@ -117,7 +117,7 @@ async def get_company_internships(
     ]
 
 
-@router.delete("/{company_id}")
+@router.delete("/{company_id}/")
 async def delete_company(
     company_id: int, 
     session: Session = Depends(get_session),

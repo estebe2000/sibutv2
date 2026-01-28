@@ -100,6 +100,9 @@ class Company(SQLModel, table=True):
     email: Optional[str] = None
     website: Optional[str] = None
     
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    
     accepts_interns: bool = Field(default=True)
     visible_to_students: bool = Field(default=True)
     
