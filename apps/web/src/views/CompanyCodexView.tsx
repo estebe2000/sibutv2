@@ -14,7 +14,7 @@ export function CompanyCodexView() {
     const fetchCompanies = async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/companies?search=${search}`);
+            const res = await api.get(`/companies/?search=${search}`);
             setCompanies(res.data);
             setLoading(false);
             

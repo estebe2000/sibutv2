@@ -26,7 +26,7 @@ export function InternshipForm({ studentUid }: { studentUid: string }) {
             setSuggestionsLoading(true);
             const timer = setTimeout(async () => {
                 try {
-                    const res = await api.get(`/companies?search=${companySearch}`);
+                    const res = await api.get(`/companies/?search=${companySearch}`);
                     setCompanySuggestions(res.data);
                 } catch (e) { console.error(e); }
                 setSuggestionsLoading(false);
@@ -59,7 +59,7 @@ export function InternshipForm({ studentUid }: { studentUid: string }) {
             let finalData = { ...data, company_name: companySearch };
             
             if (!data.company_id && companySearch) {
-                const cRes = await api.post('/companies', { name: companySearch, address: data.company_address, phone: data.company_phone, email: data.company_email });
+                const cRes = await api.post('/companies/', { name: companySearch, address: data.company_address, phone: data.company_phone, email: data.company_email });
                 finalData.company_id = cRes.data.id;
             }
 

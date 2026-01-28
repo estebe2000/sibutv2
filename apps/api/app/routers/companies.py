@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session, select, col, func
-from typing import Optional, List
+from typing import Optional, List, Any
 from ..database import get_session
 from ..models import User, Company, UserRole, Internship
 from ..dependencies import get_current_user
@@ -11,15 +11,18 @@ router = APIRouter()
 async def get_companies(
     search: Optional[str] = None, 
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: Any = Depends(get_current_user)
 ):
     """Récupère la liste des entreprises avec recherche optionnelle"""
     statement = select(Company)
     if search:
         statement = statement.where(col(Company.name).ilike(f"%{search}%"))
     
+    # Récupérer le rôle de manière sûre (dict ou objet)
+    role = current_user["role"] if isinstance(current_user, dict) else current_user.role
+
     # Si c'est un étudiant, on ne montre que celles visibles
-    if current_user.role == UserRole.STUDENT:
+    if role == UserRole.STUDENT:
         statement = statement.where(Company.visible_to_students == True)
         
     return session.exec(statement).all()
@@ -28,7 +31,7 @@ async def get_companies(
 async def create_company(
     company: Company, 
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: Any = Depends(get_current_user)
 ):
     """Crée une nouvelle entreprise dans le Codex"""
     # Vérifier si elle existe déjà par son nom
@@ -53,11 +56,13 @@ async def update_company(
     company_id: int, 
     data: dict, 
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    current_user: Any = Depends(get_current_user)
 ):
     """Met à jour une entreprise"""
+    role = current_user["role"] if isinstance(current_user, dict) else current_user.role
+
     # Seuls les profs/admins peuvent modifier (pour l'instant, à affiner si besoin)
-    if current_user.role == UserRole.STUDENT and company_id:
+    if role == UserRole.STUDENT and company_id:
         # On pourrait autoriser l'étudiant à mettre à jour "sa" boite s'il vient de la créer
         # Mais restons simple : le staff gère le Codex.
         pass
