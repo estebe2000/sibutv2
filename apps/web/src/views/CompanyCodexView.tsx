@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Title, Text, Stack, Group, TextInput, Table, Switch, ActionIcon, Modal, Button, Badge, Loader, Center, Avatar } from '@mantine/core';
-import { IconBriefcase, IconSearch, IconEdit, IconCheck, IconX, IconPhone, IconMail, IconWorld, IconHistory, IconTrash } from '@tabler/icons-react';
+import { Container, Paper, Title, Text, Stack, Group, TextInput, Table, Switch, ActionIcon, Modal, Button, Badge, Loader, Center, Avatar, Tabs } from '@mantine/core';
+import { IconBriefcase, IconSearch, IconEdit, IconCheck, IconX, IconPhone, IconMail, IconWorld, IconHistory, IconTrash, IconMap2, IconList } from '@tabler/icons-react';
 import api from '../services/api';
 import { notifications } from '@mantine/notifications';
+import { CompanyMapView } from '../components/CompanyMapView';
 
 export function CompanyCodexView() {
     const [companies, setCompanies] = useState<any[]>([]);
@@ -10,7 +11,10 @@ export function CompanyCodexView() {
     const [loading, setLoading] = useState(true);
     const [editingCompany, setEditingCompany] = useState<any | null>(null);
     const [stats, setStats] = useState<Record<number, number>>({});
+    const [activeTab, setActiveTab] = useState<string | null>('list');
+    const [focusedCompany, setFocusedCompany] = useState<any | null>(null);
     
+    // États pour l'historique
     const [historyCompany, setHistoryCompany] = useState<any | null>(null);
     const [historyData, setHistoryData] = useState<any[]>([]);
     const [historyLoading, setHistoryLoading] = useState(false);
@@ -23,25 +27,26 @@ export function CompanyCodexView() {
 
     const CompanyLogo = ({ website }: { website?: string }) => {
         const [src, setSrc] = useState<string | null>(null);
+        const [hasError, setHasError] = useState(false);
 
         useEffect(() => {
             if (!website) { setSrc(null); return; }
+            setHasError(false);
             try {
                 const domain = website.replace('https://', '').replace('http://', '').split('/')[0];
-                // Stratégie 1 : Clearbit (Joli logo)
                 setSrc(`https://logo.clearbit.com/${domain}`);
             } catch (e) { setSrc(null); }
         }, [website]);
 
         const handleError = () => {
+            if (hasError) return; // Stop si déjà en erreur
             if (src && src.includes('clearbit')) {
-                // Stratégie 2 : Fallback Google (Favicon))
+                setHasError(true);
                 try {
                     const domain = website?.replace('https://', '').replace('http://', '').split('/')[0];
                     setSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=64`);
                 } catch (e) { setSrc(null); }
             } else {
-                // Échec total
                 setSrc(null);
             }
         };
@@ -60,11 +65,17 @@ export function CompanyCodexView() {
             setCompanies(res.data);
             setLoading(false);
             
-            // Fetch stats for each company
-            res.data.forEach(async (c: any) => {
-                const sRes = await api.get(`/companies/${c.id}/stats`);
-                setStats(prev => ({ ...prev, [c.id]: sRes.data.total_interns }));
-            });
+            // Fetch stats for each company with protections
+            const newStats: Record<number, number> = {};
+            await Promise.all(res.data.map(async (c: any) => {
+                try {
+                    const sRes = await api.get(`/companies/${c.id}/stats/`);
+                    newStats[c.id] = sRes.data.total_interns;
+                } catch (e) { 
+                    newStats[c.id] = 0; 
+                }
+            }));
+            setStats(newStats);
         } catch (e) {
             console.error(e);
             setLoading(false);
@@ -75,7 +86,7 @@ export function CompanyCodexView() {
         setHistoryCompany(company);
         setHistoryLoading(true);
         try {
-            const res = await api.get(`/companies/${company.id}/internships`);
+            const res = await api.get(`/companies/${company.id}/internships/`);
             setHistoryData(res.data);
         } catch (e) { console.error(e); }
         setHistoryLoading(false);
@@ -97,13 +108,33 @@ export function CompanyCodexView() {
 
     const handleSaveEdit = async () => {
         try {
-            await api.patch(`/companies/${editingCompany.id}`, editingCompany);
+            // Géocodage automatique
+            let updatedCompany = { ...editingCompany };
+            try {
+                const geoRes = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${updatedCompany.address}&limit=1`);
+                const geoData = await geoRes.json();
+                if (geoData.features?.length > 0) {
+                    updatedCompany.longitude = geoData.features[0].geometry.coordinates[0];
+                    updatedCompany.latitude = geoData.features[0].geometry.coordinates[1];
+                }
+            } catch (e) { console.error("Geocoding failed", e); }
+
+            await api.patch(`/companies/${updatedCompany.id}/`, updatedCompany);
             setEditingCompany(null);
             fetchCompanies();
-            notifications.show({ color: 'green', title: 'Succès', message: 'Entreprise mise à jour' });
+            notifications.show({ color: 'green', title: 'Succès', message: 'Entreprise mise à jour (et localisée)' });
         } catch (e) {
             notifications.show({ color: 'red', title: 'Erreur', message: 'Impossible de sauvegarder' });
         }
+    };
+
+    const handleViewMap = (company: any) => {
+        if (!company.latitude || !company.longitude) {
+            notifications.show({ title: 'Pas de coordonnées', message: 'Cette entreprise n\'est pas géolocalisée.', color: 'orange' });
+            return;
+        }
+        setFocusedCompany(company);
+        setActiveTab('map');
     };
 
     const handleDelete = async (company: any) => {
@@ -137,9 +168,10 @@ export function CompanyCodexView() {
     const applySireneData = (r: any) => {
         setEditingCompany({
             ...editingCompany,
-            name: r.nom_complet, // Optionnel : garder le nom actuel ou prendre l'officiel ? Prenons l'officiel.
+            name: r.nom_complet,
             address: r.siege.adresse,
-            // On pourrait ajouter le SIRET si on avait le champ en base
+            longitude: r.siege.longitude || editingCompany.longitude,
+            latitude: r.siege.latitude || editingCompany.latitude
         });
         setShowSireneSearch(false);
         setSireneSearch('');
@@ -155,80 +187,95 @@ export function CompanyCodexView() {
                             <IconBriefcase color="#228be6" />
                             <Title order={3}>Codex Entreprises</Title>
                         </Group>
-                        <TextInput 
-                            placeholder="Rechercher une entreprise..." 
-                            leftSection={<IconSearch size={16} />}
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            w={300}
-                        />
+                        <Group>
+                            <Tabs value={activeTab} onChange={setActiveTab} variant="pills" radius="xl" size="xs">
+                                <Tabs.List>
+                                    <Tabs.Tab value="list" leftSection={<IconList size={14} />}>Liste</Tabs.Tab>
+                                    <Tabs.Tab value="map" leftSection={<IconMap2 size={14} />}>Carte</Tabs.Tab>
+                                </Tabs.List>
+                            </Tabs>
+                            <TextInput 
+                                placeholder="Rechercher..." 
+                                leftSection={<IconSearch size={16} />}
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                w={200}
+                            />
+                        </Group>
                     </Group>
                 </Paper>
 
-                <Paper withBorder radius="md" p="md">
-                    {loading ? (
-                        <Center h={200}><Loader /></Center>
-                    ) : (
-                        <Table striped highlightOnHover verticalSpacing="sm">
-                            <Table.Thead>
-                                <Table.Tr>
-                                    <Table.Th>Entreprise</Table.Th>
-                                    <Table.Th>Coordonnées</Table.Th>
-                                    <Table.Th>Stagiaires</Table.Th>
-                                    <Table.Th>Statut</Table.Th>
-                                    <Table.Th>Actions</Table.Th>
-                                </Table.Tr>
-                            </Table.Thead>
-                            <Table.Tbody>
-                                {companies.map((c) => (
-                                    <Table.Tr key={c.id}>
-                                        <Table.Td>
-                                            <Group gap="sm">
-                                                <CompanyLogo website={c.website} />
-                                                <div>
-                                                    <Text fw={700}>{c.name}</Text>
-                                                    <Text size="xs" c="dimmed">{c.address || 'Pas d\'adresse'}</Text>
-                                                </div>
-                                            </Group>
-                                        </Table.Td>
-                                        <Table.Td>
-                                            <Stack gap={2}>
-                                                {c.email && <Group gap={5}><IconMail size={12} /><Text size="xs">{c.email}</Text></Group>}
-                                                {c.phone && <Group gap={5}><IconPhone size={12} /><Text size="xs">{c.phone}</Text></Group>}
-                                                {c.website && <Group gap={5}><IconWorld size={12} /><Text size="xs">{c.website}</Text></Group>}
-                                            </Stack>
-                                        </Table.Td>
-                                        <Table.Td>
-                                            <Badge color="blue" variant="light">{stats[c.id] || 0} stagiaires</Badge>
-                                        </Table.Td>
-                                        <Table.Td>
-                                            <Switch 
-                                                label={c.accepts_interns ? "Accepte" : "N'accepte plus"}
-                                                checked={c.accepts_interns}
-                                                onChange={() => handleToggleInterns(c)}
-                                                size="xs"
-                                                color="green"
-                                            />
-                                        </Table.Td>
-                                        <Table.Td>
-                                            <Group gap="xs">
-                                                <ActionIcon variant="subtle" color="blue" title="Historique" onClick={() => loadHistory(c)}>
-                                                    <IconHistory size={18} />
-                                                </ActionIcon>
-                                                <ActionIcon variant="subtle" title="Modifier" onClick={() => setEditingCompany(c)}>
-                                                    <IconEdit size={18} />
-                                                </ActionIcon>
-                                                <ActionIcon variant="subtle" color="red" title="Supprimer (si aucun stage)" onClick={() => handleDelete(c)}>
-                                                    <IconTrash size={18} />
-                                                </ActionIcon>
-                                            </Group>
-                                        </Table.Td>
+                {activeTab === 'list' ? (
+                    <Paper withBorder radius="md" p="md">
+                        {loading ? (
+                            <Center h={200}><Loader /></Center>
+                        ) : (
+                            <Table striped highlightOnHover verticalSpacing="sm">
+                                <Table.Thead>
+                                    <Table.Tr>
+                                        <Table.Th>Entreprise</Table.Th>
+                                        <Table.Th>Coordonnées</Table.Th>
+                                        <Table.Th>Stagiaires</Table.Th>
+                                        <Table.Th>Statut</Table.Th>
+                                        <Table.Th>Actions</Table.Th>
                                     </Table.Tr>
-                                ))}
-                            </Table.Tbody>
-                        </Table>
-                    )}
-                </Paper>
+                                </Table.Thead>
+                                <Table.Tbody>
+                                    {companies.map((c) => (
+                                        <Table.Tr key={c.id}>
+                                            <Table.Td>
+                                                <Group gap="sm">
+                                                    <CompanyLogo website={c.website} />
+                                                    <div>
+                                                        <Text fw={700}>{c.name}</Text>
+                                                        <Text size="xs" c="dimmed">{c.address || 'Pas d\'adresse'}</Text>
+                                                    </div>
+                                                </Group>
+                                            </Table.Td>
+                                            <Table.Td>
+                                                <Stack gap={2}>
+                                                    {c.email && <Group gap={5}><IconMail size={12} /><Text size="xs">{c.email}</Text></Group>}
+                                                    {c.phone && <Group gap={5}><IconPhone size={12} /><Text size="xs">{c.phone}</Text></Group>}
+                                                    {c.website && <Group gap={5}><IconWorld size={12} /><Text size="xs">{c.website}</Text></Group>}
+                                                </Stack>
+                                            </Table.Td>
+                                            <Table.Td>
+                                                <Badge color="blue" variant="light">{stats[c.id] || 0} stagiaires</Badge>
+                                            </Table.Td>
+                                            <Table.Td>
+                                                <Switch 
+                                                    label={c.accepts_interns ? "Accepte" : "N'accepte plus"}
+                                                    checked={c.accepts_interns}
+                                                    onChange={() => handleToggleInterns(c)}
+                                                    size="xs"
+                                                    color="green"
+                                                />
+                                            </Table.Td>
+                                            <Table.Td>
+                                                <Group gap="xs">
+                                                    <ActionIcon variant="subtle" color="blue" title="Historique" onClick={() => loadHistory(c)}>
+                                                        <IconHistory size={18} />
+                                                    </ActionIcon>
+                                                    <ActionIcon variant="subtle" color="green" title="Voir sur la carte" onClick={() => handleViewMap(c)} disabled={!c.latitude}>
+                                                        <IconMap2 size={18} />
+                                                    </ActionIcon>
+                                                    <ActionIcon variant="subtle" title="Modifier" onClick={() => setEditingCompany(c)}>
+                                                        <IconEdit size={18} />
+                                                    </ActionIcon>
+                                                    <ActionIcon variant="subtle" color="red" title="Supprimer (si aucun stage)" onClick={() => handleDelete(c)}>
+                                                        <IconTrash size={18} />
+                                                    </ActionIcon>
+                                                </Group>
+                                            </Table.Td>
+                                        </Table.Tr>
+                                    ))}
+                                </Table.Tbody>
+                            </Table>
+                        )}
+                    </Paper>
+                ) : (
+                    <CompanyMapView companies={companies} focusOn={focusedCompany} />
+                )}
             </Stack>
 
             <Modal opened={!!historyCompany} onClose={() => setHistoryCompany(null)} title={`Historique - ${historyCompany?.name}`} size="xl">

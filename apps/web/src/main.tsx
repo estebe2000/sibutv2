@@ -6,6 +6,7 @@ import App from './App.tsx'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 import '@mantine/dates/styles.css'
+import 'leaflet/dist/leaflet.css';
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
