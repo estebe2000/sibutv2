@@ -164,6 +164,30 @@ class InternshipEvaluation(SQLModel, table=True):
     comment: Optional[str] = None
     updated_at: datetime = Field(default_factory=datetime.now)
 
+class ApplicationStatus(str, Enum):
+    APPLIED = "APPLIED"       # En attente
+    INTERVIEW = "INTERVIEW"   # Entretien
+    REJECTED = "REJECTED"     # Refusé
+    ACCEPTED = "ACCEPTED"     # Accepté
+
+class InternshipApplication(SQLModel, table=True):
+    """Suivi des candidatures pour les étudiants (CRM recherche stage)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_uid: str = Field(index=True, foreign_key="user.ldap_uid")
+    
+    company_name: str
+    position_title: str
+    status: ApplicationStatus = Field(default=ApplicationStatus.APPLIED)
+    
+    applied_at: datetime = Field(default_factory=datetime.now)
+    interview_at: Optional[datetime] = None
+    
+    notes: Optional[str] = None
+    url: Optional[str] = None
+    
+    # Ordre dans la colonne Kanban (pour drag & drop persistant plus tard)
+    sort_order: int = Field(default=0)
+
 # --- EVALUATION RUBRICS ---
 
 class EvaluationRubric(SQLModel, table=True):
