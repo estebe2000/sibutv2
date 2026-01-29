@@ -20,13 +20,10 @@ def seed():
     with open(seed_file, "r", encoding='utf-8') as f:
         data = json.load(f)
 
-    SQLModel.metadata.drop_all(engine)
-    SQLModel.metadata.create_all(engine)
+    # NO DROP ALL - Safety for users and groups
+    # SQLModel.metadata.create_all(engine)
 
     with Session(engine) as session:
-        prof_group = Group(name="Enseignants", year=0, pathway="Staff", formation_type="N/A")
-        session.add(prof_group)
-
         # 1. Process Competencies
         for comp_data in data.get("competences", []):
             pathway = comp_data.get("parcours", "Tronc Commun")
@@ -35,53 +32,54 @@ def seed():
             for level_data in comp_data.get("levels", []):
                 level = level_data["niveau"]
                 
-                # Get description from CORE_DESCS or fallback to extracted
-                desc = CORE_DESCS.get(c_code, comp_data.get("full_description", ""))
+                # UPSERT Competency
+                comp = session.exec(select(Competency).where(Competency.code == c_code, Competency.level == level, Competency.pathway == pathway)).first()
+                if not comp:
+                    comp = Competency(code=c_code, label=comp_data["nom"], level=level, pathway=pathway)
                 
-                comp = Competency(
-                    code=c_code,
-                    label=comp_data["nom"],
-                    description=desc,
-                    situations_pro=comp_data.get("situations_pro", ""),
-                    level=level,
-                    pathway=pathway
-                )
+                comp.description = CORE_DESCS.get(c_code, comp_data.get("full_description", ""))
+                comp.situations_pro = comp_data.get("situations_pro", "")
                 session.add(comp); session.flush()
 
                 for ce_item in comp_data.get("ce", []):
-                    session.add(EssentialComponent(
-                        code=ce_item["code"].replace('CEC', 'CE'),
-                        label=ce_item["nom"],
-                        level=level,
-                        pathway=pathway,
-                        competency_id=comp.id
-                    ))
+                    ce_code = ce_item["code"].replace('CEC', 'CE')
+                    ce = session.exec(select(EssentialComponent).where(EssentialComponent.code == ce_code, EssentialComponent.competency_id == comp.id)).first()
+                    if not ce:
+                        ce = EssentialComponent(code=ce_code, competency_id=comp.id)
+                    ce.label = ce_item["nom"]
+                    ce.level = level
+                    ce.pathway = pathway
+                    session.add(ce)
                 
                 for ac_item in level_data.get("ac", []):
-                    session.add(LearningOutcome(
-                        code=ac_item.get("full_code", ac_item["code"]),
-                        label=ac_item["nom"],
-                        description=ac_item.get("description", ""),
-                        level=level,
-                        pathway=ac_item.get("parcours", pathway),
-                        competency_id=comp.id
-                    ))
+                    ac_code = ac_item.get("full_code", ac_item["code"])
+                    lo = session.exec(select(LearningOutcome).where(LearningOutcome.code == ac_code)).first()
+                    if not lo:
+                        lo = LearningOutcome(code=ac_code, competency_id=comp.id)
+                    lo.label = ac_item["nom"]
+                    lo.description = ac_item.get("description", "")
+                    lo.level = level
+                    lo.pathway = ac_item.get("parcours", pathway)
+                    session.add(lo)
         
         session.commit()
 
         # 2. Process Resources
         for res_data in data.get("resources", []):
-            res = Resource(
-                code=res_data["code"],
-                label=res_data["label"],
-                description=res_data.get("description", ""),
-                content=res_data.get("content", ""),
-                hours=res_data.get("hours", 0),
-                hours_details=res_data.get("hours_details", ""),
-                targeted_competencies=res_data.get("targeted_competencies", ""),
-                pathway=res_data.get("pathway", "Tronc Commun")
-            )
+            res_code = res_data["code"]
+            res = session.exec(select(Resource).where(Resource.code == res_code)).first()
+            if not res:
+                res = Resource(code=res_code)
+            
+            res.label = res_data["label"]
+            res.description = res_data.get("description", "")
+            res.content = res_data.get("content", "")
+            res.hours = res_data.get("hours", 0)
+            res.pathway = res_data.get("pathway", "Tronc Commun")
             session.add(res); session.flush()
+            
+            # Update links safely
+            res.learning_outcomes = []
             for ac_code in res_data.get("ac_codes", []):
                 lo = session.exec(select(LearningOutcome).where(LearningOutcome.code == ac_code)).first()
                 if lo: res.learning_outcomes.append(lo)
@@ -91,36 +89,37 @@ def seed():
         # 3. Process Activities
         for act_data in data.get("activities", []):
             if not act_data["nom"] or len(act_data["nom"]) < 3: continue
+            act_code = act_data["code"]
+            act = session.exec(select(Activity).where(Activity.code == act_code)).first()
+            
+            if not act:
+                act = Activity(code=act_code)
+            
             act_type = ActivityType.SAE
             if act_data["type"] == "STAGE": act_type = ActivityType.STAGE
             elif act_data["type"] == "PROJET": act_type = ActivityType.PROJET
             elif act_data["type"] == "PORTFOLIO": act_type = ActivityType.PORTFOLIO
 
-            act = Activity(
-                code=act_data["code"],
-                label=act_data["nom"].split(' . . .')[0],
-                description=act_data.get("description", ""),
-                type=act_type,
-                level=act_data["niveau"],
-                semester=act_data.get("semestre", 1), 
-                pathway=act_data["pathway"],
-                resources=", ".join(act_data.get("resources", [])),
-                hours=act_data.get("hours", 0)
-            )
+            act.label = act_data["nom"].split(' . . .')[0]
+            act.description = act_data.get("description", "")
+            act.type = act_type
+            act.level = act_data["niveau"]
+            act.semester = act_data.get("semestre", 1)
+            act.pathway = act_data["pathway"]
+            
+            # Clean and update resources
+            raw_resources = act_data.get("resources", [])
+            clean_resources = sorted(list(set(raw_resources if isinstance(raw_resources, list) else [])))
+            act.resources = ", ".join(clean_resources)
+            
             session.add(act); session.flush()
+            
+            # Update AC links safely
+            act.learning_outcomes = []
             for ac_code in act_data.get("ac_codes", []):
-                # Search for the AC
                 lo = session.exec(select(LearningOutcome).where(LearningOutcome.code == ac_code)).first()
-                if not lo:
-                    # Fallback: search for the base code (first 7 chars e.g., AC24.01)
-                    base_ac = ac_code[:7]
-                    lo = session.exec(select(LearningOutcome).where(LearningOutcome.code == base_ac)).first()
-                
-                if lo: 
-                    act.learning_outcomes.append(lo)
-                else:
-                    print(f"Warning: Could not link AC {ac_code} to activity {act.code}")
-
+                if lo: act.learning_outcomes.append(lo)
+        
         session.commit()
     print("Seeding complete with robust descriptions!")
 
