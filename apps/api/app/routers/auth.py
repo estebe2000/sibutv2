@@ -32,11 +32,16 @@ def create_access_token(data: dict):
 @router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     print(f"Login attempt for user: {form_data.username}", flush=True)
+    
     # 1. Check local admin override
     if form_data.username == "admin" and form_data.password == "Rangetachambre76*":
         return {"access_token": create_access_token({"sub": "admin"}), "token_type": "bearer"}
     
-    # 2. Try to authenticate against Keycloak
+    # 2. Check demo accounts (login == password)
+    if form_data.username in ["chef", "de", "prof", "tc"] and form_data.password == form_data.username:
+        return {"access_token": create_access_token({"sub": form_data.username}), "token_type": "bearer"}
+
+    # 3. Try to authenticate against Keycloak
     token_url = f"{KC_URL}/realms/{KC_REALM}/protocol/openid-connect/token"
     print(f"Requesting token from Keycloak: {token_url}", flush=True)
     data = {
@@ -58,7 +63,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     except Exception as e:
         print(f"Keycloak Connection Error: {e}", flush=True)
     
-    # 3. Fallback to LDAP direct (optional, but good for transition)
+    # 4. Fallback to LDAP direct
     if verify_credentials(form_data.username, form_data.password):
         return {"access_token": create_access_token({"sub": form_data.username}), "token_type": "bearer"}
     
