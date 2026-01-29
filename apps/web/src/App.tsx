@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput, Divider, Alert } from '@mantine/core';
-import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp, IconMessageDots } from '@tabler/icons-react';
+import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp, IconMessageDots, IconSearch, IconSchool, IconBrandAsana } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
 import { useStore } from './store/useStore';
@@ -18,7 +18,12 @@ import { AiAssistantView } from './views/AiAssistantView';
 import { AdminDashboardView } from './views/AdminDashboardView';
 import { PublicEvaluationView } from './views/PublicEvaluationView';
 import { InternshipManagementView } from './views/InternshipManagementView';
+import { InternshipSearchView } from './views/InternshipSearchView';
 import { CompanyCodexView } from './views/CompanyCodexView';
+import { AcademicPathView } from './views/AcademicPathView';
+import { StudentOdooView } from './views/StudentOdooView';
+import { StudentPortfolioView } from './views/StudentPortfolioView';
+import { LiveBookPreviewView } from './views/LiveBookPreviewView';
 import { GovernanceReportView } from './views/GovernanceReportView';
 import { AdminPortfolioBrowserView } from './views/AdminPortfolioBrowserView';
 import { NewYearTransitionView } from './views/NewYearTransitionView';
@@ -150,21 +155,41 @@ function App() {
 
   if (user.role === 'STUDENT') {
     return (
-      <AppShell header={{ height: 60 }} padding="md">
+      <AppShell header={{ height: 60 }} navbar={{ width: isMobile ? 0 : 220, breakpoint: 'sm' }} padding="md">
         <AppShell.Header p="md">
           <Group justify="space-between">
             <Group><IconShieldCheck size={28} color="#228be6" /><Title order={3}>Skills Hub - Étudiant</Title></Group>
             <Button variant="default" size="xs" onClick={handleLogout}>Déconnexion</Button>
           </Group>
         </AppShell.Header>
+
+        {!isMobile && (
+          <AppShell.Navbar p="md">
+            <Stack gap="sm">
+              <Button variant={activeTab === 'dashboard' ? 'filled' : 'subtle'} onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={18} />} justify="start">Tableau de Bord</Button>
+              <Button variant={activeTab === 'stages' ? 'filled' : 'subtle'} onClick={() => setActiveTab('stages')} leftSection={<IconBriefcase size={18} />} justify="start" color="orange">Stages</Button>
+              <Button variant={activeTab === 'portfolio' ? 'filled' : 'subtle'} onClick={() => setActiveTab('portfolio')} leftSection={<IconBook size={18} />} justify="start" color="blue">Portfolio</Button>
+              <Button variant={activeTab === 'parcours' ? 'filled' : 'subtle'} onClick={() => setActiveTab('parcours')} leftSection={<IconSchool size={18} />} justify="start" color="grape">Parcours Scolaire</Button>
+              <Button variant={activeTab === 'odoo' ? 'filled' : 'subtle'} onClick={() => setActiveTab('odoo')} leftSection={<IconDatabase size={18} />} justify="start" color="indigo">Accès Odoo</Button>
+            </Stack>
+          </AppShell.Navbar>
+        )}
+
         <AppShell.Main bg="gray.0" pb={isMobile ? 80 : 0}>
-          <StudentDashboard user={user} curriculum={curriculum} groups={localGroups} />
+          {activeTab === 'dashboard' && <StudentDashboard user={user} groups={localGroups} />}
+          {activeTab === 'stages' && <InternshipSearchView user={user} />}
+          {activeTab === 'portfolio' && <StudentPortfolioView user={user} curriculum={curriculum} groups={localGroups} setGlobalTab={setActiveTab} />}
+          {activeTab === 'live-book' && <LiveBookPreviewView user={user} />}
+          {activeTab === 'parcours' && <AcademicPathView />}
+          {activeTab === 'odoo' && <StudentOdooView />}
         </AppShell.Main>
         {isMobile && (
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 65, background: 'white', borderTop: '2px solid #eee', zIndex: 1000, padding: '10px' }}>
             <Group grow h="100%">
-              <Button variant="subtle" onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={20}/>}>Bord</Button>
-              <Button variant="subtle" color="blue" onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={20}/>}>Stage</Button>
+              <Button variant="subtle" onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={20}/>} />
+              <Button variant="subtle" onClick={() => setActiveTab('stages')} leftSection={<IconBriefcase size={20}/>} color="orange" />
+              <Button variant="subtle" onClick={() => setActiveTab('portfolio')} leftSection={<IconBook size={20}/>} color="blue" />
+              <Button variant="subtle" onClick={() => setActiveTab('parcours')} leftSection={<IconSchool size={20}/>} color="grape" />
             </Group>
           </div>
         )}
