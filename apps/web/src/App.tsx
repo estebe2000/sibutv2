@@ -31,6 +31,7 @@ import { ExternalServicesProposalsView } from './views/ExternalServicesProposals
 import { FeedbackHubView } from './views/FeedbackHubView';
 import { LearningOutcomeEditorView } from './views/LearningOutcomeEditorView';
 import { InstallWizard } from './views/InstallWizard';
+import { DepartmentSelector } from './components/DepartmentSelector';
 import { useMediaQuery } from '@mantine/hooks';
 import './Login.css';
 
@@ -277,7 +278,11 @@ function App() {
     <AppShell header={{ height: 60 }} navbar={{ width: isMobile ? 0 : 250, breakpoint: 'sm' }} padding="md">
       <AppShell.Header p="md">
         <Group justify="space-between">
-          <Group><IconShieldCheck size={28} color="#228be6" /><Title order={3}>{isMobile ? 'Skills Mobile' : (isAdmin ? 'Skills Hub Admin' : 'Espace Enseignant')}</Title></Group>
+          <Group>
+              <IconShieldCheck size={28} color="#228be6" />
+              <Title order={3}>{isMobile ? 'Skills Mobile' : (isAdmin ? 'Skills Hub Admin' : 'Espace Enseignant')}</Title>
+              {!isMobile && isAdmin && <DepartmentSelector onDepartmentChange={() => {}} />}
+          </Group>
           <Button variant="default" size="xs" onClick={handleLogout}>Déconnexion</Button>
         </Group>
       </AppShell.Header>

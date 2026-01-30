@@ -14,11 +14,31 @@ class UserRole(str, Enum):
     STUDENT = "STUDENT"
     GUEST = "GUEST"
 
+class Department(SQLModel, table=True):
+    """Département académique (ex: TC, GEA, INFO)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    code: str = Field(index=True, unique=True) # "TC", "GEA"
+    label: str # "Techniques de Commercialisation"
+    description: Optional[str] = None
+
+    pathways: List["Pathway"] = Relationship(back_populates="department")
+    users: List["User"] = Relationship(back_populates="department")
+
+class Pathway(SQLModel, table=True):
+    """Parcours spécifique (ex: MDEE, SME)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    code: str = Field(index=True) # "MDEE"
+    label: str # "Marketing Digital..."
+    department_id: int = Field(foreign_key="department.id")
+
+    department: Department = Relationship(back_populates="pathways")
+
 class Group(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True)
     year: int # 1, 2, or 3
-    pathway: str # Nom du parcours (e.g., "Marketing Digital")
+    pathway: str # Deprecated: use pathway_id in future
+    department_id: Optional[int] = Field(default=None, foreign_key="department.id")
     formation_type: str = "FI" # "FI" (Initiale) ou "FA" (Alternance)
     academic_year: str = "2025-2026"
     
@@ -52,6 +72,9 @@ class User(SQLModel, table=True):
     group_id: Optional[int] = Field(default=None, foreign_key="group.id")
     group: Optional[Group] = Relationship(back_populates="users")
     
+    department_id: Optional[int] = Field(default=None, foreign_key="department.id")
+    department: Optional[Department] = Relationship(back_populates="users")
+
     # Lien avec les groupes de SAÉ
     activity_groups: List[ActivityGroup] = Relationship(back_populates="students", link_model=ActivityGroupStudentLink)
 
@@ -305,6 +328,7 @@ class Competency(SQLModel, table=True):
     situations_pro: Optional[str] = None
     level: int = 1 # 1, 2, or 3 (BUT1, BUT2, BUT3)
     pathway: str = Field(default="Tronc Commun")
+    department_id: Optional[int] = Field(default=None, foreign_key="department.id")
     
     essential_components: List["EssentialComponent"] = Relationship(back_populates="competency")
     learning_outcomes: List["LearningOutcome"] = Relationship(back_populates="competency")
@@ -346,6 +370,7 @@ class Resource(SQLModel, table=True):
     hours_details: Optional[str] = None
     targeted_competencies: Optional[str] = None
     pathway: str = Field(default="Tronc Commun")
+    department_id: Optional[int] = Field(default=None, foreign_key="department.id")
     responsible: Optional[str] = Field(default="(inconnu)")
     contributors: Optional[str] = Field(default="(inconnu)")
     
@@ -361,6 +386,7 @@ class Activity(SQLModel, table=True):
     level: int = 1 # 1, 2, or 3
     semester: int = 1 # 1 to 6
     pathway: str = Field(default="Tronc Commun")
+    department_id: Optional[int] = Field(default=None, foreign_key="department.id")
     resources: Optional[str] = None # List of R-codes
     responsible: Optional[str] = Field(default="(inconnu)")
     contributors: Optional[str] = Field(default="(inconnu)")

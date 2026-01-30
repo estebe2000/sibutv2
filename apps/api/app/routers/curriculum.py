@@ -4,6 +4,7 @@ from typing import List, Dict, Any
 from ..database import get_session
 from ..models import Competency, Activity, Resource, ResponsibilityMatrix, ResponsibilityEntityType, ResponsibilityType, ActivityType
 from ..dependencies import get_current_user, require_staff
+from ..dependencies_dept import get_current_department
 from pydantic import BaseModel
 from fastapi import UploadFile, File
 from ..services.pdf_parser import CurriculumPDFParser
@@ -74,9 +75,9 @@ def unassign_role(data: RoleAssignment, session: Session = Depends(get_session),
 
 
 @router.get("/competencies")
-def list_competencies(session: Session = Depends(get_session)):
+def list_competencies(session: Session = Depends(get_session), dept: Department = Depends(get_current_department)):
     from sqlalchemy.orm import selectinload
-    statement = select(Competency).options(
+    statement = select(Competency).where(Competency.department_id == dept.id).options(
         selectinload(Competency.essential_components),
         selectinload(Competency.learning_outcomes)
     )
@@ -90,9 +91,9 @@ def list_competencies(session: Session = Depends(get_session)):
     return result
 
 @router.get("/activities")
-def list_activities(session: Session = Depends(get_session)):
+def list_activities(session: Session = Depends(get_session), dept: Department = Depends(get_current_department)):
     from sqlalchemy.orm import selectinload
-    statement = select(Activity).options(
+    statement = select(Activity).where(Activity.department_id == dept.id).options(
         selectinload(Activity.learning_outcomes),
         selectinload(Activity.essential_components)
     )
@@ -128,9 +129,9 @@ def list_activities(session: Session = Depends(get_session)):
     return result
 
 @router.get("/resources")
-def list_resources(session: Session = Depends(get_session)):
+def list_resources(session: Session = Depends(get_session), dept: Department = Depends(get_current_department)):
     from sqlalchemy.orm import selectinload
-    statement = select(Resource).options(selectinload(Resource.learning_outcomes))
+    statement = select(Resource).where(Resource.department_id == dept.id).options(selectinload(Resource.learning_outcomes))
     res = session.exec(statement).all()
     
     # Récupérer toutes les responsabilités pour les ressources
@@ -208,7 +209,7 @@ def update_learning_outcome(lo_id: int, lo_data: dict, session: Session = Depend
     return lo
 
 @router.post("/verify-pdf")
-async def verify_pdf_program(file: UploadFile = File(...), session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
+async def verify_pdf_program(file: UploadFile = File(...), session: Session = Depends(get_session), current_user: any = Depends(require_staff), dept: Department = Depends(get_current_department)):
     """
     Parses a PDF program and compares it with the current database.
     Returns a report of discrepancies.
@@ -220,10 +221,10 @@ async def verify_pdf_program(file: UploadFile = File(...), session: Session = De
     parser = CurriculumPDFParser(content)
     extracted_structure = parser.parse()
 
-    # Fetch current DB state
-    db_competencies = session.exec(select(Competency)).all() # Not used in simple comparison yet
-    db_resources = session.exec(select(Resource)).all()
-    db_activities = session.exec(select(Activity)).all()
+    # Fetch current DB state for this department
+    db_competencies = session.exec(select(Competency).where(Competency.department_id == dept.id)).all()
+    db_resources = session.exec(select(Resource).where(Resource.department_id == dept.id)).all()
+    db_activities = session.exec(select(Activity).where(Activity.department_id == dept.id)).all()
 
     report = parser.compare_with_db(db_competencies, db_resources, db_activities)
 
@@ -241,30 +242,33 @@ class BulkCreatePayload(BaseModel):
     activities: List[Dict[str, Any]] = []
 
 @router.post("/bulk-create")
-def bulk_create_elements(data: BulkCreatePayload, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
+def bulk_create_elements(data: BulkCreatePayload, session: Session = Depends(get_session), current_user: any = Depends(require_staff), dept: Department = Depends(get_current_department)):
     created_count = {"resources": 0, "activities": 0}
 
     # Create Resources
     for res_data in data.resources:
-        # Check duplicate
-        if not session.exec(select(Resource).where(Resource.code == res_data["code"])).first():
+        # Check duplicate in this department
+        if not session.exec(select(Resource).where(Resource.code == res_data["code"], Resource.department_id == dept.id)).first():
             new_res = Resource(
                 code=res_data["code"],
                 label=res_data["label"],
-                level=res_data.get("level", 1)
-                # Pathway is tricky, default to Tronc Commun or handle via PDF if parsed
+                level=res_data.get("level", 1),
+                department_id=dept.id,
+                pathway="Tronc Commun" # Default
             )
             session.add(new_res)
             created_count["resources"] += 1
 
     # Create Activities
     for act_data in data.activities:
-        if not session.exec(select(Activity).where(Activity.code == act_data["code"])).first():
+        if not session.exec(select(Activity).where(Activity.code == act_data["code"], Activity.department_id == dept.id)).first():
             new_act = Activity(
                 code=act_data["code"],
                 label=act_data["label"],
                 level=act_data.get("level", 1),
-                type=ActivityType.SAE # Default for bulk import from PDF usually
+                type=ActivityType.SAE,
+                department_id=dept.id,
+                pathway="Tronc Commun"
             )
             session.add(new_act)
             created_count["activities"] += 1
