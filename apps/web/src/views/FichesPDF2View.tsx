@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { Container, Title, Paper, Grid, TextInput, Select, Text, ScrollArea, Table, Badge, Group, Button } from '@mantine/core';
 import { IconFileText } from '@tabler/icons-react';
+import { useStore } from '../store/useStore';
 
 // API URL (Relative for Nginx Gateway)
 const API_URL = '/api';
 
 export function FichesPDF2View({ curriculum }: any) {
+  const { config } = useStore();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('TOUS');
   const [pathwayFilter, setPathwayFilter] = useState('TOUS');
   const [semesterFilter, setSemesterFilter] = useState('TOUS');
 
-  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
+  const activePathwaysStr = config.find((c: any) => c.key === 'ACTIVE_PATHWAYS')?.value || 'BDMRC,BI,MDEE,MMPV,SME';
+  const pathways = ['TOUS', 'Tronc Commun', ...activePathwaysStr.split(',').filter(Boolean)];
   const types = ['TOUS', 'SAE', 'STAGE', 'PORTFOLIO', 'RESSOURCE'];
   const semesters = ['TOUS', '1', '2', '3', '4', '5', '6'];
 

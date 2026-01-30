@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Title, Paper, Tabs, Stack, TextInput, Button, Select, Group, PasswordInput } from '@mantine/core';
-import { IconUsers, IconDatabase, IconSettings, IconPlugConnected } from '@tabler/icons-react';
+import { Container, Title, Paper, Tabs, Stack, TextInput, Button, Select, Group, PasswordInput, MultiSelect, ColorInput } from '@mantine/core';
+import { IconUsers, IconDatabase, IconSettings, IconPlugConnected, IconSchool } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from '../services/api';
 
@@ -26,7 +26,10 @@ export function SettingsView({ config, onSave }: any) {
       
       { key: 'APP_LOGO_URL', value: '', category: 'branding' },
       { key: 'APP_PRIMARY_COLOR', value: '#1971c2', category: 'branding' },
-      { key: 'APP_WELCOME_MESSAGE', value: 'Bienvenue sur Skills Hub', category: 'branding' }
+      { key: 'APP_WELCOME_MESSAGE', value: 'Bienvenue sur Skills Hub', category: 'branding' },
+
+      // Pedagogy
+      { key: 'ACTIVE_PATHWAYS', value: 'BDMRC,BI,MDEE,MMPV,SME', category: 'pedagogy' }
     ];
 
     const merged = defaults.map(d => {
@@ -123,7 +126,8 @@ export function SettingsView({ config, onSave }: any) {
     { id: 'ldap', label: 'Serveur LDAP', icon: <IconUsers size={16} /> },
     { id: 'mail', label: 'Serveur Mail (SMTP)', icon: <IconUsers size={16} /> },
     { id: 'ai', label: 'IA (LiteLLM)', icon: <IconDatabase size={16} /> },
-    { id: 'branding', label: 'Identité Visuelle', icon: <IconSettings size={16} /> }
+    { id: 'branding', label: 'Identité Visuelle', icon: <IconSettings size={16} /> },
+    { id: 'pedagogy', label: 'Pédagogie', icon: <IconSchool size={16} /> }
   ];
 
   return (
@@ -185,14 +189,40 @@ export function SettingsView({ config, onSave }: any) {
                             </Button>
                         </Group>
                     </>
+                ) : cat.id === 'pedagogy' ? (
+                    <>
+                        <MultiSelect 
+                            label="Parcours Actifs"
+                            description="Sélectionnez les spécialités affichées dans l'ensemble de la plateforme."
+                            data={[
+                                { label: 'Business Développement et Management de la Relation Client (BDMRC)', value: 'BDMRC' },
+                                { label: 'Business International (BI)', value: 'BI' },
+                                { label: 'Marketing Digital, E-Business et Entrepreneuriat (MDEE)', value: 'MDEE' },
+                                { label: 'Marketing et Management du Point de Vente (MMPV)', value: 'MMPV' },
+                                { label: 'Stratégie de Marque et Événementiel (SME)', value: 'SME' }
+                            ]}
+                            value={getValue('ACTIVE_PATHWAYS').split(',').filter(Boolean)}
+                            onChange={(vals) => updateVal('ACTIVE_PATHWAYS', vals.join(','))}
+                        />
+                    </>
                 ) : (
                     localConfig.filter(c => c.category === cat.id).map(item => (
-                      <TextInput
-                        key={item.key}
-                        label={item.key.replace(/_/g, ' ').toUpperCase()}
-                        value={item.value}
-                        onChange={(e) => updateVal(item.key, e.target.value)}
-                      />
+                      item.key === 'APP_PRIMARY_COLOR' ? (
+                        <ColorInput
+                          key={item.key}
+                          label="Couleur Primaire du Hub"
+                          description="Cette couleur sera utilisée pour les PDF, le login et l'interface globale."
+                          value={item.value}
+                          onChange={(val) => updateVal(item.key, val)}
+                        />
+                      ) : (
+                        <TextInput
+                          key={item.key}
+                          label={item.key.replace(/_/g, ' ').toUpperCase()}
+                          value={item.value}
+                          onChange={(e) => updateVal(item.key, e.target.value)}
+                        />
+                      )
                     ))
                 )}
               </Stack>

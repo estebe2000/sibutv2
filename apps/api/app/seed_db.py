@@ -117,8 +117,17 @@ def seed():
             # Update AC links safely
             act.learning_outcomes = []
             for ac_code in act_data.get("ac_codes", []):
+                # Strict search for the exact code (e.g., AC31.01)
                 lo = session.exec(select(LearningOutcome).where(LearningOutcome.code == ac_code)).first()
-                if lo: act.learning_outcomes.append(lo)
+                if not lo:
+                    # Search by code without the full prefix (fallback)
+                    lo = session.exec(select(LearningOutcome).where(LearningOutcome.code.like(f"%{ac_code}%"))).first()
+                
+                if lo: 
+                    if lo not in act.learning_outcomes:
+                        act.learning_outcomes.append(lo)
+                else:
+                    print(f"Warning: Could not find AC {ac_code} in DB for activity {act.code}")
         
         session.commit()
     print("Seeding complete with robust descriptions!")

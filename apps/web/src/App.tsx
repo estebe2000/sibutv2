@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput, Divider, Alert } from '@mantine/core';
-import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp, IconMessageDots, IconSearch, IconSchool, IconBrandAsana } from '@tabler/icons-react';
+import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp, IconMessageDots, IconSearch, IconSchool, IconBrandAsana, IconPencil } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
 import { useStore } from './store/useStore';
@@ -29,7 +29,9 @@ import { AdminPortfolioBrowserView } from './views/AdminPortfolioBrowserView';
 import { NewYearTransitionView } from './views/NewYearTransitionView';
 import { ExternalServicesProposalsView } from './views/ExternalServicesProposalsView';
 import { FeedbackHubView } from './views/FeedbackHubView';
+import { LearningOutcomeEditorView } from './views/LearningOutcomeEditorView';
 import { useMediaQuery } from '@mantine/hooks';
+import './Login.css';
 
 const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
 
@@ -45,9 +47,21 @@ function App() {
   const [ldapUsers, setLdapUsers] = useState<any[]>([]);
   const [localGroups, setLocalGroups] = useState<any[]>([]);
   const [assignedUsers, setAssignedUsers] = useState<any[]>([]);
+  const [publicConfig, setPublicConfig] = useState<any>({ APP_PRIMARY_COLOR: '#1971c2', APP_LOGO_URL: '' });
+
+  useEffect(() => {
+    if (publicConfig.APP_PRIMARY_COLOR) {
+      document.documentElement.style.setProperty('--mantine-primary-color-filled', publicConfig.APP_PRIMARY_COLOR);
+      // On force aussi la couleur sur les boutons Mantine par defaut
+      const style = document.createElement('style');
+      style.innerHTML = `.mantine-Button-root[data-variant="filled"] { background-color: ${publicConfig.APP_PRIMARY_COLOR} !important; }`;
+      document.head.appendChild(style);
+    }
+  }, [publicConfig.APP_PRIMARY_COLOR]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+
     const magicToken = urlParams.get('token');
     if (magicToken) setPublicToken(magicToken);
 
@@ -137,19 +151,63 @@ function App() {
     </Center>
   );
 
-  if (!token) return (
-    <Center h="100vh" bg="gray.1">
-      <Paper shadow="md" p="xl" radius="md" withBorder w={400}>
-        <Stack align="center" mb="md">
-          <ThemeIcon size={60} radius="xl" color="blue"><IconShieldCheck size={40} /></ThemeIcon>
-          <Title order={3}>Skills Hub</Title>
-        </Stack>
-        <TextInput label="Identifiant" value={loginUsername} onChange={(e) => setLoginUsername(e.target.value)} mb="sm" />
-        <PasswordInput label="Mot de passe" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} mb="lg" />
-        <Button fullWidth onClick={handleLogin} loading={loginLoading}>Se connecter</Button>
-      </Paper>
-    </Center>
-  );
+  if (!token) {
+    console.log("Branding Config:", publicConfig);
+    const primaryColor = publicConfig?.APP_PRIMARY_COLOR || '#1971c2';
+    const logoUrl = publicConfig?.APP_LOGO_URL || '';
+    const welcomeMsg = publicConfig?.APP_WELCOME_MESSAGE || 'Bienvenue sur le Hub';
+
+    if (!publicConfig) return <Center h="100vh"><Loader /></Center>;
+
+    return (
+      <div className={`login-wrapper ${loginLoading ? 'form-success' : ''}`} style={{ background: `linear-gradient(to bottom right, ${primaryColor} 0%, #53e3a6 100%)` }}>
+        <div className="login-container">
+          {(logoUrl && logoUrl.trim() !== "") ? (
+              <img 
+                src={logoUrl} 
+                alt="Logo" 
+                style={{ maxHeight: 120, marginBottom: 20, maxWidth: '100%', objectFit: 'contain', display: 'block', margin: '0 auto 20px' }} 
+                onError={(e) => {
+                    console.error("Logo failed to load:", logoUrl);
+                    e.currentTarget.style.display = 'none';
+                }}
+              />
+          ) : (
+              <ThemeIcon size={60} radius="xl" color="white" mb="md" variant="light">
+                  <IconShieldCheck size={40} color="white" />
+              </ThemeIcon>
+          )}
+          <h1>{welcomeMsg}</h1>
+          <form className="login-form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+            <input 
+              type="text" 
+              placeholder="Identifiant" 
+              value={loginUsername} 
+              onChange={(e) => setLoginUsername(e.target.value)} 
+              required 
+              style={{ color: 'white', borderColor: 'rgba(255,255,255,0.4)' }}
+            />
+            <input 
+              type="password" 
+              placeholder="Mot de passe" 
+              value={loginPassword} 
+              onChange={(e) => setLoginPassword(e.target.value)} 
+              required 
+              style={{ color: 'white', borderColor: 'rgba(255,255,255,0.4)' }}
+            />
+            <button type="submit" className="login-button" disabled={loginLoading} style={{ color: primaryColor }}>
+              {loginLoading ? 'Connexion...' : 'Se connecter'}
+            </button>
+          </form>
+        </div>
+        
+        <ul className="bg-bubbles">
+          <li></li><li></li><li></li><li></li><li></li>
+          <li></li><li></li><li></li><li></li><li></li>
+        </ul>
+      </div>
+    );
+  }
 
   if (!user) return <Center h="100vh"><Loader /></Center>;
 
@@ -227,6 +285,7 @@ function App() {
               <Text size="10px" fw={700} c="grape.9" px="xs" mb={5} tt="uppercase">Référentiel & Contenus</Text>
               <Stack gap={2}>
                 <Button variant={activeTab === 'curriculum' ? 'filled' : 'subtle'} onClick={() => setActiveTab('curriculum')} leftSection={<IconBook size={18} />} justify="start" size="compact-sm" color="grape">Référentiel</Button>
+                <Button variant={activeTab === 'ac-editor' ? 'filled' : 'subtle'} onClick={() => setActiveTab('ac-editor')} leftSection={<IconPencil size={18} />} justify="start" size="compact-sm" color="grape">Éditeur d'AC</Button>
                 <Button variant={activeTab === 'discovery' ? 'filled' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={18} />} justify="start" size="compact-sm" color="grape">Découverte</Button>
                 <Button variant={activeTab === 'repartition' ? 'filled' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="grape">Répartition</Button>
                 <Button variant={activeTab === 'fiches2' ? 'filled' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={18} />} justify="start" size="compact-sm" color="grape">Fiches PDF</Button>
@@ -288,6 +347,7 @@ function App() {
         {activeTab === 'dashboard' && (isAdmin ? <AdminDashboardView /> : <ProfessorDashboard user={user} curriculum={curriculum} setActiveTab={setActiveTab} />)}
         {activeTab === 'dispatcher' && !isMobile && <DispatcherView fetchData={() => fetchData(user.role)} ldapUsers={ldapUsers} setLdapUsers={setLdapUsers} localGroups={localGroups} assignedUsers={assignedUsers} YEAR_COLORS={YEAR_COLORS} />}
         {activeTab === 'curriculum' && !isMobile && <CompetencyEditor curriculum={curriculum} onRefresh={fetchCurriculum} professors={staffUsers} />}
+        {activeTab === 'ac-editor' && !isMobile && <LearningOutcomeEditorView />}
         {activeTab === 'discovery' && !isMobile && <DiscoveryView curriculum={curriculum} />}
         {activeTab === 'repartition' && !isMobile && <RepartitionView curriculum={curriculum} />}
         {activeTab === 'fiches2' && <FichesPDF2View curriculum={curriculum} />}

@@ -193,3 +193,14 @@ def update_activity(act_id: int, act_data: dict, session: Session = Depends(get_
             setattr(act, key, value)
     session.add(act); session.commit(); session.refresh(act)
     return act
+
+@router.patch("/learning-outcomes/{lo_id}")
+def update_learning_outcome(lo_id: int, lo_data: dict, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
+    from ..models import LearningOutcome
+    lo = session.get(LearningOutcome, lo_id)
+    if not lo: raise HTTPException(status_code=404, detail="Learning Outcome not found")
+    for key, value in lo_data.items():
+        if key in ["label", "description"]:
+            setattr(lo, key, value)
+    session.add(lo); session.commit(); session.refresh(lo)
+    return lo
