@@ -39,7 +39,7 @@ import {
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { FileInput } from '@mantine/core';
+import { FileInput, Checkbox } from '@mantine/core';
 import api from '../services/api';
 import { useStore } from '../store/useStore';
 import { renderRichText } from '../components/RichTextRenderer';
@@ -59,6 +59,7 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importReport, setImportReport] = useState<any>(null);
   const [importing, setImporting] = useState(false);
+  const [selectedForImport, setSelectedForImport] = useState<{resources: any[], activities: any[]}>({ resources: [], activities: [] });
 
   const [activeTabs, setActiveTabs] = useState<Record<number, string | null>>({ 1: 'comps', 2: 'comps', 3: 'comps' });
   const [expandedResource, setExpandedResource] = useState<string | null>(null);
@@ -222,6 +223,37 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
       setImporting(false);
   };
 
+  const handleBulkImport = async () => {
+      setImporting(true);
+      try {
+          const payload = {
+              resources: selectedForImport.resources,
+              activities: selectedForImport.activities
+          };
+          const res = await api.post('/bulk-create', payload);
+          notifications.show({ title: 'Import Réussi', message: `${res.data.created.resources} Ressources et ${res.data.created.activities} Activités créées.`, color: 'green' });
+          setImportModalOpen(false);
+          setImportReport(null);
+          setSelectedForImport({ resources: [], activities: [] });
+          onRefresh();
+      } catch (e) {
+          notifications.show({ title: 'Erreur', message: 'Échec de l\'importation massive.', color: 'red' });
+      }
+      setImporting(false);
+  };
+
+  const toggleImportSelection = (type: 'resources' | 'activities', item: any) => {
+      setSelectedForImport(prev => {
+          const list = prev[type];
+          const exists = list.find((i: any) => i.code === item.code);
+          if (exists) {
+              return { ...prev, [type]: list.filter((i: any) => i.code !== item.code) };
+          } else {
+              return { ...prev, [type]: [...list, item] };
+          }
+      });
+  };
+
   const showInfo = async (item: any, type: 'RES' | 'AC') => {
     setInfoLoading(true);
     setInfoItem({ ...item, type });
@@ -271,13 +303,26 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                       <Tabs.Panel value="resources" pt="md">
                           <Grid>
                               <Grid.Col span={6}>
-                                  <Title order={5} c="red" mb="xs">Manquants en Base de Données ({importReport.resources.missing_in_db.length})</Title>
+                                  <Group justify="space-between" mb="xs">
+                                      <Title order={5} c="red">Manquants en Base ({importReport.resources.missing_in_db.length})</Title>
+                                      {selectedForImport.resources.length > 0 && (
+                                          <Button size="xs" color="red" onClick={handleBulkImport} loading={importing}>
+                                              Importer ({selectedForImport.resources.length})
+                                          </Button>
+                                      )}
+                                  </Group>
                                   <Paper withBorder p="sm" bg="red.0" h={300} style={{ overflowY: 'auto' }}>
-                                      <List size="sm" icon={<ThemeIcon color="red" size={16} radius="xl"><IconX size={10}/></ThemeIcon>}>
+                                      <Stack gap="xs">
                                           {importReport.resources.missing_in_db.map((r: any, i: number) => (
-                                              <List.Item key={i}><b>{r.code}</b> : {r.label}</List.Item>
+                                              <Group key={i} gap="xs">
+                                                  <Checkbox
+                                                      checked={!!selectedForImport.resources.find((x: any) => x.code === r.code)}
+                                                      onChange={() => toggleImportSelection('resources', r)}
+                                                  />
+                                                  <Text size="sm"><b>{r.code}</b> : {r.label}</Text>
+                                              </Group>
                                           ))}
-                                      </List>
+                                      </Stack>
                                   </Paper>
                               </Grid.Col>
                               <Grid.Col span={6}>
@@ -296,13 +341,26 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
                       <Tabs.Panel value="activities" pt="md">
                           <Grid>
                               <Grid.Col span={6}>
-                                  <Title order={5} c="red" mb="xs">Manquants en Base de Données ({importReport.activities.missing_in_db.length})</Title>
+                                  <Group justify="space-between" mb="xs">
+                                      <Title order={5} c="red">Manquants en Base ({importReport.activities.missing_in_db.length})</Title>
+                                      {selectedForImport.activities.length > 0 && (
+                                          <Button size="xs" color="red" onClick={handleBulkImport} loading={importing}>
+                                              Importer ({selectedForImport.activities.length})
+                                          </Button>
+                                      )}
+                                  </Group>
                                   <Paper withBorder p="sm" bg="red.0" h={300} style={{ overflowY: 'auto' }}>
-                                      <List size="sm" icon={<ThemeIcon color="red" size={16} radius="xl"><IconX size={10}/></ThemeIcon>}>
+                                      <Stack gap="xs">
                                           {importReport.activities.missing_in_db.map((a: any, i: number) => (
-                                              <List.Item key={i}><b>{a.code}</b> : {a.label}</List.Item>
+                                              <Group key={i} gap="xs">
+                                                  <Checkbox
+                                                      checked={!!selectedForImport.activities.find((x: any) => x.code === a.code)}
+                                                      onChange={() => toggleImportSelection('activities', a)}
+                                                  />
+                                                  <Text size="sm"><b>{a.code}</b> : {a.label}</Text>
+                                              </Group>
                                           ))}
-                                      </List>
+                                      </Stack>
                                   </Paper>
                               </Grid.Col>
                               <Grid.Col span={6}>

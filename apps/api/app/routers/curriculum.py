@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
-from typing import List
+from typing import List, Dict, Any
 from ..database import get_session
-from ..models import Competency, Activity, Resource, ResponsibilityMatrix, ResponsibilityEntityType, ResponsibilityType
+from ..models import Competency, Activity, Resource, ResponsibilityMatrix, ResponsibilityEntityType, ResponsibilityType, ActivityType
 from ..dependencies import get_current_user, require_staff
 from pydantic import BaseModel
 from fastapi import UploadFile, File
@@ -235,3 +235,39 @@ async def verify_pdf_program(file: UploadFile = File(...), session: Session = De
         },
         "report": report
     }
+
+class BulkCreatePayload(BaseModel):
+    resources: List[Dict[str, Any]] = []
+    activities: List[Dict[str, Any]] = []
+
+@router.post("/bulk-create")
+def bulk_create_elements(data: BulkCreatePayload, session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
+    created_count = {"resources": 0, "activities": 0}
+
+    # Create Resources
+    for res_data in data.resources:
+        # Check duplicate
+        if not session.exec(select(Resource).where(Resource.code == res_data["code"])).first():
+            new_res = Resource(
+                code=res_data["code"],
+                label=res_data["label"],
+                level=res_data.get("level", 1)
+                # Pathway is tricky, default to Tronc Commun or handle via PDF if parsed
+            )
+            session.add(new_res)
+            created_count["resources"] += 1
+
+    # Create Activities
+    for act_data in data.activities:
+        if not session.exec(select(Activity).where(Activity.code == act_data["code"])).first():
+            new_act = Activity(
+                code=act_data["code"],
+                label=act_data["label"],
+                level=act_data.get("level", 1),
+                type=ActivityType.SAE # Default for bulk import from PDF usually
+            )
+            session.add(new_act)
+            created_count["activities"] += 1
+
+    session.commit()
+    return {"status": "success", "created": created_count}
