@@ -32,10 +32,14 @@ import {
   IconDatabase,
   IconBook,
   IconUsers,
-  IconCrown
+  IconCrown,
+  IconFileUpload,
+  IconCheck,
+  IconX
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { FileInput } from '@mantine/core';
 import api from '../services/api';
 import { useStore } from '../store/useStore';
 import { renderRichText } from '../components/RichTextRenderer';
@@ -50,6 +54,11 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
 
   const [infoItem, setInfoItem] = useState<any>(null);
   const [infoLoading, setInfoLoading] = useState(false);
+
+  const [importModalOpen, setImportModalOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importReport, setImportReport] = useState<any>(null);
+  const [importing, setImporting] = useState(false);
 
   const [activeTabs, setActiveTabs] = useState<Record<number, string | null>>({ 1: 'comps', 2: 'comps', 3: 'comps' });
   const [expandedResource, setExpandedResource] = useState<string | null>(null);
@@ -196,6 +205,23 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
     }
   };
 
+  const handleImportPDF = async () => {
+      if (!importFile) return;
+      setImporting(true);
+      const formData = new FormData();
+      formData.append('file', importFile);
+      try {
+          const res = await api.post('/verify-pdf', formData, {
+              headers: { 'Content-Type': 'multipart/form-data' }
+          });
+          setImportReport(res.data.report);
+          notifications.show({ title: 'Analyse terminée', message: 'Le PDF a été comparé avec la base.', color: 'green' });
+      } catch (e) {
+          notifications.show({ title: 'Erreur', message: 'Impossible d\'analyser le fichier.', color: 'red' });
+      }
+      setImporting(false);
+  };
+
   const showInfo = async (item: any, type: 'RES' | 'AC') => {
     setInfoLoading(true);
     setInfoItem({ ...item, type });
@@ -214,6 +240,88 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
 
   return (
     <Container size="lg">
+      {/* IMPORT MODAL */}
+      <Modal opened={importModalOpen} onClose={() => { setImportModalOpen(false); setImportReport(null); setImportFile(null); }} title="Importer / Vérifier Programme Officiel" size="xl">
+          <Stack>
+              <Text size="sm" c="dimmed">
+                  Chargez le PDF officiel du programme national BUT TC. Le système va l'analyser et comparer les éléments (Ressources, SAE) avec la base de données actuelle pour détecter les écarts.
+              </Text>
+
+              <Group align="flex-end">
+                  <FileInput
+                    placeholder="Choisir le fichier PDF"
+                    label="Programme National (PDF)"
+                    accept="application/pdf"
+                    value={importFile}
+                    onChange={setImportFile}
+                    style={{ flex: 1 }}
+                  />
+                  <Button onClick={handleImportPDF} loading={importing} disabled={!importFile} leftSection={<IconFileUpload size={16}/>}>
+                      Lancer l'analyse
+                  </Button>
+              </Group>
+
+              {importReport && (
+                  <Tabs defaultValue="resources">
+                      <Tabs.List>
+                          <Tabs.Tab value="resources">Ressources ({importReport.resources.matches.length} ok)</Tabs.Tab>
+                          <Tabs.Tab value="activities">SAÉ ({importReport.activities.matches.length} ok)</Tabs.Tab>
+                      </Tabs.List>
+
+                      <Tabs.Panel value="resources" pt="md">
+                          <Grid>
+                              <Grid.Col span={6}>
+                                  <Title order={5} c="red" mb="xs">Manquants en Base de Données ({importReport.resources.missing_in_db.length})</Title>
+                                  <Paper withBorder p="sm" bg="red.0" h={300} style={{ overflowY: 'auto' }}>
+                                      <List size="sm" icon={<ThemeIcon color="red" size={16} radius="xl"><IconX size={10}/></ThemeIcon>}>
+                                          {importReport.resources.missing_in_db.map((r: any, i: number) => (
+                                              <List.Item key={i}><b>{r.code}</b> : {r.label}</List.Item>
+                                          ))}
+                                      </List>
+                                  </Paper>
+                              </Grid.Col>
+                              <Grid.Col span={6}>
+                                  <Title order={5} c="orange" mb="xs">Absents du PDF ({importReport.resources.missing_in_pdf.length})</Title>
+                                  <Paper withBorder p="sm" bg="orange.0" h={300} style={{ overflowY: 'auto' }}>
+                                      <List size="sm" icon={<ThemeIcon color="orange" size={16} radius="xl"><IconUsers size={10}/></ThemeIcon>}>
+                                          {importReport.resources.missing_in_pdf.map((r: any, i: number) => (
+                                              <List.Item key={i}><b>{r.code}</b> : {r.label}</List.Item>
+                                          ))}
+                                      </List>
+                                  </Paper>
+                              </Grid.Col>
+                          </Grid>
+                      </Tabs.Panel>
+
+                      <Tabs.Panel value="activities" pt="md">
+                          <Grid>
+                              <Grid.Col span={6}>
+                                  <Title order={5} c="red" mb="xs">Manquants en Base de Données ({importReport.activities.missing_in_db.length})</Title>
+                                  <Paper withBorder p="sm" bg="red.0" h={300} style={{ overflowY: 'auto' }}>
+                                      <List size="sm" icon={<ThemeIcon color="red" size={16} radius="xl"><IconX size={10}/></ThemeIcon>}>
+                                          {importReport.activities.missing_in_db.map((a: any, i: number) => (
+                                              <List.Item key={i}><b>{a.code}</b> : {a.label}</List.Item>
+                                          ))}
+                                      </List>
+                                  </Paper>
+                              </Grid.Col>
+                              <Grid.Col span={6}>
+                                  <Title order={5} c="orange" mb="xs">Absents du PDF ({importReport.activities.missing_in_pdf.length})</Title>
+                                  <Paper withBorder p="sm" bg="orange.0" h={300} style={{ overflowY: 'auto' }}>
+                                      <List size="sm" icon={<ThemeIcon color="orange" size={16} radius="xl"><IconUsers size={10}/></ThemeIcon>}>
+                                          {importReport.activities.missing_in_pdf.map((a: any, i: number) => (
+                                              <List.Item key={i}><b>{a.code}</b> : {a.label}</List.Item>
+                                          ))}
+                                      </List>
+                                  </Paper>
+                              </Grid.Col>
+                          </Grid>
+                      </Tabs.Panel>
+                  </Tabs>
+              )}
+          </Stack>
+      </Modal>
+
       {/* INFO MODAL - ADAPTIVE VERSION */}
       <Modal opened={!!infoItem} onClose={() => setInfoItem(null)} title={infoItem?.code || "Infos"} size={infoItem?.type === 'AC' ? "lg" : "md"}>
         {infoLoading ? <Center p="xl"><Loader /></Center> : infoItem && (
@@ -333,6 +441,7 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
       <Group justify="space-between" mb="xl">
         <Title order={2}>Gestion du Référentiel</Title>
         <Group>
+          <Button variant="default" leftSection={<IconFileUpload size={16} />} onClick={() => setImportModalOpen(true)} size="sm">Importer / Vérifier (PDF)</Button>
           <Button variant="light" color="blue" leftSection={<IconDownload size={16} />} onClick={handleExport} size="sm">Exporter (Sauvegarde)</Button>
           <Select
             placeholder="Parcours"

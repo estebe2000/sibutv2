@@ -269,6 +269,16 @@ services:
       - app_network
       - test_dev_network
 
+  tunnel:
+    image: cloudflare/cloudflared
+    container_name: but_tc_tunnel
+    restart: unless-stopped
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TOKEN}
+    command: tunnel run
+    networks:
+      - app_network
+
 volumes:
   postgres_data:
   nextcloud_data:

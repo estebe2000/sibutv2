@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Title, Paper, Tabs, Stack, TextInput, Button, Select, Group, PasswordInput, MultiSelect, ColorInput } from '@mantine/core';
-import { IconUsers, IconDatabase, IconSettings, IconPlugConnected, IconSchool } from '@tabler/icons-react';
+import { Container, Title, Paper, Tabs, Stack, TextInput, Button, Select, Group, PasswordInput, MultiSelect, ColorInput, Alert, RingProgress, Text, Grid, Center } from '@mantine/core';
+import { IconUsers, IconDatabase, IconSettings, IconPlugConnected, IconSchool, IconCloudComputing, IconActivity, IconLock } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from '../services/api';
 
@@ -29,7 +29,14 @@ export function SettingsView({ config, onSave }: any) {
       { key: 'APP_WELCOME_MESSAGE', value: 'Bienvenue sur Skills Hub', category: 'branding' },
 
       // Pedagogy
-      { key: 'ACTIVE_PATHWAYS', value: 'BDMRC,BI,MDEE,MMPV,SME', category: 'pedagogy' }
+      { key: 'ACTIVE_PATHWAYS', value: 'BDMRC,BI,MDEE,MMPV,SME', category: 'pedagogy' },
+
+      // Network
+      { key: 'CLOUDFLARE_TOKEN', value: '', category: 'network' },
+      { key: 'PUBLIC_URL', value: window.location.origin, category: 'network' },
+
+      // Security
+      { key: 'ADMIN_PASSWORD', value: '', category: 'security' }
     ];
 
     const merged = defaults.map(d => {
@@ -123,11 +130,14 @@ export function SettingsView({ config, onSave }: any) {
   };
 
   const categories = [
+    { id: 'system', label: 'État Système', icon: <IconActivity size={16} /> },
+    { id: 'branding', label: 'Identité Visuelle', icon: <IconSettings size={16} /> },
+    { id: 'network', label: 'Réseau & Accès', icon: <IconCloudComputing size={16} /> },
+    { id: 'security', label: 'Sécurité', icon: <IconLock size={16} /> },
+    { id: 'ai', label: 'IA (LiteLLM)', icon: <IconDatabase size={16} /> },
+    { id: 'pedagogy', label: 'Pédagogie', icon: <IconSchool size={16} /> },
     { id: 'ldap', label: 'Serveur LDAP', icon: <IconUsers size={16} /> },
     { id: 'mail', label: 'Serveur Mail (SMTP)', icon: <IconUsers size={16} /> },
-    { id: 'ai', label: 'IA (LiteLLM)', icon: <IconDatabase size={16} /> },
-    { id: 'branding', label: 'Identité Visuelle', icon: <IconSettings size={16} /> },
-    { id: 'pedagogy', label: 'Pédagogie', icon: <IconSchool size={16} /> }
   ];
 
   return (
@@ -143,8 +153,63 @@ export function SettingsView({ config, onSave }: any) {
 
           {categories.map(cat => (
             <Tabs.Panel key={cat.id} value={cat.id}>
-              <Stack>
-                {cat.id === 'ai' ? (
+              <Stack pt="md">
+                {cat.id === 'system' ? (
+                    <Grid>
+                        <Grid.Col span={4}>
+                            <Paper withBorder p="md" radius="md">
+                                <Group justify="center">
+                                    <RingProgress
+                                        roundCaps
+                                        thickness={8}
+                                        sections={[{ value: 100, color: 'green' }]}
+                                        label={<Center><IconActivity size={20} /></Center>}
+                                    />
+                                    <div>
+                                        <Text c="dimmed" size="xs" tt="uppercase" fw={700}>Statut API</Text>
+                                        <Text fw={700} size="xl">En ligne</Text>
+                                    </div>
+                                </Group>
+                            </Paper>
+                        </Grid.Col>
+                        <Grid.Col span={4}>
+                             <Paper withBorder p="md" radius="md">
+                                <div>
+                                    <Text c="dimmed" size="xs" tt="uppercase" fw={700}>Version App</Text>
+                                    <Text fw={700} size="xl">v1.2.0</Text>
+                                    <Text size="xs" c="dimmed">Build 2026.01.24</Text>
+                                </div>
+                            </Paper>
+                        </Grid.Col>
+                    </Grid>
+                ) : cat.id === 'network' ? (
+                    <>
+                        <TextInput
+                            label="URL Publique"
+                            description="L'adresse utilisée pour accéder au site."
+                            value={getValue('PUBLIC_URL')}
+                            onChange={(e) => updateVal('PUBLIC_URL', e.target.value)}
+                        />
+                        <PasswordInput
+                            label="Cloudflare Tunnel Token"
+                            description="Token pour l'accès Zero Trust. Nécessite un redémarrage du service Tunnel."
+                            value={getValue('CLOUDFLARE_TOKEN')}
+                            onChange={(e) => updateVal('CLOUDFLARE_TOKEN', e.target.value)}
+                        />
+                        <Alert title="Note" color="blue" icon={<IconCloudComputing size={16}/>}>
+                            Si vous modifiez le token Cloudflare, vous devez redémarrer le conteneur 'tunnel' ou l'application entière.
+                        </Alert>
+                    </>
+                ) : cat.id === 'security' ? (
+                    <>
+                        <PasswordInput
+                            label="Mot de passe Administrateur Local (admin)"
+                            description="Laissez vide pour conserver le mot de passe actuel."
+                            placeholder="Nouveau mot de passe..."
+                            onChange={(e) => updateVal('ADMIN_PASSWORD', e.target.value)}
+                        />
+                    </>
+                ) : cat.id === 'ai' ? (
                     <>
                         <Select 
                             label="Fournisseur (Provider)" 

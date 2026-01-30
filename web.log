@@ -1,0 +1,23 @@
+
+> web@0.0.0 dev
+> vite
+
+
+  VITE v7.3.0  ready in 256 ms
+
+  ➜  Local:   http://localhost:5173/app/
+  ➜  Network: http://192.168.0.2:5173/app/
+9:01:02 PM [vite] http proxy error: /api/setup/status
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+9:14:33 PM [vite] http proxy error: /api/setup/status
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+9:14:33 PM [vite] http proxy error: /api/login
+AggregateError [ECONNREFUSED]:
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+9:15:28 PM [vite] vite.config.ts changed, restarting server...
+Error: listen EACCES: permission denied 0.0.0.0:80
