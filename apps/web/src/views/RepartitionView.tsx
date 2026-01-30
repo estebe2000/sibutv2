@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { Container, Title, Tabs, Paper, ScrollArea, Table, Select, Group, Box, Badge, Center, Loader, Text } from '@mantine/core';
 import { IconClock, IconDatabase } from '@tabler/icons-react';
+import { useStore } from '../store/useStore';
 
 export function RepartitionView({ curriculum }: any) {
+  const { config } = useStore();
   if (!curriculum || !curriculum.activities) return <Center p="xl"><Loader /></Center>;
 
-  const [pathway, setPathway] = useState('SME');
+  const activePathwaysStr = config.find((c: any) => c.key === 'ACTIVE_PATHWAYS')?.value || 'BDMRC,BI,MDEE,MMPV,SME';
+  const activePathways = activePathwaysStr.split(',').filter(Boolean);
+
+  const [pathway, setPathway] = useState(activePathways[0] || 'SME');
   const [semester, setSemester] = useState('1');
 
-  const pathways = ['BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
+  const pathways = activePathways;
   const semesters = ['1', '2', '3', '4', '5', '6'];
 
   const structureData = [

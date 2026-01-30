@@ -34,12 +34,14 @@ import {
 import { notifications } from '@mantine/notifications';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import api from '../services/api';
+import { useStore } from '../store/useStore';
 import { ResponsibilitySelector } from '../components/ResponsibilitySelector';
 import { PedagogicalTeamManager } from '../components/PedagogicalTeamManager';
 
 const YEAR_COLORS: any = { 1: 'blue', 2: 'grape', 3: 'teal' };
 
 export function DispatcherView() {
+  const { config } = useStore();
   const [activeTab, setActiveTab] = useState<string | null>('dispatch');
   const [ldapUsers, setLdapUsers] = useState<any[]>([]);
   const [localKeycloakUsers, setLocalKeycloakUsers] = useState<any[]>([]);
@@ -174,6 +176,9 @@ export function DispatcherView() {
 
   if (loading) return <Center h="100vh"><Loader size="lg" /></Center>;
 
+  const activePathwaysStr = config.find((c: any) => c.key === 'ACTIVE_PATHWAYS')?.value || 'BDMRC,BI,MDEE,MMPV,SME';
+  const activePathways = ['Tronc Commun', ...activePathwaysStr.split(',').filter(Boolean)];
+
   return (
     <Container size="xl" h="calc(100vh - 100px)">
       <Tabs value={activeTab} onChange={setActiveTab} variant="pills" mb="md">
@@ -189,7 +194,7 @@ export function DispatcherView() {
             <Stack>
               <TextInput label="Nom du groupe" value={newGroup.name} onChange={(e) => setNewGroup({...newGroup, name: e.target.value})} required />
               <Select label="Année" data={['1', '2', '3']} value={newGroup.year.toString()} onChange={(v) => setNewGroup({...newGroup, year: parseInt(v || '1')})} />
-              <Select label="Parcours" data={['Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME']} value={newGroup.pathway} onChange={(v) => setNewGroup({...newGroup, pathway: v || 'Tronc Commun'})} />
+              <Select label="Parcours" data={activePathways} value={newGroup.pathway} onChange={(v) => setNewGroup({...newGroup, pathway: v || 'Tronc Commun'})} />
               <Select label="Type" data={[{label: 'Initiale', value: 'FI'}, {label: 'Alternance', value: 'FA'}]} value={newGroup.formation_type} onChange={(v) => setNewGroup({...newGroup, formation_type: v || 'FI'})} />
               <Button onClick={handleCreateGroup}>Valider</Button>
             </Stack>

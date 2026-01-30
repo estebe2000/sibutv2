@@ -37,10 +37,12 @@ import {
 import { notifications } from '@mantine/notifications';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import api from '../services/api';
+import { useStore } from '../store/useStore';
 import { renderRichText } from '../components/RichTextRenderer';
 import { ResponsibilitySelector } from '../components/ResponsibilitySelector';
 
 export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
+  const { config } = useStore();
   const [pathway, setPathway] = useState('Tronc Commun');
   const [editingComp, setEditingComp] = useState<any>(null);
   const [editingAct, setEditingAct] = useState<any>(null);
@@ -117,7 +119,8 @@ export function CompetencyEditor({ curriculum, onRefresh, professors }: any) {
     };
   }, [curriculum]);
 
-  const pathways = ['TOUS', 'Tronc Commun', 'BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
+  const activePathwaysStr = config.find((c: any) => c.key === 'ACTIVE_PATHWAYS')?.value || 'BDMRC,BI,MDEE,MMPV,SME';
+  const pathways = ['TOUS', 'Tronc Commun', ...activePathwaysStr.split(',').filter(Boolean)];
   const levels = [1, 2, 3];
 
   const handleSaveComp = async () => {

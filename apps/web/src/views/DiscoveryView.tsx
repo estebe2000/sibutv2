@@ -2,17 +2,22 @@ import React, { useState } from 'react';
 import { Container, Group, Stack, Title, Text, Select, Paper, Grid, Card, ThemeIcon, List, Badge, Modal, Center, Loader, Box, Divider } from '@mantine/core';
 import { IconUsers, IconShieldCheck, IconPlus } from '@tabler/icons-react';
 import api from '../services/api';
+import { useStore } from '../store/useStore';
 import { renderRichText } from '../components/RichTextRenderer';
 
 export function DiscoveryView({ curriculum }: any) {
+  const { config } = useStore();
   if (!curriculum || !curriculum.competences) return <Center p="xl"><Loader /></Center>;
 
-  const [pathway, setPathway] = useState('SME');
+  const activePathwaysStr = config.find((c: any) => c.key === 'ACTIVE_PATHWAYS')?.value || 'BDMRC,BI,MDEE,MMPV,SME';
+  const activePathways = activePathwaysStr.split(',').filter(Boolean);
+
+  const [pathway, setPathway] = useState(activePathways[0] || 'SME');
   const [selectedCompCode, setSelectedCompCode] = useState('C1');
   const [infoItem, setInfoItem] = useState<any>(null);
   const [infoLoading, setInfoLoading] = useState(false);
 
-  const pathways = ['BI', 'BDMRC', 'MDEE', 'MMPV', 'SME'];
+  const pathways = activePathways;
   const years = [1, 2, 3];
   const compCodes = ['C1', 'C2', 'C3', 'C4', 'C5'];
 
