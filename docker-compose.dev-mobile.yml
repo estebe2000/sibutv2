@@ -1,0 +1,279 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Database (PostgreSQL)
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    container_name: but_tc_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backup_full_descriptions.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # File Storage (Nextcloud)
+  # ---------------------------------------------------------------------------
+  nextcloud:
+    image: nextcloud:stable-apache
+    container_name: but_tc_nextcloud
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    extra_hosts:
+      - "${DOMAIN}:host-gateway"
+      - "nextcloud.${DOMAIN}:host-gateway"
+      - "only-office.${DOMAIN}:host-gateway"
+      - "home.${DOMAIN}:host-gateway"
+    environment:
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu ${DOMAIN} *.${DOMAIN}
+      - OVERWRITEPROTOCOL=https
+      - SQLITE_DATABASE=nextcloud
+    volumes:
+      - nextcloud_data:/var/www/html
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # OnlyOffice
+  # ---------------------------------------------------------------------------
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    container_name: but_tc_onlyoffice
+    restart: unless-stopped
+    ports:
+      - "8083:80"
+    extra_hosts:
+      - "${DOMAIN}:host-gateway"
+      - "nextcloud.${DOMAIN}:host-gateway"
+      - "only-office.${DOMAIN}:host-gateway"
+      - "home.${DOMAIN}:host-gateway"
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=onlyoffice_secret
+      - JWT_HEADER=Authorization
+      - USE_UNAUTHORIZED_STORAGE=true
+      - ALLOW_PRIVATE_IP_ADDRESS=true
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Databases pour Mattermost, Keycloak, Odoo
+  # ---------------------------------------------------------------------------
+  db_mattermost:
+    image: postgres:15-alpine
+    container_name: but_tc_db_mattermost
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${MM_DB_USER}
+      POSTGRES_PASSWORD: ${MM_DB_PASSWORD}
+      POSTGRES_DB: mattermost
+    volumes:
+      - mattermost_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  db_keycloak:
+    image: postgres:15-alpine
+    container_name: but_tc_db_keycloak
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${KC_DB_USER}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
+      POSTGRES_DB: keycloak
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  db_odoo:
+    image: postgres:15-alpine
+    container_name: but_tc_db_odoo
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${ODOO_DB_USER}
+      POSTGRES_PASSWORD: ${ODOO_DB_PASSWORD}
+      POSTGRES_DB: postgres
+    volumes:
+      - odoo_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Odoo, Keycloak, Mattermost
+  # ---------------------------------------------------------------------------
+  odoo:
+    build:
+      context: ./apps/odoo
+    container_name: but_tc_odoo
+    restart: unless-stopped
+    depends_on:
+      - db_odoo
+    environment:
+      - HOST=db_odoo
+      - USER=${ODOO_DB_USER}
+      - PASSWORD=${ODOO_DB_PASSWORD}
+      - ODOO_MASTER_PASSWORD=${ODOO_MASTER_PASSWORD}
+    volumes:
+      - odoo_data:/var/lib/odoo
+    networks:
+      - app_network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: but_tc_keycloak
+    restart: unless-stopped
+    command: start-dev --hostname-strict=false --import-realm
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://db_keycloak:5432/keycloak
+      - KC_DB_USERNAME=${KC_DB_USER}
+      - KC_DB_PASSWORD=${KC_DB_PASSWORD}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HTTP_ENABLED=true
+      - KC_PROXY=edge
+    volumes:
+      - ./infrastructure/keycloak/import:/opt/keycloak/data/import
+    depends_on:
+      - db_keycloak
+    ports:
+      - "8080:8080"
+    networks:
+      - app_network
+
+  mattermost:
+    image: mattermost/mattermost-team-edition:latest
+    container_name: but_tc_mattermost
+    restart: unless-stopped
+    depends_on:
+      - db_mattermost
+    environment:
+      - MM_SQLSETTINGS_DRIVERNAME=postgres
+      - MM_SQLSETTINGS_DATASOURCE=postgres://${MM_DB_USER}:${MM_DB_PASSWORD}@db_mattermost:5432/mattermost?sslmode=disable&connect_timeout=10
+      - MM_SERVICESETTINGS_SITEURL=https://mattermost.${DOMAIN}
+      - MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS=localhost 127.0.0.1 ${DOMAIN}
+      - MM_SERVICESETTINGS_ENABLEDEVELOPER=true
+      - MM_LOGINSETTINGS_ENABLEOAUTHGAMES=false
+      - MM_GITLABSETTINGS_ENABLE=true
+      - MM_GITLABSETTINGS_ID=${MM_GITLABSETTINGS_ID}
+      - MM_GITLABSETTINGS_SECRET=${MM_GITLABSETTINGS_SECRET}
+      - MM_GITLABSETTINGS_DISCOVERYENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/.well-known/openid-configuration
+      - MM_GITLABSETTINGS_AUTHENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/auth
+      - MM_GITLABSETTINGS_TOKENENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/token
+      - MM_GITLABSETTINGS_USERAPIENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/userinfo
+      - MM_GITLABSETTINGS_BUTTONTEXT=Connexion avec Keycloak
+    ports:
+      - "8065:8065"
+    volumes:
+      - mattermost_data:/mattermost/data
+      - mattermost_config:/mattermost/config
+      - mattermost_logs:/mattermost/logs
+      - mattermost_plugins:/mattermost/plugins
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Application Services (API & WEB)
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: ./apps/api
+    container_name: but_tc_api
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - LDAP_URL=${LDAP_URL}
+      - LDAP_BASE_DN=${LDAP_BASE_DN}
+      - LDAP_BIND_DN=${LDAP_BIND_DN}
+      - LDAP_BIND_PASSWORD=${LDAP_BIND_PASSWORD}
+      - NEXTCLOUD_URL=https://nextcloud.${DOMAIN}
+      - NEXTCLOUD_ADMIN=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_PASS=${NEXTCLOUD_ADMIN_PASSWORD}
+      - NEXTCLOUD_SERVICE_USER=${NEXTCLOUD_SERVICE_USER}
+      - NEXTCLOUD_SERVICE_PASS=${NEXTCLOUD_SERVICE_PASS}
+      - ROOT_PATH=/api
+      - KEYCLOAK_URL=http://but_tc_keycloak:8080
+      - KEYCLOAK_REALM=but-tc
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - ODOO_DB_URL=postgresql://${ODOO_DB_USER}:${ODOO_DB_PASSWORD}@db_odoo:5432/postgres
+      - ODOO_MASTER_PASSWORD=${ODOO_MASTER_PASSWORD}
+      - DOMAIN=${DOMAIN}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_TLS=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./docs:/app/data_source/docs
+      - ./fiches:/app/data_source/fiches
+      - rag_vectors:/app/vectors
+    networks:
+      - app_network
+
+  web:
+    build:
+      context: ./apps/web
+    container_name: but_tc_web
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - app_network
+
+  dashboard:
+    build:
+      context: ./apps/dashboard
+    container_name: but_tc_dashboard
+    restart: unless-stopped
+    environment:
+      - DOMAIN=${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/local/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - web
+      - api
+    networks:
+      - app_network
+      - test_dev_network
+
+volumes:
+  postgres_data:
+  nextcloud_data:
+  mattermost_db_data:
+  keycloak_db_data:
+  mattermost_data:
+  mattermost_config:
+  mattermost_logs:
+  mattermost_plugins:
+  odoo_data:
+  odoo_db_data:
+  rag_vectors:
+
+networks:
+  app_network:
+    driver: bridge
+  test_dev_network:
+    external: true

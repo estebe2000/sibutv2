@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+.hover-badge:hover {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+  transition: all 0.2s;
+}
