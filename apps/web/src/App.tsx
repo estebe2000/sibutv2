@@ -30,6 +30,7 @@ import { NewYearTransitionView } from './views/NewYearTransitionView';
 import { ExternalServicesProposalsView } from './views/ExternalServicesProposalsView';
 import { FeedbackHubView } from './views/FeedbackHubView';
 import { LearningOutcomeEditorView } from './views/LearningOutcomeEditorView';
+import { InstallWizard } from './views/InstallWizard';
 import { useMediaQuery } from '@mantine/hooks';
 import './Login.css';
 
@@ -38,6 +39,7 @@ const YEAR_COLORS: any = { 0: 'gray', 1: 'blue', 2: 'green', 3: 'grape' };
 function App() {
   const isMobile = useMediaQuery('(max-width: 62em)');
   const { token, setToken, user, setUser, curriculum, fetchCurriculum, setConfig, config } = useStore();
+  const [isInstalled, setIsInstalled] = useState<boolean | null>(null);
   const [publicToken, setPublicToken] = useState<string | null>(null);
   const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
@@ -60,6 +62,11 @@ function App() {
   }, [publicConfig.APP_PRIMARY_COLOR]);
 
   useEffect(() => {
+    // Check installation status
+    api.get('/setup/status')
+      .then(res => setIsInstalled(res.data.installed))
+      .catch(() => setIsInstalled(true)); // Assume installed on error to allow login fallback or show error elsewhere
+
     const urlParams = new URLSearchParams(window.location.search);
 
     const magicToken = urlParams.get('token');
@@ -137,6 +144,9 @@ function App() {
     }
     setLoginLoading(false);
   };
+
+  if (isInstalled === false) return <InstallWizard onComplete={() => setIsInstalled(true)} />;
+  if (isInstalled === null) return <Center h="100vh"><Loader /></Center>;
 
   if (publicToken) return <PublicEvaluationView token={publicToken} />;
 

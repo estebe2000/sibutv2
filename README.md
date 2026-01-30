@@ -55,6 +55,10 @@ La plateforme repose sur une architecture robuste séparant les environnements.
 
 ### Lancement
 ```bash
+# Installation Automatique (Premier lancement)
+./install.sh
+# Ce script génère les mots de passe, lance les conteneurs et vous guide vers l'assistant web.
+
 # Lancer la production (et l'environnement de test mobile)
 ./start.sh
 

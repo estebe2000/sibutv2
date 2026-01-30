@@ -5,6 +5,8 @@ from ..database import get_session
 from ..models import Competency, Activity, Resource, ResponsibilityMatrix, ResponsibilityEntityType, ResponsibilityType
 from ..dependencies import get_current_user, require_staff
 from pydantic import BaseModel
+from fastapi import UploadFile, File
+from ..services.pdf_parser import CurriculumPDFParser
 
 router = APIRouter(tags=["Curriculum"])
 
@@ -204,3 +206,32 @@ def update_learning_outcome(lo_id: int, lo_data: dict, session: Session = Depend
             setattr(lo, key, value)
     session.add(lo); session.commit(); session.refresh(lo)
     return lo
+
+@router.post("/verify-pdf")
+async def verify_pdf_program(file: UploadFile = File(...), session: Session = Depends(get_session), current_user: any = Depends(require_staff)):
+    """
+    Parses a PDF program and compares it with the current database.
+    Returns a report of discrepancies.
+    """
+    if not file.filename.lower().endswith('.pdf'):
+        raise HTTPException(status_code=400, detail="File must be a PDF")
+
+    content = await file.read()
+    parser = CurriculumPDFParser(content)
+    extracted_structure = parser.parse()
+
+    # Fetch current DB state
+    db_competencies = session.exec(select(Competency)).all() # Not used in simple comparison yet
+    db_resources = session.exec(select(Resource)).all()
+    db_activities = session.exec(select(Activity)).all()
+
+    report = parser.compare_with_db(db_competencies, db_resources, db_activities)
+
+    return {
+        "status": "success",
+        "extracted_stats": {
+            "resources_count": len(extracted_structure["resources"]),
+            "activities_count": len(extracted_structure["activities"])
+        },
+        "report": report
+    }

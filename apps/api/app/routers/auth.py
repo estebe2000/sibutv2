@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from ..database import get_session
-from ..models import User, Group
+from ..models import User, Group, SystemConfig
 from ..services.ldap_service import verify_credentials
 
 import requests
@@ -30,12 +30,17 @@ def create_access_token(data: dict):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 @router.post("/login")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
     print(f"Login attempt for user: {form_data.username}", flush=True)
     
-    # 1. Check local admin override
-    if form_data.username == "admin" and form_data.password == "Rangetachambre76*":
-        return {"access_token": create_access_token({"sub": "admin"}), "token_type": "bearer"}
+    # 1. Check local admin override (configurable)
+    if form_data.username == "admin":
+        # Fetch password from DB or use default
+        admin_pw_config = session.exec(select(SystemConfig).where(SystemConfig.key == "ADMIN_PASSWORD")).first()
+        expected_pw = admin_pw_config.value if admin_pw_config else "Rangetachambre76*"
+
+        if form_data.password == expected_pw:
+            return {"access_token": create_access_token({"sub": "admin"}), "token_type": "bearer"}
     
     # 2. Check demo accounts (login == password)
     if form_data.username in ["chef", "de", "prof", "tc"] and form_data.password == form_data.username:
