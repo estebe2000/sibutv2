@@ -240,6 +240,16 @@ services:
     networks:
       - app_network
 
+  web-dev:
+    build:
+      context: ./apps/web-dev
+    container_name: but_tc_web_dev
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - app_network
+
   dashboard:
     build:
       context: ./apps/dashboard
