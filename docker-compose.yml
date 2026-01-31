@@ -260,7 +260,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./infrastructure/local/ssl:/etc/nginx/ssl:ro
+      - ./apps/dashboard/nginx.conf:/etc/nginx/nginx.conf
+      - ./apps/dashboard/demo_stage.html:/usr/share/nginx/html/demo_stage.html
+      - ./infrastructure/local/ssl/dashboard.crt:/etc/nginx/ssl/dashboard.crt
+      - ./infrastructure/local/ssl/dashboard.key:/etc/nginx/ssl/dashboard.key
     depends_on:
       - web
       - api
