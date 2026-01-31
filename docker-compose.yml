@@ -43,6 +43,10 @@ services:
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu ${DOMAIN} *.${DOMAIN}
       - OVERWRITEPROTOCOL=https
       - REDIS_HOST=redis
+      - POSTGRES_HOST=db_nextcloud
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud_password
     volumes:
       - nextcloud_data:/var/www/html
     networks:
