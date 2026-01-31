@@ -172,9 +172,9 @@ services:
       - MM_GITLABSETTINGS_ID=${MM_GITLABSETTINGS_ID}
       - MM_GITLABSETTINGS_SECRET=${MM_GITLABSETTINGS_SECRET}
       - MM_GITLABSETTINGS_DISCOVERYENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/.well-known/openid-configuration
-      - MM_GITLABSETTINGS_AUTHENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/auth
-      - MM_GITLABSETTINGS_TOKENENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/token
-      - MM_GITLABSETTINGS_USERAPIENDPOINT=https://keycloak.${DOMAIN}/protocol/openid-connect/userinfo
+      - MM_GITLABSETTINGS_AUTHENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/protocol/openid-connect/auth
+      - MM_GITLABSETTINGS_TOKENENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/protocol/openid-connect/token
+      - MM_GITLABSETTINGS_USERAPIENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/protocol/openid-connect/userinfo
       - MM_GITLABSETTINGS_BUTTONTEXT=Connexion avec Keycloak
     ports:
       - "8065:8065"
