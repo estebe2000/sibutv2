@@ -4219,3 +4219,4 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 
 \unrestrict RnDm5Uz84RkbCucYZiNCDSpjOgbF7WOzsK1VrHf58phh5P6UqnxQ7jcExG9brC8
 
+ALTER TABLE public."user" ADD COLUMN IF NOT EXISTS phone character varying;
