@@ -143,10 +143,9 @@ services:
       - KC_DB_PASSWORD=${KC_DB_PASSWORD}
       - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
-      - KC_HOSTNAME_STRICT=false
-      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HOSTNAME=keycloak.${DOMAIN}
+      - KC_PROXY_HEADERS=xforwarded
       - KC_HTTP_ENABLED=true
-      - KC_PROXY=edge
     volumes:
       - ./infrastructure/keycloak/import:/opt/keycloak/data/import
     depends_on:
