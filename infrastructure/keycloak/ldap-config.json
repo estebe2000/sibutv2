@@ -1,0 +1,30 @@
+{
+    "parentId": "but-tc",
+    "name": "univ-lehavre-ldap",
+    "providerId": "ldap",
+    "providerType": "org.keycloak.storage.UserStorageProvider",
+    "config": {
+        "priority": ["0"],
+        "enabled": ["true"],
+        "cachePolicy": ["DEFAULT"],
+        "batchSizeForSync": ["1000"],
+        "editMode": ["READ_ONLY"],
+        "importEnabled": ["true"],
+        "syncRegistrations": ["false"],
+        "vendor": ["other"],
+        "usernameLDAPAttribute": ["uid"],
+        "rdnLDAPAttribute": ["uid"],
+        "uuidLDAPAttribute": ["entryUUID"],
+        "userObjectClasses": ["inetOrgPerson", "organizationalPerson"],
+        "connectionUrl": ["ldap://ldap.univ-lehavre.fr:389"],
+        "usersDn": ["dc=univ-lehavre,dc=fr"],
+        "authType": ["simple"],
+        "bindDn": ["cn=ldapbindusr-caucri2,ou=DSA,dc=univ-lehavre,dc=fr"],
+        "bindCredential": ["Fctldap-8%caucri2_30688"],
+        "searchScope": ["2"],
+        "validatePasswordPolicy": ["false"],
+        "trustEmail": ["false"],
+        "useTruststoreSpi": ["ldapsOnly"],
+        "connectionPooling": ["true"]
+    }
+}

@@ -16,7 +16,11 @@ fi
 echo "Starting deployment..."
 docker compose up -d --build
 
-# 4. Cleanup old images
+# 4. Apply Patches (DB Schema, Keycloak, Nextcloud)
+echo "Applying patches..."
+bash infrastructure/production/patch-all.sh
+
+# 5. Cleanup old images
 docker image prune -f
 
 echo "Deployment complete! Services are starting."

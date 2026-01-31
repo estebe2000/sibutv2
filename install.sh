@@ -30,7 +30,10 @@ fi
 echo -e "${BLUE}Starting Docker containers...${NC}"
 ./start.sh
 
-echo -e "${GREEN}=== Installation Started ===${NC}"
-echo "Please wait for containers to initialize."
-echo "Then access the application at: http://localhost:8081 (or your domain)"
-echo "You will be redirected to the Setup Wizard to complete the installation."
+echo -e "${BLUE}Waiting for services to start...${NC}"
+sleep 10
+
+echo -e "${BLUE}Applying patches and configuring services...${NC}"
+bash infrastructure/production/patch-all.sh
+
+echo -e "${GREEN}=== Installation Completed ===${NC}"

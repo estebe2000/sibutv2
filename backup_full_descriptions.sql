@@ -4220,3 +4220,11 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 \unrestrict RnDm5Uz84RkbCucYZiNCDSpjOgbF7WOzsK1VrHf58phh5P6UqnxQ7jcExG9brC8
 
 ALTER TABLE public."user" ADD COLUMN IF NOT EXISTS phone character varying;
+
+-- 🛠 DATABASE PATCHES (Skills Hub v2)
+ALTER TABLE public."user" ADD COLUMN IF NOT EXISTS phone character varying;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS company_id INTEGER;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS evaluation_token character varying;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS token_expires_at timestamp without time zone;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS is_finalized BOOLEAN DEFAULT FALSE;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
