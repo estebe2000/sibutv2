@@ -21,27 +21,37 @@ docker exec but_tc_db psql -U app_user -d skills_db -c "
 "
 
 # 2. Keycloak Demo Accounts (Infallible Method via kcadm)
-echo "🔑 [Keycloak] Creating demo accounts..."
+echo "🔑 [Keycloak] Checking demo accounts..."
 docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080 --realm master --user admin --password 'Rangetachambre76*'
 
-create_user() {
+create_user_safe() {
     U=$1; P=$2; R=$3; G=$4;
-    # Clean and Recreate
-    docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh delete users -r but-tc --query username=$U > /dev/null 2>&1 || true
-    docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh create users -r but-tc -s username=$U -s enabled=true -s firstName=Demo -s lastName=$U -s email=$U@demo.local
-    docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh set-password -r but-tc --username $U --new-password $P
+    echo "  -> Processing $U..."
+    # Check if exists
+    EXISTING_ID=$(docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh get users -r but-tc --query username=$U | grep -o '"id" : "[^"]*"' | head -1 | cut -d '"' -f 4 || echo "")
     
-    # Get New ID
-    ID=$(docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh get users -r but-tc --query username=$U | grep -o '"id" : "[^"]*"' | head -1 | cut -d '"' -f 4)
+    if [ ! -z "$EXISTING_ID" ]; then
+        echo "     User $U already exists (ID: $EXISTING_ID). Updating password..."
+        docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh set-password -r but-tc --username $U --new-password $P
+    else
+        echo "     Creating user $U..."
+        docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh create users -r but-tc -s username=$U -s enabled=true -s firstName=Demo -s lastName=$U -s email=$U@demo.local
+        docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh set-password -r but-tc --username $U --new-password $P
+        EXISTING_ID=$(docker exec but_tc_keycloak /opt/keycloak/bin/kcadm.sh get users -r but-tc --query username=$U | grep -o '"id" : "[^"]*"' | head -1 | cut -d '"' -f 4)
+    fi
     
-    # Sync DB
-    docker exec but_tc_db psql -U app_user -d skills_db -c "DELETE FROM \"user\" WHERE ldap_uid = '$U' OR email = '$U@demo.local' OR ldap_uid = '$ID';"
-    docker exec but_tc_db psql -U app_user -d skills_db -c "INSERT INTO \"user\" (ldap_uid, email, full_name, role, group_id) VALUES ('$U', '$U@demo.local', '$U Demo', '$R', $G);"
+    # Sync DB (Always update ldap_uid to match Username for these demo accounts as per previous fix)
+    docker exec but_tc_db psql -U app_user -d skills_db -c "
+      DELETE FROM \"user\" WHERE email = '$U@demo.local' AND ldap_uid != '$U';
+      INSERT INTO \"user\" (ldap_uid, email, full_name, role, group_id) 
+      VALUES ('$U', '$U@demo.local', '$U Demo', '$R', $G)
+      ON CONFLICT (ldap_uid) DO UPDATE SET group_id = $G, role = '$R';
+    "
 }
 
-create_user 'super-admin' 'super-admin' 'ADMIN' 1
-create_user 'super-prof' 'super-prof' 'PROFESSOR' 1
-create_user 'super-stud' 'super-stud' 'STUDENT' 82
+create_user_safe 'super-admin' 'super-admin' 'ADMIN' 1
+create_user_safe 'super-prof' 'super-prof' 'PROFESSOR' 1
+create_user_safe 'super-stud' 'super-stud' 'STUDENT' 82
 
 # 3. Nextcloud & OnlyOffice Configuration
 if [ -f infrastructure/production/init-univ.sh ]; then
