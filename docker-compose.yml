@@ -178,6 +178,10 @@ services:
       - MM_GITLABSETTINGS_BUTTONTEXT=Connexion avec Keycloak
     ports:
       - "8065:8065"
+    extra_hosts:
+      - "keycloak.${DOMAIN}:172.23.0.1"
+      - "home.${DOMAIN}:172.23.0.1"
+      - "mattermost.${DOMAIN}:172.23.0.1"
     volumes:
       - mattermost_data:/mattermost/data
       - mattermost_config:/mattermost/config
