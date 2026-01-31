@@ -27,6 +27,9 @@ services:
     image: nextcloud:stable-apache
     container_name: but_tc_nextcloud
     restart: unless-stopped
+    depends_on:
+      - redis
+      - db_nextcloud
     ports:
       - "8082:80"
     extra_hosts:
@@ -39,7 +42,7 @@ services:
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu ${DOMAIN} *.${DOMAIN}
       - OVERWRITEPROTOCOL=https
-      - SQLITE_DATABASE=nextcloud
+      - REDIS_HOST=redis
     volumes:
       - nextcloud_data:/var/www/html
     networks:
@@ -70,8 +73,31 @@ services:
       - app_network
 
   # ---------------------------------------------------------------------------
-  # Databases pour Mattermost, Keycloak, Odoo
+  # Redis (Cache for Nextcloud & Others)
   # ---------------------------------------------------------------------------
+  redis:
+    image: redis:alpine
+    container_name: but_tc_redis
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  # ---------------------------------------------------------------------------
+  # Databases pour Mattermost, Keycloak, Odoo, Nextcloud
+  # ---------------------------------------------------------------------------
+  db_nextcloud:
+    image: postgres:15-alpine
+    container_name: but_tc_db_nextcloud
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: nextcloud_password
+      POSTGRES_DB: nextcloud
+    volumes:
+      - nextcloud_db_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+
   db_mattermost:
     image: postgres:15-alpine
     container_name: but_tc_db_mattermost
@@ -284,6 +310,7 @@ services:
 volumes:
   postgres_data:
   nextcloud_data:
+  nextcloud_db_data:
   mattermost_db_data:
   keycloak_db_data:
   mattermost_data:
