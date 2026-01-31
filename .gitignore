@@ -27,3 +27,4 @@ tmp/
 referentiel_final.json
 parsed_competencies.json
 \n# Temporary and obsolete files\ntrash/
+\n# Infrastructure secrets\ninfrastructure/keycloak/*.json\ninfrastructure/keycloak/*.sh\ninfrastructure/production/*.sh
