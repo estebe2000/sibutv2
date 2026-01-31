@@ -1,8 +1,10 @@
 {
   "name": "Skills Hub - BUT TC",
   "short_name": "Skills Hub",
-  "description": "Application de gestion des compétences BUT TC",
-  "start_url": "/app/",
+  "description": "Application de gestion des compétences BUT TC (DEV)",
+  "id": "/appdev/",
+  "start_url": "/appdev/",
+  "scope": "/appdev/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1971c2",
