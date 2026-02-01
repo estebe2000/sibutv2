@@ -70,12 +70,13 @@ export function CalendarView() {
                                 size="md"
                                 static={false}
                                 renderDay={(date) => {
+                                    const d = dayjs(date);
                                     const events = getEventsForDate(date);
                                     return (
-                                        <Box pos="relative">
-                                            <div>{date.getDate()}</div>
+                                        <Box pos="relative" w="100%" h="100%" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Text size="sm">{d.date()}</Text>
                                             {events.length > 0 && (
-                                                <Group gap={2} justify="center" pos="absolute" bottom={-2} left={0} right={0}>
+                                                <Group gap={2} justify="center" pos="absolute" bottom={2} left={0} right={0}>
                                                     {events.slice(0, 3).map((e, i) => (
                                                         <Box 
                                                             key={i} 
