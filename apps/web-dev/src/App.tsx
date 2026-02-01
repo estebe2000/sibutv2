@@ -28,6 +28,7 @@ import { GovernanceReportView } from './views/GovernanceReportView';
 import { AdminPortfolioBrowserView } from './views/AdminPortfolioBrowserView';
 import { NewYearTransitionView } from './views/NewYearTransitionView';
 import { ExternalServicesProposalsView } from './views/ExternalServicesProposalsView';
+import { CalendarView } from './views/CalendarView';
 import { FeedbackHubView } from './views/FeedbackHubView';
 import { LearningOutcomeEditorView } from './views/LearningOutcomeEditorView';
 import { useMediaQuery } from '@mantine/hooks';
@@ -362,10 +363,9 @@ function App() {
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
         {activeTab === 'keycloak' && !isMobile && <KeycloakUserManagement />}
         {activeTab === 'new-year' && !isMobile && <NewYearTransitionView />}
-        {activeTab === 'feedback' && <FeedbackHubView />}
-        {activeTab === 'idea-calendar' && <ExternalServicesProposalsView type="calendar" />}
-        {activeTab === 'idea-mail' && <ExternalServicesProposalsView type="mail" />}
-        {activeTab === 'idea-chat' && <ExternalServicesProposalsView type="chat" />}
+                  {activeTab === 'feedback' && <FeedbackHubView />}
+                  {activeTab === 'idea-calendar' && <CalendarView />}
+                  {activeTab === 'idea-mail' && <ExternalServicesProposalsView type="mail" />}        {activeTab === 'idea-chat' && <ExternalServicesProposalsView type="chat" />}
         {activeTab === 'idea-cloud' && <ExternalServicesProposalsView type="cloud" />}
         {activeTab === 'idea-alumni' && <ExternalServicesProposalsView type="alumni" />}
         {activeTab === 'settings' && !isMobile && <SettingsView config={config} onSave={(vals) => api.post('/config', vals).then(() => fetchData())} />}
