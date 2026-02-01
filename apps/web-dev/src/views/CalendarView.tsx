@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Container, Paper, Title, Text, Stack, Group, ThemeIcon, Badge, Card, SimpleGrid, ScrollArea, ActionIcon, Tooltip, Box } from '@mantine/core';
+import { Container, Paper, Title, Text, Stack, Group, ThemeIcon, Badge, Card, SimpleGrid, ScrollArea, ActionIcon, Tooltip, Box, TextInput, Button, Divider } from '@mantine/core';
 import { Calendar } from '@mantine/dates';
-import { IconCalendar, IconChevronLeft, IconChevronRight, IconClock, IconMapPin, IconInfoCircle, IconTarget, IconBriefcase } from '@tabler/icons-react';
+import { IconCalendar, IconChevronLeft, IconChevronRight, IconClock, IconMapPin, IconInfoCircle, IconTarget, IconBriefcase, IconLink, IconRefresh } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 
@@ -17,6 +17,17 @@ const MOCK_EVENTS = [
 export function CalendarView() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [viewDate, setViewDate] = useState(new Date());
+    const [syncUrl, setSyncUrl] = useState('');
+    const [isSyncing, setIsSyncing] = useState(false);
+
+    const handleSync = () => {
+        if (!syncUrl) return;
+        setIsSyncing(true);
+        // Simulate API call
+        setTimeout(() => {
+            setIsSyncing(false);
+        }, 2000);
+    };
 
     const getEventsForDate = (date: Date) => {
         return MOCK_EVENTS.filter(event => dayjs(event.date).isSame(date, 'day'));
@@ -57,6 +68,37 @@ export function CalendarView() {
                     </Group>
                     <Badge color="yellow" variant="outline" size="lg">BUT TC - S3</Badge>
                 </Group>
+
+                {/* Sync Section */}
+                <Paper withBorder p="md" radius="md" bg="yellow.0">
+                    <Stack gap="sm">
+                        <Group gap="xs">
+                            <IconLink size={18} color="var(--mantine-color-yellow-7)" />
+                            <Text fw={600} size="sm">Lien de synchronisation iCal (Hyperplanning)</Text>
+                        </Group>
+                        <Group align="flex-end">
+                            <TextInput 
+                                placeholder="https://hplanning.univ-lehavre.fr/.../Edt_Pytel.ics" 
+                                style={{ flex: 1 }}
+                                value={syncUrl}
+                                onChange={(e) => setSyncUrl(e.currentTarget.value)}
+                                size="sm"
+                            />
+                            <Button 
+                                color="yellow" 
+                                leftSection={<IconRefresh size={16} />} 
+                                loading={isSyncing}
+                                onClick={handleSync}
+                                size="sm"
+                            >
+                                Synchroniser
+                            </Button>
+                        </Group>
+                        <Text size="xs" c="dimmed">
+                            Collez ici votre lien iCal exporté d'Hyperplanning pour intégrer vos cours automatiquement.
+                        </Text>
+                    </Stack>
+                </Paper>
 
                 <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
                     {/* Left Column: Interactive Calendar */}
