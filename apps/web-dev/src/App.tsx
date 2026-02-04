@@ -359,8 +359,10 @@ function App() {
         {activeTab === 'repartition' && !isMobile && <RepartitionView curriculum={curriculum} />}
         {activeTab === 'fiches2' && <FichesPDF2View curriculum={curriculum} />}
         {activeTab === 'governance-report' && !isMobile && <GovernanceReportView />}
-        {activeTab === 'internships' && <InternshipManagementView user={user} />}
-        {activeTab === 'companies-codex' && <CompanyCodexView />}
+        {activeTab === 'internship-management' && <InternshipManagementView user={user} />}
+        {activeTab === 'companies' && <CompanyCodexView />}
+        {activeTab === 'public-eval' && <PublicEvaluationView />}
+        {activeTab === 'applications' && <InternshipSearchView user={user} mode="admin" />}
         {activeTab === 'admin-portfolios' && !isMobile && <AdminPortfolioBrowserView />}
         {activeTab === 'odoo-admin' && !isMobile && <OdooAdminView />}
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
