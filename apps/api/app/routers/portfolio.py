@@ -109,22 +109,20 @@ async def upload_portfolio_file(
     nc_user = os.getenv("NEXTCLOUD_SERVICE_USER", "hub-service")
     nc_pass = os.getenv("NEXTCLOUD_SERVICE_PASS")
     
-    # Chemin cible : app/uploads/portfolio/uid/filename
-    target_dir = f"app/uploads/portfolio/{current_user.ldap_uid}"
-    target_path = f"{target_dir}/{file.filename}"
+    # Chemin cible : Documents/portfolio/uid/filename
+    # On utilise "Documents" car il existe par défaut
+    target_dir_root = "Documents/portfolio"
+    target_user_dir = f"{target_dir_root}/{current_user.ldap_uid}"
+    target_path = f"{target_user_dir}/{file.filename}"
     
-    # Stockage DB du chemin complet pour retrouver le fichier plus tard
-    # On stocke le chemin relatif à la racine utilisateur pour faciliter le share
     db_path = target_path 
 
     try:
         client = WebDavClient(nc_url + "/remote.php/dav/files/" + nc_user, auth=(nc_user, nc_pass))
         
         # Création des dossiers si nécessaire
-        if not client.exists("app"): client.mkdir("app")
-        if not client.exists("app/uploads"): client.mkdir("app/uploads")
-        if not client.exists("app/uploads/portfolio"): client.mkdir("app/uploads/portfolio")
-        if not client.exists(target_dir): client.mkdir(target_dir)
+        if not client.exists(target_dir_root): client.mkdir(target_dir_root)
+        if not client.exists(target_user_dir): client.mkdir(target_user_dir)
         
         # Upload du fichier via WebDAV
         client.upload_fileobj(file.file, target_path, overwrite=True)
@@ -200,11 +198,15 @@ async def get_nextcloud_share_link(file_id: int, session: Session = Depends(get_
     nc_pass = os.getenv("NEXTCLOUD_SERVICE_PASS")
 
     # Le chemin dans Nextcloud est relatif à la racine de l'utilisateur hub-service
-    # db_file.nc_path est maintenant un chemin relatif "app/uploads/..." grâce à l'upload WebDAV
+    # db_file.nc_path est maintenant un chemin relatif "Documents/portfolio/..."
     file_path = db_file.nc_path
     
     # Nettoyage de sécurité au cas où
     if file_path.startswith("/"): file_path = file_path[1:]
+    
+    # Si c'est un ancien chemin, on tente de le nettoyer
+    if "/files/" in file_path:
+        file_path = file_path.split("/files/", 1)[1]
 
     # 3. Appel API OCS pour créer/récupérer le partage
     ocs_url = f"{nc_internal_url}/ocs/v2.php/apps/files_sharing/api/v1/shares"
