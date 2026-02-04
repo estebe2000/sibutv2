@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PasswordInput, Center, Container, AppShell, Text, Group, Title, Paper, Stack, Button, ThemeIcon, Loader, TextInput, Divider, Alert } from '@mantine/core';
-import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp, IconMessageDots, IconSearch, IconSchool, IconBrandAsana, IconPencil } from '@tabler/icons-react';
+import { IconUsers, IconSettings, IconDatabase, IconShieldCheck, IconBook, IconFileText, IconCategory, IconSparkles, IconLayoutDashboard, IconLock, IconDownload, IconKey, IconBriefcase, IconInfoCircle, IconCalendarPlus, IconCalendar, IconMail, IconMessages, IconCloud, IconLamp, IconMessageDots, IconSearch, IconSchool, IconBrandAsana, IconPencil, IconStar, IconBuilding, IconSend, IconFilter } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import api from './services/api';
 import { useStore } from './store/useStore';
@@ -14,6 +14,7 @@ import { DispatcherView } from './views/DispatcherView';
 import { StudentDashboard } from './views/StudentDashboard';
 import { OdooAdminView } from './views/OdooAdminView';
 import { ProfessorDashboard } from './views/ProfessorDashboard';
+import { ProfessorPortfolioView } from './views/ProfessorPortfolioView';
 import { AiAssistantView } from './views/AiAssistantView';
 import { AdminDashboardView } from './views/AdminDashboardView';
 import { PublicEvaluationView } from './views/PublicEvaluationView';
@@ -306,17 +307,18 @@ function App() {
             </Paper>
 
             <Paper p={5} radius="sm" bg="blue.0" withBorder style={{ borderColor: 'var(--mantine-color-blue-2)' }}>
-              <Text size="10px" fw={700} c="blue.9" px="xs" mb={5} tt="uppercase">Suivi & Terrain</Text>
+              <Text size="10px" fw={700} c="blue.9" px="xs" mb={5} tt="uppercase">Outils Enseignant</Text>
               <Stack gap={2}>
-                <Button variant={activeTab === 'internships' ? 'filled' : 'subtle'} onClick={() => setActiveTab('internships')} leftSection={<IconBriefcase size={18} />} justify="start" size="compact-sm" color="blue">Tutorat de Stage</Button>
-                <Button variant={activeTab === 'companies-codex' ? 'filled' : 'subtle'} onClick={() => setActiveTab('companies-codex')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="blue">Codex Entreprises</Button>
+                <Button variant={activeTab === 'internship-management' ? 'filled' : 'subtle'} onClick={() => setActiveTab('internship-management')} leftSection={<IconBriefcase size={18} />} justify="start" size="compact-sm" color="blue">Tutorat de Stage</Button>
+                <Button variant={activeTab === 'companies' ? 'filled' : 'subtle'} onClick={() => setActiveTab('companies')} leftSection={<IconBuilding size={18} />} justify="start" size="compact-sm" color="blue">Codex Entreprises</Button>
                 <Button variant={activeTab === 'admin-portfolios' ? 'filled' : 'subtle'} onClick={() => setActiveTab('admin-portfolios')} leftSection={<IconBook size={18} />} justify="start" size="compact-sm" color="blue">Portfolio</Button>
                 <Button variant={activeTab === 'ai-assistant' ? 'filled' : 'subtle'} onClick={() => setActiveTab('ai-assistant')} leftSection={<IconSparkles size={18} />} justify="start" size="compact-sm" color="blue">Assistant IA</Button>
+                <Button variant={activeTab === 'prof-portfolio' ? 'filled' : 'subtle'} onClick={() => setActiveTab('prof-portfolio')} leftSection={<IconFileText size={18} />} justify="start" size="compact-sm" color="orange">Médiathèque Preuves</Button>
               </Stack>
             </Paper>
 
             <Paper p={5} radius="sm" bg="yellow.0" withBorder style={{ borderColor: 'var(--mantine-color-yellow-2)' }}>
-              <Text size="10px" fw={700} c="yellow.9" px="xs" mb={5} tt="uppercase">Idées</Text>
+              <Text size="10px" fw={700} c="yellow.9" px="xs" mb={5} tt="uppercase">Idées & Outils</Text>
               <Stack gap={2}>
                 <Button variant={activeTab === 'feedback' ? 'filled' : 'subtle'} onClick={() => setActiveTab('feedback')} leftSection={<IconMessageDots size={18} />} justify="start" size="compact-sm" color="yellow">Boîte à Idées</Button>
                 <Button variant={activeTab === 'idea-calendar' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-calendar')} leftSection={<IconCalendar size={18} />} justify="start" size="compact-sm" color="yellow">Calendrier</Button>
@@ -365,9 +367,10 @@ function App() {
         {activeTab === 'repartition' && !isMobile && <RepartitionView curriculum={curriculum} />}
         {activeTab === 'fiches2' && <FichesPDF2View curriculum={curriculum} />}
         {activeTab === 'governance-report' && !isMobile && <GovernanceReportView />}
-        {activeTab === 'internships' && <InternshipManagementView user={user} />}
-        {activeTab === 'companies-codex' && <CompanyCodexView />}
+        {activeTab === 'internship-management' && <InternshipManagementView user={user} />}
+        {activeTab === 'companies' && <CompanyCodexView />}
         {activeTab === 'admin-portfolios' && !isMobile && <AdminPortfolioBrowserView />}
+        {activeTab === 'prof-portfolio' && <ProfessorPortfolioView />}
         {activeTab === 'odoo-admin' && !isMobile && <OdooAdminView />}
         {activeTab === 'ai-assistant' && !isMobile && <AiAssistantView />}
         {activeTab === 'keycloak' && !isMobile && <KeycloakUserManagement />}
