@@ -56,12 +56,23 @@ def generate_full_knowledge_base():
     # 5. FILES (Summaries or Titles)
     lines.append("\n=== DOCUMENTS ET FICHES PÉDAGOGIQUES ===\n")
     
-    # Scan Fiches (LaTeX) - Just list them or extract titles?
-    # Listing them confirms existence.
-    lines.append("--- FICHES DISPONIBLES ---")
+    # Scan Fiches (LaTeX) - Read content!
+    lines.append("--- FICHES PÉDAGOGIQUES ---")
     for filepath in glob.glob(os.path.join(FICHES_PATH, "**/*.tex"), recursive=True):
         filename = os.path.basename(filepath)
-        lines.append(f"Fiche: {filename} (Contenu disponible sur demande précise)")
+        module_code = filename.replace(".tex", "")
+        lines.append(f"### MODULE: {module_code}")
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                content = f.read()
+                # Basic cleanup of LaTeX
+                content = content.replace("\\section*{", "Titre: ").replace("}", "")
+                content = content.replace("\\textbf{", "").replace("\\subsection*{", "\nSous-titre: ")
+                content = content.replace("\\begin{itemize}", "").replace("\\end{itemize}", "").replace("\\item", "-")
+                lines.append(content)
+        except Exception as e:
+            lines.append(f"(Erreur de lecture: {e})")
+        lines.append("\n---\n")
     
     # Scan Docs (Markdown) - Maybe read headers?
     lines.append("--- DOCUMENTATION ---")
