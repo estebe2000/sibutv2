@@ -3,7 +3,7 @@ from fastapi.responses import StreamingResponse, FileResponse, HTMLResponse
 from sqlmodel import Session, select
 from typing import List, Optional
 from ..database import get_session
-from ..models import User, PortfolioPage, StudentFile, ResponsibilityEntityType, StudentPPP, Internship
+from ..models import User, PortfolioPage, StudentFile, ResponsibilityEntityType, StudentPPP, Internship, Activity
 from ..dependencies import get_current_user
 from datetime import datetime
 import os
@@ -67,7 +67,10 @@ if not os.path.exists("/nextcloud_data"):
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-@router.get("/files/all", response_model=List[StudentFile])
+class StudentFileRead(StudentFile):
+    entity_title: Optional[str] = None
+
+@router.get("/files/all", response_model=List[StudentFileRead])
 async def list_all_student_files(
     entity_type: Optional[ResponsibilityEntityType] = None,
     academic_year: Optional[str] = None,
@@ -83,7 +86,46 @@ async def list_all_student_files(
     if academic_year:
         query = query.where(StudentFile.academic_year == academic_year)
         
-    return session.exec(query.order_by(StudentFile.uploaded_at.desc())).all()
+    files = session.exec(query.order_by(StudentFile.uploaded_at.desc())).all()
+    
+    enriched_files = []
+    activity_cache = {}
+    internship_cache = {}
+    
+    for f in files:
+        f_read = StudentFileRead.model_validate(f)
+        f_read.entity_title = "Dossier"
+        
+        if f.entity_type == ResponsibilityEntityType.ACTIVITY:
+            if f.entity_id in activity_cache:
+                f_read.entity_title = activity_cache[f.entity_id]
+            else:
+                try:
+                    act = session.get(Activity, int(f.entity_id))
+                    title = f"{act.code} - {act.label}" if act else f"Activité #{f.entity_id}"
+                    activity_cache[f.entity_id] = title
+                    f_read.entity_title = title
+                except:
+                    f_read.entity_title = f"Activité #{f.entity_id}"
+        
+        elif f.entity_type == ResponsibilityEntityType.INTERNSHIP:
+             if f.entity_id in internship_cache:
+                f_read.entity_title = internship_cache[f.entity_id]
+             else:
+                try:
+                    intern = session.get(Internship, int(f.entity_id))
+                    title = f"Stage {intern.company_name}" if intern and intern.company_name else f"Stage #{f.entity_id}"
+                    internship_cache[f.entity_id] = title
+                    f_read.entity_title = title
+                except:
+                    f_read.entity_title = f"Stage #{f.entity_id}"
+        
+        elif f.entity_type == ResponsibilityEntityType.PPP:
+            f_read.entity_title = "Projet Personnel et Professionnel"
+
+        enriched_files.append(f_read)
+        
+    return enriched_files
 
 @router.get("/files", response_model=List[StudentFile])
 async def list_student_files(student_uid: Optional[str] = None, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):

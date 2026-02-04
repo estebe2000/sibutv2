@@ -72,6 +72,8 @@ class ResponsibilityEntityType(str, Enum):
     RESOURCE = "RESOURCE"
     ACTIVITY = "ACTIVITY"
     STUDENT = "STUDENT"
+    INTERNSHIP = "INTERNSHIP"
+    PPP = "PPP"
 
 class ResponsibilityMatrix(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
