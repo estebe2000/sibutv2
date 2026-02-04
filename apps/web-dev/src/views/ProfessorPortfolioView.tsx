@@ -29,31 +29,17 @@ export function ProfessorPortfolioView() {
     const handleView = async (fileId: number, filename: string) => {
         try {
             setLoading(true);
-            const response = await api.get(`/portfolio/download/${fileId}`, {
-                responseType: 'blob'
-            });
+            // On demande un lien magique Nextcloud
+            const response = await api.get(`/portfolio/share-link/${fileId}`);
             
-            // Créer une URL temporaire pour le fichier
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            
-            // Si c'est une image ou un PDF, on l'ouvre dans un nouvel onglet
-            if (filename.match(/\.(jpeg|jpg|gif|png|pdf)$/i)) {
-                window.open(url, '_blank');
+            if (response.data && response.data.url) {
+                window.open(response.data.url, '_blank');
             } else {
-                // Sinon on force le téléchargement
-                link.setAttribute('download', filename);
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
+                alert("Impossible de générer le lien de visualisation.");
             }
-            
-            // Nettoyage après un court délai
-            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
         } catch (error) {
-            console.error("Erreur de téléchargement", error);
-            alert("Impossible de charger le fichier.");
+            console.error("Erreur de lien", error);
+            alert("Erreur lors de l'accès à Nextcloud.");
         } finally {
             setLoading(false);
         }

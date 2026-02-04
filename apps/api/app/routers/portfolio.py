@@ -146,6 +146,74 @@ async def download_portfolio_file(file_id: int, session: Session = Depends(get_s
         
     return FileResponse(db_file.nc_path, filename=db_file.filename)
 
+import requests
+import xml.etree.ElementTree as ET
+
+# ... imports existants ...
+
+@router.get("/share-link/{file_id}")
+async def get_nextcloud_share_link(file_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+    # 1. Vérification des droits
+    db_file = session.get(StudentFile, file_id)
+    if not db_file: raise HTTPException(status_code=404, detail="Fichier introuvable")
+    
+    is_staff = current_user.role in ["PROFESSOR", "ADMIN", "SUPER_ADMIN", "DEPT_HEAD", "STUDY_DIRECTOR"]
+    if db_file.student_uid != current_user.ldap_uid and not is_staff:
+        raise HTTPException(status_code=403, detail="Accès refusé")
+
+    # 2. Configuration Nextcloud
+    nc_internal_url = os.getenv("NEXTCLOUD_URL", "http://but_tc_nextcloud")
+    nc_public_url = "https://nextcloud.educ-ai.fr"
+    nc_user = os.getenv("NEXTCLOUD_SERVICE_USER", "hub-service")
+    nc_pass = os.getenv("NEXTCLOUD_SERVICE_PASS")
+
+    # Le chemin dans Nextcloud est relatif à la racine de l'utilisateur hub-service
+    # db_file.nc_path ressemble à "/app/uploads/portfolio/uid/file.pdf"
+    # Nextcloud attend ce chemin exact s'il est stocké ainsi.
+    # Note: On enlève le premier slash si besoin pour l'API
+    file_path = db_file.nc_path
+    if file_path.startswith("/"): file_path = file_path[1:]
+
+    # 3. Appel API OCS pour créer/récupérer le partage
+    ocs_url = f"{nc_internal_url}/ocs/v2.php/apps/files_sharing/api/v1/shares"
+    auth = (nc_user, nc_pass)
+    headers = {"OCS-APIRequest": "true"}
+    data = {
+        "path": file_path,
+        "shareType": 3, # 3 = Public Link
+        "permissions": 1 # 1 = Read Only
+    }
+
+    try:
+        # On tente de créer le partage
+        response = requests.post(ocs_url, auth=auth, headers=headers, data=data, timeout=5)
+        
+        # Si le partage existe déjà (403), on doit le récupérer
+        if response.status_code == 403 or "already exists" in response.text:
+            # On liste les partages pour ce fichier
+            get_params = {"path": file_path, "reshares": "false"}
+            list_resp = requests.get(ocs_url, auth=auth, headers=headers, params=get_params, timeout=5)
+            root = ET.fromstring(list_resp.content)
+            # On cherche le token/url dans le XML
+            token = root.find(".//token").text
+            return {"url": f"{nc_public_url}/s/{token}"}
+        
+        elif response.status_code == 200:
+            root = ET.fromstring(response.content)
+            url = root.find(".//url").text
+            # L'URL retournée par Nextcloud interne peut être http://but_tc_nextcloud/s/...
+            # On force l'URL publique
+            token = url.split("/")[-1]
+            return {"url": f"{nc_public_url}/s/{token}"}
+            
+        else:
+            print(f"NC Error: {response.text}")
+            raise HTTPException(status_code=500, detail="Erreur Nextcloud Share")
+
+    except Exception as e:
+        print(f"Exception Share: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Erreur connexion Nextcloud: {str(e)}")
+
 # --- PPP ---
 
 @router.get("/ppp", response_model=StudentPPP)
