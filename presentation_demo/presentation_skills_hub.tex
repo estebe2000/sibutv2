@@ -1,0 +1,115 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+\usepackage{booktabs}
+\usepackage{fontawesome5}
+
+\usetheme{Madrid}
+\usecolortheme{dolphin}
+
+\definecolor{BUTBlue}{RGB}{25, 113, 194}
+\definecolor{BUTYellow}{RGB}{240, 140, 0}
+
+\setbeamercolor{structure}{fg=BUTBlue}
+\setbeamercolor{frametitle}{fg=white,bg=BUTBlue}
+
+\title[Skills Hub v2.0]{Skills Hub : Le Pilotage Intelligent du BUT TC}
+\author{Equipe Projet BUT TC}
+\institute{IUT du Havre}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Plan}
+    \tableofcontents
+\end{frame}
+
+\section{Le Constat et les Besoins}
+
+\begin{frame}{Le Defi de l'APC}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Realite Administrative :}
+        \begin{itemize}
+            \item \faExclamationTriangle \textbf{Volume Massif :} 11 000 etudiants.
+            \item \faFileExcel \textbf{Outils inadaptes :} Excel, Moodle.
+            \item \faSearch \textbf{Tracabilite impossible.}
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \textbf{Reponse Skills Hub :}
+        \begin{block}{Objectif Zero Friction}
+            Passer d'une gestion administrative a un pilotage pedagogique.
+        \end{block}
+    \end{columns}
+\end{frame}
+
+\section{Architecture Technique}
+
+\begin{frame}{Le Triptyque Gagnant}
+    \begin{center}
+    \begin{tikzpicture}[node distance=2cm, auto, thick]
+        \tikzstyle{block} = [rectangle, draw, fill=blue!10, text width=3cm, text centered, rounded corners, minimum height=2cm]
+        \tikzstyle{line} = [draw, ->, thick]
+        
+        \node [block, fill=BUTBlue!20] (hub) {LE HUB\\(Cerveau)};
+        \node [block, fill=green!20, below left=of hub] (nextcloud) {NEXTCLOUD\\(Memoire)};
+        \node [block, fill=purple!20, below right=of hub] (mattermost) {MATTERMOST\\(Liaison)};
+        
+        \path [line] (hub) -- (nextcloud);
+        \path [line] (hub) -- (mattermost);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+\section{Roles et Acteurs}
+
+\begin{frame}{Chaine de Valeur}
+    \begin{itemize}
+        \item \textbf{\faUserTie Directeur d'Etudes :} Pilotage macro.
+        \item \textbf{\faChalkboardTeacher Enseignant :} Validation AC et CE.
+        \item \textbf{\faUserGraduate Etudiant :} Acteur de son parcours (Mobile First).
+    \end{itemize}
+    
+    \vspace{0.5cm}
+    
+    \begin{alertblock}{Innovation : Le Tuteur Pro}
+        Acces via \textbf{"Magic Link"} (Zero compte, zero mot de passe).
+    \end{alertblock}
+\end{frame}
+
+\section{Cycle de Vie du Stage}
+
+\begin{frame}{Processus de Validation}
+    \begin{enumerate}
+        \item \textbf{\faFileContract Declaration :} Saisie des missions.
+        \item \textbf{\faEye Suivi :} Visite sur site.
+        \item \textbf{\faUserEdit Auto-Evaluation :} Reflexivite et preuves.
+        \item \textbf{\faStar Evaluation Pro :} Note savoir-etre via lien unique.
+        \item \textbf{\faGavel Jury :} Synthese et validation finale.
+    \end{enumerate}
+\end{frame}
+
+\section{Roadmap}
+
+\begin{frame}{Futur et Perspectives}
+    \begin{itemize}
+        \item \faProjectDiagram \textbf{Generalisation :} SAE et Projets Tutores.
+        \item \faRobot \textbf{Automatisation :} ChatOps et IA.
+        \item \faChartLine \textbf{Gouvernance :} Exports officiels.
+    \end{itemize}
+    
+    \vspace{1cm}
+    \centering
+    \large \textbf{https://home.educ-ai.fr/demo-stage}
+\end{frame}
+
+\end{document}

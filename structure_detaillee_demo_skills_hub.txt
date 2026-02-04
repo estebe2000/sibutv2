@@ -1,0 +1,127 @@
+STRUCTURE DÉTAILLÉE DE PRÉSENTATION : SKILLS HUB - BUT TC v2.0
+================================================================
+
+1. INTRODUCTION & VISION : DU "ADMINISTRATIF" AU "PÉDAGOGIQUE"
+--------------------------------------------------------------
+* Titre Clé : "Skills Hub : L'intelligence collective au service de la compétence."
+* Le Constat : Aujourd'hui, on passe 80% du temps à gérer des fichiers Excel et des conventions de stage, et seulement 20% à accompagner l'étudiant.
+* La Promesse : Inverser ce ratio. Automatiser tout ce qui peut l'être pour libérer du temps de cerveau disponible pour la pédagogie.
+* Philosophie : "Mobile First" (Pensé pour l'étudiant sur son téléphone) et "Data Driven" (Piloté par la donnée de compétence).
+
+2. LES BESOINS CRITIQUES (Pourquoi ça ne pouvait plus durer)
+------------------------------------------------------------
+* Complexité Structurelle :
+    - Le BUT TC, c'est 5 parcours, 3 niveaux, 11 000 étudiants potentiels.
+    - Le référentiel est une matrice 3D : AC (Apprentissages Critiques) x CE (Composantes Essentielles) x SAÉ (Situations d'Apprentissage).
+    - Impossible à gérer "à la main" sans erreur.
+* Fragmentation des Outils :
+    - Les preuves sont sur un Drive ou une clé USB.
+    - Les notes sont sur Moodle ou un ERP.
+    - Les échanges sont par mails.
+    - Résultat : Perte d'information et difficulté pour l'étudiant de "voir" sa progression.
+* Besoin de Preuve (L'approche Portfolio) :
+    - Il ne suffit plus d'avoir 12/20. Il faut PROUVER qu'on sait faire.
+    - Il faut stocker des vidéos, des rapports, des créations graphiques de manière pérenne et sécurisée (RGPD).
+
+3. L'ÉCOSYSTÈME TECHNIQUE (Le Triptyque Gagnant)
+------------------------------------------------
+Une architecture micro-services robuste et interconnectée.
+
+* A. LE HUB (L'Orchestrateur & Cerveau) : 
+    - Rôle : Centralise l'identité (SSO Keycloak) et la logique métier.
+    - Tech : React (Frontend réactif) + FastAPI (Backend puissant) + PostgreSQL (Données structurées).
+    - Fonction : C'est lui qui dit "Cet étudiant a validé l'AC 23.01 grâce à son stage".
+
+* B. NEXTCLOUD (Le Moteur GED & Coffre-fort) : 
+    - Rôle : Gestion Électronique de Documents (GED).
+    - Pourquoi pas un simple dossier ? Pour la versionning, le partage sécurisé, et l'édition en ligne (OnlyOffice).
+    - Intégration : L'étudiant dépose son rapport sur le Hub -> Le Hub le range automatiquement dans le bon dossier Nextcloud de l'étudiant -> Le prof le corrige via OnlyOffice sans rien télécharger.
+
+* C. MATTERMOST (L'Agent de Liaison & Notifications) :
+    - Rôle : ChatOps (Opérations par le Chat).
+    - Innovation : Fini les mails "Rappel : Rendu demain". Le bot Mattermost envoie une notification push directe.
+    - Scénario : Un étudiant est en retard sur son auto-évaluation -> Le Hub détecte le retard -> Le Hub demande à Mattermost d'envoyer un DM automatique à l'étudiant avec le lien direct.
+
+4. LES ACTEURS : UNE CHAÎNE DE VALEUR COMPLÈTE
+----------------------------------------------
+Chacun a une interface adaptée à son rôle.
+
+* ADMINISTRATEUR (Le Garant) :
+    - Vue "Tour de contrôle".
+    - Importation massive des étudiants depuis Apogée/LDAP.
+    - Configuration des périodes académiques.
+
+* DIRECTEUR D'ÉTUDES (Le Pilote) :
+    - Tableaux de bord macro : "Quelle classe est en retard sur la compétence Marketing ?"
+    - Gestion des jurys et bascule d'année.
+
+* RESPONSABLE RESSOURCE/ACTIVITÉ (L'Architecte) :
+    - Définit le contenu pédagogique.
+    - Lie une SAÉ à des AC spécifiques (ex: "La SAÉ Vente valide la Négociation").
+
+* ENSEIGNANT (L'Expert) :
+    - Interface de correction optimisée ("Speed Grader").
+    - Accès direct aux preuves sans clic superflu.
+
+* ÉLÈVE (Le Héros) :
+    - Interface mobile (PWA).
+    - Vision "Jauge de progression" (Gamification).
+    - Sait exactement ce qu'il doit faire pour valider son année.
+
+* TUTEUR PRO (Le Partenaire) :
+    - Zéro friction : Pas de compte à créer, pas de mot de passe à retenir.
+    - "Magic Link" : Reçoit un mail sécurisé, clique, évalue, valide. Simple.
+
+* TUTEUR PÉDAGOGIQUE (Le Coach) :
+    - Vue synthétique de ses 10-15 étudiants suivis.
+    - Alertes automatiques en cas de décrochage ou de silence radio de l'entreprise.
+
+5. FOCUS : LE CYCLE DE VIE DU STAGE (Validation AC & CE)
+------------------------------------------------------
+Démonstration de la puissance du flux intégré.
+
+* PHASE 1 : Déclaration (L'Engagement)
+    - L'étudiant saisit sa mission.
+    - Il sélectionne les Compétences qu'il pense travailler (Auto-positionnement).
+    - Le Hub valide la cohérence avec le parcours.
+
+* PHASE 2 : Pilotage (Le Suivi)
+    - Visite de stage numérisée : Le tuteur pédago remplit la grille sur tablette pendant la visite.
+    - Synchronisation immédiate : Le rapport de visite est généré en PDF et stocké sur Nextcloud.
+
+* PHASE 3 : Auto-Évaluation (La Réflexivité)
+    - L'étudiant reçoit une notif Mattermost.
+    - Il s'évalue sur une échelle de maîtrise (Novice -> Expert).
+    - Il doit JUSTIFIER sa note par une preuve (Lien vers un document Nextcloud).
+
+* PHASE 4 : Évaluation Professionnelle (La Réalité Terrain)
+    - Le tuteur pro note le "Savoir-Être" et le "Savoir-Faire".
+    - Comparaison automatique : Le Hub affiche l'écart entre l'auto-éval de l'étudiant et la note du pro (Prise de conscience).
+
+* PHASE 5 : Soutenance & Validation (Le Verdict)
+    - L'enseignant accède à une synthèse : Note Pro + Rapport + Oral.
+    - Il valide définitivement les AC. Cette donnée remonte automatiquement dans le bulletin de compétences global.
+
+6. LE RESTE À FAIRE (Roadmap & Futur)
+-----------------------------------
+Le moteur est là, il faut maintenant le déployer sur tout le territoire.
+
+* A. GÉNÉRALISATION DU MOTEUR DE VALIDATION :
+    - SAÉ : Appliquer la même rigueur de validation aux projets de groupe.
+    - PROJET TUTORÉ : Gérer l'évaluation par les pairs (Peer Review) pour noter l'implication individuelle dans un groupe.
+    - PORTFOLIO : Création d'un "Web-Book" public que l'étudiant peut envoyer à un recruteur (CV augmenté).
+
+* B. AUTOMATISATION POUSSÉE (IA & ChatOps) :
+    - Assistant IA : Aide à la rédaction des appréciations pour les enseignants (sur la base des notes).
+    - Chatbot Pédagogique : Un bot Mattermost qui répond aux questions fréquentes ("C'est quand la date limite ?", "Où est mon modèle de rapport ?").
+
+* C. GOUVERNANCE & QUALITÉ :
+    - Exports PDF officiels pour les commissions d'audit (HCERES).
+    - Suivi longitudinal de l'insertion pro (Alumni).
+
+7. CONCLUSION
+-------------
+Skills Hub n'est pas "un logiciel de plus". C'est la colonne vertébrale numérique du BUT TC.
+Il transforme une contrainte réglementaire (l'APC) en opportunité d'excellence pédagogique.
+Architecture solide, Données sécurisées, Expérience utilisateur moderne.
+C'est prêt.

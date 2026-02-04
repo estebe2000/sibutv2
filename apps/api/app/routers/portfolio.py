@@ -61,6 +61,24 @@ async def delete_portfolio_page(page_id: int, session: Session = Depends(get_ses
 UPLOAD_DIR = "/app/uploads/portfolio"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+@router.get("/files/all", response_model=List[StudentFile])
+async def list_all_student_files(
+    entity_type: Optional[ResponsibilityEntityType] = None,
+    academic_year: Optional[str] = None,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role not in ["PROFESSOR", "ADMIN", "SUPER_ADMIN", "DEPT_HEAD", "STUDY_DIRECTOR"]:
+        raise HTTPException(status_code=403, detail="Accès réservé aux enseignants")
+        
+    query = select(StudentFile)
+    if entity_type:
+        query = query.where(StudentFile.entity_type == entity_type)
+    if academic_year:
+        query = query.where(StudentFile.academic_year == academic_year)
+        
+    return session.exec(query.order_by(StudentFile.uploaded_at.desc())).all()
+
 @router.get("/files", response_model=List[StudentFile])
 async def list_student_files(student_uid: Optional[str] = None, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     uid = student_uid if student_uid else current_user.ldap_uid

@@ -1,0 +1,6 @@
+\babel@toc {french}{}\relax 
+\beamer@sectionintoc {1}{Le Constat & Les Besoins}{3}{0}{1}
+\beamer@sectionintoc {2}{L\'Architecture Technique (Le Triptyque)}{4}{0}{2}
+\beamer@sectionintoc {3}{Une Chaîne de Valeur Complète}{5}{0}{3}
+\beamer@sectionintoc {4}{Cas Concret : Le Cycle de Vie du Stage}{7}{0}{4}
+\beamer@sectionintoc {5}{Futur & Perspectives}{12}{0}{5}
