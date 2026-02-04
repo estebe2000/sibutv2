@@ -45,20 +45,22 @@ export function ProfessorPortfolioView() {
 
     // Grouping Logic
     const groupedFiles = files.reduce((acc: any, file: any) => {
-        // Filter logic inside reducer
         const matchesSearch = file.filename.toLowerCase().includes(search.toLowerCase()) || file.student_uid.toLowerCase().includes(search.toLowerCase());
         const matchesType = typeFilter ? file.entity_type === typeFilter : true;
 
         if (!matchesSearch || !matchesType) return acc;
 
         if (!acc[file.student_uid]) {
-            acc[file.student_uid] = { ACTIVITY: [], INTERNSHIP: [], PPP: [] };
+            acc[file.student_uid] = { ACTIVITY: {}, INTERNSHIP: {}, PPP: {} };
         }
         
-        // Group by Type
         const type = file.entity_type || 'ACTIVITY';
-        if (!acc[file.student_uid][type]) acc[file.student_uid][type] = [];
-        acc[file.student_uid][type].push(file);
+        const context = file.entity_title || 'Divers';
+        
+        if (!acc[file.student_uid][type]) acc[file.student_uid][type] = {};
+        if (!acc[file.student_uid][type][context]) acc[file.student_uid][type][context] = [];
+        
+        acc[file.student_uid][type][context].push(file);
         
         return acc;
     }, {});
@@ -116,35 +118,44 @@ export function ProfessorPortfolioView() {
                                         <Group justify="space-between" pr="md">
                                             <Text fw={500}>{studentUid}</Text>
                                             <Badge variant="light" color="gray">
-                                                {Object.values(types).flat().length} fichiers
+                                                {Object.values(types).reduce((acc: number, typeGroup: any) => acc + Object.values(typeGroup).flat().length, 0)} fichiers
                                             </Badge>
                                         </Group>
                                     </Accordion.Control>
                                     <Accordion.Panel>
                                         <Stack gap="md">
-                                            {Object.entries(types).map(([type, files]: [string, any]) => (
-                                                files.length > 0 && (
+                                            {Object.entries(types).map(([type, contexts]: [string, any]) => (
+                                                Object.keys(contexts).length > 0 && (
                                                     <Paper key={type} withBorder p="sm" bg="gray.0">
-                                                        <Group gap="xs" mb="xs">
+                                                        <Group gap="xs" mb="sm">
                                                             {getTypeIcon(type)}
                                                             <Text size="sm" fw={700} tt="uppercase" c="dimmed">{getTypeLabel(type)}</Text>
                                                         </Group>
-                                                        <Stack gap="xs">
-                                                            {files.map((file: any) => (
-                                                                <Group key={file.id} justify="space-between" wrap="nowrap">
-                                                                    <Group gap="sm" wrap="nowrap" style={{ overflow: 'hidden' }}>
-                                                                        <IconFile size={14} style={{ flexShrink: 0 }} />
-                                                                        <Text size="sm" truncate>{file.filename}</Text>
-                                                                    </Group>
-                                                                    <Group gap="xs" wrap="nowrap">
-                                                                        <Text size="xs" c="dimmed" style={{ whiteSpace: 'nowrap' }}>
-                                                                            {dayjs(file.uploaded_at).format('DD/MM/YYYY')}
-                                                                        </Text>
-                                                                        <ActionIcon size="sm" variant="subtle" color="blue" onClick={() => handleView(file.id, file.filename)}>
-                                                                            <IconEye size={14} />
-                                                                        </ActionIcon>
-                                                                    </Group>
-                                                                </Group>
+                                                        <Stack gap="sm">
+                                                            {Object.entries(contexts).map(([contextName, contextFiles]: [string, any]) => (
+                                                                <div key={contextName}>
+                                                                    <Text size="xs" fw={600} c="blue" mb={4} style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                                                        {contextName}
+                                                                    </Text>
+                                                                    <Stack gap={4} pl="xs" style={{ borderLeft: '2px solid var(--mantine-color-gray-3)' }}>
+                                                                        {contextFiles.map((file: any) => (
+                                                                            <Group key={file.id} justify="space-between" wrap="nowrap" py={4}>
+                                                                                <Group gap="sm" wrap="nowrap" style={{ overflow: 'hidden' }}>
+                                                                                    <IconFile size={14} style={{ flexShrink: 0 }} />
+                                                                                    <Text size="sm" truncate>{file.filename}</Text>
+                                                                                </Group>
+                                                                                <Group gap="xs" wrap="nowrap">
+                                                                                    <Text size="xs" c="dimmed" style={{ whiteSpace: 'nowrap' }}>
+                                                                                        {dayjs(file.uploaded_at).format('DD/MM/YYYY')}
+                                                                                    </Text>
+                                                                                    <ActionIcon size="sm" variant="subtle" color="blue" onClick={() => handleView(file.id, file.filename)}>
+                                                                                        <IconEye size={14} />
+                                                                                    </ActionIcon>
+                                                                                </Group>
+                                                                            </Group>
+                                                                        ))}
+                                                                    </Stack>
+                                                                </div>
                                                             ))}
                                                         </Stack>
                                                     </Paper>
