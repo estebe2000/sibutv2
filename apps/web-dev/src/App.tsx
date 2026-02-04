@@ -277,10 +277,29 @@ function App() {
       {!isMobile && (
         <AppShell.Navbar p="md">
           <Stack gap="sm">
+            <Paper p={5} radius="sm" bg="indigo.0" withBorder style={{ borderColor: 'var(--mantine-color-indigo-2)' }}>
+              <Text size="10px" fw={700} c="indigo.9" px="xs" mb={5} tt="uppercase">Pilotage</Text>
+              <Stack gap={2}>
+                <Button variant={activeTab === 'dashboard' ? 'filled' : 'subtle'} onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={18} />} justify="start" size="compact-sm" color="indigo">Tableau de Bord</Button>
+                <Button variant={activeTab === 'governance-report' ? 'filled' : 'subtle'} onClick={() => setActiveTab('governance-report')} leftSection={<IconShieldCheck size={18} />} justify="start" size="compact-sm" color="indigo">Rapport Gouvernance</Button>
+                {isAdmin && <Button variant={activeTab === 'dispatcher' ? 'filled' : 'subtle'} onClick={() => setActiveTab('dispatcher')} leftSection={<IconUsers size={18} />} justify="start" size="compact-sm" color="indigo">Dispatching</Button>}
+              </Stack>
+            </Paper>
+
+            <Paper p={5} radius="sm" bg="grape.0" withBorder style={{ borderColor: 'var(--mantine-color-grape-2)' }}>
+              <Text size="10px" fw={700} c="grape.9" px="xs" mb={5} tt="uppercase">Référentiel & Contenus</Text>
+              <Stack gap={2}>
+                <Button variant={activeTab === 'curriculum' ? 'filled' : 'subtle'} onClick={() => setActiveTab('curriculum')} leftSection={<IconBook size={18} />} justify="start" size="compact-sm" color="grape">Référentiel</Button>
+                <Button variant={activeTab === 'ac-editor' ? 'filled' : 'subtle'} onClick={() => setActiveTab('ac-editor')} leftSection={<IconPencil size={18} />} justify="start" size="compact-sm" color="grape">Éditeur d'AC</Button>
+                <Button variant={activeTab === 'discovery' ? 'filled' : 'subtle'} onClick={() => setActiveTab('discovery')} leftSection={<IconCategory size={18} />} justify="start" size="compact-sm" color="grape">Découverte</Button>
+                <Button variant={activeTab === 'repartition' ? 'filled' : 'subtle'} onClick={() => setActiveTab('repartition')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="grape">Répartition</Button>
+                <Button variant={activeTab === 'fiches2' ? 'filled' : 'subtle'} onClick={() => setActiveTab('fiches2')} leftSection={<IconFileText size={18} />} justify="start" size="compact-sm" color="grape">Fiches PDF</Button>
+              </Stack>
+            </Paper>
+
             <Paper p={5} radius="sm" bg="blue.0" withBorder style={{ borderColor: 'var(--mantine-color-blue-2)' }}>
               <Text size="10px" fw={700} c="blue.9" px="xs" mb={5} tt="uppercase">Outils Enseignant</Text>
               <Stack gap={2}>
-                <Button variant={activeTab === 'dashboard' ? 'filled' : 'subtle'} onClick={() => setActiveTab('dashboard')} leftSection={<IconLayoutDashboard size={18} />} justify="start" size="compact-sm" color="blue">Pilotage</Button>
                 <Button variant={activeTab === 'internship-management' ? 'filled' : 'subtle'} onClick={() => setActiveTab('internship-management')} leftSection={<IconBriefcase size={18} />} justify="start" size="compact-sm" color="blue">Tutorat de Stage</Button>
                 <Button variant={activeTab === 'companies' ? 'filled' : 'subtle'} onClick={() => setActiveTab('companies')} leftSection={<IconBuilding size={18} />} justify="start" size="compact-sm" color="blue">Codex Entreprises</Button>
                 <Button variant={activeTab === 'admin-portfolios' ? 'filled' : 'subtle'} onClick={() => setActiveTab('admin-portfolios')} leftSection={<IconBook size={18} />} justify="start" size="compact-sm" color="blue">Portfolio</Button>
