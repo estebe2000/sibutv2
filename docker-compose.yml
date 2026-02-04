@@ -256,6 +256,7 @@ services:
       - ./docs:/app/data_source/docs
       - ./fiches:/app/data_source/fiches
       - rag_vectors:/app/vectors
+      - nextcloud_data:/nextcloud_data
     networks:
       - app_network
 

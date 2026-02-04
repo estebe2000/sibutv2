@@ -58,7 +58,13 @@ async def delete_portfolio_page(page_id: int, session: Session = Depends(get_ses
 
 # --- FILES ---
 
-UPLOAD_DIR = "/app/uploads/portfolio"
+# Chemin vers le volume partagé Nextcloud
+# Structure : /nextcloud_data/data/<user>/files/...
+UPLOAD_DIR = "/nextcloud_data/data/hub-service/files/app/uploads/portfolio"
+# Fallback pour le dev local sans volume partagé
+if not os.path.exists("/nextcloud_data"):
+    UPLOAD_DIR = "/app/uploads/portfolio"
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.get("/files/all", response_model=List[StudentFile])
@@ -168,11 +174,16 @@ async def get_nextcloud_share_link(file_id: int, session: Session = Depends(get_
     nc_pass = os.getenv("NEXTCLOUD_SERVICE_PASS")
 
     # Le chemin dans Nextcloud est relatif à la racine de l'utilisateur hub-service
-    # db_file.nc_path ressemble à "/app/uploads/portfolio/uid/file.pdf"
-    # Nextcloud attend ce chemin exact s'il est stocké ainsi.
-    # Note: On enlève le premier slash si besoin pour l'API
+    # db_file.nc_path ressemble à "/nextcloud_data/data/hub-service/files/app/uploads/portfolio/uid/file.pdf"
+    # Nextcloud attend "app/uploads/portfolio/uid/file.pdf"
     file_path = db_file.nc_path
-    if file_path.startswith("/"): file_path = file_path[1:]
+    
+    # On nettoie le préfixe du volume partagé
+    if "/files/" in file_path:
+        file_path = file_path.split("/files/", 1)[1]
+    elif file_path.startswith("/app/uploads"):
+        # Rétrocompatibilité pour les anciens fichiers
+        if file_path.startswith("/"): file_path = file_path[1:]
 
     # 3. Appel API OCS pour créer/récupérer le partage
     ocs_url = f"{nc_internal_url}/ocs/v2.php/apps/files_sharing/api/v1/shares"
