@@ -26,9 +26,37 @@ export function ProfessorPortfolioView() {
         }
     };
 
-    const handleView = async (fileId: number) => {
-        // Ouvre le fichier dans un nouvel onglet via l'API de téléchargement (qui gère le stream)
-        window.open(`https://home.educ-ai.fr/api/portfolio/download/${fileId}`, '_blank');
+    const handleView = async (fileId: number, filename: string) => {
+        try {
+            setLoading(true);
+            const response = await api.get(`/portfolio/download/${fileId}`, {
+                responseType: 'blob'
+            });
+            
+            // Créer une URL temporaire pour le fichier
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            
+            // Si c'est une image ou un PDF, on l'ouvre dans un nouvel onglet
+            if (filename.match(/\.(jpeg|jpg|gif|png|pdf)$/i)) {
+                window.open(url, '_blank');
+            } else {
+                // Sinon on force le téléchargement
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            }
+            
+            // Nettoyage après un court délai
+            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+        } catch (error) {
+            console.error("Erreur de téléchargement", error);
+            alert("Impossible de charger le fichier.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const filteredFiles = files.filter(f => {
@@ -94,7 +122,7 @@ export function ProfessorPortfolioView() {
                                         </Table.Td>
                                         <Table.Td><Text size="xs" c="dimmed">{dayjs(file.uploaded_at).format('DD/MM/YYYY HH:mm')}</Text></Table.Td>
                                         <Table.Td>
-                                            <ActionIcon variant="subtle" color="blue" onClick={() => handleView(file.id)}>
+                                            <ActionIcon variant="subtle" color="blue" onClick={() => handleView(file.id, file.filename)}>
                                                 <IconEye size={16} />
                                             </ActionIcon>
                                         </Table.Td>
