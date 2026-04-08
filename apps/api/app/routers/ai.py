@@ -1,7 +1,9 @@
 import os
 import requests
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, BackgroundTasks, Request
+from fastapi.responses import FileResponse, Response, StreamingResponse, JSONResponse
 from pydantic import BaseModel
+import httpx
 from typing import List, Optional
 from sqlmodel import Session, select
 from ..database import get_session
@@ -110,6 +112,17 @@ async def ingest_knowledge(background_tasks: BackgroundTasks, session: Session =
     background_tasks.add_task(generate_full_knowledge_base)
     return {"status": "Ingestion started", "message": "Reconstruction du contexte global en cours..."}
 
+@router.get("/download-knowledge")
+async def download_knowledge():
+    """Télécharge le fichier de contexte global."""
+    if not os.path.exists(KNOWLEDGE_FILE_PATH):
+        raise HTTPException(status_code=404, detail="Fichier de contexte introuvable. Veuillez d'abord mettre à jour l'IA.")
+    return FileResponse(
+        path=KNOWLEDGE_FILE_PATH,
+        filename="knowledge_base.txt",
+        media_type="text/plain"
+    )
+
 @router.post("/test-connection")
 async def test_connection(req: TestConnectionRequest):
     """Test the connection to the LLM provider."""
@@ -153,6 +166,81 @@ async def get_ollama_models(endpoint: Optional[str] = None):
             continue
             
     raise HTTPException(status_code=404, detail="Aucune instance Ollama détectée sur le réseau.")
+
+@router.get("/proxy/v1/models")
+async def proxy_models():
+    """Proxy pour Open WebUI afin de lister Codestral comme un modele disponible."""
+    return {
+        "object": "list",
+        "data": [
+            {"id": "codestral-latest", "object": "model", "created": 1700000000, "owned_by": "openai"},
+            {"id": "codestral-mamba-latest", "object": "model", "created": 1700000000, "owned_by": "openai"}
+        ]
+    }
+
+@router.post("/proxy/v1/chat/completions")
+async def proxy_chat_completions(request: Request):
+    """Proxy les requetes de chat vers Codestral de maniere ultra-robuste."""
+    try:
+        req_json = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+        
+    # NETTOYAGE DU PAYLOAD (Mistral rejette les champs OpenAI inconnus)
+    allowed_keys = ["model", "messages", "stream", "temperature", "top_p", "max_tokens", "safe_prompt", "random_seed"]
+    mistral_payload = {k: v for k, v in req_json.items() if k in allowed_keys}
+    
+    is_stream = mistral_payload.get("stream", False)
+    
+    # Mistral API key
+    api_key = os.getenv("MISTRAL_API_KEY", "3a218ppqAlBzjegiqPSu3JF0c8krF5fo")
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "Accept": "text/event-stream" if is_stream else "application/json",
+    }
+
+    import requests as req_lib
+    
+    if is_stream:
+        def stream_generator():
+            with req_lib.post(
+                "https://codestral.mistral.ai/v1/chat/completions",
+                json=mistral_payload,
+                headers=headers,
+                stream=True,
+                timeout=120.0
+            ) as response:
+                # IMPORTANT: On itere sur les lignes brut pour eviter tout re-encodage foireux
+                for line in response.iter_lines():
+                    if line:
+                        yield line + b"\n"
+                    else:
+                        yield b"\n"
+        
+        # On force identity pour empecher uvicorn/fastapi de compresser le stream
+        return StreamingResponse(
+            stream_generator(), 
+            media_type="text/event-stream",
+            headers={"Content-Encoding": "identity"}
+        )
+    else:
+        try:
+            resp = req_lib.post(
+                "https://codestral.mistral.ai/v1/chat/completions",
+                json=mistral_payload,
+                headers=headers,
+                timeout=120.0
+            )
+            # Retourne le JSON pur de Mistral
+            return JSONResponse(
+                content=resp.json(), 
+                status_code=resp.status_code,
+                headers={"Content-Encoding": "identity"}
+            )
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/chat")
 async def chat_with_context(request: ChatRequest, session: Session = Depends(get_session)):

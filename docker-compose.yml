@@ -195,17 +195,19 @@ services:
       - MM_SQLSETTINGS_DRIVERNAME=postgres
       - MM_SQLSETTINGS_DATASOURCE=postgres://${MM_DB_USER}:${MM_DB_PASSWORD}@db_mattermost:5432/mattermost?sslmode=disable&connect_timeout=10
       - MM_SERVICESETTINGS_SITEURL=https://mattermost.${DOMAIN}
-      - MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS=localhost 127.0.0.1 ${DOMAIN}
-      - MM_SERVICESETTINGS_ENABLEDEVELOPER=true
-      - MM_LOGINSETTINGS_ENABLEOAUTHGAMES=false
+      - MM_SERVICESETTINGS_LISTENADDRESS=:8065
+      - MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS=localhost 127.0.0.1 ${DOMAIN} but_tc_keycloak
+      - MM_SERVICESETTINGS_ENABLETRUSTEDPROXIES=true
+      - MM_SERVICESETTINGS_TRUSTEDPROXYIPHEADER=X-Forwarded-For
+      - MM_SERVICESETTINGS_ENABLELOCALMODE=true
       - MM_GITLABSETTINGS_ENABLE=true
-      - MM_GITLABSETTINGS_ID=${MM_GITLABSETTINGS_ID}
-      - MM_GITLABSETTINGS_SECRET=${MM_GITLABSETTINGS_SECRET}
-      - MM_GITLABSETTINGS_DISCOVERYENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/.well-known/openid-configuration
-      - MM_GITLABSETTINGS_AUTHENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/protocol/openid-connect/auth
-      - MM_GITLABSETTINGS_TOKENENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/protocol/openid-connect/token
-      - MM_GITLABSETTINGS_USERAPIENDPOINT=https://keycloak.${DOMAIN}/realms/but-tc/protocol/openid-connect/userinfo
-      - MM_GITLABSETTINGS_BUTTONTEXT=Connexion avec Keycloak
+      - MM_GITLABSETTINGS_ID=mattermost-app
+      - MM_GITLABSETTINGS_SECRET=mattermost_secret_key_76
+      - MM_GITLABSETTINGS_AUTHENDPOINT=https://mattermost.${DOMAIN}/sso/keycloak/authorize
+      - MM_GITLABSETTINGS_TOKENENDPOINT=http://but_tc_keycloak:8080/realms/but-tc/protocol/openid-connect/token
+      - MM_GITLABSETTINGS_USERAPIENDPOINT=http://but_tc_keycloak:8080/realms/but-tc/protocol/openid-connect/userinfo
+      - MM_GITLABSETTINGS_BUTTONTEXT=Keycloak
+      - MM_TEAMSETTINGS_ENABLESIGNUPWITHGITLAB=true
     ports:
       - "8065:8065"
     volumes:
@@ -215,6 +217,24 @@ services:
       - mattermost_plugins:/mattermost/plugins
     networks:
       - app_network
+
+#  mm-ldap:
+#    image: local/mattermost-ldap-apache:latest
+#    container_name: but_tc_mm_ldap
+#    restart: unless-stopped
+#    environment:
+#      - LDAP_HOST=${LDAP_URL}
+#      - LDAP_PORT=389
+#      - LDAP_BASE_DN=${LDAP_BASE_DN}
+#      - LDAP_BIND_DN=${LDAP_BIND_DN}
+#      - LDAP_PASS=${LDAP_BIND_PASSWORD}
+#      - LDAP_USER_ATTRIBUTE=uid
+#      - OAUTH_CLIENT_ID=mattermost-ldap
+#      - OAUTH_CLIENT_SECRET=ldap_secret_key_76
+#    volumes:
+#      - mm_ldap_data:/var/www/html/oauth/data
+#    networks:
+#      - app_network
 
   # ---------------------------------------------------------------------------
   # Application Services (API & WEB)
@@ -250,6 +270,8 @@ services:
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
       - SMTP_TLS=true
+      - ANYTHING_LLM_URL=http://host.docker.internal:3001/api/v1
+      - ANYTHING_LLM_API_KEY=458T7VQ-MMWMT2K-QC0CAXF-0Q1GVFM
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -298,9 +320,20 @@ services:
     depends_on:
       - web
       - api
+      - scodoc-tester
     networks:
       - app_network
       - test_dev_network
+
+  scodoc-tester:
+    build:
+      context: ./apps/scodoc-tester
+    container_name: but_tc_scodoc_tester
+    restart: unless-stopped
+    ports:
+      - "8091:8091"
+    networks:
+      - app_network
 
   tunnel:
     image: cloudflare/cloudflared
@@ -322,6 +355,7 @@ volumes:
   mattermost_config:
   mattermost_logs:
   mattermost_plugins:
+  mm_ldap_data:
   odoo_data:
   odoo_db_data:
   rag_vectors:

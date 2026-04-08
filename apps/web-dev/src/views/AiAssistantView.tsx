@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Container, Title, Text, Group, ThemeIcon, Paper, ScrollArea, Textarea, ActionIcon, Stack, Loader, Avatar, SimpleGrid, Alert, FileInput, Tooltip, Button, Badge, Chip, Box } from '@mantine/core';
-import { IconRobot, IconSend, IconUser, IconSchool, IconChecklist, IconBrain, IconSparkles, IconTrash, IconFileUpload, IconFileCheck, IconBulb, IconRefresh } from '@tabler/icons-react';
+import { IconRobot, IconSend, IconUser, IconSchool, IconChecklist, IconBrain, IconSparkles, IconTrash, IconFileUpload, IconFileCheck, IconBulb, IconRefresh, IconDownload } from '@tabler/icons-react';
 import { useAiChat } from '../hooks/useAiChat';
 import { notifications } from '@mantine/notifications';
-import api from '../services/api';
+import api, { API_URL } from '../services/api';
 
 // BIBLIOTHÈQUES STANDARDS
 import ReactMarkdown from 'react-markdown';
@@ -68,6 +68,9 @@ export function AiAssistantView() {
                 </div>
             </Group>
             <Group>
+                <Button variant="light" color="blue" leftSection={<IconDownload size={16}/>} onClick={() => window.open(`${API_URL}/ai/download-knowledge`, '_blank')}>
+                    Télécharger Contexte
+                </Button>
                 <Button variant="light" leftSection={<IconRefresh size={16}/>} onClick={handleIngest} loading={ingesting}>
                     Mettre à jour l'IA
                 </Button>

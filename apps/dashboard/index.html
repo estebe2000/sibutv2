@@ -63,7 +63,7 @@
             </a>
 
             <!-- Mattermost -->
-            <a href="https://mattermost.${DOMAIN}" id="link-mattermost" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-indigo-600 hover:shadow-xl">
+            <a href="https://mattermost.${DOMAIN}/oauth/gitlab/login" id="link-mattermost" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-indigo-600 hover:shadow-xl">
                 <div class="flex items-center mb-4 text-indigo-600">
                     <i class="fas fa-comments text-3xl mr-4"></i>
                     <h3 class="text-2xl font-bold text-gray-800">Mattermost</h3>
@@ -227,6 +227,18 @@
                 }
             });
         }
+    </script>
+    <!-- AnythingLLM Embed -->
+    <script
+      data-embed-id="10f42633-c155-4ff1-803a-e720a7995471"
+      data-base-api-url="http://localhost:3001/api/embed"
+      data-chat-icon="chatBubble"
+      data-assistant-name="Assistant Skills Hub"
+      data-greeting="Bonjour ! Je suis l'assistant Skills Hub. Posez-moi vos questions sur les cours ou les enseignants."
+      data-button-color="#1971c2"
+      data-user-bg-color="#1971c2"
+      data-no-sponsor="true"
+      src="http://localhost:3001/embed/anythingllm-chat-widget.min.js">
     </script>
 </body>
 </html>
