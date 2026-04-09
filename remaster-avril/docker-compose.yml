@@ -80,6 +80,60 @@ services:
     volumes:
       - keycloak_db_data:/var/lib/postgresql/data
 
+  # --- COMMUNICATION (MATRIX) ---
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: remaster_synapse
+    restart: unless-stopped
+    environment:
+      - SYNAPSE_SERVER_NAME=${DOMAIN}
+      - SYNAPSE_REPORT_STATS=no
+      - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+    volumes:
+      - ./infrastructure/synapse/data:/data
+    depends_on:
+      - db_synapse
+
+  db_synapse:
+    image: postgres:15-alpine
+    container_name: remaster_db_synapse
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: synapse_password
+      POSTGRES_DB: synapse
+    volumes:
+      - synapse_db_data:/var/lib/postgresql/data
+
+  # --- VIDEO (LIVEKIT & COTURN) ---
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: remaster_livekit
+    restart: unless-stopped
+    command: --config /livekit.yaml
+    volumes:
+      - ./infrastructure/livekit/livekit.yaml:/livekit.yaml
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "7882:7882/udp"
+
+  coturn:
+    image: coturn/coturn:latest
+    container_name: remaster_coturn
+    restart: unless-stopped
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+    command:
+      - -n
+      - --lt-cred-mech
+      - --fingerprint
+      - --use-auth-secret
+      - --static-auth-secret=secret_turn_key
+      - --realm=${DOMAIN}
+
 volumes:
   postgres_data:
   keycloak_db_data:
+  synapse_db_data:
