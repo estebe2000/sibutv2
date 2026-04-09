@@ -1,0 +1,19 @@
+port: 7880
+rtc:
+    tcp_port: 7881
+    port_range_start: 50000
+    port_range_end: 50050
+    use_external_ip: false
+turn:
+    enabled: true
+    domain: localhost
+    tls_port: 3478
+    udp_port: 3478
+    external_ip: 127.0.0.1
+    auth_server:
+        # On utilise le secret partagé avec Coturn
+        shared_secret: "secret_turn_key"
+keys:
+    devkey: "secret_livekit_key"
+logging:
+    level: info

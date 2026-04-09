@@ -1,0 +1,41 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="space-y-8 animate-in zoom-in-95 duration-500">
+    <header class="flex justify-between items-end">
+        <div>
+            <h2 class="text-3xl font-black tracking-tight italic">Projets & Code (Forgejo)</h2>
+            <p class="text-slate-400 font-bold">Hébergement Git souverain pour les SAÉ</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="https://git.educ-ai.fr" target="_blank" class="px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-200">Ouvrir Forgejo</a>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm relative overflow-hidden">
+            <h3 class="text-xl font-black mb-6 text-orange-600">Dépôts récents</h3>
+            <div class="space-y-4">
+                <div class="p-6 bg-slate-50 rounded-2xl border border-transparent hover:border-orange-200 transition-all cursor-pointer flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center font-black">S</div>
+                        <div>
+                            <p class="font-bold text-slate-800">BUT2 / SAE-2.1-Marketing</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Mis à jour il y a 2h</p>
+                        </div>
+                    </div>
+                    <span class="px-2 py-1 bg-green-100 text-green-600 text-[10px] font-black rounded">Public</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-orange-50 rounded-[3rem] p-10 border border-orange-100 flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-orange-600 shadow-lg mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.28 1.15-.28 2.35 0 3.5-.73 1.02-1.08 2.25-1 3.5 0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-4.51-2-7-2"/></svg>
+            </div>
+            <h3 class="text-xl font-black mb-2 italic">Forgejo CI/CD</h3>
+            <p class="text-xs text-orange-600 font-bold opacity-60 uppercase tracking-widest">Pipeline de validation actif</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

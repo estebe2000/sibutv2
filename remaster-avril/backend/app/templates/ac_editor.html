@@ -1,0 +1,39 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="space-y-8 animate-in slide-in-from-bottom duration-500">
+    <header>
+        <h2 class="text-3xl font-black tracking-tight italic">Éditeur d'Apprentissages Critiques (AC)</h2>
+        <p class="text-slate-400 font-bold">Modification rapide des libellés du référentiel</p>
+    </header>
+
+    <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                    <th class="pb-4 px-4">Code AC</th>
+                    <th class="pb-4 px-4">Libellé actuel</th>
+                    <th class="pb-4 px-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                {% for ac in learning_outcomes %}
+                <tr class="group hover:bg-slate-50 transition-all">
+                    <td class="py-6 px-4">
+                        <span class="font-black text-blue-600 tracking-tighter">{{ ac.code }}</span>
+                    </td>
+                    <td class="py-6 px-4">
+                        <input type="text" value="{{ ac.label }}" class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-2 focus:ring-blue-100 rounded-lg px-2 py-1 transition-all">
+                    </td>
+                    <td class="py-6 px-4 text-right">
+                        <button class="p-2 bg-blue-50 text-blue-600 rounded-xl opacity-0 group-hover:opacity-100 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

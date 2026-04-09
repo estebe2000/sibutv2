@@ -1,0 +1,49 @@
+<div class="space-y-10 animate-in slide-in-from-bottom duration-700">
+    <header>
+        <h2 class="text-5xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Mon Portfolio</h2>
+        <p class="text-slate-400 font-bold text-lg mt-2 italic text-uppercase">Parcours {{ user.role.value }}</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <div class="md:col-span-8 bg-white rounded-[3rem] p-12 shadow-2xl shadow-purple-500/5 border border-purple-100 relative overflow-hidden">
+            <h3 class="text-2xl font-black mb-10 text-purple-600 italic">Mes Macro-Compétences (Niveau 1)</h3>
+            <div class="space-y-10">
+                {% for comp in data.competencies %}
+                <div class="space-y-3">
+                    <div class="flex justify-between items-end px-2">
+                        <div>
+                            <span class="font-black text-slate-800 text-lg block leading-none mb-1">{{ comp.code }}</span>
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ comp.label }}</span>
+                        </div>
+                        <span class="text-3xl font-black text-slate-900">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-5 rounded-full overflow-hidden border border-slate-50 shadow-inner">
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-1000" style="width: 5%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="absolute top-0 right-0 w-48 h-48 bg-purple-500/5 rounded-bl-full -mr-10 -mt-10"></div>
+        </div>
+
+        <div class="md:col-span-4 space-y-8">
+            <button class="w-full bg-slate-900 text-white p-12 rounded-[3rem] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all group relative overflow-hidden">
+                <div class="relative z-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mb-6 opacity-50 group-hover:rotate-12 transition-transform mx-auto w-12 h-12"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                    <span class="text-2xl font-black block">Nouvelle Fiche</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest opacity-40">Rédiger une réflexion</span>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </button>
+
+            {% include 'components/news_feed.html' %}
+
+            <div class="p-8 bg-slate-50 rounded-[3rem] border border-slate-100">
+                <h4 class="font-black text-sm uppercase tracking-widest text-slate-400 mb-4">Aide au Portfolio</h4>
+                <p class="text-xs font-bold text-slate-500 leading-relaxed">
+                    Utilisez l'assistant IA pour vous aider à formuler vos fiches de réflexion en fonction des AC ciblés.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

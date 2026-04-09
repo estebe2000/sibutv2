@@ -1,0 +1,21 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="space-y-8 animate-in slide-in-from-left duration-500">
+    <header>
+        <h2 class="text-3xl font-black tracking-tight italic">Codex Entreprises</h2>
+        <p class="text-slate-400 font-bold">Annuaire des partenaires et base historique des stages</p>
+    </header>
+
+    <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
+        <div class="relative z-10">
+            <h3 class="text-xl font-black mb-6 italic">Recherche Partenaire</h3>
+            <div class="relative group">
+                <input type="text" placeholder="Rechercher par nom, ville ou secteur..." class="w-full p-6 bg-white/10 border-none rounded-2xl font-bold text-white placeholder:text-white/30 focus:ring-2 focus:ring-blue-500 transition-all outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="absolute right-6 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-blue-500"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            </div>
+        </div>
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[100px] -mr-32 -mt-32"></div>
+    </div>
+</div>
+{% endblock %}
