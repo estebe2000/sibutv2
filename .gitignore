@@ -6,6 +6,7 @@ dist-ssr/
 
 # Python
 venv/
+.litellm_venv/
 __pycache__/
 *.pyc
 .env
