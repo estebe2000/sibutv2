@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "skills-hub-sql": {
+      "name": "SkillsHub SQL",
+      "transport": "stdio",
+      "command": "python3",
+      "args": ["/app/server/storage/skills_mcp.py"],
+      "env": {}
+    }
+  }
+}

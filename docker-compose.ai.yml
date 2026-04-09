@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # --- Open WebUI (Skills Hub - Assistant Pédagogique) ---
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: ai_open_webui
+    restart: unless-stopped
+    ports:
+      - "3005:8080"
+    env_file:
+      - .env.ai
+    environment:
+      - WEBUI_AUTH=True
+      # --- Configuration LDAP Universitaire (Vérifiée) ---
+      - ENABLE_LDAP=True
+      - LDAP_SERVER_HOST=ldap.univ-lehavre.fr
+      - LDAP_SERVER_PORT=389
+      - LDAP_APP_DN=cn=ldapbindusr-caucri2,ou=DSA,dc=univ-lehavre,dc=fr
+      - LDAP_APP_PASSWORD=Fctldap-8%caucri2_30688
+      - LDAP_SEARCH_BASE=dc=univ-lehavre,dc=fr
+      - LDAP_SEARCH_FILTER=
+      - LDAP_USE_TLS=False
+      # --- Paramètres de base & Inscription ---
+      - ENABLE_SIGNUP=True
+      - DEFAULT_USER_ROLE=user
+      # --- Branding ---
+      - WEBUI_NAME=Skills Hub - BUT TC
+      - "WEBUI_BANNER_MESSAGE=Bienvenue sur l'Assistant IA du département Techniques de Commercialisation."
+      # --- Providers LLM : Proxy Local + Albert (Etalab) ---
+      - OPENAI_API_BASE_URLS=http://172.16.95.98/ai/proxy/v1;https://albert.api.etalab.gouv.fr/v1
+      - OPENAI_API_KEYS=3a218ppqAlBzjegiqPSu3JF0c8krF5fo;sk-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo4NTAyLCJ0b2tlbl9pZCI6MTYxNTQsImV4cGlyZXMiOjE4MDQ0NjA0MDB9.GDGvca0HKxkvziUfe6lFh2GbLwymyDJzvdRgRkSEztA
+      # --- Configuration TTS (Text-to-Speech) ---
+      - AUDIO_TTS_ENGINE=webapi
+      - AUDIO_TTS_WEBAPI_URL=http://172.16.89.122:17493/generate
+      - AUDIO_TTS_WEBAPI_METHOD=POST
+      - AUDIO_TTS_WEBAPI_BODY={"profile_id":"e0eac734-4fbe-4bc1-b27e-e82a7529322f","text":"{{text}}","language":"fr"}
+      - AUDIO_TTS_WEBAPI_HEADERS={"Content-Type":"application/json"}
+      - ENABLE_PERSISTENT_CONFIG=False
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - open_webui_data:/app/backend/data
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    name: test_app_network
+    external: true
+
+volumes:
+  open_webui_data:

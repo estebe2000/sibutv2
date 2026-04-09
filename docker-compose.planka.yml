@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  planka:
+    image: ghcr.io/plankanban/planka:latest
+    container_name: planka_app
+    restart: always
+    depends_on:
+      - planka_db
+    ports:
+      - "1337:1337"
+    environment:
+      - BASE_URL=https://planka.educ-ai.fr
+      - DATABASE_URL=postgresql://planka:planka_password@planka_db:5432/planka
+      - SECRET_KEY=f9bd90109d752150af743d2911bb50a4f3fce9cbcb72ca1d4b9bf1d36796d4eb
+      - DEFAULT_ADMIN_EMAIL=admin@admin.com
+      - DEFAULT_ADMIN_PASSWORD=Rangetachambre76*
+      - DEFAULT_ADMIN_NAME=Admin
+      - DEFAULT_ADMIN_USERNAME=admin
+    volumes:
+      - planka_avatars:/app/public/avatars
+      - planka_attachments:/app/public/attachments
+      - planka_backgrounds:/app/public/backgrounds
+    networks:
+      - planka_network
+
+  planka_db:
+    image: postgres:15-alpine
+    container_name: planka_db
+    restart: always
+    environment:
+      - POSTGRES_USER=planka
+      - POSTGRES_PASSWORD=planka_password
+      - POSTGRES_DB=planka
+    volumes:
+      - planka_db_data:/var/lib/postgresql/data
+    networks:
+      - planka_network
+
+networks:
+  planka_network:
+    driver: bridge
+
+volumes:
+  planka_avatars:
+  planka_attachments:
+  planka_backgrounds:
+  planka_db_data:

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Page de Base</title>
+    <!-- Chargement de Tailwind CSS pour un design moderne rapide -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Styles personnalisés si nécessaire */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <!-- En-tête / Navigation -->
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-indigo-600">MonProjet</div>
+            <div class="space-x-6">
+                <a href="#" class="hover:text-indigo-600 transition">Accueil</a>
+                <a href="#" class="hover:text-indigo-600 transition">À propos</a>
+                <a href="#" class="hover:text-indigo-600 transition">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenu Principal -->
+    <main class="flex-grow container mx-auto px-6 py-12">
+
+        <section class="max-w-4xl mx-auto">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-6">Bienvenue sur votre nouvelle page</h1>
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                Ceci est une structure HTML5 de base. Elle inclut les balises sémantiques essentielles,
+                une configuration responsive pour mobiles et tablettes, ainsi qu'une intégration
+                de Tailwind CSS pour faciliter la mise en page.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-6 bg-white rounded-xl shadow-md border border-gray-100">
+                    <h2 class="text-xl font-semibold mb-3 text-indigo-500">Structure Sémantique</h2>
+                    <p class="text-gray-500">Utilisation de header, main, section et footer pour un meilleur
+                        référencement et accessibilité.</p>
+                </div>
+                <div class="p-6 bg-white rounded-xl shadow-md border border-gray-100">
+                    <h2 class="text-xl font-semibold mb-3 text-indigo-500">Design Responsive</h2>
+                    <p class="text-gray-500">La page s'adapte automatiquement à la taille de l'écran grâce aux classes
+                        utilitaires.</p>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <button id="actionBtn"
+                    class="bg-indigo-600 text-white px-8 py-3 rounded-full font-medium hover:bg-indigo-700 transition shadow-lg">
+                    Cliquez ici
+                </button>
+                <div id="message" class="mt-4 text-indigo-600 font-medium hidden">
+                    Bonjour ! Le JavaScript fonctionne aussi.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="bg-gray-900 text-white py-8 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2024 MonProjet. Créé pour un usage éducatif.</p>
+        </div>
+    </footer>
+
+    <!-- Script JavaScript simple -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('actionBtn');
+            const msg = document.getElementById('message');
+
+            btn.addEventListener('click', () => {
+                msg.classList.remove('hidden');
+                btn.textContent = 'Merci !';
+            });
+        });
+    </script>
+    <!--
+Paste this script at the bottom of your HTML before the </body> tag.
+See more style and config options on our docs
+https://github.com/Mintplex-Labs/anythingllm-embed/blob/main/README.md
+-->
+    <script data-embed-id="381ae866-7f79-46e9-a0a3-fa93472cac76" data-base-api-url="http://localhost:3001/api/embed"
+        src="http://localhost:3001/embed/anythingllm-chat-widget.min.js">
+        </script>
+    <!-- AnythingLLM (https://anythingllm.com) -->
+</body>
+
+</html>

@@ -1,0 +1,2475 @@
+CATALOGUE RESSOURCES
+
+CODE: R1.01
+TITRE: Fondamentaux du marketing et comportement du consommateur
+CONTENU: – Démarche marketing et champ d’application
+– Identiﬁcation des acteurs de l’offre, de la demande et les facteurs d’inﬂuence d’un marché
+– Analyse de l’inﬂuence des acteurs sur le marché
+– Connaissance du comportement du consommateur et ses attentes : notion de besoins, modélisation du comportement
+du consommateur, facteurs explicatifs du comportement, processus de décision et variables clés
+– Identiﬁcation des cibles d’un marché et des critères de segmentation
+– Identiﬁcation des positionnements
+– Choix d’une cible et du positionnement lié
+---
+CODE: R1.02
+TITRE: Fondamentaux de la vente
+CONTENU: Les métiers commerciaux
+La déontologie et l’éthique dans la relation commerciale
+Les fondamentaux de la négociation commerciale
+– Maîtriser l’information (entreprise, environnement, concurrence, produit)
+– Établir les objectifs de l’entretien de vente
+– Connaître les étapes d’un entretien de vente et leurs objectifs et les pratiquer lors de jeux de rôles (étapes 1 et 2 de
+l’entretien de vente)
+– Préparer la prise de contact
+– Construire un plan de découverte : mener un questionnement (poser des questions ouvertes, fermées, alternatives,
+rebonds), pratiquer l’écoute active, savoir reformuler, savoir repérer les besoins du client et identiﬁer son proﬁl (SONCAS
+entre autres)
+Les bases de la prospection commerciale
+– Comprendre les enjeux de la prospection commerciale (générer des contacts et récupérer des contacts perdus, conqué-
+rir de nouvelles cibles, orienter son développement commercial, s’adapter aux technologies...)
+– Connaître les outils de prospection traditionnels (visites, salons, mailing, téléphone)
+– Créer ou qualiﬁer un ﬁchier de prospection
+– Mener une démarche de prospection téléphonique (gérer la relation commerciale par téléphone / mener une opération
+de phoning, construire un GET / analyser les résultats), notamment grâce à des jeux de rôle de phoning
+---
+CODE: R1.03
+TITRE: Fondamentaux de la communication commerciale
+CONTENU: – Brief, stratégies, objectifs et cibles de la communication commerciale
+– Acteurs de la communication commerciale (agences, régies, organismes de régulation)
+– Panorama des moyens de communication, chiffres, secteurs
+– Bases du message publicitaire : fond / forme (couleurs, formes, contrastes, cohérence)
+– Outils simples de communication « print » : afﬁches, encarts presse, ﬂyers, plaquettes
+– Indicateurs d’analyse de la notoriété et de l’image
+---
+CODE: R1.04
+TITRE: Etudes marketing - 1
+CONTENU: – Typologie des études de marché
+– Cahier des charges
+– Analyse et recherche documentaire (repérage des sources d’information, collecte et traitement)
+– Types de sondage
+– Élaboration du questionnaire
+– Plan de sondage, population, échantillonnage
+---
+CODE: R1.05
+TITRE: Environnement économique de l’entreprise
+CONTENU: – Agents économiques, interactions et agrégats économiques (PIB, inﬂation...)
+– Comportement du consommateur et analyse de la demande (notions d’élasticités...), comportement du producteur et
+maximisation du proﬁt
+– Marchés et conditions de concurrence (CPP, marchés imparfaits...)
+– Notions de politique économique
+Apprentissage critique ciblé :
+– AC11.01 | Analyser l’environnement d’une entreprise en repérant et appréciant les sources d’informations (ﬁabilité et
+pertinence)
+---
+CODE: R1.06
+TITRE: Environnement juridique de l’entreprise
+CONTENU: – Environnement juridique et judiciaire, les acteurs du monde des affaires (les personnes), biens et patrimoine, responsa-
+bilité civile, moyens de preuve
+– Éléments de la propriété intellectuelle (droits d’auteur, charte graphique), droit à l’image
+---
+CODE: R1.07
+TITRE: Techniques quantitatives et représentations - 1
+CONTENU: – Calcul mental et ordre de grandeur
+– Pourcentages, taux de variation, indices, élasticité
+– Statistique descriptive : généralités, séries à un caractère, paramètres de position, de dispersion, de concentration,
+représentation graphique
+– Équations, fonctions afﬁnes
+Utilisation d’un tableur conseillée
+---
+CODE: R1.08
+TITRE: Eléments ﬁnanciers de l’entreprise
+CONTENU: – Mécanisme de la comptabilité (documents commerciaux, TVA et IS)
+– Compte de résultat : notion de produits et charges, résultat
+– Contenu d’un bilan : actif, passif, rôle des amortissements et des provisions
+– Tableau de trésorerie
+– Distinction entre notions de bénéﬁce et de trésorerie
+---
+CODE: R1.09
+TITRE: Rôle et organisation de l’entreprise sur son marché
+CONTENU: – Organigramme et rôle du manager (structure simple, fonctionnelle, divisionnelle, matricielle, par projet)
+– PESTEL
+– Concurrence directe et indirecte, avantage concurrentiel
+– SWOT
+---
+CODE: R1.10
+TITRE: Initiation à la conduite de projet
+CONTENU: – Déﬁnition des étapes de la conduite de projet : phase de cadrage ou avant-projet avec toutes les analyses préliminaires
+(déﬁnition de la note de cadrage)
+– Déﬁnition de la conception et de la planiﬁcation : constitution de l’équipe, organisation du travail en groupe, répartition
+des tâches et planiﬁcation
+– Présentation des différents outils de la gestion de projet : carte mentale, priorisation des tâches, matrice des responsa-
+bilités, diagramme de planiﬁcation, outils de travail collaboratif, organisation de réunions
+---
+CODE: R1.11
+TITRE: Langue A Anglais du commerce - 1
+CONTENU: – Présentation d’une entreprise (points faibles et points forts), présentation de soi
+– Recherche d’informations sur internet, de documentations sur une entreprise ou un produit et présentation à l’oral et à
+l’écrit
+– Traduction d’un questionnaire/une enquête/une interview simple en anglais
+– Prospection au téléphone et prise des RDV
+– Rédaction et utilisation de questions pour connaître les besoins du client
+– Description d’un support de communication commerciale (publicité) dans sa dimension culturelle, présentation d’un brief
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire basique général de l’entreprise, de la communication commerciale et du marketing et le restituer
+dans une situation professionnelle spéciﬁque
+– Mobiliser les connecteurs logiques pour l’argumentation
+---
+CODE: R2.02
+TITRE: Prospection et négociation
+CONTENU: Contenu :
+Au travers de jeux de rôle portant sur les étapes 3 et 4 de l’entretien de vente, aborder :
+La prospection commerciale digitale :
+– E-mailing, SMS, réseaux sociaux, etc.
+– Indicateurs de performance / les indicateurs de rentabilité
+– Outils de CRM
+La maîtrise de son offre
+– Conception ou construction d’un argumentaire de vente CAP complet (produits, services payants, services gratuits,
+marque...)
+– Traduction de l’offre produit en bénéﬁces client
+– Anticipation et traitement des objections
+– Conclusion et prise de congé (sans négociation du prix)
+L’exploitation et la construction des Outils d’Aide à la Vente (OAV)
+– Outils de présentation
+– Outils de preuve
+– Outils de contractualisation
+– Outils de démonstration (échantillon, exemplaire du produit...)
+---
+CODE: R4.SME.09
+TITRE: Relations publiques et relations presse
+CONTENU: 
+---
+CODE: R4.SME.10
+TITRE: Organisation et logistique - 1
+CONTENU: 
+---
+CODE: R4.SME.11
+TITRE: Gestion commerciale - 1
+CONTENU: 
+---
+CODE: R1.12
+TITRE: Langue B du commerce - 1
+CONTENU: – Présentation d’une entreprise (points faibles et points forts), présentation de soi
+– Recherche d’informations sur internet, de documentations sur une entreprise ou un produit et présentation à l’oral et à
+l’écrit
+– Traduction d’un questionnaire/une enquête/une interview simple en langue étrangère
+– Prospection au téléphone et prise des RDV
+– Rédaction et utilisation de questions pour connaitre les besoins du client
+– Description d’un support de communication commerciale (publicité) dans sa dimension culturelle, présentation d’un brief
+Outils linguistiques
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire basique général de l’entreprise, de la communication commerciale et marketing, et le restituer
+dans une situation professionnelle spéciﬁque
+– Mobiliser les connecteurs logiques pour l’argumentation
+---
+CODE: R1.13
+TITRE: Ressources et culture numériques - 1
+CONTENU: – Prise en main de l’E.N.T. : Mail Netiquette, objets connectés, réunions en distanciel, échange de ﬁchiers
+– Organisation et recherche d’information (ordinateur, support de stockage, réseau interne, sécurité/protection)
+– Outils de recherche sur Internet
+– Traitement de texte : utilisation d’un logiciel de traitement de texte (saisie/import de texte, mise en page, mise en forme,
+insertion d’objets, export, structuration, gestion de documents longs)
+– Création et exploitation de présentations professionnelles (import/export, transitions, animations, insertions d’objets) à
+l’aide d’un logiciel de PréAO
+– Création et exploitation d’images pour l’intégration dans un support commercial à l’aide de logiciels de retouche d’image
+(type bitmap) : import, export, redimensionnement, format, transparence, effets simples
+– Utilisation d’un tableur simple et des fonctions de base d’un tableur : création de tableaux, calculs de base, création de
+graphiques simples
+– Import/export, insertions d’objets, mise en page, mise en forme à l’aide des fonctions avancées d’un traitement de texte,
+d’un logiciel de PAO, PréAO
+---
+CODE: R1.14
+TITRE: Expression, communication et culture 1
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 1) :
+– Initiation à la recherche documentaire (ex : recourir à l’environnement numérique de travail, aux bases de données, aux
+normes bibliographiques).
+– Etude de la ﬁabilité et de la pertinence des informations (fake news, plagiat, etc.) et des sources choisies (médias grand
+public et spécialisés, internet, etc.)
+– Développement de l’esprit critique et la culture générale en privilégiant les sujets d’actualité socio-économique, géopoli-
+tique et culturelle
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel (niveau 1) :
+– Développement des savoirs et savoir-faire en sémiologie aﬁn de communiquer par l’image (à titre indicatif : ﬂyer, afﬁche,
+support d’exposé, etc) et au moyen d’outils de présentation (logiciels de carte heuristique, de diaporama, d’infographie,
+etc.)
+– Analyse et compréhension des écritures professionnelles : les textes de la presse généraliste et/ou spécialisée
+– Élaboration de documents et écrits professionnels qui répondent aux différentes situations de communication (à titre
+indicatif : revue de presse, dossier, plaquette de présentation, rapport simple, note, courrier, courriel, etc.)
+– Compréhension et respect des normes de présentation écrites : typographie, orthographe/syntaxe
+Communiquer, persuader, interagir :
+– Analyse de la communication (niveau 1) : comprendre les enjeux de la communication verbale, non verbale et para-
+verbale en situation (recours possible à un ou des modèles théoriques explicatifs jugés pertinents) pour analyser ses
+manières de communiquer et les améliorer (fonctions du langage, pragmatique, anthropologie de la - communication,
+etc.); accent mis sur l’identiﬁcation et la maitrise des normes sociales, culturelles, professionnelles et des registres de
+langue)
+– Ecoute active, prise de notes, reformulation, compte-rendu oral, exposé, etc.
+---
+CODE: R1.15
+TITRE: Projet personnel professionnel - 1
+CONTENU: S’approprier la démarche PPP : connaissance de soi (intérêt, curiosité, aspirations, motivations), accompagnement des étu-
+diants dans la déﬁnition d’une stratégie personnelle permettant la réalisation du projet professionnel
+– Développer une démarche réﬂexive et introspective (de manière à découvrir ses valeurs, qualités, motivations, savoirs,
+savoir-être, savoirs-faire) au travers, par exemple de son expérience et ses centres d’intérêt
+– Placer l’étudiant dans une démarche prospective en termes d’avenir, souhait, motivation vis-à-vis d’un projet d’études
+et/ou professionnel
+– S’initier à la démarche réﬂexive (savoir interroger et analyser son expérience)
+S’approprier la formation
+– S’approprier les compétences de la formation – identiﬁer les blocs de compétences
+– Référencer les compétences et les associer avec la réalité du terrain
+– Découvrir, analyser les parcours B.U.T. de la spécialité
+– Accompagner le choix des parcours (type 1 / type 2)
+Découvrir les métiers et connaître le territoire
+– Faire le lien avec les métiers (ﬁches ROME – Association article 1, etc.)
+– Se familiariser avec les débouchés en fonction du territoire, les bassins d’entreprise, les réseaux d’entreprise, etc.
+– Identiﬁer les métiers en lien avec la formation, en analyser les principales caractéristiques
+Se projeter dans un environnement professionnel
+– Appréhender les codes, les usages et les cultures d’entreprise
+– Intégrer des codes sociaux au niveau France et Europe pour s’ouvrir à la diversité culturelle et s’ouvrir sur la mondiali-
+sation socio-économique
+– Construire son réseau professionnel : découvrir les réseaux et sensibiliser à l’identité numérique
+– Préparer son stage et/ou son alternance et/ou son parcours à l’international
+---
+CODE: R2.01
+TITRE: Marketing mix - 1
+CONTENU: Contenu :
+– Conception d’une politique de produit : cycle de vie, évolution saisonnière et temporaire, gamme et évolution des
+gammes, marque, packaging
+– Conception d’une politique de prix : objectifs, contraintes, méthodes de ﬁxation
+– Préconisation d’une politique de communication et d’une politique de distribution
+– Mise en cohérence de la stratégie marketing (cible et positionnement choisis) avec les variables du mix (produit, prix,
+communication, distribution)
+---
+CODE: R6.SME.04
+TITRE: Evènementiel sectoriel
+CONTENU: 
+---
+CODE: R2.03
+TITRE: Moyens de la communication commerciale
+CONTENU: Contenu :
+– Moyens de communication médias, médias sociaux
+– Marketing direct (objectifs, ciblage, outils)
+– Promotion des ventes (techniques et mise en œuvre)
+– Sponsoring, mécénat
+– Relations publiques, relations presse
+– Outils de communication : dossier de sponsoring, e-mailing, communiqué de presse, dossier de presse, post réseaux
+sociaux
+– Indicateurs d’analyse et de mesure des résultats : taux de retour, ventes, retombées médias, etc.
+---
+CODE: R2.04
+TITRE: Etudes marketing - 2
+CONTENU: Contenu :
+– Études quantitatives : approfondissement des différents types de sondage, panels...
+– Analyse des données de l’étude et rédaction du rapport d’étude
+– Logiciel de traitement d’enquête
+– Études qualitatives
+---
+CODE: R2.05
+TITRE: Relations contractuelles commerciales
+CONTENU: Contenu :
+– Information du client : informations légales à communiquer sur l’entreprise et sur les produits (y compris sur internet),
+droit de la publicité, information du consommateur, promotion des ventes
+– Contrats (y compris conclusion du contrat en ligne); distinction entre contrat de vente et contrat d’entreprise : négocia-
+tions pré-contractuelles, obligations contractuelles, CGV, clauses abusives
+– Éléments de la propriété intellectuelle (marque, logo)
+---
+CODE: R2.06
+TITRE: Techniques quantitatives et représentations - 2
+CONTENU: Contenu :
+– Calcul ﬁnancier : intérêts simples, intérêts composés, emprunts
+– Séries à deux caractères : ajustement, corrélation
+– Chroniques
+– Tableaux de contingence
+– Test d’indépendance
+L’utilisation de logiciels spéciﬁques est encouragée (tableurs, logiciel d’enquêtes quantitatives, de statistiques)
+---
+CODE: R2.07
+TITRE: Coûts, marges et prix d’une offre simple
+CONTENU: Contenu :
+– Notion de coûts / charges
+– Différence charges variables/ ﬁxes et directes/ indirectes, seuil de rentabilité simple
+– Application de la méthode des coûts complets et de la méthode des coûts variables
+– Méthode de valorisation des stocks
+---
+CODE: R2.08
+TITRE: Canaux de commercialisation et de distribution
+CONTENU: Contenu :
+– Identiﬁcation des types de distribution
+– Panorama de la distribution en France, évolutions et tendances
+– Relation producteur-fournisseur et producteur-distributeur
+– Choix des canaux de distribution et impact sur le mix du producteur
+Apprentissage critique ciblé :
+– AC11.04 | Concevoir une offre cohérente et éthique en termes de produits, de prix, de distribution et de communication
+---
+CODE: R2.09
+TITRE: Psychologie sociale
+CONTENU: Contenu :
+– Les individus, groupes sociaux et leurs caractéristiques : personnalité/ individualité, croyance, attitudes, émotions,
+culture, catégorisation sociale, motivation
+– Les modèles et théories : théories des besoins, théorie du comportement planiﬁé, théories de l’engagement, théories de
+l’inﬂuence sociale
+– Dynamique de groupe
+– Gestion de conﬂit, gestion du stress
+– Communication persuasive / engageante
+– Inﬂuence consciente et non consciente sur les attitudes et les comportements
+– Processus de mémorisation et d’attention
+---
+CODE: R2.10
+TITRE: Gestion et conduite de projet
+CONTENU: Contenu :
+– Conception complète du projet : prise en compte du cadrage du commanditaire, planiﬁcation complète en tenant compte
+des antériorités, des ressources disponibles et des contraintes diverses, notamment de budget et de temps
+– Détermination des tâches critiques pour faire les meilleurs choix d’affectation de ressources
+– Comparaison de différents plans d’actions possibles en fonction de leur pertinence, acceptabilité et faisabilité et choisir
+le plus adapté
+– Maitrise des outils de la gestion de projet
+---
+CODE: R2.11
+TITRE: Langue A Anglais du commerce - 2
+CONTENU: Contenu :
+– Description techniquement d’un produit, présentation d’un produit sous forme d’avantages
+– Conception d’un support de communication simple qui présente la stratégie appliquée au produit
+– Présentation du marketing mix d’un produit à l’écrit comme à l’oral
+– Compréhension et rédaction des documents commerciaux simples, rédaction des mails, mailing
+– Construction d’un argumentaire de vente et un plan de découverte simple
+– Production d’un support de communication commerciale simple (brochure, courrier commercial simple...)
+– Justiﬁcation des choix, argumentation
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire basique général de l’entreprise, de la communication commerciale, et du marketing et le restituer
+dans une situation professionnelle spéciﬁque
+– Mobiliser les connecteurs logiques pour l’argumentation
+---
+CODE: R2.12
+TITRE: Langue B du commerce - 2
+CONTENU: Contenu :
+– Description techniquement d’un produit, présentation d’un produit sous forme d’avantages
+– Conception d’un support de communication simple qui présente la stratégie appliquée au produit
+– Présentation du marketing mix d’un produit à l’écrit comme à l’oral
+– Compréhension et rédaction des documents commerciaux simples, rédaction des mails, mailing
+– Construction d’un argumentaire de vente et un plan de découverte simple
+– Production d’un support de communication commerciale simple (brochure, courrier commercial simple...)
+– Justiﬁcation des choix, argumentation
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire basique général de l’entreprise, de la communication commerciale, et du marketing et le restituer
+dans une situation professionnelle spéciﬁque
+– Mobiliser les connecteurs logiques pour l’argumentation
+---
+CODE: R2.13
+TITRE: Ressources et culture numériques - 2
+CONTENU: Contenu :
+– Mise en page élaborée (afﬁches, ﬂyers, dépliants)
+– Publipostage/ Publimailing simple (traitement de texte)
+– Tableur : fonctions simples, calculs conditionnels (SI et Cie, NB.SI, ...), création de graphiques simples, export et liens
+entre les différents logiciels (Tableur, PréAO, Traitement de texte)
+– Montage vidéo simple
+– Utilisation des réseaux sociaux, des sites internet : principe et introduction aux bons usages, fonction de base, prise en
+main d’un CMS
+---
+CODE: R2.14
+TITRE: Expression, communication et culture - 2
+CONTENU: Contenu : outre l’approfondissement des éléments contenus au S1, peuvent être abordés au S2 les points suivants :
+S’informer et informer de manière critique et efﬁcace (niveau 1) :
+– Découverte d’univers artistiques et développement des pratiques culturelles : expositions, conférences, festivals, mu-
+sées.
+– Synthèses à l’écrit : analyse du corpus, problématique, élaboration de plans détaillés
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel (niveau 1) :
+– Développement des savoirs et savoir-faire en sémiologie aﬁn de communiquer par l’image ﬁxe et mobile (à titre indicatif :
+poster, spot vidéo, etc.) et au moyen d’outils de présentation (logiciel de présentation, datavisualisation, etc.)
+– Analyse et compréhension des écritures professionnelles : les documents d’entreprise
+– Élaboration de documents qui répondent aux différentes situations de communication (à titre indicatif : compte-rendu
+écrit/oral, résumé, rapport, communiqué de presse, dossier de presse, revue de presse, scénario de vidéo promotion-
+nelle ou de spot publicitaire, post sur les réseaux sociaux, etc.)
+– Compréhension et respect des normes de présentation écrites : typographie, orthographe/syntaxe, etc.
+Communiquer, persuader, interagir (niveau 1) :
+– Développement des capacités de communication (écrite et orale) à des ﬁns de persuasion (à titre indicatif : initiation à la
+rhétorique et l’argumentation; genres possibles : note d’intention, pitch, discours oratoire, débat, etc.)
+---
+CODE: R2.15
+TITRE: Projet personnel professionnel - 2
+CONTENU: Contenu :
+S’approprier la démarche PPP : connaissance de soi (intérêt, curiosité, aspirations, motivations), accompagnement des étu-
+diants dans la déﬁnition d’une stratégie personnelle permettant la réalisation du projet professionnel
+– Développer une démarche réﬂexive et introspective (de manière à découvrir ses valeurs, qualités, motivations, savoirs,
+savoir-être, savoirs-faire) au travers, par exemple de son expérience et ses centres d’intérêt
+– Placer l’étudiant dans une démarche prospective en termes d’avenir, souhait, motivation vis-à-vis d’un projet d’études
+et/ou professionnel
+– S’initier à la démarche réﬂexive (savoir interroger et analyser son expérience)
+S’approprier la formation
+– S’approprier les compétences de la formation – identiﬁer les blocs de compétences
+– Référencer les compétences et les associer avec la réalité du terrain
+– Découvrir, analyser les parcours B.U.T. de la spécialité
+– Accompagner le choix des parcours (type 1 / type 2)
+Découvrir les métiers et connaître le territoire
+– Faire le lien avec les métiers (ﬁches ROME – Association article 1, etc.)
+– Se familiariser avec les débouchés en fonction du territoire, les bassins d’entreprise, les réseaux d’entreprise, etc.
+– Identiﬁer les métiers en lien avec la formation, en analyser les principales caractéristiques
+Se projeter dans un environnement professionnel
+– Appréhender les codes, les usages et les cultures d’entreprise
+– Intégrer des codes sociaux au niveau France et Europe pour s’ouvrir à la diversité culturelle et s’ouvrir sur la mondiali-
+sation socio-économique
+– Construire son réseau professionnel : découvrir les réseaux et sensibiliser à l’identité numérique
+– Préparer son stage et/ou son alternance et/ou son parcours à l’international
+---
+CODE: R4.BDMRC.10
+TITRE: Relation client omnicanal
+CONTENU: 
+---
+CODE: R3.SME.15
+TITRE: Marketing de l’évènementiel - 1
+CONTENU: – Panorama des différents types d’événements simples en fonction des cibles et objectifs
+– Conception d’un événement adapté à la demande : du brief à la proposition
+– Gestion hybride de l’événementiel : adapter les événements à la nouvelle problématique du distanciel
+– Outils d’éco-conception d’événements
+– Communication avant, pendant, après
+– Communication : apprentissage de logiciels d’infographie
+– Mesure de l’impact : nombre d’inscrits ou participants, mesure de la satisfaction
+---
+CODE: R3.SME.16
+TITRE: Fondamentaux de la communication de marque
+CONTENU: – Leviers de création de marque : liens marketing et communication (mix, positionnement, etc.)
+– Narration de marque (storytelling, construction de l’identité : fonctions, codes, valeurs de marque, etc.)
+– Mesure de la visibilité
+– En lien avec le droit : Propriété industrielle, RSE
+---
+CODE: R6.SME.03
+TITRE: Stratégie de développement de marque - 2
+CONTENU: 
+---
+CODE: R5.SME.10
+TITRE: Ressources et culture numériques appliquées à la stratégie de marque et à l’évène-
+CONTENU: – Prise en main d’un ERP et d’un CRM
+– Techniques de construction et d’alimentation d’une base de données, scoring
+– Tableurs fonctions avancées : simulations, tableaux de bord
+– Outils de présentation et communication des tableaux de bord
+– Billetterie : utilisation d’outils adaptés aux évènements complexes avec paiement en ligne
+---
+CODE: R5.SME.11
+TITRE: Stratégie de développement de marque - 1
+CONTENU: – Identité et valeur de la marque
+– Construction et mesure du capital marque
+– Création de contenu et animation de la marque
+– Fonctions de la marque pour le consommateur et pour l’entreprise
+– Aspects juridiques de la marque
+---
+CODE: R5.SME.12
+TITRE: Marketing digital de la marque
+CONTENU: – Création de contenu (textuel, visuel, audio) : développement de contenu en adéquation avec la stratégie éditoriale de
+chacun des supports digitaux tant dans le contenu que dans la forme, respect des spéciﬁcités de rédaction de contenu
+web, élaboration des supports audio et audiovisuels de qualité
+– Management des communautés de marque : inﬂuenceurs, ambassadeurs. Gestion des collaborations avec les différents
+types d’acteurs de la communauté, dans le respect de la stratégie de marque, création des ﬁchiers d’inﬂuenceurs/
+ambassadeurs potentiels, déﬁnition des critères de choix, connaissance des plateformes d’inﬂuence marketing et de
+leur fonctionnement, interactions avec la communauté
+– Gestion de la viralité : réactions face aux rumeurs, à la désinformation et aux fake news, gestion de la « guerre digitale »
+– E-réputation, veille : mise en place d’une veille sur l’e-réputation de la marque aﬁn de pouvoir interagir pertinemment
+avec la communauté et gestion de l’e-réputation de la marque au niveau stratégique
+– Indicateurs clés de performance et mesure d’audience digitale : déﬁnition des indicateurs clés en fonction des différents
+supports, réalisation de tableaux de bord de suivi, diffusion de l’information
+Apprentissage critique ciblé :
+– AC34.04SME | Développer la communauté de marque et l’adhésion (community management, veille image de marque
+et e-réputation)
+---
+CODE: R5.SME.13
+TITRE: Gestion commerciale - 2
+CONTENU: – Relations, négociation avec les prestataires
+– Recherche de sponsors auprès de partenaires privés
+– Recherche de subventions auprès de partenaires publics et institutionnels : connaissance des collectivités susceptibles
+de soutenir le projet, dossier de partenariat, suivi des démarches administratives
+– Achat, produits dérivés : choix de produits adaptés, élaboration d’une politique commerciale (quantités, prix, modalités
+de vente)
+---
+CODE: R5.SME.14
+TITRE: Organisation et logistique - 2
+CONTENU: – Gestion de projet : planiﬁcation, gestion des risques, retour d’expérience
+– Gestion budgétaire : budget prévisionnel et réalisé, analyse d’écart, rédiger un dossier de subvention
+– Droit de l’évènement : autorisations, licences, assurances, sécurité, débit de boisson / évènement et RSE
+– Management d’équipe : connaissance des différents styles de management, techniques d’animation d’une équipe, mo-
+dalités d’évaluation individuelle et collective
+---
+CODE: R5.SME.15
+TITRE: Conception graphique
+CONTENU: -Traitement de l’image complexe
+– Conception et mise en page d’outils de communication complexes
+– Création graphique de l’identité de marque
+---
+CODE: R5.SME.16
+TITRE: Marketing de l’évènementiel - 2
+CONTENU: – Panorama des différents types d’évènements complexes : événements grand public, congrès, conventions, foires et
+salons, festivals
+– Spéciﬁcités de la création et promotion d’un évènement grand public de grande ampleur
+– Mesure des retombées, de la fréquentation et de la satisfaction
+Apprentissage critique ciblé :
+– AC35.01SME | Créer un événement complexe adapté aux attentes du commanditaire
+---
+CODE: R3.MMPV.16
+TITRE: Marketing du point de vente
+CONTENU: – Stratégies et marketing mix du fabricant
+– Stratégies et marketing du distributeur : enseigne, positionnement, structuration de l’offre, communication nationale /
+régionale
+– Facteurs d’ambiance en magasin : marketing sensoriel, théâtralisation
+– Rôle et enjeux des marques et de la MDD (tant pour le producteur que pour le distributeur)
+– Choix du point de vente par le consommateur, son comportement en magasin, digitalisation de la relation client
+– Principes, dimensions, mise en oeuvre du géomarketing
+---
+CODE: R3.MDEE.16
+TITRE: Créativité et innovation
+CONTENU: 
+---
+CODE: R3.MMPV.15
+TITRE: Management de la performance du point de vente
+CONTENU: – Analyse du CA, répartition des ventes en volume et en valeur, marges...
+– Analyse des indicateurs du point de vente en fonction de sa localisation, de son format, des caractéristiques de sa
+zone de chalandise (données démographiques, économiques, etc.), de son environnement concurrentiel, des éléments
+déclencheurs de traﬁc situés à proximité...
+– Suivi de l’activité de l’équipe de vente, mise en place d’objectifs et communication sur les résultats
+---
+CODE: R5.MMPV.13
+TITRE: Supply chain
+CONTENU: – Enjeux de la logistique : origine, organisation des différents acteurs, source d’avantages concurrentiels, nouvelles tech-
+nologies
+– Gestion de stock : suivi de l’état des stocks, identiﬁcation des besoins en approvisionnement et suivi des commandes
+(disponibilités, délais de livraison, ect.)
+– Contrôle de l’état et de la conservation des produits périssables et coordination du retrait des produits impropres à la
+vente
+– Gestion des ﬂux : tendus, poussés, tirés, transit, allotis, cross-docking
+– Acteurs de la qualité, certiﬁcation, qualité ﬁlières et produits
+---
+CODE: R5.MMPV.10
+TITRE: Ressources et culture numériques appliquées au marketing et management du point
+CONTENU: – Prise en main d’un ERP
+– Tableurs fonctions avancées : simulations, tableaux de bord
+– Introduction au Big Data, au Data Mining
+---
+CODE: R5.MMPV.11
+TITRE: Parcours expérience client
+CONTENU: – Mise en place d’une expérience d’achat globale et transparente pour créer une relation durable avec les clients
+– Analyse des besoins du client omni-consommateur pour uniformiser l’ensemble des points de contact, ﬂuidiﬁer le par-
+cours client, améliorer l’expérience client et générer plus de traﬁc
+– Anticipation des nouvelles tendances de consommation et des nouvelles technologies aﬁn d’adapter le point de vente
+ou le rayon
+---
+CODE: R5.MMPV.12
+TITRE: Management d’équipe - 2
+CONTENU: – Différents types de management (pouvoir, leadership, management responsable, autonomie et délégation) et adaptation
+aux équipes en place
+– Motivations au travail / management de la différenciation
+– Gestion des conﬂits et du changement
+---
+CODE: R5.MMPV.14
+TITRE: Droit de la distribution
+CONTENU: 
+---
+CODE: R5.MMPV.15
+TITRE: Trade marketing
+CONTENU: – Utilisation des critères du sourcing pour choisir les fournisseurs
+– Pilotage collaboratif des approvisionnements : plan commercial commun (PCC) et gestion collaborative de planiﬁcation
+et de la prévision (CPFR)
+– Prévisions des opérations commerciales communes : opérations promotionnelles conjointes, co-branding
+– Utilisation du category management pour optimiser les ventes
+– Mise en place de partenariats entre fournisseurs et distributeurs (Efﬁcient Consumer Response : ECR)
+---
+CODE: R3.MDEE.15
+TITRE: Stratégie de marketing digital
+CONTENU: 
+---
+CODE: R5.MDEE.13
+TITRE: Stratégie social media et e-CRM
+CONTENU: – Gestion des réseaux sociaux
+– Stratégie de communication digitale
+– E-CRM et fonctionnement de Social Ads
+– Technique d’élaboration d’une campagne d’e-mailing ou MD (SMS...) : recrutement de prospects, qualiﬁcation de ﬁchiers,
+construction de la campagne
+– Utilisation d’outils de routage professionnel, mesure du ROI (retour sur investissement)
+– Mettre en place des outils d’animation (jeu concours, etc.)
+---
+CODE: R5.MDEE.14
+TITRE: Business model - 2
+CONTENU: – Responsabilité, ﬁscalité et protection du dirigeant
+– Gestion ﬁnancière adaptée à l’entrepreneuriat
+– Contenus d’un business model complet
+– Valeur délivrée
+– Création et partage de la valeur
+– RSE et "positive business"
+---
+CODE: R5.MDEE.10
+TITRE: Ressources et culture numériques appliquées au marketing digital, à l’e-business et
+CONTENU: – Internet : approfondissement HTML et CSS, (PHP, javascript)
+– FTP
+– SGBD : bases d’un SI, modèle relationnel, requêtes (bases SQL), logiciel de BD
+– Installation d’un CMS et utilisation professionnelle
+– Production d’un site internet (prolongement ou développement du site simple élaboré au niveau 2)
+---
+CODE: R5.MDEE.11
+TITRE: Management de la créativité et de l’innovation
+CONTENU: – Marketing dédié à l’innovation : création d’idées nouvelles en utilisant des techniques de créativité, sélection d’une idée,
+formalisation et présentation
+– Retours de l’expérience client et utilisateur : élaboration et analyse des retours utilisateurs et proposition d’améliorations
+en termes de valeur délivrée
+– Fiche persona complète avec proﬁl psychologique utilisateur et occasion d’usage
+– Cahier des charges de proposition d’une offre adaptée
+– Techniques de production d’artefact et/ou prototype
+– Propriété intellectuelle et industrielle : recherche d’antériorités, utilisation des dispositifs de protection, dépôt
+---
+CODE: R5.MDEE.12
+TITRE: Référencement
+CONTENU: – Réalisation d’un audit de référencement
+– Mise en œuvre les techniques de référencement naturel (SEO) et de mener des campagnes de référencement payant
+(SEA)
+– Analyse des mots-clés d’une marque et recommandations
+– Evaluation des campagnes de référencement
+---
+CODE: R5.MDEE.15
+TITRE: Stratégie de contenu et rédaction web
+CONTENU: – Enjeux liés au contenu
+– Spéciﬁcités d’un contenu numérique et d’une marque digitale
+– Rédaction et design
+– Stratégie de contenu et audience
+---
+CODE: R5.MDEE.16
+TITRE: Logistique et supply chain
+CONTENU: – Les enjeux de la logistique : satisfaction clients, taux de service et coûts logistiques
+– Les ﬂux de production : gestion des stocks, des espaces et des délais
+– Les ﬂux d’information et les solutions digitales
+– La supply chain
+– La logistique du e-commerce
+---
+CODE: R3.05
+TITRE: Environnement économique international
+CONTENU: – Bases d’économie internationale (taux de change, aperçu du commerce mondial et théories du commerce international,
+approche géopolitique)
+– Enjeux économiques de l’innovation, lien avec la notion d’avantages comparatifs
+– Approche des enjeux environnementaux et des questions sociales en économie
+---
+CODE: R3.BI.15
+TITRE: Stratégie et veille à l’international
+CONTENU: – Compréhension de l’intérêt de la démarche d’internationalisation d’une organisation
+– Identiﬁcation des besoins et objectifs d’expansion à l’international d’une organisation
+– Identiﬁcation des options stratégiques de développement à l’international
+– Identiﬁcation des sources d’information pour la prise de décision (veille)
+– Analyse, trie des données par rapport aux objectifs
+– Utilisation des outils d’analyse stratégique pour identiﬁer les marchés porteurs et les cibles à l’international pour l’orga-
+nisation (SWOT, Porter, Pestel)
+– Mobilisation du diagnostic interne de l’entreprise pour déterminer sa capacité à s’internationaliser (moyens ﬁnanciers,
+humains, logistiques...)
+– Identiﬁcation des organismes d’appui de développement à l’international (BPI,...)
+– Restitution des informations et des recommandations
+Cette ressource peut être dispensée en langues étrangères.
+---
+CODE: R3.BI.16
+TITRE: Marketing et vente à l’international
+CONTENU: – Identiﬁcation des prospects à l’international
+– Chiffrage des coûts et estimation de la faisabilité d’une opération de prospection à l’international
+– Adaptation de l’offre en déployant un marketing mix à l’international (stratégies d’adaptation et de standardisation, etc)
+– Élaboration d’un plan de lancement à l’international qui prend en compte les spéciﬁcités culturelles
+Cette ressource peut être dispensée en langues étrangères.
+Apprentissage critique ciblé :
+– AC25.04BI | Positionner l’offre en fonction des spéciﬁcités culturelles identiﬁées sur le(s) marché(s) ciblé(s)
+---
+CODE: R5.BI.13
+TITRE: Droit international
+CONTENU: – Présentation des sources du droit international (public / privé)
+– Analyse de l’environnement global international (OMC, UE, autres zones régionales...)
+– Droit général du contrat international : notions générales, loi applicable
+– Présentation des différents grands risques à l’international (droit applicable, résolution des litiges, familles de droit)
+– Droit spécial du contrat de vente international : cadre juridique du contrat de vente et formation du contrat, négociation,
+pourparlers, médiation, arbitrage
+– Droit de la concurrence à l’international (fusions, acquisitions)
+– Protection des données et dispositifs anti-corruption, intelligence économique
+Cette ressource peut être dispensée en langues étrangères.
+---
+CODE: R5.BI.10
+TITRE: Ressources et culture numériques appliquées au business international, achat et vente.
+CONTENU: – Prise en main d’un ERP
+– Tableurs fonctions avancées : simulations, tableaux de bord,
+– Introduction au Big Data, au Data Mining
+---
+CODE: R5.BI.11
+TITRE: Approvisionnements
+CONTENU: – Analyse du besoin / de la demande et suivi de commande
+– Calcul de besoin net
+– Tenue des stocks et classement selon les classes ABC : inventaires permanents, périodiques, tournants
+– Outils et techniques de gestion des stocks et des commandes
+– Système de quantité ﬁxe, à intervalles ﬁxes
+– Stock de sécurité
+– Méthode kanban
+– Analyse de la performance approvisionnement
+– Démarche d’amélioration continue
+Cette ressource peut être dispensée en langues étrangères.
+---
+CODE: R5.BI.12
+TITRE: Techniques du commerce international - 2
+CONTENU: – Instruments de paiement, virement et lettre de change, SWIFT
+– Techniques de paiement documentaires, cash-on-delivery, remise documentaire, crédit documentaire, lettre de crédit
+stand-by, assurance-crédit, forfaitage, affacturage
+– Risque de change, marché des changes, couverture à terme
+– Garanties BPI
+– Echanges Intra Union, dédouanement, dette douanière, régimes douaniers
+– Transport international, tariﬁcation du transport maritime, aérien et routier, groupage
+Cette ressource peut être dispensée en langues étrangères.
+---
+CODE: R5.BI.14
+TITRE: Logistique et supply chain
+CONTENU: – Les enjeux de la logistique : satisfaction clients, taux de service et coûts logistiques
+– La supply chain
+– Les ﬂux de production : gestion des stocks, des espaces et des délais
+– La logistique de distribution et du e-commerce
+– Les ﬂux d’information et les solutions digitales
+– L’optimisation de la supply chain, décision make or buy
+– Ethique et éco-responsabilité
+Cette ressource peut être dispensée en langues étrangères.
+---
+CODE: R5.BI.15
+TITRE: Marketing achat
+CONTENU: 
+---
+CODE: R3.13
+TITRE: Expression, communication, culture - 3
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 2) :
+– Approfondissement des techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et
+sectorielle).
+– Approfondissement des techniques de rédaction documentaire : lecture et écriture de documents techniques et spé-
+cialisés, respect des normes bibliographiques et bureautiques appliquées à un document (ergonomie d’un document
+numérique, texte, paratexte, hypertexte, etc.)
+– Rédaction de synthèse de documents, typologie des plans (thématique, dialectique et d’aide à la décision, etc.)
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel (niveau 2) :
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire (note de lecture, contraction de texte).
+– Écrits professionnels (entreprise, presse, web) : rédaction de dossier, de compte-rendu de réunion, d’article de presse
+grand public / spécialisée, de dossier de presse, de communiqué de presse, de revue de presse, de publication corporate,
+d’écrit pour le web, de tweet, de post, d’e-mail, d’article de blog, d’e-books, de brochure web, d’élément de marque (logo,
+polices, etc.), datavisualisation.
+Communiquer, persuader, interagir (niveau 2) :
+– Analyse de la communication et développement d’une éthique de la communication interpersonnelle (écoute active,
+empathie, attitudes de Porter, analyse et compréhension des malentendus, etc.)
+– Approfondissement des techniques d’argumentation et de rhétorique et mise en pratique aﬁn de mieux gérer les relations
+avec le client, les collaborateurs, etc. (typologie des arguments, preuves techniques, pitch, discours, exposé, débat, etc.)
+– Utilisation d’outils collaboratifs, des réseaux sociaux pour communiquer
+– Animation de réunions (méthodologie de la conduite de réunion, typologie des réunions, techniques de prise de parole)
+et outils de communication adaptés
+---
+CODE: R5.BDMRC.10
+TITRE: Ressources et culture numériques appliquées au business développement et au
+CONTENU: – Prise en main d’un ERP et d’un CRM
+– Techniques de construction et d’alimentation d’une base de données, scoring
+– Tableurs fonctions avancées : simulations, tableaux de bord
+– Outils de présentation et communication des tableaux de bord
+– Introduction au Big Data, et au Data Mining, etc.
+---
+CODE: R4.BDMRC.09
+TITRE: Fondamentaux du management de l’équipe commerciale
+CONTENU: 
+---
+CODE: R3.BDMRC.15
+TITRE: Marketing B2B
+CONTENU: – Veille et intelligence économique
+– Collaboration interne en vue de développer les opportunités commerciales
+– Contribution à la réactivité commerciale en développant la valeur ajoutée client
+---
+CODE: R3.BDMRC.16
+TITRE: Fondamentaux de la relation client
+CONTENU: – Culture client
+– Indicateurs de la relation client
+– Logiciel CRM : présentation, rôle
+---
+CODE: R5.05
+TITRE: Analyse ﬁnancière
+CONTENU: – Fonds de roulement, besoin en fonds de roulement, trésorerie, ratios de liquidité, solvabilité, endettement, ratios de
+rotation
+– Décomposition de la rentabilité à travers les SIG, la CAF, la trésorerie, ratios de proﬁtabilité et de rentabilité
+---
+CODE: R5.BDMRC.13
+TITRE: Marketing des services
+CONTENU: culture de service et gestion des incidences service
+– Elaboration et suivi de feed-back des clients
+– Identiﬁcation des types de participation des clients
+– Etude et compréhension des motifs de réclamation des clients (attribution, motivation, émotions)
+– Gestion des incidents de service et des clients mécontents
+– Mise en place d’une prise en charge efﬁcace des réclamations
+– Prise en compte de l’équité et de la justice organisationnelle
+---
+CODE: R5.BDMRC.11
+TITRE: Développement des pratiques managériales
+CONTENU: – Positionnement managérial et management relationnel d’une équipe
+– Motivation et valorisation, management de la différenciation
+– Facteurs clés du leadership, qualités du leader, compétences
+– Outils de coaching, de prévention et de gestion de conﬂit
+---
+CODE: R5.BDMRC.12
+TITRE: Management de la valeur client
+CONTENU: – Segmentation et valorisation du portefeuille clients, montée en gamme
+– Suivi de l’évolution du portefeuille clients
+– Indicateurs de performance (Net Promoter Score, ...)
+– Calcul de lifetime value (LTV), cross-selling, up-selling
+– Coût d’acquisition d’un client, ﬁdélisation
+Prérequis :
+– R5.BDMRC.10 | Ressources et culture numériques appliquées au business développement et au management de la
+relation client
+---
+CODE: R5.BDMRC.14
+TITRE: Pilotage de l’équipe commerciale
+CONTENU: – Outils d’information (base de données clients, listes précises de prospects, état de la concurrence, ﬁches produits à jour)
+– Outils de communication (réunions internes et clients, participation, réseaux, gestion de la mobilité, intranet, reporting)
+– Outils de suivi de l’activité (évolution de la mission, tableau de bord, atteinte des objectifs...)
+Prérequis :
+– R5.BDMRC.10 | Ressources et culture numériques appliquées au business développement et au management de la
+relation client
+---
+CODE: R4.01
+TITRE: Stratégie marketing
+CONTENU: – Composants d’une stratégie marketing en environnement complexe
+– Éléments clés des spéciﬁcités d’un marché ou d’une activité : B to B, produit ou service, commerce international, activité
+digitale, etc., en cohérence avec le contexte local, national ou international
+---
+CODE: R4.01
+TITRE: Stratégie marketing
+CONTENU: – Composants d’une stratégie marketing en environnement complexe
+– Éléments clés des spéciﬁcités d’un marché ou d’une activité : B to B, produit ou service, commerce international, activité
+digitale, etc., en cohérence avec le contexte local, national ou international
+---
+CODE: R4.01
+TITRE: Stratégie marketing
+CONTENU: 
+---
+CODE: R4.01
+TITRE: Stratégie marketing
+CONTENU: – Composants d’une stratégie marketing en environnement complexe
+– Éléments clés des spéciﬁcités d’un marché ou d’une activité : B to B, produit ou service, commerce international, activité
+digitale, etc., en cohérence avec le contexte local, national ou international
+---
+CODE: R5.05
+TITRE: Analyse ﬁnancière
+CONTENU: – Fonds de roulement, besoin en fonds de roulement, trésorerie, ratios de liquidité, solvabilité, endettement, ratios de
+rotation
+– Décomposition de la rentabilité à travers les SIG, la CAF, la trésorerie, ratios de proﬁtabilité et de rentabilité
+---
+CODE: R6.01
+TITRE: Stratégie d’entreprise - 2
+CONTENU: 
+---
+CODE: R3.01
+TITRE: Marketing Mix - 2
+CONTENU: – Mise en oeuvre d’une démarche marketing cohérente avec la stratégie choisie
+– Proposition d’une offre opérationnelle en termes de produit/service, de prix, de distribution et de communication
+– Intégration d’une posture et d’une démarche éthiques et responsables en intégrant les enjeux sociétaux et écologiques
+dans l’offre élaborée
+– Prise en compte de l’environnement digital et/ou international
+---
+CODE: R3.02
+TITRE: Entretien de vente
+CONTENU: – Maîtrise des 7 étapes de l’entretien de vente (prise de contact, découverte des besoins, argumentation, traitement des
+objections, proposition commerciale, conclusion, prise de congé) lors d’une simulation de jeu de rôle
+– Création d’un devis
+– Maîtrise des techniques d’annonce de prix
+– Maîtrise des techniques de défense d’une offre
+– Traitement des objections prix
+– Identiﬁcation des ratios utiles à l’analyse de la performance commerciale et construction des tableaux reporting pour
+mesurer l’efﬁcacité de son action commerciale
+– Réalisation d’une auto-analyse et d’un retour d’expérience
+---
+CODE: R3.03
+TITRE: Principes de la communication digitale
+CONTENU: – Stratégie de communication digitale : axe de communication, objectifs de communication et cible(s)
+– Panorama des médias/réseaux digitaux et sociaux : points forts et points faibles des différents réseaux sociaux / choix
+les médias sociaux adaptés aux besoins de l’entreprise
+– Parcours de communication digitale : principe de conversion (entonnoir « funnel ») de visiteur à client ﬁdèle
+– Création, gestion et planiﬁcation des publications dans le respect d’une ligne éditoriale
+– Création et gestion de contenus d’un site web en adéquation avec la stratégie
+– Gestion des inﬂuenceurs
+– Analyse de la performance : e-reputation
+---
+CODE: R4.03
+TITRE: Conception d’une campagne de communication
+CONTENU: – Réﬂexion stratégique : cibles, objectifs, stratégie de communication (ressources S1) / élaboration du budget de cam-
+pagne
+– Indicateurs de choix des supports : audience utile, afﬁnité, coût pour mille
+– Plan média : approche 360◦, cohérence des moyens
+– Stratégie de création de contenu et messages performatifs / brief, copy-stratégie, storyboard, copy-writing
+– Évaluation et analyse d’une campagne : pré-test et post-test
+---
+CODE: R4.03
+TITRE: Conception d’une campagne de communication
+CONTENU: – Réﬂexion stratégique : cibles, objectifs, stratégie de communication (ressources S1) / élaboration du budget de cam-
+pagne
+– Indicateurs de choix des supports : audience utile, afﬁnité, coût pour mille
+– Plan média : approche 360◦, cohérence des moyens
+– Stratégie de création de contenu et messages performatifs / brief, copy-stratégie, storyboard, copy-writing
+– Évaluation et analyse d’une campagne : pré-test et post-test
+---
+CODE: R3.04
+TITRE: Etudes marketing - 3
+CONTENU: – Études quantitatives : échantillonnage et estimation, initiation à l’analyse d’indicateurs et de leurs représentations
+– Études qualitatives : entretiens directifs et semi-directifs, analyse qualitative des données
+– Outils numériques de traitement des données
+---
+CODE: R4.03
+TITRE: Conception d’une campagne de communication
+CONTENU: 
+---
+CODE: R4.04
+TITRE: Droit du travail
+CONTENU: 
+---
+CODE: R6.02
+TITRE: Négocier dans des contextes spéciﬁques - 2
+CONTENU: 
+---
+CODE: R3.06
+TITRE: Droit des activités commerciales - 1
+CONTENU: – Contrats de distribution
+– Législation sur les prix
+– Produits (normes, labels, AO)
+– Effets du contrat / Responsabilité contractuelle
+– Garanties légales et contractuelles
+– Pratiques abusives
+– Droit de la publicité
+– Droit des réseaux sociaux / E-réputation - Droit à l’oubli
+– Données personnelles : collecte et exploitation des données
+– Nom de domaine
+---
+CODE: R3.07
+TITRE: Techniques quantitatives et représentations - 3
+CONTENU: 
+---
+CODE: R3.08
+TITRE: Tableau de bord commercial
+CONTENU: – Sélection des indicateurs pertinents en fonction de l’activité et suivi de leur évolution
+– Création d’un budget prévisionnel aﬁn d’anticiper les problèmes de trésorerie
+– Mise en évidence des écarts aﬁn de les analyser et de faire des recommandations de gestion
+– Mesure et évaluation de l’impact d’une future décision de gestion
+---
+CODE: R3.09
+TITRE: Psychologie sociale du travail
+CONTENU: – Approfondissement et utilisation des leviers pour faire évoluer l’offre en s’appuyant sur des outils de création de valeur
+tout en proposant une communication efﬁcace pour la promouvoir (construction et utilisation d’outils de mesure des
+déterminants sociocognitifs : attitudes, représentations sociales, intentions comportementales)
+– Questionnement des notions de RSE et de performances commerciales au regard des notions de bien-être, de qualité
+de vie au travail, de satisfaction au travail et de façon plus générale au regard des indicateurs sociaux
+– Appréhension de l’ingénierie psychosociale comme un outil de diagnostic permettant d’évaluer un problème (audit),
+conceptualisation d’une solution alternative, construction d’un modèle d’action et application du modèle d’action tout en
+comprenant les mécanismes de la résistance au changement et en apprenant à accompagner la conduite du change-
+ment.
+– Compréhension des interactions entre les environnements organisationnels, professionnels et les pensées, sentiments
+et comportements des salariés et groupes de salariés.
+– Appréhension des impacts de l’environnement sur le fonctionnement d’une entreprise (système ouvert) et sur ses stra-
+tégies marketing (environnement / écologie - vie de travail / vie hors travail - culture du pays)
+– Sensibilisation à l’aménagement des postes de travail mais aussi à la présentation ergonomique des données
+---
+CODE: R3.10
+TITRE: Anglais appliqué au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté au contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.11
+TITRE: LV B appliquée au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.12
+TITRE: Ressources et culture numériques - 3
+CONTENU: – Bases HTML & CSS (en local)
+– Tableurs : fonctions avancées incluant formulaires, tris, ﬁltres, rechercheV, consolidation, calculs conditionnels, tableaux
+croisés dynamiques, graphiques élaborés
+– Prise en main d’un outil de dessin vectoriel
+– Prise en main d’un outil de carte heuristique
+– Multimédia : réalisation d’une vidéo avec outils d’enregistrement & mixage de son
+– Respect de la législation, notamment du droit de propriété intellectuelle et du droit à la vie privée
+---
+CODE: R3.13
+TITRE: Expression, communication, culture - 3
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 2) :
+– Approfondissement des techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et
+sectorielle).
+– Approfondissement des techniques de rédaction documentaire : lecture et écriture de documents techniques et spé-
+cialisés, respect des normes bibliographiques et bureautiques appliquées à un document (ergonomie d’un document
+numérique, texte, paratexte, hypertexte, etc.)
+– Rédaction de synthèse de documents, typologie des plans (thématique, dialectique et d’aide à la décision, etc.)
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel (niveau 2) :
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire (note de lecture, contraction de texte).
+– Écrits professionnels (entreprise, presse, web) : rédaction de dossier, de compte-rendu de réunion, d’article de presse
+grand public / spécialisée, de dossier de presse, de communiqué de presse, de revue de presse, de publication corporate,
+d’écrit pour le web, de tweet, de post, d’e-mail, d’article de blog, d’e-books, de brochure web, d’élément de marque (logo,
+polices, etc.), datavisualisation.
+Communiquer, persuader, interagir (niveau 2) :
+– Analyse de la communication et développement d’une éthique de la communication interpersonnelle (écoute active,
+empathie, attitudes de Porter, analyse et compréhension des malentendus, etc.)
+– Approfondissement des techniques d’argumentation et de rhétorique et mise en pratique aﬁn de mieux gérer les relations
+avec le client, les collaborateurs, etc. (typologie des arguments, preuves techniques, pitch, discours, exposé, débat, etc.)
+– Utilisation d’outils collaboratifs, des réseaux sociaux pour communiquer
+– Animation de réunions (méthodologie de la conduite de réunion, typologie des réunions, techniques de prise de parole)
+et outils de communication adaptés
+---
+CODE: R3.14
+TITRE: PPP - 3
+CONTENU: Déﬁnir son proﬁl, en partant de ses appétences, de ses envies et asseoir son choix professionnel
+– Approfondir la connaissance de soi tout au long de la sa formation
+– Connaître les modalités d’admission (établissement d’études supérieures et entreprise)
+– S’initier à la veille informationnelle sur un secteur d’activité, une entreprise, les innovations, les technologies, etc.
+– Se familiariser avec les différents métiers possibles en lien avec les parcours proposés
+Construire un/des projet(s) professionnel(s) en déﬁnissant une stratégie personnelle pour le/les réaliser
+– Identiﬁer les métiers associés au(x) projet(s) professionnel(s)
+– Construire son parcours de formation en adéquation avec son/ses projet(s) professionnel(s) (spécialité et modalité en
+alternance ou initiale, réorientation, internationale, poursuite d’études, insertion professionnelle)
+– Découvrir la pluralité des parcours pour accéder à un métier : poursuite d’études et passerelles en B.U.T.2 et B.U.T.3
+(tant au national qu’à l’international), VAE, formation tout au long de la vie, entrepreneuriat
+Analyser les métiers envisagés : postes, types d’organisation, secteur, environnement professionnel
+– Appréhender les secteurs professionnels
+– Se familiariser avec les métiers représentatifs du secteur
+– Identiﬁer les métiers possibles en fonction du parcours de B.U.T. choisi
+Mettre en place une démarche de recherche de stage et d’alternance et les outils associés
+– Formaliser les acquis personnels et professionnels de l’expérience du stage précédent (connaissance de soi, choix de
+domaine et de métier/découverte du monde l’entreprise, etc.)
+– Développer une posture professionnelle adaptée
+– Mettre en oeuvre les techniques de recherche de stage ou d’alternance : rechercher une offre, l’analyser, élaborer un
+CV & LM adaptés. Se préparer à l’entretien. Développer une méthodologie de suivi de ses démarches
+– Gérer son identité numérique et sa e-réputation
+---
+CODE: R5.01
+TITRE: Stratégie d’entreprise - 1
+CONTENU: – Outils d’analyse stratégique, matrices de positionnement
+– Composantes d’un portefeuille d’activités, facteurs clés de succès et actifs stratégiques
+– Construction d’une veille stratégique (déﬁnition des indicateurs et mise en place)
+– Conditions d’ adaptabilité, de transformation de l’activité, et de gestion du changement organisationnel
+---
+CODE: R4.MDEE.10
+TITRE: Stratégie e-commerce
+CONTENU: 
+---
+CODE: R4.06
+TITRE: LV B appliquée au commerce - 4
+CONTENU: 
+---
+CODE: R5.02
+TITRE: Négocier dans des contextes spéciﬁques - 1
+CONTENU: – Savoir analyser le contexte situationnel (positionnement des interlocuteurs, contexte spatio-temporel, sociologique, psy-
+chologique, problématique commerciale des interlocuteurs)
+– Appréhender des contextes particuliers et en comprendre les spéciﬁcités
+– Identiﬁer le processus d’achat et les décideurs
+– Identiﬁer la valeur ajoutée de la solution en relation avec le besoin du client
+– Jeux de rôle spéciﬁques aux domaines d’activité ciblés
+---
+CODE: R5.03
+TITRE: Financement et régulation de l’économie
+CONTENU: – Financement de l’économie, étude des crises
+– Théories économiques, histoire de la pensée économique
+– Régulations, ﬁnancement des enjeux environnementaux et sociaux
+---
+CODE: R5.04
+TITRE: Droit des activités commerciales - 2
+CONTENU: – Cadre légal : intérêt des législations environnementales et sociales
+– Protection de l’activité commerciale : fonds de commerce, bail commercial
+– Paiement et sûretés
+– Règlement des litiges et recours judiciaires
+---
+CODE: R5.06
+TITRE: Anglais appliqué au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.07
+TITRE: LV B appliquée au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.08
+TITRE: Expression, communication, culture - 5
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 3) :
+– Maitriser les techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et sectorielle).
+– Maitriser les techniques de rédaction documentaire :
+Lecture et écriture de documents techniques et spécialisés
+Respect des normes bibliographiques et bureautiques appliquées à un document technique ou professionnel : ergonomie d’un
+document numérique, texte, paratexte, hypertexte, etc.
+Savoir synthétiser à l’écrit (niveau 3) : note de synthèse opérationnelle.
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel : les écritures académiques
+et professionnelles (niveau 3)
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire : note de lecture, synthèse, compte-rendu, méthodologie du rapport de stage et de la soutenance.
+– Écrits professionnels (entreprise, web) : rédaction de dossier, de compte-rendu (d’événement, d’entretien, etc.), de
+publication corporate, de facture, devis, d’écrit pour le web, datavisualisation.
+Communiquer, persuader, interagir (niveau 3) :
+– Analyser la communication en milieu de travail
+– Persuader : approfondir les techniques d’argumentation et de rhétorique et les mettre en pratique dans sa vie profes-
+sionnelle.
+– Animer et gérer une réunion (dynamique de groupe, animation de réunion, de focus group, techniques de prise de parole,
+gestion des conﬂits).
+– Développer ses habiletés relationnelles en contexte de communication au travail (empathie, écoute, entretien, afﬁrmation
+de soi, intelligence émotionnelle, etc.)
+---
+CODE: R5.09
+TITRE: PPP - 5
+CONTENU: Approfondir la connaissance de soi et afﬁrmer sa posture professionnelle
+– Exploiter ses stages aﬁn de parfaire sa posture professionnelle
+– Formaliser ses réseaux professionnels (proﬁls, carte réseau, réseau professionnel...)
+– Faire le bilan de ses compétences
+Formaliser son plan de carrière : développement d’une stratégie personnelle et professionnelle
+– À court terme : insertion professionnelle immédiate après le B.U.T. ou poursuite d’études
+– À plus long terme : VAE, CPF, FTLV, etc.
+S’approprier le processus et s’adapter aux différents types de recrutement
+– Mise à jour des outils de communication professionnelle
+– Préparation aux différents types et formes de recrutement : test, entretien collectif ou individuel, mise en situation,
+concours, en entreprise, en école, à l’université
+---
+CODE: R4.08
+TITRE: PPP - 4
+CONTENU: Déﬁnir son proﬁl, en partant de ses appétences, de ses envies et asseoir son choix professionnel
+– Approfondir la connaissance de soi tout au long de la sa formation
+– Connaître les modalités d’admission (établissement d’études supérieures et entreprise)
+– S’initier à la veille informationnelle sur un secteur d’activité, une entreprise, les innovations, les technologies, etc.
+– Se familiariser avec les différents métiers possibles en lien avec les parcours proposés
+Construire un/des projet(s) professionnel(s) en déﬁnissant une stratégie personnelle pour le/les réaliser
+– Identiﬁer les métiers associés au(x) projet(s) professionnel(s)
+– Construire son parcours de formation en adéquation avec son/ses projet(s) professionnel(s) (spécialité et modalité en
+alternance ou initiale, réorientation, internationale, poursuite d’études, insertion professionnelle)
+– Découvrir la pluralité des parcours pour accéder à un métier : poursuite d’études et passerelles en B.U.T.2 et B.U.T.3
+(tant au national qu’à l’international), VAE, formation tout au long de la vie, entrepreneuriat
+Analyser les métiers envisagés : postes, types d’organisation, secteur, environnement professionnel
+– Appréhender les secteurs professionnels
+– Se familiariser avec les métiers représentatifs du secteur
+– Identiﬁer les métiers possibles en fonction du parcours de B.U.T. choisi
+Mettre en place une démarche de recherche de stage et d’alternance et les outils associés
+– Formaliser les acquis personnels et professionnels de l’expérience du stage précédent (connaissance de soi, choix de
+domaine et de métier/découverte du monde l’entreprise, etc.)
+– Développer une posture professionnelle adaptée
+– Mettre en oeuvre les techniques de recherche de stage ou d’alternance : rechercher une offre, l’analyser, élaborer un
+CV & LM adaptés. Se préparer à l’entretien. Développer une méthodologie de suivi de ses démarches
+– Gérer son identité numérique et sa e-réputation
+---
+CODE: R6.MMPV.04
+TITRE: Prise de décision-pilotage
+CONTENU: 
+---
+CODE: R4.08
+TITRE: PPP - 4
+CONTENU: 
+---
+CODE: R4.BI.09
+TITRE: Stratégie achats
+CONTENU: 
+---
+CODE: R4.BI.10
+TITRE: Techniques du commerce international - 1
+CONTENU: 
+---
+CODE: R4.BI.11
+TITRE: Management interculturel
+CONTENU: 
+---
+CODE: R4.04
+TITRE: Droit du travail
+CONTENU: 
+---
+CODE: R4.06
+TITRE: LV B appliquée au commerce - 4
+CONTENU: 
+---
+CODE: R4.02
+TITRE: Négociation : rôle du vendeur et de l’acheteur
+CONTENU: 
+---
+CODE: R4.05
+TITRE: Anglais appliqué au commerce - 4
+CONTENU: 
+---
+CODE: R4.07
+TITRE: Expression, communication, culture - 4
+CONTENU: 
+---
+CODE: R3.01
+TITRE: Marketing Mix - 2
+CONTENU: – Mise en oeuvre d’une démarche marketing cohérente avec la stratégie choisie
+– Proposition d’une offre opérationnelle en termes de produit/service, de prix, de distribution et de communication
+– Intégration d’une posture et d’une démarche éthiques et responsables en intégrant les enjeux sociétaux et écologiques
+dans l’offre élaborée
+– Prise en compte de l’environnement digital et/ou international
+---
+CODE: R3.02
+TITRE: Entretien de vente
+CONTENU: – Maîtrise des 7 étapes de l’entretien de vente (prise de contact, découverte des besoins, argumentation, traitement des
+objections, proposition commerciale, conclusion, prise de congé) lors d’une simulation de jeu de rôle
+– Création d’un devis
+– Maîtrise des techniques d’annonce de prix
+– Maîtrise des techniques de défense d’une offre
+– Traitement des objections prix
+– Identiﬁcation des ratios utiles à l’analyse de la performance commerciale et construction des tableaux reporting pour
+mesurer l’efﬁcacité de son action commerciale
+– Réalisation d’une auto-analyse et d’un retour d’expérience
+---
+CODE: R3.03
+TITRE: Principes de la communication digitale
+CONTENU: – Stratégie de communication digitale : axe de communication, objectifs de communication et cible(s)
+– Panorama des médias/réseaux digitaux et sociaux : points forts et points faibles des différents réseaux sociaux / choix
+les médias sociaux adaptés aux besoins de l’entreprise
+– Parcours de communication digitale : principe de conversion (entonnoir « funnel ») de visiteur à client ﬁdèle
+– Création, gestion et planiﬁcation des publications dans le respect d’une ligne éditoriale
+– Création et gestion de contenus d’un site web en adéquation avec la stratégie
+– Gestion des inﬂuenceurs
+– Analyse de la performance : e-reputation
+---
+CODE: R3.04
+TITRE: Etudes marketing - 3
+CONTENU: – Études quantitatives : échantillonnage et estimation, initiation à l’analyse d’indicateurs et de leurs représentations
+– Études qualitatives : entretiens directifs et semi-directifs, analyse qualitative des données
+– Outils numériques de traitement des données
+---
+CODE: R3.05
+TITRE: Environnement économique international
+CONTENU: – Bases d’économie internationale (taux de change, aperçu du commerce mondial et théories du commerce international,
+approche géopolitique)
+– Enjeux économiques de l’innovation, lien avec la notion d’avantages comparatifs
+– Approche des enjeux environnementaux et des questions sociales en économie
+---
+CODE: R3.06
+TITRE: Droit des activités commerciales - 1
+CONTENU: – Contrats de distribution
+– Législation sur les prix
+– Produits (normes, labels, AO)
+– Effets du contrat / Responsabilité contractuelle
+– Garanties légales et contractuelles
+– Pratiques abusives
+– Droit de la publicité
+– Droit des réseaux sociaux / E-réputation - Droit à l’oubli
+– Données personnelles : collecte et exploitation des données
+– Nom de domaine
+---
+CODE: R3.07
+TITRE: Techniques quantitatives et représentations - 3
+CONTENU: 
+---
+CODE: R5.04
+TITRE: Droit des activités commerciales - 2
+CONTENU: – Cadre légal : intérêt des législations environnementales et sociales
+– Protection de l’activité commerciale : fonds de commerce, bail commercial
+– Paiement et sûretés
+– Règlement des litiges et recours judiciaires
+---
+CODE: R3.08
+TITRE: Tableau de bord commercial
+CONTENU: – Sélection des indicateurs pertinents en fonction de l’activité et suivi de leur évolution
+– Création d’un budget prévisionnel aﬁn d’anticiper les problèmes de trésorerie
+– Mise en évidence des écarts aﬁn de les analyser et de faire des recommandations de gestion
+– Mesure et évaluation de l’impact d’une future décision de gestion
+---
+CODE: R3.09
+TITRE: Psychologie sociale du travail
+CONTENU: – Approfondissement et utilisation des leviers pour faire évoluer l’offre en s’appuyant sur des outils de création de valeur
+tout en proposant une communication efﬁcace pour la promouvoir (construction et utilisation d’outils de mesure des
+déterminants sociocognitifs : attitudes, représentations sociales, intentions comportementales)
+– Questionnement des notions de RSE et de performances commerciales au regard des notions de bien-être, de qualité
+de vie au travail, de satisfaction au travail et de façon plus générale au regard des indicateurs sociaux
+– Appréhension de l’ingénierie psychosociale comme un outil de diagnostic permettant d’évaluer un problème (audit),
+conceptualisation d’une solution alternative, construction d’un modèle d’action et application du modèle d’action tout en
+comprenant les mécanismes de la résistance au changement et en apprenant à accompagner la conduite du change-
+ment.
+– Compréhension des interactions entre les environnements organisationnels, professionnels et les pensées, sentiments
+et comportements des salariés et groupes de salariés.
+– Appréhension des impacts de l’environnement sur le fonctionnement d’une entreprise (système ouvert) et sur ses stra-
+tégies marketing (environnement / écologie - vie de travail / vie hors travail - culture du pays)
+– Sensibilisation à l’aménagement des postes de travail mais aussi à la présentation ergonomique des données
+---
+CODE: R3.10
+TITRE: Anglais appliqué au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté au contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.11
+TITRE: LV B appliquée au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.12
+TITRE: Ressources et culture numériques - 3
+CONTENU: – Bases HTML & CSS (en local)
+– Tableurs : fonctions avancées incluant formulaires, tris, ﬁltres, rechercheV, consolidation, calculs conditionnels, tableaux
+croisés dynamiques, graphiques élaborés
+– Prise en main d’un outil de dessin vectoriel
+– Prise en main d’un outil de carte heuristique
+– Multimédia : réalisation d’une vidéo avec outils d’enregistrement & mixage de son
+– Respect de la législation, notamment du droit de propriété intellectuelle et du droit à la vie privée
+---
+CODE: R3.13
+TITRE: Expression, communication, culture - 3
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 2) :
+– Approfondissement des techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et
+sectorielle).
+– Approfondissement des techniques de rédaction documentaire : lecture et écriture de documents techniques et spé-
+cialisés, respect des normes bibliographiques et bureautiques appliquées à un document (ergonomie d’un document
+numérique, texte, paratexte, hypertexte, etc.)
+– Rédaction de synthèse de documents, typologie des plans (thématique, dialectique et d’aide à la décision, etc.)
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel (niveau 2) :
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire (note de lecture, contraction de texte).
+– Écrits professionnels (entreprise, presse, web) : rédaction de dossier, de compte-rendu de réunion, d’article de presse
+grand public / spécialisée, de dossier de presse, de communiqué de presse, de revue de presse, de publication corporate,
+d’écrit pour le web, de tweet, de post, d’e-mail, d’article de blog, d’e-books, de brochure web, d’élément de marque (logo,
+polices, etc.), datavisualisation.
+Communiquer, persuader, interagir (niveau 2) :
+– Analyse de la communication et développement d’une éthique de la communication interpersonnelle (écoute active,
+empathie, attitudes de Porter, analyse et compréhension des malentendus, etc.)
+– Approfondissement des techniques d’argumentation et de rhétorique et mise en pratique aﬁn de mieux gérer les relations
+avec le client, les collaborateurs, etc. (typologie des arguments, preuves techniques, pitch, discours, exposé, débat, etc.)
+– Utilisation d’outils collaboratifs, des réseaux sociaux pour communiquer
+– Animation de réunions (méthodologie de la conduite de réunion, typologie des réunions, techniques de prise de parole)
+et outils de communication adaptés
+---
+CODE: R3.14
+TITRE: PPP - 3
+CONTENU: Déﬁnir son proﬁl, en partant de ses appétences, de ses envies et asseoir son choix professionnel
+– Approfondir la connaissance de soi tout au long de la sa formation
+– Connaître les modalités d’admission (établissement d’études supérieures et entreprise)
+– S’initier à la veille informationnelle sur un secteur d’activité, une entreprise, les innovations, les technologies, etc.
+– Se familiariser avec les différents métiers possibles en lien avec les parcours proposés
+Construire un/des projet(s) professionnel(s) en déﬁnissant une stratégie personnelle pour le/les réaliser
+– Identiﬁer les métiers associés au(x) projet(s) professionnel(s)
+– Construire son parcours de formation en adéquation avec son/ses projet(s) professionnel(s) (spécialité et modalité en
+alternance ou initiale, réorientation, internationale, poursuite d’études, insertion professionnelle)
+– Découvrir la pluralité des parcours pour accéder à un métier : poursuite d’études et passerelles en B.U.T.2 et B.U.T.3
+(tant au national qu’à l’international), VAE, formation tout au long de la vie, entrepreneuriat
+Analyser les métiers envisagés : postes, types d’organisation, secteur, environnement professionnel
+– Appréhender les secteurs professionnels
+– Se familiariser avec les métiers représentatifs du secteur
+– Identiﬁer les métiers possibles en fonction du parcours de B.U.T. choisi
+Mettre en place une démarche de recherche de stage et d’alternance et les outils associés
+– Formaliser les acquis personnels et professionnels de l’expérience du stage précédent (connaissance de soi, choix de
+domaine et de métier/découverte du monde l’entreprise, etc.)
+– Développer une posture professionnelle adaptée
+– Mettre en oeuvre les techniques de recherche de stage ou d’alternance : rechercher une offre, l’analyser, élaborer un
+CV & LM adaptés. Se préparer à l’entretien. Développer une méthodologie de suivi de ses démarches
+– Gérer son identité numérique et sa e-réputation
+---
+CODE: R4.02
+TITRE: Négociation : rôle du vendeur et de l’acheteur
+CONTENU: 
+---
+CODE: R4.04
+TITRE: Droit du travail
+CONTENU: 
+---
+CODE: R4.05
+TITRE: Anglais appliqué au commerce - 4
+CONTENU: 
+---
+CODE: R4.07
+TITRE: Expression, communication, culture - 4
+CONTENU: 
+---
+CODE: R4.08
+TITRE: PPP - 4
+CONTENU: 
+---
+CODE: R4.MMPV.09
+TITRE: Merchandising
+CONTENU: 
+---
+CODE: R4.MMPV.10
+TITRE: Management des équipes - 1
+CONTENU: 
+---
+CODE: R4.MMPV.11
+TITRE: GRC
+CONTENU: 
+---
+CODE: R5.01
+TITRE: Stratégie d’entreprise - 1
+CONTENU: – Outils d’analyse stratégique, matrices de positionnement
+– Composantes d’un portefeuille d’activités, facteurs clés de succès et actifs stratégiques
+– Construction d’une veille stratégique (déﬁnition des indicateurs et mise en place)
+– Conditions d’ adaptabilité, de transformation de l’activité, et de gestion du changement organisationnel
+---
+CODE: R5.02
+TITRE: Négocier dans des contextes spéciﬁques - 1
+CONTENU: – Savoir analyser le contexte situationnel (positionnement des interlocuteurs, contexte spatio-temporel, sociologique, psy-
+chologique, problématique commerciale des interlocuteurs)
+– Appréhender des contextes particuliers et en comprendre les spéciﬁcités
+– Identiﬁer le processus d’achat et les décideurs
+– Identiﬁer la valeur ajoutée de la solution en relation avec le besoin du client
+– Jeux de rôle spéciﬁques aux domaines d’activité ciblés
+---
+CODE: R5.03
+TITRE: Financement et régulation de l’économie
+CONTENU: – Financement de l’économie, étude des crises
+– Théories économiques, histoire de la pensée économique
+– Régulations, ﬁnancement des enjeux environnementaux et sociaux
+---
+CODE: R5.05
+TITRE: Analyse ﬁnancière
+CONTENU: – Fonds de roulement, besoin en fonds de roulement, trésorerie, ratios de liquidité, solvabilité, endettement, ratios de
+rotation
+– Décomposition de la rentabilité à travers les SIG, la CAF, la trésorerie, ratios de proﬁtabilité et de rentabilité
+---
+CODE: R5.06
+TITRE: Anglais appliqué au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.07
+TITRE: LV B appliquée au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.08
+TITRE: Expression, communication, culture - 5
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 3) :
+– Maitriser les techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et sectorielle).
+– Maitriser les techniques de rédaction documentaire :
+Lecture et écriture de documents techniques et spécialisés
+Respect des normes bibliographiques et bureautiques appliquées à un document technique ou professionnel : ergonomie d’un
+document numérique, texte, paratexte, hypertexte, etc.
+Savoir synthétiser à l’écrit (niveau 3) : note de synthèse opérationnelle.
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel : les écritures académiques
+et professionnelles (niveau 3)
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire : note de lecture, synthèse, compte-rendu, méthodologie du rapport de stage et de la soutenance.
+– Écrits professionnels (entreprise, web) : rédaction de dossier, de compte-rendu (d’événement, d’entretien, etc.), de
+publication corporate, de facture, devis, d’écrit pour le web, datavisualisation.
+Communiquer, persuader, interagir (niveau 3) :
+– Analyser la communication en milieu de travail
+– Persuader : approfondir les techniques d’argumentation et de rhétorique et les mettre en pratique dans sa vie profes-
+sionnelle.
+– Animer et gérer une réunion (dynamique de groupe, animation de réunion, de focus group, techniques de prise de parole,
+gestion des conﬂits).
+– Développer ses habiletés relationnelles en contexte de communication au travail (empathie, écoute, entretien, afﬁrmation
+de soi, intelligence émotionnelle, etc.)
+---
+CODE: R5.09
+TITRE: PPP - 5
+CONTENU: Approfondir la connaissance de soi et afﬁrmer sa posture professionnelle
+– Exploiter ses stages aﬁn de parfaire sa posture professionnelle
+– Formaliser ses réseaux professionnels (proﬁls, carte réseau, réseau professionnel...)
+– Faire le bilan de ses compétences
+Formaliser son plan de carrière : développement d’une stratégie personnelle et professionnelle
+– À court terme : insertion professionnelle immédiate après le B.U.T. ou poursuite d’études
+– À plus long terme : VAE, CPF, FTLV, etc.
+S’approprier le processus et s’adapter aux différents types de recrutement
+– Mise à jour des outils de communication professionnelle
+– Préparation aux différents types et formes de recrutement : test, entretien collectif ou individuel, mise en situation,
+concours, en entreprise, en école, à l’université
+---
+CODE: R6.01
+TITRE: Stratégie d’entreprise - 2
+CONTENU: 
+---
+CODE: R6.02
+TITRE: Négocier dans des contextes spéciﬁques - 2
+CONTENU: 
+---
+CODE: R6.MMPV.03
+TITRE: Droit du travail et relations sociales dans l’entreprise
+CONTENU: 
+---
+CODE: R5.05
+TITRE: Analyse ﬁnancière
+CONTENU: – Fonds de roulement, besoin en fonds de roulement, trésorerie, ratios de liquidité, solvabilité, endettement, ratios de
+rotation
+– Décomposition de la rentabilité à travers les SIG, la CAF, la trésorerie, ratios de proﬁtabilité et de rentabilité
+---
+CODE: R3.01
+TITRE: Marketing Mix - 2
+CONTENU: – Mise en oeuvre d’une démarche marketing cohérente avec la stratégie choisie
+– Proposition d’une offre opérationnelle en termes de produit/service, de prix, de distribution et de communication
+– Intégration d’une posture et d’une démarche éthiques et responsables en intégrant les enjeux sociétaux et écologiques
+dans l’offre élaborée
+– Prise en compte de l’environnement digital et/ou international
+---
+CODE: R3.02
+TITRE: Entretien de vente
+CONTENU: – Maîtrise des 7 étapes de l’entretien de vente (prise de contact, découverte des besoins, argumentation, traitement des
+objections, proposition commerciale, conclusion, prise de congé) lors d’une simulation de jeu de rôle
+– Création d’un devis
+– Maîtrise des techniques d’annonce de prix
+– Maîtrise des techniques de défense d’une offre
+– Traitement des objections prix
+– Identiﬁcation des ratios utiles à l’analyse de la performance commerciale et construction des tableaux reporting pour
+mesurer l’efﬁcacité de son action commerciale
+– Réalisation d’une auto-analyse et d’un retour d’expérience
+---
+CODE: R3.03
+TITRE: Principes de la communication digitale
+CONTENU: – Stratégie de communication digitale : axe de communication, objectifs de communication et cible(s)
+– Panorama des médias/réseaux digitaux et sociaux : points forts et points faibles des différents réseaux sociaux / choix
+les médias sociaux adaptés aux besoins de l’entreprise
+– Parcours de communication digitale : principe de conversion (entonnoir « funnel ») de visiteur à client ﬁdèle
+– Création, gestion et planiﬁcation des publications dans le respect d’une ligne éditoriale
+– Création et gestion de contenus d’un site web en adéquation avec la stratégie
+– Gestion des inﬂuenceurs
+– Analyse de la performance : e-reputation
+---
+CODE: R3.04
+TITRE: Etudes marketing - 3
+CONTENU: – Études quantitatives : échantillonnage et estimation, initiation à l’analyse d’indicateurs et de leurs représentations
+– Études qualitatives : entretiens directifs et semi-directifs, analyse qualitative des données
+– Outils numériques de traitement des données
+---
+CODE: R3.05
+TITRE: Environnement économique international
+CONTENU: – Bases d’économie internationale (taux de change, aperçu du commerce mondial et théories du commerce international,
+approche géopolitique)
+– Enjeux économiques de l’innovation, lien avec la notion d’avantages comparatifs
+– Approche des enjeux environnementaux et des questions sociales en économie
+---
+CODE: R3.06
+TITRE: Droit des activités commerciales - 1
+CONTENU: – Contrats de distribution
+– Législation sur les prix
+– Produits (normes, labels, AO)
+– Effets du contrat / Responsabilité contractuelle
+– Garanties légales et contractuelles
+– Pratiques abusives
+– Droit de la publicité
+– Droit des réseaux sociaux / E-réputation - Droit à l’oubli
+– Données personnelles : collecte et exploitation des données
+– Nom de domaine
+---
+CODE: R3.07
+TITRE: Techniques quantitatives et représentations - 3
+CONTENU: 
+---
+CODE: R5.04
+TITRE: Droit des activités commerciales - 2
+CONTENU: – Cadre légal : intérêt des législations environnementales et sociales
+– Protection de l’activité commerciale : fonds de commerce, bail commercial
+– Paiement et sûretés
+– Règlement des litiges et recours judiciaires
+---
+CODE: R3.08
+TITRE: Tableau de bord commercial
+CONTENU: – Sélection des indicateurs pertinents en fonction de l’activité et suivi de leur évolution
+– Création d’un budget prévisionnel aﬁn d’anticiper les problèmes de trésorerie
+– Mise en évidence des écarts aﬁn de les analyser et de faire des recommandations de gestion
+– Mesure et évaluation de l’impact d’une future décision de gestion
+---
+CODE: R3.09
+TITRE: Psychologie sociale du travail
+CONTENU: – Approfondissement et utilisation des leviers pour faire évoluer l’offre en s’appuyant sur des outils de création de valeur
+tout en proposant une communication efﬁcace pour la promouvoir (construction et utilisation d’outils de mesure des
+déterminants sociocognitifs : attitudes, représentations sociales, intentions comportementales)
+– Questionnement des notions de RSE et de performances commerciales au regard des notions de bien-être, de qualité
+de vie au travail, de satisfaction au travail et de façon plus générale au regard des indicateurs sociaux
+– Appréhension de l’ingénierie psychosociale comme un outil de diagnostic permettant d’évaluer un problème (audit),
+conceptualisation d’une solution alternative, construction d’un modèle d’action et application du modèle d’action tout en
+comprenant les mécanismes de la résistance au changement et en apprenant à accompagner la conduite du change-
+ment.
+– Compréhension des interactions entre les environnements organisationnels, professionnels et les pensées, sentiments
+et comportements des salariés et groupes de salariés.
+– Appréhension des impacts de l’environnement sur le fonctionnement d’une entreprise (système ouvert) et sur ses stra-
+tégies marketing (environnement / écologie - vie de travail / vie hors travail - culture du pays)
+– Sensibilisation à l’aménagement des postes de travail mais aussi à la présentation ergonomique des données
+---
+CODE: R3.10
+TITRE: Anglais appliqué au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté au contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.11
+TITRE: LV B appliquée au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.12
+TITRE: Ressources et culture numériques - 3
+CONTENU: – Bases HTML & CSS (en local)
+– Tableurs : fonctions avancées incluant formulaires, tris, ﬁltres, rechercheV, consolidation, calculs conditionnels, tableaux
+croisés dynamiques, graphiques élaborés
+– Prise en main d’un outil de dessin vectoriel
+– Prise en main d’un outil de carte heuristique
+– Multimédia : réalisation d’une vidéo avec outils d’enregistrement & mixage de son
+– Respect de la législation, notamment du droit de propriété intellectuelle et du droit à la vie privée
+---
+CODE: R3.13
+TITRE: Expression, communication, culture - 3
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 2) :
+– Approfondissement des techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et
+sectorielle).
+– Approfondissement des techniques de rédaction documentaire : lecture et écriture de documents techniques et spé-
+cialisés, respect des normes bibliographiques et bureautiques appliquées à un document (ergonomie d’un document
+numérique, texte, paratexte, hypertexte, etc.)
+– Rédaction de synthèse de documents, typologie des plans (thématique, dialectique et d’aide à la décision, etc.)
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel (niveau 2) :
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire (note de lecture, contraction de texte).
+– Écrits professionnels (entreprise, presse, web) : rédaction de dossier, de compte-rendu de réunion, d’article de presse
+grand public / spécialisée, de dossier de presse, de communiqué de presse, de revue de presse, de publication corporate,
+d’écrit pour le web, de tweet, de post, d’e-mail, d’article de blog, d’e-books, de brochure web, d’élément de marque (logo,
+polices, etc.), datavisualisation.
+Communiquer, persuader, interagir (niveau 2) :
+– Analyse de la communication et développement d’une éthique de la communication interpersonnelle (écoute active,
+empathie, attitudes de Porter, analyse et compréhension des malentendus, etc.)
+– Approfondissement des techniques d’argumentation et de rhétorique et mise en pratique aﬁn de mieux gérer les relations
+avec le client, les collaborateurs, etc. (typologie des arguments, preuves techniques, pitch, discours, exposé, débat, etc.)
+– Utilisation d’outils collaboratifs, des réseaux sociaux pour communiquer
+– Animation de réunions (méthodologie de la conduite de réunion, typologie des réunions, techniques de prise de parole)
+et outils de communication adaptés
+---
+CODE: R3.14
+TITRE: PPP - 3
+CONTENU: Déﬁnir son proﬁl, en partant de ses appétences, de ses envies et asseoir son choix professionnel
+– Approfondir la connaissance de soi tout au long de la sa formation
+– Connaître les modalités d’admission (établissement d’études supérieures et entreprise)
+– S’initier à la veille informationnelle sur un secteur d’activité, une entreprise, les innovations, les technologies, etc.
+– Se familiariser avec les différents métiers possibles en lien avec les parcours proposés
+Construire un/des projet(s) professionnel(s) en déﬁnissant une stratégie personnelle pour le/les réaliser
+– Identiﬁer les métiers associés au(x) projet(s) professionnel(s)
+– Construire son parcours de formation en adéquation avec son/ses projet(s) professionnel(s) (spécialité et modalité en
+alternance ou initiale, réorientation, internationale, poursuite d’études, insertion professionnelle)
+– Découvrir la pluralité des parcours pour accéder à un métier : poursuite d’études et passerelles en B.U.T.2 et B.U.T.3
+(tant au national qu’à l’international), VAE, formation tout au long de la vie, entrepreneuriat
+Analyser les métiers envisagés : postes, types d’organisation, secteur, environnement professionnel
+– Appréhender les secteurs professionnels
+– Se familiariser avec les métiers représentatifs du secteur
+– Identiﬁer les métiers possibles en fonction du parcours de B.U.T. choisi
+Mettre en place une démarche de recherche de stage et d’alternance et les outils associés
+– Formaliser les acquis personnels et professionnels de l’expérience du stage précédent (connaissance de soi, choix de
+domaine et de métier/découverte du monde l’entreprise, etc.)
+– Développer une posture professionnelle adaptée
+– Mettre en oeuvre les techniques de recherche de stage ou d’alternance : rechercher une offre, l’analyser, élaborer un
+CV & LM adaptés. Se préparer à l’entretien. Développer une méthodologie de suivi de ses démarches
+– Gérer son identité numérique et sa e-réputation
+---
+CODE: R4.02
+TITRE: Négociation : rôle du vendeur et de l’acheteur
+CONTENU: 
+---
+CODE: R4.05
+TITRE: Anglais appliqué au commerce - 4
+CONTENU: 
+---
+CODE: R4.06
+TITRE: LV B appliquée au commerce - 4
+CONTENU: 
+---
+CODE: R4.07
+TITRE: Expression, communication, culture - 4
+CONTENU: 
+---
+CODE: R4.MDEE.09
+TITRE: Conduite de projet digital
+CONTENU: 
+---
+CODE: R4.MDEE.11
+TITRE: Business model - 1
+CONTENU: 
+---
+CODE: R5.01
+TITRE: Stratégie d’entreprise - 1
+CONTENU: – Outils d’analyse stratégique, matrices de positionnement
+– Composantes d’un portefeuille d’activités, facteurs clés de succès et actifs stratégiques
+– Construction d’une veille stratégique (déﬁnition des indicateurs et mise en place)
+– Conditions d’ adaptabilité, de transformation de l’activité, et de gestion du changement organisationnel
+---
+CODE: R5.02
+TITRE: Négocier dans des contextes spéciﬁques - 1
+CONTENU: – Savoir analyser le contexte situationnel (positionnement des interlocuteurs, contexte spatio-temporel, sociologique, psy-
+chologique, problématique commerciale des interlocuteurs)
+– Appréhender des contextes particuliers et en comprendre les spéciﬁcités
+– Identiﬁer le processus d’achat et les décideurs
+– Identiﬁer la valeur ajoutée de la solution en relation avec le besoin du client
+– Jeux de rôle spéciﬁques aux domaines d’activité ciblés
+---
+CODE: R5.03
+TITRE: Financement et régulation de l’économie
+CONTENU: – Financement de l’économie, étude des crises
+– Théories économiques, histoire de la pensée économique
+– Régulations, ﬁnancement des enjeux environnementaux et sociaux
+---
+CODE: R5.06
+TITRE: Anglais appliqué au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.07
+TITRE: LV B appliquée au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.08
+TITRE: Expression, communication, culture - 5
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 3) :
+– Maitriser les techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et sectorielle).
+– Maitriser les techniques de rédaction documentaire :
+Lecture et écriture de documents techniques et spécialisés
+Respect des normes bibliographiques et bureautiques appliquées à un document technique ou professionnel : ergonomie d’un
+document numérique, texte, paratexte, hypertexte, etc.
+Savoir synthétiser à l’écrit (niveau 3) : note de synthèse opérationnelle.
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel : les écritures académiques
+et professionnelles (niveau 3)
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire : note de lecture, synthèse, compte-rendu, méthodologie du rapport de stage et de la soutenance.
+– Écrits professionnels (entreprise, web) : rédaction de dossier, de compte-rendu (d’événement, d’entretien, etc.), de
+publication corporate, de facture, devis, d’écrit pour le web, datavisualisation.
+Communiquer, persuader, interagir (niveau 3) :
+– Analyser la communication en milieu de travail
+– Persuader : approfondir les techniques d’argumentation et de rhétorique et les mettre en pratique dans sa vie profes-
+sionnelle.
+– Animer et gérer une réunion (dynamique de groupe, animation de réunion, de focus group, techniques de prise de parole,
+gestion des conﬂits).
+– Développer ses habiletés relationnelles en contexte de communication au travail (empathie, écoute, entretien, afﬁrmation
+de soi, intelligence émotionnelle, etc.)
+---
+CODE: R5.09
+TITRE: PPP - 5
+CONTENU: Approfondir la connaissance de soi et afﬁrmer sa posture professionnelle
+– Exploiter ses stages aﬁn de parfaire sa posture professionnelle
+– Formaliser ses réseaux professionnels (proﬁls, carte réseau, réseau professionnel...)
+– Faire le bilan de ses compétences
+Formaliser son plan de carrière : développement d’une stratégie personnelle et professionnelle
+– À court terme : insertion professionnelle immédiate après le B.U.T. ou poursuite d’études
+– À plus long terme : VAE, CPF, FTLV, etc.
+S’approprier le processus et s’adapter aux différents types de recrutement
+– Mise à jour des outils de communication professionnelle
+– Préparation aux différents types et formes de recrutement : test, entretien collectif ou individuel, mise en situation,
+concours, en entreprise, en école, à l’université
+---
+CODE: R6.01
+TITRE: Stratégie d’entreprise - 2
+CONTENU: 
+---
+CODE: R6.02
+TITRE: Négocier dans des contextes spéciﬁques - 2
+CONTENU: 
+---
+CODE: R6.MDEE.03
+TITRE: Traﬁc management - analyse d’audience
+CONTENU: 
+---
+CODE: R6.MDEE.04
+TITRE: Formalisation et sécurisation d’un business model
+CONTENU: 
+---
+CODE: R3.01
+TITRE: Marketing Mix - 2
+CONTENU: – Mise en oeuvre d’une démarche marketing cohérente avec la stratégie choisie
+– Proposition d’une offre opérationnelle en termes de produit/service, de prix, de distribution et de communication
+– Intégration d’une posture et d’une démarche éthiques et responsables en intégrant les enjeux sociétaux et écologiques
+dans l’offre élaborée
+– Prise en compte de l’environnement digital et/ou international
+---
+CODE: R3.02
+TITRE: Entretien de vente
+CONTENU: – Maîtrise des 7 étapes de l’entretien de vente (prise de contact, découverte des besoins, argumentation, traitement des
+objections, proposition commerciale, conclusion, prise de congé) lors d’une simulation de jeu de rôle
+– Création d’un devis
+– Maîtrise des techniques d’annonce de prix
+– Maîtrise des techniques de défense d’une offre
+– Traitement des objections prix
+– Identiﬁcation des ratios utiles à l’analyse de la performance commerciale et construction des tableaux reporting pour
+mesurer l’efﬁcacité de son action commerciale
+– Réalisation d’une auto-analyse et d’un retour d’expérience
+---
+CODE: R3.03
+TITRE: Principes de la communication digitale
+CONTENU: – Stratégie de communication digitale : axe de communication, objectifs de communication et cible(s)
+– Panorama des médias/réseaux digitaux et sociaux : points forts et points faibles des différents réseaux sociaux / choix
+les médias sociaux adaptés aux besoins de l’entreprise
+– Parcours de communication digitale : principe de conversion (entonnoir « funnel ») de visiteur à client ﬁdèle
+– Création, gestion et planiﬁcation des publications dans le respect d’une ligne éditoriale
+– Création et gestion de contenus d’un site web en adéquation avec la stratégie
+– Gestion des inﬂuenceurs
+– Analyse de la performance : e-reputation
+---
+CODE: R3.04
+TITRE: Etudes marketing - 3
+CONTENU: – Études quantitatives : échantillonnage et estimation, initiation à l’analyse d’indicateurs et de leurs représentations
+– Études qualitatives : entretiens directifs et semi-directifs, analyse qualitative des données
+– Outils numériques de traitement des données
+---
+CODE: R3.05
+TITRE: Environnement économique international
+CONTENU: – Bases d’économie internationale (taux de change, aperçu du commerce mondial et théories du commerce international,
+approche géopolitique)
+– Enjeux économiques de l’innovation, lien avec la notion d’avantages comparatifs
+– Approche des enjeux environnementaux et des questions sociales en économie
+---
+CODE: R3.06
+TITRE: Droit des activités commerciales - 1
+CONTENU: – Contrats de distribution
+– Législation sur les prix
+– Produits (normes, labels, AO)
+– Effets du contrat / Responsabilité contractuelle
+– Garanties légales et contractuelles
+– Pratiques abusives
+– Droit de la publicité
+– Droit des réseaux sociaux / E-réputation - Droit à l’oubli
+– Données personnelles : collecte et exploitation des données
+– Nom de domaine
+---
+CODE: R3.07
+TITRE: Techniques quantitatives et représentations - 3
+CONTENU: 
+---
+CODE: R3.08
+TITRE: Tableau de bord commercial
+CONTENU: – Sélection des indicateurs pertinents en fonction de l’activité et suivi de leur évolution
+– Création d’un budget prévisionnel aﬁn d’anticiper les problèmes de trésorerie
+– Mise en évidence des écarts aﬁn de les analyser et de faire des recommandations de gestion
+– Mesure et évaluation de l’impact d’une future décision de gestion
+---
+CODE: R3.09
+TITRE: Psychologie sociale du travail
+CONTENU: – Approfondissement et utilisation des leviers pour faire évoluer l’offre en s’appuyant sur des outils de création de valeur
+tout en proposant une communication efﬁcace pour la promouvoir (construction et utilisation d’outils de mesure des
+déterminants sociocognitifs : attitudes, représentations sociales, intentions comportementales)
+– Questionnement des notions de RSE et de performances commerciales au regard des notions de bien-être, de qualité
+de vie au travail, de satisfaction au travail et de façon plus générale au regard des indicateurs sociaux
+– Appréhension de l’ingénierie psychosociale comme un outil de diagnostic permettant d’évaluer un problème (audit),
+conceptualisation d’une solution alternative, construction d’un modèle d’action et application du modèle d’action tout en
+comprenant les mécanismes de la résistance au changement et en apprenant à accompagner la conduite du change-
+ment.
+– Compréhension des interactions entre les environnements organisationnels, professionnels et les pensées, sentiments
+et comportements des salariés et groupes de salariés.
+– Appréhension des impacts de l’environnement sur le fonctionnement d’une entreprise (système ouvert) et sur ses stra-
+tégies marketing (environnement / écologie - vie de travail / vie hors travail - culture du pays)
+– Sensibilisation à l’aménagement des postes de travail mais aussi à la présentation ergonomique des données
+---
+CODE: R3.10
+TITRE: Anglais appliqué au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté au contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.11
+TITRE: LV B appliquée au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.12
+TITRE: Ressources et culture numériques - 3
+CONTENU: – Bases HTML & CSS (en local)
+– Tableurs : fonctions avancées incluant formulaires, tris, ﬁltres, rechercheV, consolidation, calculs conditionnels, tableaux
+croisés dynamiques, graphiques élaborés
+– Prise en main d’un outil de dessin vectoriel
+– Prise en main d’un outil de carte heuristique
+– Multimédia : réalisation d’une vidéo avec outils d’enregistrement & mixage de son
+– Respect de la législation, notamment du droit de propriété intellectuelle et du droit à la vie privée
+---
+CODE: R3.02
+TITRE: Entretien de vente
+CONTENU: – Maîtrise des 7 étapes de l’entretien de vente (prise de contact, découverte des besoins, argumentation, traitement des
+objections, proposition commerciale, conclusion, prise de congé) lors d’une simulation de jeu de rôle
+– Création d’un devis
+– Maîtrise des techniques d’annonce de prix
+– Maîtrise des techniques de défense d’une offre
+– Traitement des objections prix
+– Identiﬁcation des ratios utiles à l’analyse de la performance commerciale et construction des tableaux reporting pour
+mesurer l’efﬁcacité de son action commerciale
+– Réalisation d’une auto-analyse et d’un retour d’expérience
+---
+CODE: R3.14
+TITRE: PPP - 3
+CONTENU: Déﬁnir son proﬁl, en partant de ses appétences, de ses envies et asseoir son choix professionnel
+– Approfondir la connaissance de soi tout au long de la sa formation
+– Connaître les modalités d’admission (établissement d’études supérieures et entreprise)
+– S’initier à la veille informationnelle sur un secteur d’activité, une entreprise, les innovations, les technologies, etc.
+– Se familiariser avec les différents métiers possibles en lien avec les parcours proposés
+Construire un/des projet(s) professionnel(s) en déﬁnissant une stratégie personnelle pour le/les réaliser
+– Identiﬁer les métiers associés au(x) projet(s) professionnel(s)
+– Construire son parcours de formation en adéquation avec son/ses projet(s) professionnel(s) (spécialité et modalité en
+alternance ou initiale, réorientation, internationale, poursuite d’études, insertion professionnelle)
+– Découvrir la pluralité des parcours pour accéder à un métier : poursuite d’études et passerelles en B.U.T.2 et B.U.T.3
+(tant au national qu’à l’international), VAE, formation tout au long de la vie, entrepreneuriat
+Analyser les métiers envisagés : postes, types d’organisation, secteur, environnement professionnel
+– Appréhender les secteurs professionnels
+– Se familiariser avec les métiers représentatifs du secteur
+– Identiﬁer les métiers possibles en fonction du parcours de B.U.T. choisi
+Mettre en place une démarche de recherche de stage et d’alternance et les outils associés
+– Formaliser les acquis personnels et professionnels de l’expérience du stage précédent (connaissance de soi, choix de
+domaine et de métier/découverte du monde l’entreprise, etc.)
+– Développer une posture professionnelle adaptée
+– Mettre en oeuvre les techniques de recherche de stage ou d’alternance : rechercher une offre, l’analyser, élaborer un
+CV & LM adaptés. Se préparer à l’entretien. Développer une méthodologie de suivi de ses démarches
+– Gérer son identité numérique et sa e-réputation
+---
+CODE: R4.02
+TITRE: Négociation : rôle du vendeur et de l’acheteur
+CONTENU: 
+---
+CODE: R4.03
+TITRE: Conception d’une campagne de communication
+CONTENU: 
+---
+CODE: R4.04
+TITRE: Droit du travail
+CONTENU: 
+---
+CODE: R4.05
+TITRE: Anglais appliqué au commerce - 4
+CONTENU: 
+---
+CODE: R4.06
+TITRE: LV B appliquée au commerce - 4
+CONTENU: 
+---
+CODE: R4.07
+TITRE: Expression, communication, culture - 4
+CONTENU: 
+---
+CODE: R4.08
+TITRE: PPP - 4
+CONTENU: 
+---
+CODE: R5.01
+TITRE: Stratégie d’entreprise - 1
+CONTENU: – Outils d’analyse stratégique, matrices de positionnement
+– Composantes d’un portefeuille d’activités, facteurs clés de succès et actifs stratégiques
+– Construction d’une veille stratégique (déﬁnition des indicateurs et mise en place)
+– Conditions d’ adaptabilité, de transformation de l’activité, et de gestion du changement organisationnel
+---
+CODE: R5.02
+TITRE: Négocier dans des contextes spéciﬁques - 1
+CONTENU: – Savoir analyser le contexte situationnel (positionnement des interlocuteurs, contexte spatio-temporel, sociologique, psy-
+chologique, problématique commerciale des interlocuteurs)
+– Appréhender des contextes particuliers et en comprendre les spéciﬁcités
+– Identiﬁer le processus d’achat et les décideurs
+– Identiﬁer la valeur ajoutée de la solution en relation avec le besoin du client
+– Jeux de rôle spéciﬁques aux domaines d’activité ciblés
+---
+CODE: R5.03
+TITRE: Financement et régulation de l’économie
+CONTENU: – Financement de l’économie, étude des crises
+– Théories économiques, histoire de la pensée économique
+– Régulations, ﬁnancement des enjeux environnementaux et sociaux
+---
+CODE: R5.04
+TITRE: Droit des activités commerciales - 2
+CONTENU: – Cadre légal : intérêt des législations environnementales et sociales
+– Protection de l’activité commerciale : fonds de commerce, bail commercial
+– Paiement et sûretés
+– Règlement des litiges et recours judiciaires
+---
+CODE: R4.04
+TITRE: Droit du travail
+CONTENU: 
+---
+CODE: R4.05
+TITRE: Anglais appliqué au commerce - 4
+CONTENU: 
+---
+CODE: R4.06
+TITRE: LV B appliquée au commerce - 4
+CONTENU: 
+---
+CODE: R4.07
+TITRE: Expression, communication, culture - 4
+CONTENU: 
+---
+CODE: R5.06
+TITRE: Anglais appliqué au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.07
+TITRE: LV B appliquée au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.08
+TITRE: Expression, communication, culture - 5
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 3) :
+– Maitriser les techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et sectorielle).
+– Maitriser les techniques de rédaction documentaire :
+Lecture et écriture de documents techniques et spécialisés
+Respect des normes bibliographiques et bureautiques appliquées à un document technique ou professionnel : ergonomie d’un
+document numérique, texte, paratexte, hypertexte, etc.
+Savoir synthétiser à l’écrit (niveau 3) : note de synthèse opérationnelle.
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel : les écritures académiques
+et professionnelles (niveau 3)
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire : note de lecture, synthèse, compte-rendu, méthodologie du rapport de stage et de la soutenance.
+– Écrits professionnels (entreprise, web) : rédaction de dossier, de compte-rendu (d’événement, d’entretien, etc.), de
+publication corporate, de facture, devis, d’écrit pour le web, datavisualisation.
+Communiquer, persuader, interagir (niveau 3) :
+– Analyser la communication en milieu de travail
+– Persuader : approfondir les techniques d’argumentation et de rhétorique et les mettre en pratique dans sa vie profes-
+sionnelle.
+– Animer et gérer une réunion (dynamique de groupe, animation de réunion, de focus group, techniques de prise de parole,
+gestion des conﬂits).
+– Développer ses habiletés relationnelles en contexte de communication au travail (empathie, écoute, entretien, afﬁrmation
+de soi, intelligence émotionnelle, etc.)
+---
+CODE: R5.09
+TITRE: PPP - 5
+CONTENU: Approfondir la connaissance de soi et afﬁrmer sa posture professionnelle
+– Exploiter ses stages aﬁn de parfaire sa posture professionnelle
+– Formaliser ses réseaux professionnels (proﬁls, carte réseau, réseau professionnel...)
+– Faire le bilan de ses compétences
+Formaliser son plan de carrière : développement d’une stratégie personnelle et professionnelle
+– À court terme : insertion professionnelle immédiate après le B.U.T. ou poursuite d’études
+– À plus long terme : VAE, CPF, FTLV, etc.
+S’approprier le processus et s’adapter aux différents types de recrutement
+– Mise à jour des outils de communication professionnelle
+– Préparation aux différents types et formes de recrutement : test, entretien collectif ou individuel, mise en situation,
+concours, en entreprise, en école, à l’université
+---
+CODE: R6.01
+TITRE: Stratégie d’entreprise - 2
+CONTENU: 
+---
+CODE: R6.02
+TITRE: Négocier dans des contextes spéciﬁques - 2
+CONTENU: 
+---
+CODE: R6.BI.03
+TITRE: Anglais appliqué au business international
+CONTENU: 
+---
+CODE: R6.BI.04
+TITRE: LVB appliquée au commerce international
+CONTENU: 
+---
+CODE: R3.01
+TITRE: Marketing Mix - 2
+CONTENU: – Mise en oeuvre d’une démarche marketing cohérente avec la stratégie choisie
+– Proposition d’une offre opérationnelle en termes de produit/service, de prix, de distribution et de communication
+– Intégration d’une posture et d’une démarche éthiques et responsables en intégrant les enjeux sociétaux et écologiques
+dans l’offre élaborée
+– Prise en compte de l’environnement digital et/ou international
+---
+CODE: R3.03
+TITRE: Principes de la communication digitale
+CONTENU: – Stratégie de communication digitale : axe de communication, objectifs de communication et cible(s)
+– Panorama des médias/réseaux digitaux et sociaux : points forts et points faibles des différents réseaux sociaux / choix
+les médias sociaux adaptés aux besoins de l’entreprise
+– Parcours de communication digitale : principe de conversion (entonnoir « funnel ») de visiteur à client ﬁdèle
+– Création, gestion et planiﬁcation des publications dans le respect d’une ligne éditoriale
+– Création et gestion de contenus d’un site web en adéquation avec la stratégie
+– Gestion des inﬂuenceurs
+– Analyse de la performance : e-reputation
+---
+CODE: R3.04
+TITRE: Etudes marketing - 3
+CONTENU: – Études quantitatives : échantillonnage et estimation, initiation à l’analyse d’indicateurs et de leurs représentations
+– Études qualitatives : entretiens directifs et semi-directifs, analyse qualitative des données
+– Outils numériques de traitement des données
+---
+CODE: R3.05
+TITRE: Environnement économique international
+CONTENU: – Bases d’économie internationale (taux de change, aperçu du commerce mondial et théories du commerce international,
+approche géopolitique)
+– Enjeux économiques de l’innovation, lien avec la notion d’avantages comparatifs
+– Approche des enjeux environnementaux et des questions sociales en économie
+---
+CODE: R3.06
+TITRE: Droit des activités commerciales - 1
+CONTENU: – Contrats de distribution
+– Législation sur les prix
+– Produits (normes, labels, AO)
+– Effets du contrat / Responsabilité contractuelle
+– Garanties légales et contractuelles
+– Pratiques abusives
+– Droit de la publicité
+– Droit des réseaux sociaux / E-réputation - Droit à l’oubli
+– Données personnelles : collecte et exploitation des données
+– Nom de domaine
+---
+CODE: R3.07
+TITRE: Techniques quantitatives et représentations - 3
+CONTENU: 
+---
+CODE: R3.08
+TITRE: Tableau de bord commercial
+CONTENU: – Sélection des indicateurs pertinents en fonction de l’activité et suivi de leur évolution
+– Création d’un budget prévisionnel aﬁn d’anticiper les problèmes de trésorerie
+– Mise en évidence des écarts aﬁn de les analyser et de faire des recommandations de gestion
+– Mesure et évaluation de l’impact d’une future décision de gestion
+---
+CODE: R3.09
+TITRE: Psychologie sociale du travail
+CONTENU: – Approfondissement et utilisation des leviers pour faire évoluer l’offre en s’appuyant sur des outils de création de valeur
+tout en proposant une communication efﬁcace pour la promouvoir (construction et utilisation d’outils de mesure des
+déterminants sociocognitifs : attitudes, représentations sociales, intentions comportementales)
+– Questionnement des notions de RSE et de performances commerciales au regard des notions de bien-être, de qualité
+de vie au travail, de satisfaction au travail et de façon plus générale au regard des indicateurs sociaux
+– Appréhension de l’ingénierie psychosociale comme un outil de diagnostic permettant d’évaluer un problème (audit),
+conceptualisation d’une solution alternative, construction d’un modèle d’action et application du modèle d’action tout en
+comprenant les mécanismes de la résistance au changement et en apprenant à accompagner la conduite du change-
+ment.
+– Compréhension des interactions entre les environnements organisationnels, professionnels et les pensées, sentiments
+et comportements des salariés et groupes de salariés.
+– Appréhension des impacts de l’environnement sur le fonctionnement d’une entreprise (système ouvert) et sur ses stra-
+tégies marketing (environnement / écologie - vie de travail / vie hors travail - culture du pays)
+– Sensibilisation à l’aménagement des postes de travail mais aussi à la présentation ergonomique des données
+---
+CODE: R4.08
+TITRE: PPP - 4
+CONTENU: 
+---
+CODE: R3.10
+TITRE: Anglais appliqué au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté au contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.11
+TITRE: LV B appliquée au commerce - 3
+CONTENU: – Participation active à une réunion pour la mise en place d’un projet marketing
+– Phoning (prise de rdv, administration d’une enquête ...)
+– Élaboration et animation d’un entretien de vente simple
+– Analyse des posts sur les réseaux sociaux d’une entreprise et préparer des réponses
+– Préparation du CV et de la lettre de motivation
+Outils linguistiques
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, alphabet, vocabu-
+laire adapté en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire général de l’entreprise, du marketing, de la vente, de la communication commerciale et le resti-
+tuer dans une situation professionnelle
+---
+CODE: R3.12
+TITRE: Ressources et culture numériques - 3
+CONTENU: – Bases HTML & CSS (en local)
+– Tableurs : fonctions avancées incluant formulaires, tris, ﬁltres, rechercheV, consolidation, calculs conditionnels, tableaux
+croisés dynamiques, graphiques élaborés
+– Prise en main d’un outil de dessin vectoriel
+– Prise en main d’un outil de carte heuristique
+– Multimédia : réalisation d’une vidéo avec outils d’enregistrement & mixage de son
+– Respect de la législation, notamment du droit de propriété intellectuelle et du droit à la vie privée
+---
+CODE: R3.13
+TITRE: Expression, communication, culture - 3
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 2) :
+– Approfondissement des techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et
+sectorielle).
+– Approfondissement des techniques de rédaction documentaire : lecture et écriture de documents techniques et spé-
+cialisés, respect des normes bibliographiques et bureautiques appliquées à un document (ergonomie d’un document
+numérique, texte, paratexte, hypertexte, etc.)
+– Rédaction de synthèse de documents, typologie des plans (thématique, dialectique et d’aide à la décision, etc.)
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel (niveau 2) :
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire (note de lecture, contraction de texte).
+– Écrits professionnels (entreprise, presse, web) : rédaction de dossier, de compte-rendu de réunion, d’article de presse
+grand public / spécialisée, de dossier de presse, de communiqué de presse, de revue de presse, de publication corporate,
+d’écrit pour le web, de tweet, de post, d’e-mail, d’article de blog, d’e-books, de brochure web, d’élément de marque (logo,
+polices, etc.), datavisualisation.
+Communiquer, persuader, interagir (niveau 2) :
+– Analyse de la communication et développement d’une éthique de la communication interpersonnelle (écoute active,
+empathie, attitudes de Porter, analyse et compréhension des malentendus, etc.)
+– Approfondissement des techniques d’argumentation et de rhétorique et mise en pratique aﬁn de mieux gérer les relations
+avec le client, les collaborateurs, etc. (typologie des arguments, preuves techniques, pitch, discours, exposé, débat, etc.)
+– Utilisation d’outils collaboratifs, des réseaux sociaux pour communiquer
+– Animation de réunions (méthodologie de la conduite de réunion, typologie des réunions, techniques de prise de parole)
+et outils de communication adaptés
+---
+CODE: R3.14
+TITRE: PPP - 3
+CONTENU: Déﬁnir son proﬁl, en partant de ses appétences, de ses envies et asseoir son choix professionnel
+– Approfondir la connaissance de soi tout au long de la sa formation
+– Connaître les modalités d’admission (établissement d’études supérieures et entreprise)
+– S’initier à la veille informationnelle sur un secteur d’activité, une entreprise, les innovations, les technologies, etc.
+– Se familiariser avec les différents métiers possibles en lien avec les parcours proposés
+Construire un/des projet(s) professionnel(s) en déﬁnissant une stratégie personnelle pour le/les réaliser
+– Identiﬁer les métiers associés au(x) projet(s) professionnel(s)
+– Construire son parcours de formation en adéquation avec son/ses projet(s) professionnel(s) (spécialité et modalité en
+alternance ou initiale, réorientation, internationale, poursuite d’études, insertion professionnelle)
+– Découvrir la pluralité des parcours pour accéder à un métier : poursuite d’études et passerelles en B.U.T.2 et B.U.T.3
+(tant au national qu’à l’international), VAE, formation tout au long de la vie, entrepreneuriat
+Analyser les métiers envisagés : postes, types d’organisation, secteur, environnement professionnel
+– Appréhender les secteurs professionnels
+– Se familiariser avec les métiers représentatifs du secteur
+– Identiﬁer les métiers possibles en fonction du parcours de B.U.T. choisi
+Mettre en place une démarche de recherche de stage et d’alternance et les outils associés
+– Formaliser les acquis personnels et professionnels de l’expérience du stage précédent (connaissance de soi, choix de
+domaine et de métier/découverte du monde l’entreprise, etc.)
+– Développer une posture professionnelle adaptée
+– Mettre en oeuvre les techniques de recherche de stage ou d’alternance : rechercher une offre, l’analyser, élaborer un
+CV & LM adaptés. Se préparer à l’entretien. Développer une méthodologie de suivi de ses démarches
+– Gérer son identité numérique et sa e-réputation
+---
+CODE: R4.01
+TITRE: Stratégie marketing
+CONTENU: 
+---
+CODE: R4.02
+TITRE: Négociation : rôle du vendeur et de l’acheteur
+CONTENU: 
+---
+CODE: R4.03
+TITRE: Conception d’une campagne de communication
+CONTENU: 
+---
+CODE: R5.01
+TITRE: Stratégie d’entreprise - 1
+CONTENU: – Outils d’analyse stratégique, matrices de positionnement
+– Composantes d’un portefeuille d’activités, facteurs clés de succès et actifs stratégiques
+– Construction d’une veille stratégique (déﬁnition des indicateurs et mise en place)
+– Conditions d’ adaptabilité, de transformation de l’activité, et de gestion du changement organisationnel
+---
+CODE: R5.02
+TITRE: Négocier dans des contextes spéciﬁques - 1
+CONTENU: – Savoir analyser le contexte situationnel (positionnement des interlocuteurs, contexte spatio-temporel, sociologique, psy-
+chologique, problématique commerciale des interlocuteurs)
+– Appréhender des contextes particuliers et en comprendre les spéciﬁcités
+– Identiﬁer le processus d’achat et les décideurs
+– Identiﬁer la valeur ajoutée de la solution en relation avec le besoin du client
+– Jeux de rôle spéciﬁques aux domaines d’activité ciblés
+---
+CODE: R5.03
+TITRE: Financement et régulation de l’économie
+CONTENU: – Financement de l’économie, étude des crises
+– Théories économiques, histoire de la pensée économique
+– Régulations, ﬁnancement des enjeux environnementaux et sociaux
+---
+CODE: R5.04
+TITRE: Droit des activités commerciales - 2
+CONTENU: – Cadre légal : intérêt des législations environnementales et sociales
+– Protection de l’activité commerciale : fonds de commerce, bail commercial
+– Paiement et sûretés
+– Règlement des litiges et recours judiciaires
+---
+CODE: R5.05
+TITRE: Analyse ﬁnancière
+CONTENU: – Fonds de roulement, besoin en fonds de roulement, trésorerie, ratios de liquidité, solvabilité, endettement, ratios de
+rotation
+– Décomposition de la rentabilité à travers les SIG, la CAF, la trésorerie, ratios de proﬁtabilité et de rentabilité
+---
+CODE: R5.06
+TITRE: Anglais appliqué au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.07
+TITRE: LV B appliquée au commerce - 5
+CONTENU: – Participation et animation de débats sur des sujets en lien avec la RSE et le développement durable
+– Mise en place d’actions pour sensibiliser sur des sujets en lien avec la RSE
+– Création de supports et réalisation d’argumentaires pour défendre leur pertinence
+– Réalisation d’un entretien de vente
+Outils linguistiques :
+– Travailler entre autres les éléments suivants : conjugaison et emploi des temps adaptés à la situation, vocabulaire adapté
+en contexte, forme interrogative, formules de politesse, possession, comparatifs, discours direct et indirect, syntaxe
+– Veiller à la qualité phonétique et idiomatique de l’expression
+– Manier toutes sortes de chiffres (dates, horaires, prix, etc.), lire des graphiques et décrire des tendances
+– Maîtriser le vocabulaire technique général des affaires et le restituer dans une situation professionnelle spéciﬁque
+– Argumenter et défendre son opinion / ses choix
+---
+CODE: R5.08
+TITRE: Expression, communication, culture - 5
+CONTENU: S’informer et informer de manière critique et efﬁcace (niveau 3) :
+– Maitriser les techniques de recherche documentaire (à titre indicatif : veille documentaire universitaire et sectorielle).
+– Maitriser les techniques de rédaction documentaire :
+Lecture et écriture de documents techniques et spécialisés
+Respect des normes bibliographiques et bureautiques appliquées à un document technique ou professionnel : ergonomie d’un
+document numérique, texte, paratexte, hypertexte, etc.
+Savoir synthétiser à l’écrit (niveau 3) : note de synthèse opérationnelle.
+Analyser, comprendre et mobiliser les spéciﬁcités de la communication en contexte professionnel : les écritures académiques
+et professionnelles (niveau 3)
+– Écrits académiques : production de documents complexes qui répondent aux différentes situations de communication
+universitaire : note de lecture, synthèse, compte-rendu, méthodologie du rapport de stage et de la soutenance.
+– Écrits professionnels (entreprise, web) : rédaction de dossier, de compte-rendu (d’événement, d’entretien, etc.), de
+publication corporate, de facture, devis, d’écrit pour le web, datavisualisation.
+Communiquer, persuader, interagir (niveau 3) :
+– Analyser la communication en milieu de travail
+– Persuader : approfondir les techniques d’argumentation et de rhétorique et les mettre en pratique dans sa vie profes-
+sionnelle.
+– Animer et gérer une réunion (dynamique de groupe, animation de réunion, de focus group, techniques de prise de parole,
+gestion des conﬂits).
+– Développer ses habiletés relationnelles en contexte de communication au travail (empathie, écoute, entretien, afﬁrmation
+de soi, intelligence émotionnelle, etc.)
+---
+CODE: R5.09
+TITRE: PPP - 5
+CONTENU: Approfondir la connaissance de soi et afﬁrmer sa posture professionnelle
+– Exploiter ses stages aﬁn de parfaire sa posture professionnelle
+– Formaliser ses réseaux professionnels (proﬁls, carte réseau, réseau professionnel...)
+– Faire le bilan de ses compétences
+Formaliser son plan de carrière : développement d’une stratégie personnelle et professionnelle
+– À court terme : insertion professionnelle immédiate après le B.U.T. ou poursuite d’études
+– À plus long terme : VAE, CPF, FTLV, etc.
+S’approprier le processus et s’adapter aux différents types de recrutement
+– Mise à jour des outils de communication professionnelle
+– Préparation aux différents types et formes de recrutement : test, entretien collectif ou individuel, mise en situation,
+concours, en entreprise, en école, à l’université
+---
+CODE: R6.01
+TITRE: Stratégie d’entreprise - 2
+CONTENU: 
+---
+CODE: R6.02
+TITRE: Négocier dans des contextes spéciﬁques - 2
+CONTENU: 
+---
+CODE: R6.BDMRC.03
+TITRE: Management des comptes-clés (KAM)
+CONTENU: 
+---
+CODE: R6.BDMRC.04
+TITRE: Nouveaux comportements des clients
+CONTENU: 
+---

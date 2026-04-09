@@ -66,8 +66,8 @@ async def dashboard(request: Request):
         if not db_user:
             return RedirectResponse(url='/login')
 
-        # news_feed = await get_room_messages("general")
-        news_feed = [] # Temporairement désactivé pour éviter le 504
+        news_feed = await get_room_messages("general")
+        # news_feed = [] # Temporairement désactivé pour éviter le 504
         return templates.TemplateResponse(
             request=request, 
             name="dashboard.html", 

@@ -1,0 +1,22 @@
+\babel@toc {french}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Comprendre l'écosystème}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Les rôles dans Skill Hub}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Glossaire des concepts clés}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}L'Architecture : Un triptyque intégré}{3}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Accès et Connexion}{4}{section.3}%
+\contentsline {section}{\numberline {4}Le Bloc Pilotage}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Tableau de bord}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Rapport de gouvernance}{5}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Le Bloc Référentiel \& Contenus}{7}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Référentiel \& Affectations}{7}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Éditeur d'AC (Apprentissages Critiques)}{7}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Découverte \& Fiches PDF}{8}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Le Bloc Outils Enseignant}{9}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Suivi des Stages \& Workflow}{9}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Médiathèque des Preuves \& Portfolio}{10}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Partenaires et Technologies Internes}{10}{section.7}%
+\contentsline {section}{\numberline {8}Assistance \& Support}{11}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Assistant IA}{11}{subsection.8.1}%
+\contentsline {section}{\numberline {9}Le Bloc Idées \& Outils}{12}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Boîte à Idées}{12}{subsection.9.1}%

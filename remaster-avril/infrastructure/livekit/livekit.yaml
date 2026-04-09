@@ -4,14 +4,7 @@ rtc:
     port_range_start: 50000
     port_range_end: 50050
     use_external_ip: false
-turn:
-    enabled: true
-    domain: ${DOMAIN}
-    tls_port: 3478
-    udp_port: 3478
-    # Les secrets de turn doivent être spécifiés correctement
-    shared_secret: "secret_turn_key"
 keys:
-    devkey: "secret_livekit_key"
+    devkey: "livekit_api_secret_key_32_chars_long_and_secure"
 logging:
     level: info

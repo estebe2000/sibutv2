@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  scodoc-test:
+    image: scodoc/scodoc:latest
+    container_name: scodoc_test
+    restart: unless-stopped
+    ports:
+      - "8090:8000"
+    environment:
+      - SCODOC_TITLE="ScoDoc Test"
+      - SCODOC_ADMIN_PASSWORD=admin_scodoc
+    volumes:
+      - scodoc_data:/opt/scodoc-data
+    networks:
+      - app_network
+
+volumes:
+  scodoc_data:
+
+networks:
+  app_network:
+    external: true
+    name: sibutv2_app_network # Assuming this is the network name from the main compose file

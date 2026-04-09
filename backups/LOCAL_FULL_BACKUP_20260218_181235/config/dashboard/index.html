@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUT TC - Skills Hub Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .service-card:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <nav class="bg-blue-700 text-white shadow-lg p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold flex items-center">
+                <i class="fas fa-graduation-cap mr-3"></i>
+                BUT TC - Skills Hub
+            </h1>
+            <div id="auth-section" class="flex items-center gap-4">
+                <!-- Zone dynamique de connexion -->
+                <div id="login-zone">
+                    <button onclick="redirectToKeycloak()" id="login-btn" class="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2">
+                        <i class="fas fa-sign-in-alt"></i> Connexion au Portail
+                    </button>
+                </div>
+                <div id="user-info" class="hidden flex items-center gap-4">
+                    <span id="user-display" class="text-sm font-medium"></span>
+                    <button onclick="handleLogout()" class="text-xs underline text-blue-200 hover:text-white">Déconnexion</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-12 px-4">
+        <header class="text-center mb-12">
+            <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Tableau de Bord des Services</h2>
+            <p class="text-xl text-gray-600">Accédez rapidement à tous les outils de votre environnement de travail</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Skills Hub Admin -->
+            <a href="https://home.${DOMAIN}/app/" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-600 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-blue-600">
+                    <i class="fas fa-desktop text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Skills Hub Admin</h3>
+                </div>
+                <p class="text-gray-600">Gestion du référentiel, roadmap des compétences et génération de fiches PDF.</p>
+                <div class="mt-6 text-sm font-semibold text-blue-600">Portail Unifié <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+
+            <!-- Nextcloud -->
+            <a href="https://nextcloud.${DOMAIN}" id="link-nextcloud" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-blue-400 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-blue-400">
+                    <i class="fas fa-cloud text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Nextcloud</h3>
+                </div>
+                <p class="text-gray-600">Stockage de fichiers, édition collaborative via OnlyOffice et gestion de groupes.</p>
+                <div class="mt-6 text-sm font-semibold text-blue-400">Portail Unifié <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+
+            <!-- Mattermost -->
+            <a href="https://mattermost.${DOMAIN}/oauth/gitlab/login" id="link-mattermost" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-indigo-600 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-indigo-600">
+                    <i class="fas fa-comments text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Mattermost</h3>
+                </div>
+                <p class="text-gray-600">Espace de discussion et de collaboration en temps réel pour les équipes.</p>
+                <div class="mt-6 text-sm font-semibold text-indigo-600">Portail Unifié <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+
+            <!-- Odoo ERP -->
+            <a href="https://odoo.${DOMAIN}" id="link-odoo" target="_blank" class="service-card block p-8 bg-white rounded-2xl shadow-md border-t-4 border-purple-600 hover:shadow-xl">
+                <div class="flex items-center mb-4 text-purple-600">
+                    <i class="fas fa-briefcase text-3xl mr-4"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Odoo ERP</h3>
+                </div>
+                <p class="text-gray-600">Gestion d'entreprise, CRM, Ventes et Site Web. Votre environnement métier complet.</p>
+                <div class="mt-6 text-sm font-semibold text-purple-600">Accès Direct <i class="fas fa-external-link-alt ml-1"></i></div>
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 py-8 mt-12">
+        <div class="container mx-auto text-center text-sm">
+            <p>&copy; 2026 BUT Techniques de Commercialisation - Skills Hub</p>
+            <p class="mt-2 text-gray-500">Déployé via Docker pour projet-edu.eu</p>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration
+        const API_URL = '/api';
+        const KC_URL = 'https://keycloak.${DOMAIN}';
+        const KC_REALM = 'but-tc';
+        const KC_CLIENT_ID = 'skills-hub-app';
+        const COOKIE_NAME = 'auth_token';
+        const REDIRECT_URI = window.location.origin + '/';
+
+        // Helper pour les cookies
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax; Secure";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i=0;i < ca.length;i++) {
+                let c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {   
+            document.cookie = name+'=; Max-Age=-99999999; path=/;';  
+        }
+
+        // SSO Redirect
+        function redirectToKeycloak() {
+            const authUrl = `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/auth?client_id=${KC_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=openid`;
+            window.location.href = authUrl;
+        }
+
+        // Handle Callback from Keycloak
+        async function handleCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                // On enlève le code de l'URL pour la propreté
+                window.history.replaceState({}, document.title, "/");
+
+                try {
+                    // On demande à notre API d'échanger le code contre un token
+                    // (Plus sécurisé que de le faire en JS pur avec le secret)
+                    const formData = new FormData();
+                    formData.append('code', code);
+                    formData.append('redirect_uri', REDIRECT_URI);
+
+                    const res = await fetch(`${API_URL}/auth/callback`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        setCookie(COOKIE_NAME, data.access_token, 1);
+                        localStorage.setItem('user_name', data.username);
+                        location.reload();
+                    }
+                } catch (e) {
+                    console.error("SSO Callback Error", e);
+                }
+            }
+        }
+
+        function handleLogout() {
+            eraseCookie(COOKIE_NAME);
+            localStorage.removeItem('user_name');
+            // Logout from Keycloak and redirect to Dashboard root
+            const logoutUrl = `${KC_URL}/realms/${KC_REALM}/protocol/openid-connect/logout?post_logout_redirect_uri=${encodeURIComponent(window.location.origin + '/')}&client_id=${KC_CLIENT_ID}`;
+            window.location.href = logoutUrl;
+        }
+
+        async function checkAuth() {
+            const token = getCookie(COOKIE_NAME);
+            // On ne se fie plus seulement au localStorage, on va chercher le profil frais
+            
+            if (token) {
+                document.getElementById('login-zone').classList.add('hidden');
+                document.getElementById('user-info').classList.remove('hidden');
+                
+                try {
+                    // Récupération du profil complet (Role, Email...)
+                    const res = await fetch(`${API_URL}/users/me`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (res.ok) {
+                        const user = await res.json();
+                        document.getElementById('user-display').innerText = `Bonjour, ${user.full_name || user.username}`;
+                        
+                        // LOGIQUE DYNAMIQUE ODOO
+                        if (user.role === 'STUDENT' && user.email) {
+                            // Calcul du nom de la base (doit matcher la logique Python/React)
+                            const namePart = user.email.split('@')[0];
+                            const dbName = namePart.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/^-|-$/g, '');
+                            const studentUrl = `https://${dbName}.${DOMAIN}`;
+                            
+                            const odooLink = document.getElementById('link-odoo');
+                            if (odooLink) {
+                                odooLink.href = studentUrl;
+                                // Visuel pour indiquer que c'est perso
+                                odooLink.classList.remove('border-purple-600');
+                                odooLink.classList.add('border-green-500');
+                                odooLink.querySelector('.text-purple-600').classList.replace('text-purple-600', 'text-green-600');
+                                odooLink.querySelector('.mt-6').innerHTML = 'Mon Instance <i class="fas fa-user-circle ml-1"></i>';
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Erreur récupération profil", e);
+                }
+            }
+        }
+
+        // Init
+        handleCallback().then(checkAuth);
+
+        // Detection automatique du hostname (existant)
+        const currentHost = window.location.hostname;
+        if (currentHost !== 'projet-edu.eu' && currentHost !== 'localhost') {
+            document.querySelectorAll('a').forEach(link => {
+                if (link.href.includes('projet-edu.eu')) {
+                    link.href = link.href.replace('projet-edu.eu', currentHost);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
