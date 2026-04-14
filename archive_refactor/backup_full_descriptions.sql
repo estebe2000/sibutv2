@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict vzwQdUqViNPb8XQwrvgTelkBIszvtox6ygNmBLbPQ6f0lcwjpP5yMUaNMk2DvwJ
+\restrict RnDm5Uz84RkbCucYZiNCDSpjOgbF7WOzsK1VrHf58phh5P6UqnxQ7jcExG9brC8
 
 -- Dumped from database version 15.15
 -- Dumped by pg_dump version 15.15
@@ -19,6 +19,22 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: public; Type: SCHEMA; Schema: -; Owner: app_user
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO app_user;
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: app_user
+--
+
+COMMENT ON SCHEMA public IS '';
+
+
+--
 -- Name: activitytype; Type: TYPE; Schema: public; Owner: app_user
 --
 
@@ -33,6 +49,32 @@ CREATE TYPE public.activitytype AS ENUM (
 ALTER TYPE public.activitytype OWNER TO app_user;
 
 --
+-- Name: responsibilityentitytype; Type: TYPE; Schema: public; Owner: app_user
+--
+
+CREATE TYPE public.responsibilityentitytype AS ENUM (
+    'RESOURCE',
+    'ACTIVITY',
+    'STUDENT'
+);
+
+
+ALTER TYPE public.responsibilityentitytype OWNER TO app_user;
+
+--
+-- Name: responsibilitytype; Type: TYPE; Schema: public; Owner: app_user
+--
+
+CREATE TYPE public.responsibilitytype AS ENUM (
+    'OWNER',
+    'INTERVENANT',
+    'TUTOR'
+);
+
+
+ALTER TYPE public.responsibilitytype OWNER TO app_user;
+
+--
 -- Name: userrole; Type: TYPE; Schema: public; Owner: app_user
 --
 
@@ -43,7 +85,10 @@ CREATE TYPE public.userrole AS ENUM (
     'PROF_RESP_SAE',
     'PROFESSOR',
     'STUDENT',
-    'GUEST'
+    'GUEST',
+    'DEPT_HEAD',
+    'ADMIN_STAFF',
+    'STUDY_DIRECTOR'
 );
 
 
@@ -119,6 +164,54 @@ CREATE TABLE public.activitycelink (
 
 
 ALTER TABLE public.activitycelink OWNER TO app_user;
+
+--
+-- Name: activitygroup; Type: TABLE; Schema: public; Owner: app_user
+--
+
+CREATE TABLE public.activitygroup (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    activity_id integer NOT NULL,
+    academic_year character varying NOT NULL
+);
+
+
+ALTER TABLE public.activitygroup OWNER TO app_user;
+
+--
+-- Name: activitygroup_id_seq; Type: SEQUENCE; Schema: public; Owner: app_user
+--
+
+CREATE SEQUENCE public.activitygroup_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.activitygroup_id_seq OWNER TO app_user;
+
+--
+-- Name: activitygroup_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: app_user
+--
+
+ALTER SEQUENCE public.activitygroup_id_seq OWNED BY public.activitygroup.id;
+
+
+--
+-- Name: activitygroupstudentlink; Type: TABLE; Schema: public; Owner: app_user
+--
+
+CREATE TABLE public.activitygroupstudentlink (
+    group_id integer NOT NULL,
+    student_uid character varying NOT NULL
+);
+
+
+ALTER TABLE public.activitygroupstudentlink OWNER TO app_user;
 
 --
 -- Name: competency; Type: TABLE; Schema: public; Owner: app_user
@@ -198,6 +291,43 @@ ALTER SEQUENCE public.essentialcomponent_id_seq OWNED BY public.essentialcompone
 
 
 --
+-- Name: evaluationrubric; Type: TABLE; Schema: public; Owner: app_user
+--
+
+CREATE TABLE public.evaluationrubric (
+    id integer NOT NULL,
+    activity_id integer NOT NULL,
+    name character varying NOT NULL,
+    total_points double precision NOT NULL,
+    academic_year character varying NOT NULL
+);
+
+
+ALTER TABLE public.evaluationrubric OWNER TO app_user;
+
+--
+-- Name: evaluationrubric_id_seq; Type: SEQUENCE; Schema: public; Owner: app_user
+--
+
+CREATE SEQUENCE public.evaluationrubric_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.evaluationrubric_id_seq OWNER TO app_user;
+
+--
+-- Name: evaluationrubric_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: app_user
+--
+
+ALTER SEQUENCE public.evaluationrubric_id_seq OWNED BY public.evaluationrubric.id;
+
+
+--
 -- Name: group; Type: TABLE; Schema: public; Owner: app_user
 --
 
@@ -233,6 +363,50 @@ ALTER TABLE public.group_id_seq OWNER TO app_user;
 --
 
 ALTER SEQUENCE public.group_id_seq OWNED BY public."group".id;
+
+
+--
+-- Name: internship; Type: TABLE; Schema: public; Owner: app_user
+--
+
+CREATE TABLE public.internship (
+    id integer NOT NULL,
+    student_uid character varying NOT NULL,
+    academic_year character varying NOT NULL,
+    start_date timestamp without time zone,
+    end_date timestamp without time zone,
+    company_name character varying,
+    company_address character varying,
+    company_phone character varying,
+    company_email character varying,
+    supervisor_name character varying,
+    supervisor_phone character varying,
+    supervisor_email character varying
+);
+
+
+ALTER TABLE public.internship OWNER TO app_user;
+
+--
+-- Name: internship_id_seq; Type: SEQUENCE; Schema: public; Owner: app_user
+--
+
+CREATE SEQUENCE public.internship_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.internship_id_seq OWNER TO app_user;
+
+--
+-- Name: internship_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: app_user
+--
+
+ALTER SEQUENCE public.internship_id_seq OWNED BY public.internship.id;
 
 
 --
@@ -272,6 +446,42 @@ ALTER TABLE public.learningoutcome_id_seq OWNER TO app_user;
 --
 
 ALTER SEQUENCE public.learningoutcome_id_seq OWNED BY public.learningoutcome.id;
+
+
+--
+-- Name: promotionresponsibility; Type: TABLE; Schema: public; Owner: app_user
+--
+
+CREATE TABLE public.promotionresponsibility (
+    id integer NOT NULL,
+    teacher_uid character varying NOT NULL,
+    group_id integer NOT NULL,
+    academic_year character varying NOT NULL
+);
+
+
+ALTER TABLE public.promotionresponsibility OWNER TO app_user;
+
+--
+-- Name: promotionresponsibility_id_seq; Type: SEQUENCE; Schema: public; Owner: app_user
+--
+
+CREATE SEQUENCE public.promotionresponsibility_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.promotionresponsibility_id_seq OWNER TO app_user;
+
+--
+-- Name: promotionresponsibility_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: app_user
+--
+
+ALTER SEQUENCE public.promotionresponsibility_id_seq OWNED BY public.promotionresponsibility.id;
 
 
 --
@@ -328,6 +538,123 @@ CREATE TABLE public.resourceaclink (
 
 
 ALTER TABLE public.resourceaclink OWNER TO app_user;
+
+--
+-- Name: responsibilitymatrix; Type: TABLE; Schema: public; Owner: app_user
+--
+
+CREATE TABLE public.responsibilitymatrix (
+    id integer NOT NULL,
+    user_id character varying NOT NULL,
+    entity_type public.responsibilityentitytype NOT NULL,
+    entity_id character varying NOT NULL,
+    role_type public.responsibilitytype NOT NULL,
+    academic_year character varying NOT NULL
+);
+
+
+ALTER TABLE public.responsibilitymatrix OWNER TO app_user;
+
+--
+-- Name: responsibilitymatrix_id_seq; Type: SEQUENCE; Schema: public; Owner: app_user
+--
+
+CREATE SEQUENCE public.responsibilitymatrix_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.responsibilitymatrix_id_seq OWNER TO app_user;
+
+--
+-- Name: responsibilitymatrix_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: app_user
+--
+
+ALTER SEQUENCE public.responsibilitymatrix_id_seq OWNED BY public.responsibilitymatrix.id;
+
+
+--
+-- Name: rubriccriterion; Type: TABLE; Schema: public; Owner: app_user
+--
+
+CREATE TABLE public.rubriccriterion (
+    id integer NOT NULL,
+    rubric_id integer NOT NULL,
+    ac_id integer,
+    ce_id integer,
+    label character varying NOT NULL,
+    description character varying,
+    weight double precision NOT NULL
+);
+
+
+ALTER TABLE public.rubriccriterion OWNER TO app_user;
+
+--
+-- Name: rubriccriterion_id_seq; Type: SEQUENCE; Schema: public; Owner: app_user
+--
+
+CREATE SEQUENCE public.rubriccriterion_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.rubriccriterion_id_seq OWNER TO app_user;
+
+--
+-- Name: rubriccriterion_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: app_user
+--
+
+ALTER SEQUENCE public.rubriccriterion_id_seq OWNED BY public.rubriccriterion.id;
+
+
+--
+-- Name: studentfile; Type: TABLE; Schema: public; Owner: app_user
+--
+
+CREATE TABLE public.studentfile (
+    id integer NOT NULL,
+    student_uid character varying NOT NULL,
+    filename character varying NOT NULL,
+    nc_path character varying NOT NULL,
+    entity_type public.responsibilityentitytype NOT NULL,
+    entity_id character varying NOT NULL,
+    is_locked boolean NOT NULL,
+    uploaded_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.studentfile OWNER TO app_user;
+
+--
+-- Name: studentfile_id_seq; Type: SEQUENCE; Schema: public; Owner: app_user
+--
+
+CREATE SEQUENCE public.studentfile_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.studentfile_id_seq OWNER TO app_user;
+
+--
+-- Name: studentfile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: app_user
+--
+
+ALTER SEQUENCE public.studentfile_id_seq OWNED BY public.studentfile.id;
+
 
 --
 -- Name: systemconfig; Type: TABLE; Schema: public; Owner: app_user
@@ -411,6 +738,13 @@ ALTER TABLE ONLY public.activity ALTER COLUMN id SET DEFAULT nextval('public.act
 
 
 --
+-- Name: activitygroup id; Type: DEFAULT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.activitygroup ALTER COLUMN id SET DEFAULT nextval('public.activitygroup_id_seq'::regclass);
+
+
+--
 -- Name: competency id; Type: DEFAULT; Schema: public; Owner: app_user
 --
 
@@ -425,10 +759,24 @@ ALTER TABLE ONLY public.essentialcomponent ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
+-- Name: evaluationrubric id; Type: DEFAULT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.evaluationrubric ALTER COLUMN id SET DEFAULT nextval('public.evaluationrubric_id_seq'::regclass);
+
+
+--
 -- Name: group id; Type: DEFAULT; Schema: public; Owner: app_user
 --
 
 ALTER TABLE ONLY public."group" ALTER COLUMN id SET DEFAULT nextval('public.group_id_seq'::regclass);
+
+
+--
+-- Name: internship id; Type: DEFAULT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.internship ALTER COLUMN id SET DEFAULT nextval('public.internship_id_seq'::regclass);
 
 
 --
@@ -439,10 +787,38 @@ ALTER TABLE ONLY public.learningoutcome ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
+-- Name: promotionresponsibility id; Type: DEFAULT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.promotionresponsibility ALTER COLUMN id SET DEFAULT nextval('public.promotionresponsibility_id_seq'::regclass);
+
+
+--
 -- Name: resource id; Type: DEFAULT; Schema: public; Owner: app_user
 --
 
 ALTER TABLE ONLY public.resource ALTER COLUMN id SET DEFAULT nextval('public.resource_id_seq'::regclass);
+
+
+--
+-- Name: responsibilitymatrix id; Type: DEFAULT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.responsibilitymatrix ALTER COLUMN id SET DEFAULT nextval('public.responsibilitymatrix_id_seq'::regclass);
+
+
+--
+-- Name: rubriccriterion id; Type: DEFAULT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.rubriccriterion ALTER COLUMN id SET DEFAULT nextval('public.rubriccriterion_id_seq'::regclass);
+
+
+--
+-- Name: studentfile id; Type: DEFAULT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.studentfile ALTER COLUMN id SET DEFAULT nextval('public.studentfile_id_seq'::regclass);
 
 
 --
@@ -985,6 +1361,31 @@ COPY public.activitycelink (activity_id, ce_id) FROM stdin;
 
 
 --
+-- Data for Name: activitygroup; Type: TABLE DATA; Schema: public; Owner: app_user
+--
+
+COPY public.activitygroup (id, name, activity_id, academic_year) FROM stdin;
+30	Moussaillon	3	2025-2026
+34	Aristide Briand	5	2025-2026
+35	Écume	5	2025-2026
+39	Estuaire	1	2025-2026
+\.
+
+
+--
+-- Data for Name: activitygroupstudentlink; Type: TABLE DATA; Schema: public; Owner: app_user
+--
+
+COPY public.activitygroupstudentlink (group_id, student_uid) FROM stdin;
+30	bl251857
+30	gt231116
+30	bn250395
+30	al252868
+34	bn250395
+\.
+
+
+--
 -- Data for Name: competency; Type: TABLE DATA; Schema: public; Owner: app_user
 --
 
@@ -1139,6 +1540,17 @@ COPY public.essentialcomponent (id, code, label, level, pathway, competency_id) 
 
 
 --
+-- Data for Name: evaluationrubric; Type: TABLE DATA; Schema: public; Owner: app_user
+--
+
+COPY public.evaluationrubric (id, activity_id, name, total_points, academic_year) FROM stdin;
+10	5	Nouvelle Grillerrt	20	2025-2026
+11	1	2026 ind	20	2025-2026
+12	34	2026--groupe	20	2025-2026
+\.
+
+
+--
 -- Data for Name: group; Type: TABLE DATA; Schema: public; Owner: app_user
 --
 
@@ -1150,21 +1562,27 @@ COPY public."group" (id, name, year, pathway, formation_type, academic_year) FRO
 62	Groupe 1 BUT1 FI	1	Tronc Commun	FI	2025-2026
 63	Groupe 4 BUT1 FI	1	Tronc Commun	FI	2025-2026
 64	Démission BUT1 FI	1	Tronc Commun	FI	2025-2026
-65	nan BUT1 FI	1	Tronc Commun	FI	2025-2026
 66	Groupe 2 BUT3 FI	3	Tronc Commun	FI	2025-2026
 67	Groupe 3 BUT3 FI	3	Tronc Commun	FI	2025-2026
 68	Groupe 1 BUT3 FI	3	Tronc Commun	FI	2025-2026
 69	Gr. étrangers BUT3 FI	3	Tronc Commun	FI	2025-2026
-70	nan BUT3 FI	3	Tronc Commun	FI	2025-2026
 71	groupe 1 BUT2 FI	2	Tronc Commun	FI	2025-2026
 72	groupe 2 BUT2 FI	2	Tronc Commun	FI	2025-2026
 73	groupe 3 BUT2 FI	2	Tronc Commun	FI	2025-2026
 74	Gr Etranger BUT2 FI	2	Tronc Commun	FI	2025-2026
-75	nan BUT2 FI	2	Tronc Commun	FI	2025-2026
 76	Global BUT2 FA	2	Tronc Commun	FA	2025-2026
 77	Global BUT3 FA	3	Tronc Commun	FA	2025-2026
 78	Groupe 1 BUT3 FA	3	Tronc Commun	FA	2025-2026
 79	Groupe 2 BUT3 FA	3	Tronc Commun	FA	2025-2026
+\.
+
+
+--
+-- Data for Name: internship; Type: TABLE DATA; Schema: public; Owner: app_user
+--
+
+COPY public.internship (id, student_uid, academic_year, start_date, end_date, company_name, company_address, company_phone, company_email, supervisor_name, supervisor_phone, supervisor_email) FROM stdin;
+1	pytels	2025-2026	\N	\N	a	4 Rue du Maulévrier	0770052646	aaa@aaaa.fr	tom cruise	01 02 03 04 05	tomtom@for.ever
 \.
 
 
@@ -1296,6 +1714,20 @@ COPY public.learningoutcome (id, code, label, description, level, pathway, compe
 51	AC35.03SME	Rechercher des partenaires et des subventions	L'expertise consiste ici à diversifier les sources de financement pour assurer la viabilité économique du projet complexe.\n\n### Ressources mobilisées\n• R5.SME.13 : Gestion commerciale-2.\n\n### Critères d’évaluation\n• Efficacité de la prospection : Capacité à identifier et convaincre des partenaires dont les valeurs sont alignées avec l'événement.\n• Qualité du mix de financement : Justesse du dosage entre autofinancement, mécénat, sponsoring et subventions publiques.\n\nEn résumé : cet AC permet de sécuriser le financement de projets événementiels complexes.	3	SME	12
 52	AC35.04SME	Gérer des prestataires	L'étudiant agit comme un chef d'orchestre capable de coordonner une chaîne complexe de sous-traitants techniques et artistiques.\n\n### Ressources mobilisées\n• R5.SME.14 : Organisation et logistique-2.\n• R6.SME.04 : Événementiel sectoriel.\n\n### Critères d’évaluation\n• Maîtrise de la chaîne logistique : Capacité à négocier les contrats et à contrôler la qualité des livrables de chaque prestataire.\n• Fluidité opérationnelle : Efficience de la coordination sur le terrain pour éviter les goulots d'étranglement ou les ruptures de service.\n\nEn résumé : cet AC forge la capacité à piloter une chaîne de prestataires diversifiés.	3	SME	12
 53	AC35.05SME	Manager un évènement complexe	C'est la compétence finale de synthèse : piloter le projet dans sa globalité, gérer l'équipe, les imprévus et mesurer les retombées réelles.\n\n### Mise en pratique (Stage)\n• Stage de fin de BUT (S6) en responsabilité.\n\n### Critères d’évaluation\n• Qualité du leadership : Aptitude à animer l'équipe projet et à prendre des décisions critiques en situation réelle.\n• Vision réflexive et critique : Capacité à produire un bilan post-événement analysant avec recul les résultats (KPIs) et proposant des pistes de régulation.\n\nEn résumé : cet AC valide la capacité à manager intégralement un projet événementiel d'envergure.	3	SME	12
+\.
+
+
+--
+-- Data for Name: promotionresponsibility; Type: TABLE DATA; Schema: public; Owner: app_user
+--
+
+COPY public.promotionresponsibility (id, teacher_uid, group_id, academic_year) FROM stdin;
+1	montieca	79	2025-2026
+2	montieca	78	2025-2026
+3	montieca	77	2025-2026
+4	montieca	76	2025-2026
+5	khaledz	59	2025-2026
+6	khaledz	60	2025-2026
 \.
 
 
@@ -2817,10 +3249,88 @@ COPY public.resourceaclink (resource_id, ac_id) FROM stdin;
 
 
 --
+-- Data for Name: responsibilitymatrix; Type: TABLE DATA; Schema: public; Owner: app_user
+--
+
+COPY public.responsibilitymatrix (id, user_id, entity_type, entity_id, role_type, academic_year) FROM stdin;
+7	davidm	RESOURCE	R1.01	INTERVENANT	2025-2026
+11	millemi	RESOURCE	R1.01	INTERVENANT	2025-2026
+13	davidm	ACTIVITY	3	INTERVENANT	2025-2026
+16	millemi	RESOURCE	R1.13	INTERVENANT	2025-2026
+17	davidm	ACTIVITY	1	INTERVENANT	2025-2026
+20	millemi	RESOURCE	R2.01	OWNER	2025-2026
+28	millemi	ACTIVITY	34	INTERVENANT	2025-2026
+29	tabellth	ACTIVITY	34	INTERVENANT	2025-2026
+30	montieca	ACTIVITY	34	INTERVENANT	2025-2026
+35	millemi	RESOURCE	R1.04	OWNER	2025-2026
+41	millemi	STUDENT	pytels	TUTOR	2025-2026
+46	tabellth	RESOURCE	R1.06	OWNER	2025-2026
+47	pytels	RESOURCE	R1.13	OWNER	2025-2026
+48	pytels	RESOURCE	R1.07	OWNER	2025-2026
+51	pytels	ACTIVITY	34	OWNER	2025-2026
+52	tabellth	ACTIVITY	1	OWNER	2025-2026
+53	khaledz	ACTIVITY	5	OWNER	2025-2026
+54	tabellth	ACTIVITY	8	OWNER	2025-2026
+55	davidm	STUDENT	bm250979	TUTOR	2025-2026
+56	davidm	STUDENT	gj252592	TUTOR	2025-2026
+\.
+
+
+--
+-- Data for Name: rubriccriterion; Type: TABLE DATA; Schema: public; Owner: app_user
+--
+
+COPY public.rubriccriterion (id, rubric_id, ac_id, ce_id, label, description, weight) FROM stdin;
+54	10	4	\N	Concevoir une offre cohérente et éthique en termes de produits, de prix, de distribution et de communication	\N	1
+53	10	3	\N	Choisir une cible et un positionnement en fonction de la segmentation du marché	\N	4
+55	10	2	\N	Mettre en oeuvre une étude de marché dans un environnement simple	\N	1.5
+56	10	\N	\N	Serie	\N	3.5
+63	11	\N	\N	horraire	\N	1
+64	11	\N	\N	serieux	\N	1
+57	11	1	\N	Analyser l'environnement d'une entreprise en repérant et appréciant les sources d'informations	\N	6
+58	11	2	\N	Mettre en oeuvre une étude de marché dans un environnement simple	\N	6
+59	11	3	\N	Choisir une cible et un positionnement en fonction de la segmentation du marché	\N	6
+67	12	81	\N	S'appuyer sur les indicateurs de performances pour améliorer la relation client	\N	1
+68	12	12	\N	Intégrer la RSE dans la stratégie de l'offre	\N	1
+66	12	27	\N	Maîtriser les codes propres à l'univers spécifique rencontré	\N	2.5
+72	12	9	\N	Mettre en place des outils de veille pour anticiper les évolutions de l'environnement	\N	3
+73	12	10	\N	Élaborer une stratégie marketing dans un environnement instable	\N	2
+70	12	25	\N	Identifier les techniques d’achat employées par un acheteur professionnel	\N	2
+69	12	94	\N	Développer un projet de façon proactive	\N	1.5
+74	12	\N	\N	presentation	\N	1.5
+75	12	\N	\N	orale	\N	1.5
+71	12	11	\N	Faire évoluer l'offre à l'aide de leviers de création de valeur	\N	1.5
+65	12	90	\N	Faire des préconisations grâce aux outils du diagnostic stratégique	\N	2.5
+\.
+
+
+--
+-- Data for Name: studentfile; Type: TABLE DATA; Schema: public; Owner: app_user
+--
+
+COPY public.studentfile (id, student_uid, filename, nc_path, entity_type, entity_id, is_locked, uploaded_at) FROM stdin;
+1	pytels	Capture_d'écran_2026-01-14_140546.png	SkillsHub/pytels/ResponsibilityEntityType.ACTIVITY_45/Capture_d'écran_2026-01-14_140546.png	ACTIVITY	45	f	2026-01-14 20:25:15.082687
+2	pytels	81o-7Rz9ZEL._UF1000,1000_QL80_.jpg	SkillsHub/pytels/ResponsibilityEntityType.ACTIVITY_45/81o-7Rz9ZEL._UF1000,1000_QL80_.jpg	ACTIVITY	45	f	2026-01-14 20:27:23.531205
+\.
+
+
+--
 -- Data for Name: systemconfig; Type: TABLE DATA; Schema: public; Owner: app_user
 --
 
 COPY public.systemconfig (id, key, value, category) FROM stdin;
+1	ldap_url	ldap://ldap:389	ldap
+2	ldap_base_dn	dc=univ,dc=fr	ldap
+3	smtp_host	mail	mail
+4	smtp_port	1025	mail
+6	APP_LOGO_URL	https://www-iut.univ-lehavre.fr/wp-content/uploads/2024/12/cropped-logo-IUT_WEB-5-3.png	branding
+7	APP_PRIMARY_COLOR	#1971c2	branding
+8	APP_WELCOME_MESSAGE	Bienvenue sur Skills Hub	branding
+5	mistral_api_key	3a218ppqAlBzjegiqPSu3JF0c8krF5fo	ai
+12	ai_api_key	3a218ppqAlBzjegiqPSu3JF0c8krF5fo	ai
+9	ai_provider	codestral	ai
+10	ai_model	codestral-latest	ai
+11	ai_endpoint	https://codestral.mistral.ai/v1	ai
 \.
 
 
@@ -2918,7 +3428,6 @@ COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
 234	sa230921	aida.seye@etu.univ-lehavre.fr	Aida Seye	STUDENT	68
 304	ma242522	aurelien.monnier@etu.univ-lehavre.fr	Aurelien Monnier	STUDENT	71
 235	sj231750	justine.sigogne@etu.univ-lehavre.fr	Justine Sigogne	STUDENT	69
-236	sl232993	lalya.susunaga@etu.univ-lehavre.fr	Lalya Susunaga	STUDENT	70
 237	ta231912	alice.teissere@etu.univ-lehavre.fr	Alice Teissere	STUDENT	69
 238	ts231183	selen.topcu@etu.univ-lehavre.fr	Selen Topcu	STUDENT	68
 239	vo224060	oleksandr.vusatyi@etu.univ-lehavre.fr	Oleksandr Vusatyi	STUDENT	66
@@ -3023,8 +3532,8 @@ COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
 190	bm231784	mathieu.bernard@etu.univ-lehavre.fr	Mathieu Bernard	STUDENT	67
 353	tm230204	marion.tisserand@etu.univ-lehavre.fr	Marion Tisserand	STUDENT	77
 356	ze230272	emilien.zwisler@etu.univ-lehavre.fr	Emilien Zwisler	STUDENT	77
-358	millemi	mickael.millet@univ-lehavre.fr	Mickael Millet	PROFESSOR	1
 191	bc230951	clemence.bostyn@etu.univ-lehavre.fr	Clemence Bostyn	STUDENT	69
+360	tv243830	vianney.tsiba-ngami@etu.univ-lehavre.fr	Vianney Tsiba ngami	GUEST	\N
 192	bn232234	naelya.boulard-diallo@etu.univ-lehavre.fr	Naelya Boulard-diallo	STUDENT	68
 194	bl230128	luis-samuel.branco@etu.univ-lehavre.fr	Luis samuel Branco	STUDENT	68
 196	cf232016	florian.caciotti@etu.univ-lehavre.fr	Florian Caciotti	STUDENT	69
@@ -3045,7 +3554,6 @@ COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
 123	lm252399	marilou.lebrument@etu.univ-lehavre.fr	Marilou Lebrument	STUDENT	61
 193	br231059	raika.boura@etu.univ-lehavre.fr	Raika Boura	STUDENT	66
 195	bt222383	theo.broust@etu.univ-lehavre.fr	Theo Broust	STUDENT	66
-357	pytels	steeve.pytel@univ-lehavre.fr	Steeve Pytel	PROFESSOR	1
 93	fp250049	pierre.fouillet@etu.univ-lehavre.fr	Pierre Fouillet	STUDENT	63
 94	gi251885	ismael.gerard@etu.univ-lehavre.fr	Ismael Gerard-depetris	STUDENT	61
 95	gl252149	lily.geretto@etu.univ-lehavre.fr	Lily Geretto	STUDENT	63
@@ -3096,7 +3604,6 @@ COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
 119	la252504	arthur.lagarde@etu.univ-lehavre.fr	Arthur Lagarde	STUDENT	61
 120	lm251469	marie.langlois@etu.univ-lehavre.fr	Marie Langlois	STUDENT	60
 121	lp252252	pauline.le-drezen@etu.univ-lehavre.fr	Pauline Le drezen	STUDENT	59
-359	davidm	maxime.david@univ-lehavre.fr	Maxime David	PROFESSOR	1
 122	lm252757	mahene.lebret--mendy@etu.univ-lehavre.fr	Mahene Lebret--mendy	STUDENT	59
 320	vc241032	camille.vincent@etu.univ-lehavre.fr	Camille Vincent	STUDENT	73
 324	dl243055	louise.danger@etu.univ-lehavre.fr	Louise Danger	STUDENT	76
@@ -3143,6 +3650,7 @@ COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
 169	tm251348	matheo.tauvel@etu.univ-lehavre.fr	Matheo Tauvel	STUDENT	63
 172	tc250504	cassandra.turgy@etu.univ-lehavre.fr	Cassandra Turgy	STUDENT	62
 219	ll232027	louis.lecomte@etu.univ-lehavre.fr	Louis Lecomte	STUDENT	67
+359	davidm	maxime.david@univ-lehavre.fr	Maxime David	PROFESSOR	1
 249	bm231958	mathis.baumann@etu.univ-lehavre.fr	Mathis Baumann	STUDENT	71
 157	rt251714	timeo.rossard@etu.univ-lehavre.fr	Timeo Rossard	STUDENT	61
 162	sl251481	lucie.sapin@etu.univ-lehavre.fr	Lucie Sapin	STUDENT	61
@@ -3188,6 +3696,13 @@ COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
 293	lp242802	paloma.lequien@etu.univ-lehavre.fr	Paloma Lequien	STUDENT	74
 298	mj240527	jules.mary@etu.univ-lehavre.fr	Jules Mary	STUDENT	71
 303	ma242510	adele.michel@etu.univ-lehavre.fr	Adele Michel	STUDENT	72
+358	millemi	mickael.millet@univ-lehavre.fr	Mickael Millet	DEPT_HEAD	1
+362	khaledz	zahraa.khaled@univ-lehavre.fr	Zahraa Khaled	STUDY_DIRECTOR	1
+361	montieca	caroline.milcent-montier@univ-lehavre.fr	Caroline Milcent Montier	STUDY_DIRECTOR	1
+236	sl232993	lalya.susunaga@etu.univ-lehavre.fr	Lalya Susunaga	GUEST	\N
+357	pytels	steeve.pytel@univ-lehavre.fr	Steeve Pytel	PROFESSOR	1
+363	tabellth	thierry.tabellion@univ-lehavre.fr	Thierry Tabellion	PROFESSOR	1
+364	duc	chaofan.du@univ-lehavre.fr	Chaofan Du	PROFESSOR	1
 \.
 
 
@@ -3196,6 +3711,13 @@ COPY public."user" (id, ldap_uid, email, full_name, role, group_id) FROM stdin;
 --
 
 SELECT pg_catalog.setval('public.activity_id_seq', 63, true);
+
+
+--
+-- Name: activitygroup_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
+--
+
+SELECT pg_catalog.setval('public.activitygroup_id_seq', 39, true);
 
 
 --
@@ -3213,10 +3735,24 @@ SELECT pg_catalog.setval('public.essentialcomponent_id_seq', 110, true);
 
 
 --
+-- Name: evaluationrubric_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
+--
+
+SELECT pg_catalog.setval('public.evaluationrubric_id_seq', 12, true);
+
+
+--
 -- Name: group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.group_id_seq', 79, true);
+SELECT pg_catalog.setval('public.group_id_seq', 80, true);
+
+
+--
+-- Name: internship_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
+--
+
+SELECT pg_catalog.setval('public.internship_id_seq', 1, true);
 
 
 --
@@ -3227,6 +3763,13 @@ SELECT pg_catalog.setval('public.learningoutcome_id_seq', 123, true);
 
 
 --
+-- Name: promotionresponsibility_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
+--
+
+SELECT pg_catalog.setval('public.promotionresponsibility_id_seq', 6, true);
+
+
+--
 -- Name: resource_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
@@ -3234,17 +3777,38 @@ SELECT pg_catalog.setval('public.resource_id_seq', 260, true);
 
 
 --
+-- Name: responsibilitymatrix_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
+--
+
+SELECT pg_catalog.setval('public.responsibilitymatrix_id_seq', 56, true);
+
+
+--
+-- Name: rubriccriterion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
+--
+
+SELECT pg_catalog.setval('public.rubriccriterion_id_seq', 75, true);
+
+
+--
+-- Name: studentfile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
+--
+
+SELECT pg_catalog.setval('public.studentfile_id_seq', 4, true);
+
+
+--
 -- Name: systemconfig_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.systemconfig_id_seq', 1, false);
+SELECT pg_catalog.setval('public.systemconfig_id_seq', 12, true);
 
 
 --
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: app_user
 --
 
-SELECT pg_catalog.setval('public.user_id_seq', 359, true);
+SELECT pg_catalog.setval('public.user_id_seq', 364, true);
 
 
 --
@@ -3272,6 +3836,22 @@ ALTER TABLE ONLY public.activitycelink
 
 
 --
+-- Name: activitygroup activitygroup_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.activitygroup
+    ADD CONSTRAINT activitygroup_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: activitygroupstudentlink activitygroupstudentlink_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.activitygroupstudentlink
+    ADD CONSTRAINT activitygroupstudentlink_pkey PRIMARY KEY (group_id, student_uid);
+
+
+--
 -- Name: competency competency_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -3288,6 +3868,14 @@ ALTER TABLE ONLY public.essentialcomponent
 
 
 --
+-- Name: evaluationrubric evaluationrubric_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.evaluationrubric
+    ADD CONSTRAINT evaluationrubric_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: group group_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -3296,11 +3884,27 @@ ALTER TABLE ONLY public."group"
 
 
 --
+-- Name: internship internship_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.internship
+    ADD CONSTRAINT internship_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: learningoutcome learningoutcome_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
 --
 
 ALTER TABLE ONLY public.learningoutcome
     ADD CONSTRAINT learningoutcome_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: promotionresponsibility promotionresponsibility_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.promotionresponsibility
+    ADD CONSTRAINT promotionresponsibility_pkey PRIMARY KEY (id);
 
 
 --
@@ -3317,6 +3921,30 @@ ALTER TABLE ONLY public.resource
 
 ALTER TABLE ONLY public.resourceaclink
     ADD CONSTRAINT resourceaclink_pkey PRIMARY KEY (resource_id, ac_id);
+
+
+--
+-- Name: responsibilitymatrix responsibilitymatrix_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.responsibilitymatrix
+    ADD CONSTRAINT responsibilitymatrix_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rubriccriterion rubriccriterion_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.rubriccriterion
+    ADD CONSTRAINT rubriccriterion_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: studentfile studentfile_pkey; Type: CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.studentfile
+    ADD CONSTRAINT studentfile_pkey PRIMARY KEY (id);
 
 
 --
@@ -3350,6 +3978,13 @@ CREATE INDEX ix_competency_code ON public.competency USING btree (code);
 
 
 --
+-- Name: ix_evaluationrubric_activity_id; Type: INDEX; Schema: public; Owner: app_user
+--
+
+CREATE INDEX ix_evaluationrubric_activity_id ON public.evaluationrubric USING btree (activity_id);
+
+
+--
 -- Name: ix_group_name; Type: INDEX; Schema: public; Owner: app_user
 --
 
@@ -3357,10 +3992,52 @@ CREATE INDEX ix_group_name ON public."group" USING btree (name);
 
 
 --
+-- Name: ix_internship_student_uid; Type: INDEX; Schema: public; Owner: app_user
+--
+
+CREATE INDEX ix_internship_student_uid ON public.internship USING btree (student_uid);
+
+
+--
+-- Name: ix_promotionresponsibility_group_id; Type: INDEX; Schema: public; Owner: app_user
+--
+
+CREATE INDEX ix_promotionresponsibility_group_id ON public.promotionresponsibility USING btree (group_id);
+
+
+--
+-- Name: ix_promotionresponsibility_teacher_uid; Type: INDEX; Schema: public; Owner: app_user
+--
+
+CREATE INDEX ix_promotionresponsibility_teacher_uid ON public.promotionresponsibility USING btree (teacher_uid);
+
+
+--
 -- Name: ix_resource_code; Type: INDEX; Schema: public; Owner: app_user
 --
 
 CREATE INDEX ix_resource_code ON public.resource USING btree (code);
+
+
+--
+-- Name: ix_responsibilitymatrix_user_id; Type: INDEX; Schema: public; Owner: app_user
+--
+
+CREATE INDEX ix_responsibilitymatrix_user_id ON public.responsibilitymatrix USING btree (user_id);
+
+
+--
+-- Name: ix_rubriccriterion_rubric_id; Type: INDEX; Schema: public; Owner: app_user
+--
+
+CREATE INDEX ix_rubriccriterion_rubric_id ON public.rubriccriterion USING btree (rubric_id);
+
+
+--
+-- Name: ix_studentfile_student_uid; Type: INDEX; Schema: public; Owner: app_user
+--
+
+CREATE INDEX ix_studentfile_student_uid ON public.studentfile USING btree (student_uid);
 
 
 --
@@ -3410,6 +4087,30 @@ ALTER TABLE ONLY public.activitycelink
 
 
 --
+-- Name: activitygroup activitygroup_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.activitygroup
+    ADD CONSTRAINT activitygroup_activity_id_fkey FOREIGN KEY (activity_id) REFERENCES public.activity(id);
+
+
+--
+-- Name: activitygroupstudentlink activitygroupstudentlink_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.activitygroupstudentlink
+    ADD CONSTRAINT activitygroupstudentlink_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.activitygroup(id);
+
+
+--
+-- Name: activitygroupstudentlink activitygroupstudentlink_student_uid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.activitygroupstudentlink
+    ADD CONSTRAINT activitygroupstudentlink_student_uid_fkey FOREIGN KEY (student_uid) REFERENCES public."user"(ldap_uid);
+
+
+--
 -- Name: essentialcomponent essentialcomponent_competency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -3418,11 +4119,43 @@ ALTER TABLE ONLY public.essentialcomponent
 
 
 --
+-- Name: evaluationrubric evaluationrubric_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.evaluationrubric
+    ADD CONSTRAINT evaluationrubric_activity_id_fkey FOREIGN KEY (activity_id) REFERENCES public.activity(id);
+
+
+--
+-- Name: internship internship_student_uid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.internship
+    ADD CONSTRAINT internship_student_uid_fkey FOREIGN KEY (student_uid) REFERENCES public."user"(ldap_uid);
+
+
+--
 -- Name: learningoutcome learningoutcome_competency_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
 ALTER TABLE ONLY public.learningoutcome
     ADD CONSTRAINT learningoutcome_competency_id_fkey FOREIGN KEY (competency_id) REFERENCES public.competency(id);
+
+
+--
+-- Name: promotionresponsibility promotionresponsibility_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.promotionresponsibility
+    ADD CONSTRAINT promotionresponsibility_group_id_fkey FOREIGN KEY (group_id) REFERENCES public."group"(id);
+
+
+--
+-- Name: promotionresponsibility promotionresponsibility_teacher_uid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.promotionresponsibility
+    ADD CONSTRAINT promotionresponsibility_teacher_uid_fkey FOREIGN KEY (teacher_uid) REFERENCES public."user"(ldap_uid);
 
 
 --
@@ -3442,6 +4175,30 @@ ALTER TABLE ONLY public.resourceaclink
 
 
 --
+-- Name: rubriccriterion rubriccriterion_ac_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.rubriccriterion
+    ADD CONSTRAINT rubriccriterion_ac_id_fkey FOREIGN KEY (ac_id) REFERENCES public.learningoutcome(id);
+
+
+--
+-- Name: rubriccriterion rubriccriterion_ce_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.rubriccriterion
+    ADD CONSTRAINT rubriccriterion_ce_id_fkey FOREIGN KEY (ce_id) REFERENCES public.essentialcomponent(id);
+
+
+--
+-- Name: rubriccriterion rubriccriterion_rubric_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
+--
+
+ALTER TABLE ONLY public.rubriccriterion
+    ADD CONSTRAINT rubriccriterion_rubric_id_fkey FOREIGN KEY (rubric_id) REFERENCES public.evaluationrubric(id);
+
+
+--
 -- Name: user user_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: app_user
 --
 
@@ -3450,8 +4207,24 @@ ALTER TABLE ONLY public."user"
 
 
 --
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: app_user
+--
+
+REVOKE USAGE ON SCHEMA public FROM PUBLIC;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict vzwQdUqViNPb8XQwrvgTelkBIszvtox6ygNmBLbPQ6f0lcwjpP5yMUaNMk2DvwJ
+\unrestrict RnDm5Uz84RkbCucYZiNCDSpjOgbF7WOzsK1VrHf58phh5P6UqnxQ7jcExG9brC8
 
+ALTER TABLE public."user" ADD COLUMN IF NOT EXISTS phone character varying;
+
+-- 🛠 DATABASE PATCHES (Skills Hub v2)
+ALTER TABLE public."user" ADD COLUMN IF NOT EXISTS phone character varying;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS company_id INTEGER;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS evaluation_token character varying;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS token_expires_at timestamp without time zone;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS is_finalized BOOLEAN DEFAULT FALSE;
+ALTER TABLE public."internship" ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;

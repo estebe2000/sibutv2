@@ -1,140 +1,95 @@
-# But TC Skills - Brownfield Architecture Document
+# Skills Hub : Documentation d'Architecture Brownfield (État PoC)
 
-## Introduction
+## 1. Introduction
 
-This document captures the **CURRENT STATE** (As-Is) of the "But TC Skills" project codebase as of January 2026. It serves as a reference for the planned refactoring towards a unified student portal.
+Ce document décrit l'architecture RÉELLE du projet Skills Hub à la fin de sa phase PoC. Il sert de base pour la planification de la transition vers la production et la fragmentation de la base de données.
 
-### Document Scope
+### État du Document
+*   **Version** : 1.0 (Audit PoC)
+*   **Date** : 12/04/2026
+*   **Auteur** : Winston (Architecte)
 
-Comprehensive documentation of the entire system, with a focus on:
-- Infrastructure (Docker, Network, Services)
-- Integration Points (LDAP, Nextcloud, OnlyOffice)
-- Frontend Architecture & Technical Debt
-- Backend Data Flow
+---
 
-### Change Log
+## 2. Vue d'Ensemble Technique
 
-| Date       | Version | Description                 | Author     |
-| ---------- | ------- | --------------------------- | ---------- |
-| 2026-01-11 | 1.0     | Initial brownfield analysis | Architect  |
+### Stack Technologique Actuelle
+| Composant | Technologie | Version (estimée) | Notes |
+| :--- | :--- | :--- | :--- |
+| **Backend** | FastAPI | 0.100+ | Utilise SQLModel (SQLAlchemy + Pydantic) |
+| **Frontend** | React | 18.x | Vite, Mantine UI, Zustand |
+| **Base de Données** | PostgreSQL | 15+ | Monolithique (un seul schéma public) |
+| **Auth** | Keycloak | v26 | Intégration LDAP/OIDC |
+| **Stockage** | Nextcloud | v28+ | Via API/WebDAV pour les fichiers étudiants |
 
-## Quick Reference - Key Files and Entry Points
-
-### Critical Files
-
-- **Infrastructure**: `docker-compose.yml` (Service orchestration)
-- **Frontend Entry**: `apps/web/src/App.tsx` (Main Routing & Layout)
-- **Frontend Logic**: `apps/web/src/views/CompetencyEditor.tsx` (Core business logic, high complexity)
-- **API Entry**: `apps/api/app/main.py` (FastAPI entry point)
-- **Routing**: `apps/dashboard/nginx.conf` (Current Gateway configuration)
-
-## High Level Architecture
-
-### Technical Summary
-
-The project is a **Service-Oriented Architecture** orchestrated via Docker Compose. It combines a custom developed Skills Hub (FastAPI/React) with off-the-shelf open-source platforms (Nextcloud, Mattermost, OnlyOffice, OpenLDAP).
-
-### Actual Tech Stack
-
-| Category      | Technology       | Version | Notes                                |
-| ------------- | ---------------- | ------- | ------------------------------------ |
-| **Frontend**  | React (Vite)     | 19.x    | Uses Mantine UI, Zustand, Tailwind   |
-| **Backend**   | Python (FastAPI) | Latest  | Uses SQLModel, Pandas, ReportLab     |
-| **Database**  | PostgreSQL       | 15      | Main DB for Skills & Mattermost      |
-| **Auth**      | OpenLDAP         | Osixia  | Currently mocks University LDAP      |
-| **Storage**   | Nextcloud        | Stable  | Apache image, currently on **SQLite**|
-| **Office**    | OnlyOffice       | Latest  | Integrated via JWT                   |
-| **Gateway**   | Nginx            | Latest  | Currently static file server only    |
-
-## Repository Structure Reality Check
-
-- **Type**: Monorepo (Apps + Infrastructure in one repo)
-- **Package Manager**: NPM (Frontend), PIP (Backend)
-- **Notable**: Infrastructure configuration is mixed between `infrastructure/` folder and `docker-compose.yml` root.
-
-### Project Structure (Actual)
-
+### Structure du Dépôt
 ```text
-project-root/
+/
 ├── apps/
-│   ├── api/             # FastAPI Backend
-│   │   ├── app/         # Application code
-│   │   └── requirements.txt
-│   ├── web/             # React Frontend
-│   │   ├── src/
-│   │   │   ├── views/   # Page components (Heavy logic here)
-│   │   │   ├── store/   # Zustand stores
-│   │   │   └── App.tsx  # Main router
-│   │   └── package.json
-│   └── dashboard/       # Nginx Gateway (Incomplete)
-│       └── nginx.conf   # Static config, missing proxy rules
-├── infrastructure/      # Config files for services
-│   ├── local/           # Local dev setup scripts
-│   └── caprover/        # Deployment configs
-├── docker-compose.yml   # Main orchestrator
-└── .bmad-core/          # Project Management methodology
+│   ├── api/            # Backend FastAPI
+│   │   ├── app/
+│   │   │   ├── models.py    # Monolithe de modèles SQLModel
+│   │   │   ├── routers/   # Endpoints API (Auth, Curriculum, etc.)
+│   │   │   └── services/  # Logique métier (Partielle)
+│   ├── web/            # Frontend React
+│   └── scodoc-api-relay/ # Proxy pour Scodoc (à vérifier)
+├── infrastructure/     # Docker Compose (Dev/Prod)
+└── docs/               # Documentation (README, PRD)
 ```
 
-## Technical Debt and Known Issues
+---
 
-### 🔴 Critical Technical Debt
+## 3. Analyse de la Base de Données (Monolithe)
 
-1.  **Dashboard / Gateway Routing**:
-    - `apps/dashboard/nginx.conf` serves only static files.
-    - **Issue**: Services (Nextcloud, Mattermost) are accessed via different ports (8082, 8065) instead of a unified domain/path strategy. This breaks the "Unified Portal" experience.
+Actuellement, tous les modèles résident dans `apps/api/app/models.py`.
 
-2.  **Frontend Monoliths**:
-    - `apps/web/src/views/CompetencyEditor.tsx` (>600 lines) contains UI, API calls, and complex state logic mixed together.
-    - **Risk**: Hard to maintain, test, or refactor.
+### Domaines de Données Identifiés
+1.  **IAM & Core** : `User`, `Group`, `SystemConfig`.
+2.  **Référentiel (Curriculum)** : `Competency`, `LearningOutcome` (AC), `EssentialComponent` (CE), `Resource`.
+3.  **Activités & Évaluation** : `Activity` (SAE/Stages), `ActivityGroup`, `EvaluationRubric`, `Grade`.
+4.  **Stages (Internships)** : `Internship`, `Company`, `InternshipVisit`, `InternshipApplication`.
+5.  **Portfolio & Traces** : `PortfolioPage`, `StudentFile`, `StudentPPP`.
 
-3.  **Nextcloud Configuration**:
-    - Running on **SQLite** (`SQLITE_DATABASE=nextcloud` in docker-compose).
-    - **Risk**: Performance bottlenecks and locking issues in production. Must migrate to Postgres/MySQL.
+### Relations Critiques (Goulots d'étranglement pour la fragmentation)
+*   `Activity` est lié à `LearningOutcome` et `EssentialComponent` via des tables de liaison (`ActivityACLink`, `ActivityCELink`).
+*   `Internship` utilise `LearningOutcome` via `InternshipACLink`.
+*   `User` (LDAP UID) est la clé étrangère omniprésente utilisée dans presque tous les modules.
 
-4.  **API URL Hardcoding**:
-    - Frontend relies on `window.location.hostname` sniffing to guess API URL.
-    - **Fix**: Should use Environment Variables (`VITE_API_URL`) injected at build/runtime.
+---
 
-### ⚠️ Integration Fragility
+## 4. Dette Technique et Points de Vigilance
 
-- **OnlyOffice / Nextcloud**:
-    - Integration relies on `extra_hosts` (`projet-edu.eu:host-gateway`) to loopback Docker networking.
-    - Known issues with "Integration Error" often stem from Mixed Content (HTTP vs HTTPS) or unreachable internal URLs.
+### Dette Identifiée
+*   **Absence de Schémas** : Toutes les tables sont dans le schéma `public`. La fragmentation demandée par le PRD nécessitera une migration vers des schémas (`core`, `curriculum`, `internships`).
+*   **Typage Pydantic** : Mélange entre les modèles de table et les modèles de réponse API.
+*   **Logique Scodoc** : Actuellement centrée sur les étudiants. L'extension vers les responsables et ressources (FR1 du PRD) nécessite de nouveaux services.
+*   **Stages vs SAE** : Le PRD demande de traiter les Stages comme des "SAE Solo". L'architecture actuelle sépare `Activity` et `Internship`, ce qui crée une duplication de logique d'évaluation.
 
-## Data Models and Flows
+### Workarounds du PoC
+*   Les informations d'entreprise dans `Internship` sont parfois dupliquées (`company_name`, `company_address`) au lieu de pointer systématiquement vers `Company`.
 
-### Database (PostgreSQL)
-- **Skills DB**: `but_tc_db` (User: app_user)
-- **Mattermost DB**: `but_tc_db_mattermost` (User: mmuser)
+---
 
-### Authentication Flow (Current)
-1.  **LDAP** is the source of truth (mocked).
-2.  **API** connects to LDAP via `ldap3`.
-3.  **Frontend** sends creds to API -> API validates vs LDAP -> Returns Token.
-4.  **Nextcloud/Mattermost** have their own auth (currently separate, target is SSO).
+## 5. Stratégie de Transition (Migration)
 
-## Infrastructure & Deployment
+### Étape 1 : Isolation des Schémas (Fragmentation)
+Nous allons migrer vers une structure multi-schémas :
+*   `sch_core` : Utilisateurs, Groupes, Config.
+*   `sch_curriculum` : Référentiel de compétences (Compétences, AC, CE, Ressources).
+*   `sch_pedagogy` : SAE, Stages, Groupes, Évaluations.
+*   `sch_portfolio` : Pages, Exports, Traces.
 
-### Local Development
-- Command: `npm run infra:up` (Wraps docker-compose + init scripts).
-- Services exposed on localhost ports (3000, 8000, 8081, 8082, etc.).
+### Étape 2 : Unification SAE/Stages
+Refactoriser le module `Internship` pour qu'il hérite ou utilise les mécanismes de `Activity` (SAE), permettant ainsi de réutiliser les grilles d'évaluation et le mapping des AC.
 
-### "Isolated" Server Deployment
-- Constraint: Server has Outbound internet but **NO Inbound** (No public IP/DNS).
-- **SSL Challenge**: Let's Encrypt HTTP-01 will fail.
-- **Solution needed**: DNS-01 Challenge or manual certificate management.
+### Étape 3 : Abstraction Scodoc
+Créer un service `ScodocService` dédié pour isoler les appels API et le mapping des données, afin de protéger le reste du système contre les changements d'API Scodoc.
 
-## Refactoring Roadmap (Pre-requisites)
+---
 
-To achieve the "Unified Portal" vision, the following architectural changes are required:
+## 6. Infrastructure de Production
 
-1.  **Gateway Unification**:
-    - Transform `apps/dashboard` into a true Reverse Proxy (Traefik or Nginx).
-    - Map paths (`/nextcloud`, `/mattermost`, `/api`) to internal containers.
-
-2.  **SSO Implementation**:
-    - Centralize Auth. When user logs into Dashboard, they should be authenticated for all services (CAS or OAuth2).
-
-3.  **Frontend Decomposition**:
-    - Split `CompetencyEditor` into functional atoms (Data Fetcher, UI Presenter, State Manager).
-    - Move API logic to a dedicated Service Layer or Custom Hooks.
+### Déploiement Cible (172.16.95.98)
+*   **Reverse Proxy** : Nginx gérant les certificats SSL et le dispatching vers les conteneurs.
+*   **Keycloak** : Doit être configuré avec `KC_HOSTNAME` explicite pour éviter les erreurs de redirection OIDC rencontrées lors du PoC.
+*   **Nextcloud** : Utilisation de l'application `user_oidc` pour assurer la cohérence des UID entre Skills Hub et le stockage des fichiers.

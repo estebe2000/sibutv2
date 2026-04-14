@@ -41,6 +41,25 @@ class ActivityGroup(SQLModel, table=True):
     activity: "Activity" = Relationship(back_populates="activity_groups")
     students: List["User"] = Relationship(back_populates="activity_groups", link_model=ActivityGroupStudentLink)
 
+class ActivityGroupGrade(SQLModel, table=True):
+    """Note globale attribuée à un groupe pour une activité (SAE/Projet)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    group_id: int = Field(foreign_key="activitygroup.id")
+    activity_id: int = Field(foreign_key="activity.id")
+    grade: float = Field(default=0.0)
+    comment: Optional[str] = None
+    updated_at: datetime = Field(default_factory=datetime.now)
+
+class StudentIndividualGrade(SQLModel, table=True):
+    """Note ou modulation individuelle pour un étudiant au sein d'un groupe"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    group_id: int = Field(foreign_key="activitygroup.id")
+    student_uid: str = Field(foreign_key="user.ldap_uid")
+    individual_grade: Optional[float] = None # Si on veut une note finale directe
+    modulation_score: float = Field(default=1.0) # Coefficient de modulation (0.0 à 1.5 par ex)
+    comment: Optional[str] = None
+    updated_at: datetime = Field(default_factory=datetime.now)
+
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     ldap_uid: str = Field(unique=True, index=True)
@@ -94,6 +113,16 @@ class PromotionResponsibility(SQLModel, table=True):
     group_id: int = Field(index=True, foreign_key="group.id")
     academic_year: str = "2025-2026"
 
+class ValidationStatus(str, Enum):
+    PENDING = "PENDING"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+
+class InternshipACLink(SQLModel, table=True):
+    """Lien entre un stage et les AC ciblés par l'étudiant"""
+    internship_id: Optional[int] = Field(default=None, foreign_key="internship.id", primary_key=True)
+    ac_id: Optional[int] = Field(default=None, foreign_key="learningoutcome.id", primary_key=True)
+
 class Company(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True, unique=True)
@@ -139,6 +168,11 @@ class Internship(SQLModel, table=True):
     token_expires_at: Optional[datetime] = None
     is_finalized: bool = Field(default=False)
     is_active: bool = Field(default=True)
+
+    # Validation Pédagogique (Avant stage)
+    director_validation_status: ValidationStatus = Field(default=ValidationStatus.PENDING)
+    director_feedback: Optional[str] = None
+    targeted_ac: List["LearningOutcome"] = Relationship(link_model=InternshipACLink)
 
     visits: List["InternshipVisit"] = Relationship(back_populates="internship")
 
@@ -370,3 +404,13 @@ class Activity(SQLModel, table=True):
     learning_outcomes: List[LearningOutcome] = Relationship(back_populates="activities", link_model=ActivityACLink)
     essential_components: List[EssentialComponent] = Relationship(back_populates="activities", link_model=ActivityCELink)
     activity_groups: List[ActivityGroup] = Relationship(back_populates="activity")
+
+class StudentCompetencyProgress(SQLModel, table=True):
+    """Suivi de l'acquisition des compétences par l'étudiant"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_uid: str = Field(index=True, foreign_key="user.ldap_uid")
+    competency_id: int = Field(foreign_key="competency.id")
+    semester: int # 1 à 6
+    level_validated: int = 1 # Niveau atteint (1, 2, or 3)
+    is_validated: bool = Field(default=False)
+    updated_at: datetime = Field(default_factory=datetime.now)

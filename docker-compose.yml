@@ -41,7 +41,7 @@ services:
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu ${DOMAIN} *.${DOMAIN}
-      - OVERWRITEPROTOCOL=https
+      # - OVERWRITEPROTOCOL=https # Commenté pour autoriser le trafic interne OnlyOffice
       - REDIS_HOST=redis
       - POSTGRES_HOST=db_nextcloud
       - POSTGRES_DB=nextcloud
@@ -332,6 +332,16 @@ services:
     restart: unless-stopped
     ports:
       - "8091:8091"
+    networks:
+      - app_network
+
+  scodoc-api-relay:
+    build:
+      context: ./apps/scodoc-api-relay
+    container_name: but_tc_scodoc_api_relay
+    restart: unless-stopped
+    ports:
+      - "8092:8000"
     networks:
       - app_network
 
