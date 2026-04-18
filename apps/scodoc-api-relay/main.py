@@ -197,7 +197,9 @@ def demo_view():
 @app.get("/{path:path}")
 def proxy_scodoc(path: str, request: Request):
     if not path or path == "favicon.ico": return {"status": "ok"}
-    return fetch_scodoc_api(path, params=dict(request.query_params))
+    # Si le path commence par 'api/', on le nettoie car fetch_scodoc_api rajoute déjà /api
+    clean_path = path[4:] if path.startswith("api/") else path
+    return fetch_scodoc_api(clean_path, params=dict(request.query_params))
 
 if __name__ == "__main__":
     import uvicorn

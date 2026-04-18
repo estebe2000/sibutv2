@@ -3,33 +3,20 @@ import time
 import sys
 
 # Configuration
-KEYCLOAK_URL = "http://localhost:8080"
+# En local sur Mac, on passe par l'Ingress (port 80) 
+# et on utilise les headers Host pour le routage Nginx
+INGRESS_URL = "http://localhost:80"
+DOMAIN = "educ-ai.fr"
 REALM = "but-tc"
 CLIENT_ID = "skills-hub-app"
-API_URL = "http://localhost:8000/api/v1"
 
 USERNAME = "pytels"
 PASSWORD = "Monpetitponey76**"
 
-def wait_for_service(url, name, timeout=60):
-    """Attendre qu'un service soit disponible"""
-    start_time = time.time()
-    print(f"[*] Attente du service {name} ({url})...")
-    while time.time() - start_time < timeout:
-        try:
-            response = requests.get(url, timeout=2)
-            if response.status_code < 500:
-                print(f"[+] {name} est en ligne !")
-                return True
-        except requests.exceptions.RequestException:
-            pass
-        time.sleep(2)
-    print(f"[!] Erreur: Timeout lors de l'attente de {name}")
-    return False
-
 def test_connection():
     # 1. Obtenir un token de Keycloak
-    token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
+    token_url = f"{INGRESS_URL}/realms/{REALM}/protocol/openid-connect/token"
+    auth_host = f"auth.{DOMAIN}"
     
     payload = {
         'grant_type': 'password',
@@ -39,9 +26,9 @@ def test_connection():
         'scope': 'openid profile email'
     }
     
-    print(f"[*] Tentative de connexion Keycloak pour '{USERNAME}'...")
+    print(f"[*] Tentative de connexion Keycloak ({auth_host}) pour '{USERNAME}'...")
     try:
-        response = requests.post(token_url, data=payload)
+        response = requests.post(token_url, data=payload, headers={"Host": auth_host}, timeout=10)
         if response.status_code != 200:
             print(f"[!] Échec de l'authentification: {response.status_code}")
             print(f"Détails: {response.text}")
@@ -56,13 +43,16 @@ def test_connection():
         return False
 
     # 2. Appeler l'API avec le token
-    print(f"[*] Appel de l'endpoint de test API: {API_URL}/auth/test")
+    api_host = f"hub.{DOMAIN}"
+    api_url = f"{INGRESS_URL}/api/v1/auth/test"
+    print(f"[*] Appel de l'endpoint de test API ({api_host}): {api_url}")
     headers = {
-        'Authorization': f'Bearer {access_token}'
+        'Authorization': f'Bearer {access_token}',
+        'Host': api_host
     }
     
     try:
-        api_response = requests.get(f"{API_URL}/auth/test", headers=headers)
+        api_response = requests.get(api_url, headers=headers, timeout=10)
         if api_response.status_code == 200:
             result = api_response.json()
             print("\n" + "="*40)
@@ -81,10 +71,6 @@ def test_connection():
 
 if __name__ == "__main__":
     print("=== TEST DE CONNEXION SKILLS HUB REMASTER ===\n")
-    
-    # On vérifie d'abord si les services sont lancés (optionnel mais utile)
-    # wait_for_service(f"{KEYCLOAK_URL}/health", "Keycloak")
-    # wait_for_service(f"{API_URL}/health", "API")
     
     if test_connection():
         print("\n[SUCCESS] La chaîne d'authentification complète est fonctionnelle !")

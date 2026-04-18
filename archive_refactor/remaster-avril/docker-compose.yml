@@ -105,6 +105,47 @@ services:
     volumes:
       - synapse_db_data:/var/lib/postgresql/data
 
+  db_nextcloud:
+    image: postgres:15-alpine
+    container_name: remaster_db_nextcloud
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: nextcloud_password
+      POSTGRES_DB: nextcloud
+    volumes:
+      - nextcloud_db_data:/var/lib/postgresql/data
+
+  # --- DOCUMENTATION & COLLABORATION ---
+  nextcloud:
+    image: nextcloud:latest
+    container_name: remaster_nextcloud
+    restart: unless-stopped
+    depends_on:
+      - db_nextcloud
+      - keycloak
+    environment:
+      - POSTGRES_HOST=db_nextcloud
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud_password
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER:-admin}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD:-admin_password}
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN}
+    volumes:
+      - nextcloud_data:/var/www/html
+
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    container_name: remaster_onlyoffice
+    restart: unless-stopped
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=onlyoffice_secret
+    volumes:
+      - onlyoffice_data:/var/www/onlyoffice/Data
+      - onlyoffice_logs:/var/log/onlyoffice
+
   # --- VIDEO (LIVEKIT & COTURN) ---
   livekit:
     image: livekit/livekit-server:latest
@@ -137,3 +178,7 @@ volumes:
   postgres_data:
   keycloak_db_data:
   synapse_db_data:
+  nextcloud_db_data:
+  nextcloud_data:
+  onlyoffice_data:
+  onlyoffice_logs:
