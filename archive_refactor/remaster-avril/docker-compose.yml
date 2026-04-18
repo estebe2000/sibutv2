@@ -30,6 +30,7 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HOSTNAME: auth.${DOMAIN}
+      KC_HOSTNAME_STRICT: "false"
       KC_PROXY_HEADERS: xforwarded
     volumes:
       - ./infrastructure/keycloak/import:/opt/keycloak/data/import
