@@ -1,0 +1,59 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="space-y-8 animate-in slide-in-from-bottom duration-700">
+    <header class="flex justify-between items-end bg-white p-8 rounded-[3rem] border border-slate-200 shadow-sm">
+        <div>
+            <h2 class="text-4xl font-black tracking-tighter italic text-slate-800">Synchronisation ScoDoc</h2>
+            <p class="text-slate-500 font-bold">Mise à jour automatique des effectifs depuis l'université</p>
+        </div>
+        <button id="btn-sync" onclick="startAutoSync()" class="px-10 py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+            Démarrer la Synchronisation Totale
+        </button>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-indigo-900 rounded-[3rem] p-10 text-white shadow-2xl">
+            <h3 class="text-xl font-black mb-6 italic">Fonctionnement du moteur</h3>
+            <ul class="space-y-4 text-indigo-100 font-medium">
+                <li class="flex gap-3"><span class="text-blue-400 font-black">01.</span> Récupération des semestres actifs du département TC.</li>
+                <li class="flex gap-3"><span class="text-blue-400 font-black">02.</span> Classement automatique : Promo 26 (B1), 25 (B2), 24 (B3).</li>
+                <li class="flex gap-3"><span class="text-blue-400 font-black">03.</span> Distinction FI/FA basée sur les codes de ressources en 'A'.</li>
+                <li class="flex gap-3"><span class="text-blue-400 font-black">04.</span> Mise à jour des NIP existants (gestion des passages d'année).</li>
+            </ul>
+        </div>
+        
+        <div class="bg-white rounded-[3rem] p-10 border border-slate-200 flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </div>
+            <p class="text-slate-400 font-bold italic max-w-xs">Une fois la synchro terminée, rendez-vous dans l'onglet "Effectifs" pour renommer ou supprimer les groupes importés.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+async function startAutoSync() {
+    const btn = document.getElementById('btn-sync');
+    btn.disabled = true;
+    btn.innerHTML = "<span class='animate-spin'>⚙️</span> Synchronisation en cours...";
+    
+    try {
+        const response = await fetch('/api/v1/dispatch/auto-sync', { method: 'POST' });
+        const result = await response.json();
+        if (response.ok) {
+            alert(`Succès !\nGroupes créés : ${result.stats.groups}\nÉtudiants synchronisés : ${result.stats.users}`);
+            window.location.href = "/effectifs";
+        } else {
+            alert("Erreur: " + result.detail);
+        }
+    } catch (e) {
+        alert("Échec de la connexion au serveur");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = "Tout synchroniser";
+    }
+}
+</script>
+{% endblock %}

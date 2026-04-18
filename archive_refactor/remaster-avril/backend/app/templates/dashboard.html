@@ -1,218 +1,123 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skills Hub - IUT APC</title>
+    <title>{{ settings.PROJECT_NAME if settings else 'Skills Hub' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
-        .nav-link.active { background-color: #eff6ff; color: #2563eb; }
-        .menu-content { transition: max-height 0.3s ease-out; overflow: hidden; }
-        .menu-content.collapsed { max-height: 0; }
-        .menu-content.expanded { max-height: 500px; }
-        .rotate-icon { transition: transform 0.3s ease; }
-        .rotate-icon.rotated { transform: rotate(90deg); }
+        .menu-content { transition: all 0.3s ease-in-out; }
+        .menu-content.collapsed { display: none; }
+        .rotate-icon { transition: transform 0.3s; }
+        .rotate-icon.active { transform: rotate(90deg); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900" hx-boost="true">
-
-    <div class="flex min-h-screen">
+<body class="bg-slate-50 text-slate-900 overflow-hidden">
+    <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col py-8 sticky top-0 h-screen overflow-y-auto">
-            <div class="mb-10 px-4">
-                <div class="w-full">
-                    <img src="/static/logo_small.png" alt="Skills Hub Logo" class="w-full object-contain">
+        <aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-full shadow-sm z-30">
+            <div class="p-8">
+                <div class="flex items-center gap-3 mb-10 group cursor-pointer" onclick="window.location.href='/'">
+                    <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100 group-hover:scale-110 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <span class="text-xl font-black italic tracking-tighter">Skills Hub</span>
                 </div>
+
+                <nav class="space-y-6 font-bold text-slate-500">
+                    <!-- SECTION PILOTAGE -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMenu('menu-pilotage', 'icon-pilotage')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow transition-all border border-slate-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7"/><path d="M16 5V3"/><path d="M8 5V3"/><path d="M3 9h18"/><path d="M20 22a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+                                </div>
+                                <span class="text-sm font-black text-slate-600 uppercase tracking-tighter">Pilotage</span>
+                            </div>
+                            <svg id="icon-pilotage" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300 active"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <div id="menu-pilotage" class="menu-content space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
+                            <a href="/" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/' %}text-blue-600{% endif %}">Tableau de Bord</a>
+                            <a href="/effectifs" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/effectifs' %}text-blue-600{% endif %}">Effectifs</a>
+                            <a href="/synchro-scodoc" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/synchro-scodoc' %}text-blue-600{% endif %}">Synchro ScoDoc</a>
+                        </div>
+                    </div>
+
+                    {% if user.role.value == 'ADMIN' or user.role.value == 'PROFESSOR' %}
+                    <!-- SECTION OUTILS -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMenu('menu-tools', 'icon-tools')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow transition-all border border-slate-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+                                </div>
+                                <span class="text-sm font-black text-slate-600 uppercase tracking-tighter">Outils Enseignant</span>
+                            </div>
+                            <svg id="icon-tools" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <div id="menu-tools" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
+                            <a href="/ai-assistant" class="block px-4 py-2 hover:text-blue-600 transition-all">Assistant IA</a>
+                            <a href="/proof-library" class="block px-4 py-2 hover:text-blue-600 transition-all">Médiathèque Preuves</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if user.role.value == 'ADMIN' %}
+                    <!-- SECTION ADMIN -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMenu('menu-admin', 'icon-admin')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow transition-all border border-slate-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </div>
+                                <span class="text-sm font-black text-slate-600 uppercase tracking-tighter">Administration</span>
+                            </div>
+                            <svg id="icon-admin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300 active"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <div id="menu-admin" class="menu-content space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
+                            <a href="/admin/users" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/admin/users' %}text-blue-600{% endif %}">Utilisateurs</a>
+                            <a href="/referentiel" class="block px-4 py-2 hover:text-blue-600 transition-all">Référentiel</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </nav>
             </div>
 
-            <nav class="flex-1 px-4 space-y-2 text-sm font-bold text-slate-500">
-                <!-- PILOTAGE -->
-                <div class="pt-2">
-                    <button onclick="toggleMenu('menu-pilotage', 'icon-pilotage')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 rounded-xl transition-all group">
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 group-hover:text-blue-600"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-                            <span>Pilotage</span>
-                        </div>
-                        <svg id="icon-pilotage" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
-                    <div id="menu-pilotage" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
-                        <a href="/" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/' %}text-blue-600{% endif %}">Tableau de Bord</a>
-                        <a href="/governance-report" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/governance-report' %}text-blue-600{% endif %}">Rapport Gouvernance</a>
-                        <a href="/dispatching" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/dispatching' %}text-blue-600{% endif %}">Dispatching</a>
+            <!-- Profile and Logout -->
+            <div class="mt-auto p-8 border-t border-slate-100">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-xs text-slate-400">
+                        {{ user.full_name[:2] | upper if user else '??' }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-black text-slate-800 uppercase tracking-tighter">{{ user.full_name if user else 'Invité' }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ user.role.value if user else 'GUEST' }}</p>
                     </div>
                 </div>
-
-                {% if user.role.value == 'ADMIN' or user.role.value == 'PROFESSOR' %}
-                <!-- SECTION OUTILS ENSEIGNANT -->
-                <div class="pt-2">
-                    <button onclick="toggleMenu('menu-tools', 'icon-tools')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 rounded-xl transition-all group">
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 group-hover:text-blue-600"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
-                            <span>Outils Enseignant</span>
-                        </div>
-                        <svg id="icon-tools" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
-                    <div id="menu-tools" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
-                        <a href="/internships" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/internships' %}text-blue-600{% endif %}">Tutorat de Stage</a>
-                        <a href="/companies" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/companies' %}text-blue-600{% endif %}">Codex Entreprises</a>
-                        <a href="/portfolio-view" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/portfolio-view' %}text-blue-600{% endif %}">Portfolio</a>
-                        <a href="/ai-assistant" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/ai-assistant' %}text-blue-600{% endif %}">Assistant IA</a>
-                        <a href="/proof-library" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/proof-library' %}text-blue-600{% endif %}">Médiathèque Preuves</a>
-                    </div>
-                </div>
-
-                <!-- SECTION ÉCHANGE -->
-                <div class="pt-2">
-                    <button onclick="toggleMenu('menu-exchange', 'icon-exchange')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 rounded-xl transition-all group">
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 group-hover:text-blue-600"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                            <span>Échange</span>
-                        </div>
-                        <svg id="icon-exchange" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
-                    <div id="menu-exchange" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
-                        <a href="/forgejo" class="block px-4 py-2 hover:text-blue-600 transition-all">Forgejo (Git & Projets)</a>
-                        <a href="/matrix" class="block px-4 py-2 hover:text-blue-600 transition-all">Matrix (Chat & Visio)</a>
-                        <a href="/nextcloud" class="block px-4 py-2 hover:text-blue-600 transition-all">Nextcloud (Documents)</a>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if user.role.value == 'ADMIN' %}
-                <!-- SECTION RÉFÉRENTIEL -->
-                <div class="pt-2">
-                    <button onclick="toggleMenu('menu-ref', 'icon-ref')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 rounded-xl transition-all group">
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 group-hover:text-blue-600"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
-                            <span>Référentiel</span>
-                        </div>
-                        <svg id="icon-ref" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
-                    <div id="menu-ref" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
-                        <a href="/referentiel" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/referentiel' %}text-blue-600{% endif %}">Liste globale</a>
-                        <a href="/ac-editor" class="block px-4 py-2 hover:text-blue-600 transition-all">Éditeur d'AC</a>
-                        <a href="/discovery" class="block px-4 py-2 hover:text-blue-600 transition-all">Moteur Découverte</a>
-                        <a href="/repartition" class="block px-4 py-2 hover:text-blue-600 transition-all">Répartition</a>
-                        <a href="/pdf-generator" class="block px-4 py-2 hover:text-blue-600 transition-all">Génération PDF</a>
-                    </div>
-                </div>
-
-                <!-- SECTION ADMINISTRATION -->
-                <div class="pt-2">
-                    <button onclick="toggleMenu('menu-admin', 'icon-admin')" class="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 rounded-xl transition-all group">
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 group-hover:text-blue-600"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
-                            <span>Administration</span>
-                        </div>
-                        <svg id="icon-admin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
-                    <div id="menu-admin" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
-                        <a href="/local-accounts" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/local-accounts' %}text-blue-600{% endif %}">Utilisateurs</a>
-                        <a href="/emdash-admin" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/emdash-admin' %}text-blue-600{% endif %}">Gestion EmDash</a>
-                        <a href="/year-transition" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/year-transition' %}text-blue-600{% endif %}">Bascule Année</a>
-                        <a href="/settings" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/settings' %}text-blue-600{% endif %}">Configuration</a>
-                    </div>
-                </div>
-                {% endif %}
-            </nav>
-
-            <div class="mt-auto px-6 py-6 border-t border-slate-100">
-                <a href="/logout" hx-boost="false" class="block w-full py-3 bg-red-50 text-red-600 rounded-xl font-black text-xs text-center uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all">Quitter</a>
+                <a href="/logout" class="flex items-center gap-3 text-red-400 hover:text-red-600 transition-colors font-black text-xs uppercase tracking-widest">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Quitter
+                </a>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-            <header class="h-20 bg-white/80 border-b border-slate-200 px-10 flex items-center justify-between sticky top-0 z-50 glass-effect flex-shrink-0">
-                <div class="text-slate-400 font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                    Recherche...
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="text-right">
-                        <p class="text-sm font-black leading-none">{{ user.full_name }}</p>
-                        <p class="text-[9px] text-blue-600 font-black uppercase mt-1.5 tracking-tighter bg-blue-50 px-2 py-0.5 rounded">{{ user.role.value }}</p>
-                    </div>
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white font-black shadow-lg">
-                        {{ user.ldap_uid[:2] | upper }}
-                    </div>
-                </div>
-            </header>
-
-            <div id="main-content">
-                {% block content %}
-                {% if user.role.value == 'ADMIN' %}
-                    <div class="p-10">{% include 'dashboards/admin.html' %}</div>
-                {% elif user.role.value == 'PROFESSOR' %}
-                    <div class="p-10">{% include 'dashboards/professor.html' %}</div>
-                {% else %}
-                    <div class="p-10">{% include 'dashboards/student.html' %}</div>
-                {% endif %}
-                {% endblock %}
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-12 bg-slate-50 relative">
+            <div class="max-w-7xl mx-auto">
+                {% block content %}{% endblock %}
             </div>
         </main>
     </div>
 
     <script>
-        function toggleMenu(menuId, iconId, forceOpen = false) {
+        function toggleMenu(menuId, iconId) {
             const menu = document.getElementById(menuId);
             const icon = document.getElementById(iconId);
-            if (!menu || !icon) return;
-
-            if (forceOpen || menu.classList.contains('collapsed')) {
-                menu.classList.remove('collapsed');
-                menu.classList.add('expanded');
-                icon.classList.add('rotated');
-            } else {
-                menu.classList.remove('expanded');
-                menu.classList.add('collapsed');
-                icon.classList.remove('rotated');
-            }
+            menu.classList.toggle('collapsed');
+            icon.classList.toggle('active');
         }
-
-        function closeAllMenus() {
-            const menus = ['menu-pilotage', 'menu-tools', 'menu-exchange', 'menu-ref', 'menu-admin'];
-            const icons = ['icon-pilotage', 'icon-tools', 'icon-exchange', 'icon-ref', 'icon-admin'];
-            
-            menus.forEach((id, index) => {
-                const m = document.getElementById(id);
-                const i = document.getElementById(icons[index]);
-                if (m) {
-                    m.classList.remove('expanded');
-                    m.classList.add('collapsed');
-                }
-                if (i) i.classList.remove('rotated');
-            });
-        }
-
-        function initNavigation() {
-            const path = window.location.pathname;
-            closeAllMenus();
-
-            if (['/', '/governance-report', '/dispatching'].includes(path)) {
-                toggleMenu('menu-pilotage', 'icon-pilotage', true);
-            }
-            else if (['/referentiel', '/ac-editor', '/discovery', '/repartition', '/pdf-generator'].includes(path)) {
-                toggleMenu('menu-ref', 'icon-ref', true);
-            }
-            else if (['/local-accounts', '/emdash-admin', '/year-transition', '/settings'].includes(path)) {
-                toggleMenu('menu-admin', 'icon-admin', true);
-            }
-            else if (['/internships', '/companies', '/portfolio-view', '/ai-assistant', '/proof-library'].includes(path)) {
-                toggleMenu('menu-tools', 'icon-tools', true);
-            }
-            else if (['/forgejo', '/matrix', '/nextcloud'].includes(path)) {
-                toggleMenu('menu-exchange', 'icon-exchange', true);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', initNavigation);
-        document.addEventListener('htmx:afterSwap', initNavigation);
     </script>
 </body>
 </html>

@@ -1,0 +1,121 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<style>
+    .but-badge-1 { border-left: 6px solid #3b82f6; }
+    .but-badge-2 { border-left: 6px solid #a855f7; }
+    .but-badge-3 { border-left: 6px solid #14b8a6; }
+</style>
+
+<div class="space-y-8 animate-in fade-in duration-500">
+    <header class="flex justify-between items-center bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
+        <div>
+            <h2 class="text-3xl font-black tracking-tight italic text-slate-800">Effectifs & Ressources</h2>
+            <p class="text-slate-400 font-bold uppercase text-[10px] tracking-widest mt-1">Gestion du département</p>
+        </div>
+        <div class="flex gap-4">
+            <div class="bg-slate-50 px-6 py-2 rounded-2xl border border-slate-100 flex flex-col items-center">
+                <span class="text-[9px] font-black text-slate-400 uppercase">Total Hub</span>
+                <span class="text-xl font-black text-blue-600 leading-none">{{ promotions|map(attribute='users')|map('length')|sum }}</span>
+            </div>
+            <a href="/synchro-scodoc" class="px-6 py-3 bg-slate-900 text-white rounded-2xl font-bold text-xs hover:bg-blue-600 transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                Sync ScoDoc
+            </a>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        {% set current_year = 2026 %}
+        {% for level_idx in [1, 2, 3] %}
+            {% set target_entry_year = current_year - level_idx + 1 %}
+            {% set promo = promotions | selectattr("entry_year", "equalto", target_entry_year) | list | first %}
+            
+            <div class="flex flex-col space-y-4">
+                <div class="flex items-center justify-between px-4">
+                    <h3 class="font-black text-slate-500 uppercase text-xs tracking-widest italic">BUT {{ level_idx }} ({{ target_entry_year }})</h3>
+                    <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-black">{{ promo.users|length if promo else 0 }}</span>
+                </div>
+
+                <div class="bg-white rounded-[2rem] border border-slate-200 p-2 shadow-sm min-h-[300px]">
+                    {% if promo %}
+                        <div class="space-y-2 p-2">
+                            {% for group in promo.groups %}
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100 but-badge-{{ level_idx }}">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="text-sm font-black text-slate-800">{{ group.name }}</div>
+                                        <div class="text-[9px] font-bold text-slate-400 uppercase">{{ group.formation_type }} • {{ group.pathway }}</div>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-2">
+                                        <span class="px-2 py-1 bg-white rounded-lg border border-slate-200 text-[10px] font-black">{{ group.users|length }} pers.</span>
+                                        <div class="flex gap-1">
+                                            <button onclick="renameGroup({{ group.id }}, '{{ group.name }}')" class="p-1.5 bg-white border border-slate-100 rounded-lg text-slate-400 hover:text-blue-600 transition-colors shadow-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                                            </button>
+                                            <button onclick="deleteGroup({{ group.id }})" class="p-1.5 bg-white border border-slate-100 rounded-lg text-slate-400 hover:text-red-600 transition-colors shadow-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="h-full flex flex-col items-center justify-center p-10 text-center opacity-30">
+                            <p class="text-sm font-black italic">Aucune donnée</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- MATRICE DES RESSOURCES -->
+    <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
+        <h3 class="text-xl font-black mb-8 italic flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M8 7h6"/><path d="M8 11h8"/></svg>
+            Matrice des Ressources & Enseignants
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {% for res in resources %}
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                <div class="flex justify-between mb-2">
+                    <span class="text-[10px] font-black text-indigo-400">{{ res.code }}</span>
+                    <span class="text-[8px] font-black bg-white/10 px-1.5 rounded">{{ res.pathway }}</span>
+                </div>
+                <div class="text-[11px] font-bold text-slate-200 truncate">{{ res.label }}</div>
+                <div class="mt-4 flex items-center gap-2 border-t border-white/5 pt-3">
+                    <div class="w-5 h-5 rounded-md bg-indigo-500 flex items-center justify-center text-[8px] font-black">{{ res.responsible[0] if res.responsible else '?' }}</div>
+                    <span class="text-[9px] font-black text-slate-500 uppercase">{{ res.responsible }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+async function renameGroup(id, currentName) {
+    const newName = prompt("Nouveau nom pour ce groupe :", currentName);
+    if (!newName || newName === currentName) return;
+    try {
+        const response = await fetch(`/api/v1/dispatch/groups/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: newName })
+        });
+        if (response.ok) window.location.reload();
+    } catch (e) { alert("Erreur serveur"); }
+}
+
+async function deleteGroup(id) {
+    if (!confirm("Supprimer ce groupe ?\n(Les élèves seront conservés en base)")) return;
+    try {
+        const response = await fetch(`/api/v1/dispatch/groups/${id}`, { method: 'DELETE' });
+        if (response.ok) window.location.reload();
+    } catch (e) { alert("Erreur serveur"); }
+}
+</script>
+{% endblock %}

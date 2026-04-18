@@ -340,8 +340,11 @@ services:
       context: ./apps/scodoc-api-relay
     container_name: but_tc_scodoc_api_relay
     restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
     ports:
       - "8092:8000"
+    volumes:
+      - ./apps/scodoc-api-relay:/app
     networks:
       - app_network
 

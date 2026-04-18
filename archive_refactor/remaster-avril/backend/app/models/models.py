@@ -79,22 +79,38 @@ class ResourceACLink(SQLModel, table=True):
 
 # --- CORE MODELS ---
 
+class Promotion(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(index=True) # e.g., "Promo 26"
+    entry_year: int # e.g., 2026
+    
+    groups: List["Group"] = Relationship(back_populates="promotion")
+    users: List["User"] = Relationship(back_populates="promotion")
+
 class Group(SQLModel, AcademicYearMixin, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True)
-    year: int
+    scodoc_id: Optional[str] = Field(default=None, index=True) # Lien technique ScoDoc
+    year: int # 1, 2, 3
     pathway: str
     formation_type: str = "FI"
+    
+    promotion_id: Optional[int] = Field(default=None, foreign_key="promotion.id")
+    promotion: Optional[Promotion] = Relationship(back_populates="groups")
     
     users: List["User"] = Relationship(back_populates="group")
 
 class User(SQLModel, TimestampMixin, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     ldap_uid: str = Field(unique=True, index=True)
+    nip: Optional[str] = Field(default=None, unique=True, index=True) # Identifiant ScoDoc stable
     email: str = Field(index=True)
     full_name: str
     phone: Optional[str] = None
     role: UserRole = Field(default=UserRole.GUEST)
+    
+    promotion_id: Optional[int] = Field(default=None, foreign_key="promotion.id")
+    promotion: Optional[Promotion] = Relationship(back_populates="users")
     
     group_id: Optional[int] = Field(default=None, foreign_key="group.id")
     group: Optional[Group] = Relationship(back_populates="users")
