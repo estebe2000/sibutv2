@@ -22,6 +22,7 @@ services:
     container_name: remaster_keycloak
     restart: unless-stopped
     command: start-dev --hostname-strict=false --http-enabled=true --import-realm
+    # Port 8080 supprimé pour éviter que Keycloak ne l'insère dans ses URLs de découverte
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://db_keycloak:5432/keycloak
@@ -30,7 +31,8 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HOSTNAME: auth.${DOMAIN}
-      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_PORT: "443"
+      KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: xforwarded
     volumes:
       - ./infrastructure/keycloak/import:/opt/keycloak/data/import
@@ -53,7 +55,6 @@ services:
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
-      # URL Interne pour la validation des tokens (Evite le 504)
       - KEYCLOAK_INTERNAL_URL=http://keycloak:8080
     volumes:
       - ./backend/app:/app/app
@@ -125,6 +126,8 @@ services:
     depends_on:
       - db_nextcloud
       - keycloak
+    extra_hosts:
+      - "auth.${DOMAIN}:host-gateway"
     environment:
       - POSTGRES_HOST=db_nextcloud
       - POSTGRES_DB=nextcloud
@@ -132,7 +135,8 @@ services:
       - POSTGRES_PASSWORD=nextcloud_password
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER:-admin}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD:-admin_password}
-      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN}
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN} auth.${DOMAIN}
+      - OVERWRITEPROTOCOL=https
     volumes:
       - nextcloud_data:/var/www/html
 
