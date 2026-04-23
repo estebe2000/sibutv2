@@ -7,11 +7,12 @@ from authlib.integrations.starlette_client import OAuth
 from sqlmodel import Session, select, create_engine, func
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from .core.config import settings
-from .models.models import User, UserRole, Activity, Competency, Promotion, Group, Resource
+from .models.models import User, UserRole, Activity, Competency, Promotion, Group, Resource, Announcement
 from .services.matrix_service import matrix_service
 import os
 import httpx
 import json
+import asyncio
 
 app = FastAPI(title="Skills Hub Remaster")
 
@@ -58,11 +59,9 @@ async def dashboard(request: Request):
     with Session(engine) as session:
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
-        
         active_role = request.session.get('active_role') or db_user.role.value
         stats = {}
         data = {}
-        
         if active_role == 'ADMIN':
             stats = {
                 "user_count": session.exec(select(func.count(User.id))).one(),
@@ -75,9 +74,19 @@ async def dashboard(request: Request):
             data["my_saes"] = session.exec(select(Activity).where(Activity.type == "SAE").limit(3)).all()
         elif active_role == 'STUDENT':
             data["competencies"] = session.exec(select(Competency).limit(3)).all()
+        
+        # Récupération des annonces depuis la base locale (Fiabilité garantie)
+        ann_list = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(5)).all()
+        news = []
+        for a in ann_list:
+            news.append({
+                "sender": a.author_uid,
+                "content": f"**{a.title}**<br>{a.content}",
+                "timestamp": a.created_at
+            })
             
         return templates.TemplateResponse(request, "dashboard.html", {
-            "user": db_user, "active_role": active_role, "stats": stats, "data": data, "news": []
+            "user": db_user, "active_role": active_role, "stats": stats, "data": data, "news": news
         })
 
 @app.get("/switch-role/{role}")
@@ -115,33 +124,21 @@ async def effectifs(request: Request):
         if not db_user: return RedirectResponse(url='/login')
         active_role = request.session.get('active_role') or db_user.role.value
         if active_role != 'ADMIN': return RedirectResponse(url='/')
-
-        # Chargement explicite pour éviter les erreurs de session fermée dans Jinja
         from sqlalchemy.orm import selectinload
         statement = select(Promotion).options(selectinload(Promotion.users), selectinload(Promotion.groups))
         promotions = session.exec(statement).all()
-        
-        # Calcul du total en Python (plus robuste)
         total_count = sum(len(p.users) for p in promotions)
-        
-        # Organisation par niveau pour le template
         current_year = 2026
         promos_by_level = {
             1: next((p for p in promotions if p.entry_year == current_year), None),
             2: next((p for p in promotions if p.entry_year == current_year - 1), None),
             3: next((p for p in promotions if p.entry_year == current_year - 2), None),
         }
-        
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
-        
         return templates.TemplateResponse(request, "effectifs.html", {
-            "user": db_user, 
-            "active_role": active_role, 
-            "promos_by_level": promos_by_level,
-            "total_users": total_count,
-            "resources": resources, 
-            "teachers": teachers
+            "user": db_user, "active_role": active_role, "promos_by_level": promos_by_level,
+            "total_users": total_count, "resources": resources, "teachers": teachers
         })
 
 @app.get("/api/teacher/{ldap_uid}")
@@ -202,18 +199,40 @@ async def admin_matrix(request: Request):
         if not db_user: return RedirectResponse(url='/login')
         active_role = request.session.get('active_role') or db_user.role.value
         if active_role != 'ADMIN': return RedirectResponse(url='/')
-        return templates.TemplateResponse(request, "admin_matrix.html", {"user": db_user, "active_role": active_role})
+        announcements = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(10)).all()
+        return templates.TemplateResponse(request, "admin_matrix.html", {
+            "user": db_user, "active_role": active_role, "announcements": announcements
+        })
 
 @app.post("/api/v1/admin/matrix/announce")
 async def matrix_announce(data: dict, request: Request):
     user_session = request.session.get('user')
     if not user_session: raise HTTPException(status_code=401)
-    success = await matrix_service.broadcast_announcement(
+    room_id, event_id = await matrix_service.broadcast_announcement(
         title=data.get("title"), content=data.get("content"),
         room_type=data.get("room"), priority=data.get("priority")
     )
-    if success: return {"status": "success", "message": "Annonce diffusée sur Matrix"}
-    raise HTTPException(status_code=500, detail="Erreur lors de l'envoi sur Matrix")
+    if event_id:
+        with Session(engine) as session:
+            ann = Announcement(
+                matrix_event_id=event_id, matrix_room_id=room_id,
+                title=data.get("title"), content=data.get("content"),
+                author_uid=user_session['preferred_username']
+            )
+            session.add(ann); session.commit()
+        return {"status": "success"}
+    raise HTTPException(status_code=500)
+
+@app.delete("/api/v1/admin/matrix/announcements/{ann_id}")
+async def delete_announcement(ann_id: int, request: Request):
+    user_session = request.session.get('user')
+    if not user_session: raise HTTPException(status_code=401)
+    with Session(engine) as session:
+        ann = session.get(Announcement, ann_id)
+        if not ann: raise HTTPException(status_code=404)
+        await matrix_service.redact_event(ann.matrix_room_id, ann.matrix_event_id)
+        session.delete(ann); session.commit()
+    return {"status": "success"}
 
 @app.post("/api/v1/admin/matrix/sync-rooms")
 async def sync_matrix_rooms(request: Request):
@@ -227,12 +246,14 @@ async def sync_matrix_rooms(request: Request):
             if room_id:
                 p.matrix_room_id = room_id
                 session.add(p); created_count += 1
+            await asyncio.sleep(2)
         groups = session.exec(select(Group).where(Group.matrix_room_id == None)).all()
         for g in groups:
             room_id = await matrix_service.create_room(name=f"GROUPE {g.name}")
             if room_id:
                 g.matrix_room_id = room_id
                 session.add(g); created_count += 1
+            await asyncio.sleep(2)
         session.commit()
     return {"status": "success", "created": created_count}
 

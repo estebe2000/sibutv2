@@ -42,5 +42,8 @@ signing_key_path: "/data/educ-ai.fr.signing.key"
 trusted_key_servers:
   - server_name: "matrix.org"
 
+ratelimiting:
+  exempt_users:
+    - "@hub-bot:educ-ai.fr"
 
 # vim:ft=yaml

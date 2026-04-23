@@ -242,3 +242,12 @@ class UserFeedback(SQLModel, TimestampMixin, table=True):
     title: str
     description: str
     votes: int = Field(default=0)
+
+class Announcement(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    matrix_event_id: str = Field(index=True)
+    matrix_room_id: str
+    title: str
+    content: str
+    author_uid: str
+    created_at: datetime = Field(default_factory=datetime.now)
