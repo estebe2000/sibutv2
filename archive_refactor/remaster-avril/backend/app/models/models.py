@@ -83,6 +83,7 @@ class Promotion(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True) # e.g., "Promo 26"
     entry_year: int # e.g., 2026
+    matrix_room_id: Optional[str] = None # ID du salon Matrix de la promo
     
     groups: List["Group"] = Relationship(back_populates="promotion")
     users: List["User"] = Relationship(back_populates="promotion")
@@ -94,6 +95,7 @@ class Group(SQLModel, AcademicYearMixin, table=True):
     year: int # 1, 2, 3
     pathway: str
     formation_type: str = "FI"
+    matrix_room_id: Optional[str] = None # ID du salon Matrix du groupe (ex: #TC1-G1)
     
     promotion_id: Optional[int] = Field(default=None, foreign_key="promotion.id")
     promotion: Optional[Promotion] = Relationship(back_populates="groups")

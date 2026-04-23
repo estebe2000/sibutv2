@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     DOMAIN: str = os.getenv("DOMAIN", "localhost")
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here") # For JWT fallback
     
+    # Matrix (Synapse)
+    MATRIX_HOMESERVER: str = os.getenv("MATRIX_HOMESERVER", "https://matrix.educ-ai.fr")
+    MATRIX_BOT_USER: str = os.getenv("MATRIX_BOT_USER", "@hub-bot:educ-ai.fr")
+    MATRIX_BOT_PASSWORD: Optional[str] = os.getenv("MATRIX_BOT_PASSWORD", None)
+    MATRIX_ACCESS_TOKEN: Optional[str] = os.getenv("MATRIX_ACCESS_TOKEN", None)
+    MATRIX_ROOM_GENERAL: str = os.getenv("MATRIX_ROOM_GENERAL", "!your-room-id:educ-ai.fr")
+
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True

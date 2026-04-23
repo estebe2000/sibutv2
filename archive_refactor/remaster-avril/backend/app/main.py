@@ -8,6 +8,7 @@ from sqlmodel import Session, select, create_engine, func
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from .core.config import settings
 from .models.models import User, UserRole, Activity, Competency, Promotion, Group, Resource
+from .services.matrix_service import matrix_service
 import os
 import httpx
 import json
@@ -20,7 +21,7 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 # --- PROTECTION SESSION ---
 app.add_middleware(
     SessionMiddleware, 
-    secret_key="skills-hub-secret-key-2026",
+    secret_key=settings.SECRET_KEY,
     session_cookie="skills_hub_session",
     same_site="lax",
     https_only=False
@@ -35,18 +36,15 @@ def on_startup():
     SQLModel.metadata.create_all(engine)
 
 # Configuration OIDC
-DOMAIN = os.getenv("DOMAIN", "educ-ai.fr")
-REALM = os.getenv("KEYCLOAK_REALM", "but-tc")
-
 oauth = OAuth()
 oauth.register(
     name='keycloak',
-    client_id=os.getenv("KEYCLOAK_CLIENT_ID"),
-    client_secret=os.getenv("KEYCLOAK_CLIENT_SECRET"),
-    authorize_url=f"https://auth.{DOMAIN}/realms/{REALM}/protocol/openid-connect/auth",
-    access_token_url=f"http://keycloak:8080/realms/{REALM}/protocol/openid-connect/token",
-    userinfo_endpoint=f"http://keycloak:8080/realms/{REALM}/protocol/openid-connect/userinfo",
-    jwks_uri=f"http://keycloak:8080/realms/{REALM}/protocol/openid-connect/certs",
+    client_id=settings.KEYCLOAK_CLIENT_ID,
+    client_secret=settings.KEYCLOAK_CLIENT_SECRET,
+    authorize_url=f"https://auth.{settings.DOMAIN}/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/auth",
+    access_token_url=f"http://keycloak:8080/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/token",
+    userinfo_endpoint=f"http://keycloak:8080/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/userinfo",
+    jwks_uri=f"http://keycloak:8080/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/certs",
     client_kwargs={'scope': 'openid profile email'},
 )
 
@@ -61,9 +59,7 @@ async def dashboard(request: Request):
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
         
-        # Sélection du rôle actif (Session > Base)
         active_role = request.session.get('active_role') or db_user.role.value
-        
         stats = {}
         data = {}
         
@@ -74,25 +70,14 @@ async def dashboard(request: Request):
                 "sae_count": session.exec(select(func.count(Activity.id))).one(),
             }
             data["recent_activities"] = session.exec(select(Activity).limit(5)).all()
-            
         elif active_role == 'PROFESSOR':
-            # RÉEL : Mes ressources (Enseignements dont je suis responsable)
-            data["my_resources"] = session.exec(
-                select(Resource).where(Resource.responsible_uid == db_user.ldap_uid)
-            ).all()
-            
-            # SIMULATION : SAÉ (En attendant l'intégration du référentiel complet)
+            data["my_resources"] = session.exec(select(Resource).where(Resource.responsible_uid == db_user.ldap_uid)).all()
             data["my_saes"] = session.exec(select(Activity).where(Activity.type == "SAE").limit(3)).all()
-            
         elif active_role == 'STUDENT':
             data["competencies"] = session.exec(select(Competency).limit(3)).all()
             
         return templates.TemplateResponse(request, "dashboard.html", {
-            "user": db_user, 
-            "active_role": active_role,
-            "stats": stats, 
-            "data": data, 
-            "news": []
+            "user": db_user, "active_role": active_role, "stats": stats, "data": data, "news": []
         })
 
 @app.get("/switch-role/{role}")
@@ -107,7 +92,7 @@ async def switch_role(request: Request, role: str):
 
 @app.get("/login")
 async def login(request: Request):
-    redirect_uri = f"https://hub.{DOMAIN}/auth"
+    redirect_uri = f"https://hub.{settings.DOMAIN}/auth"
     request.session.clear()
     return await oauth.keycloak.authorize_redirect(request, redirect_uri)
 
@@ -118,7 +103,7 @@ async def auth_callback(request: Request):
         user_info = token.get('userinfo')
         request.session['user'] = dict(user_info)
         return RedirectResponse(url='/')
-    except Exception as e:
+    except:
         return RedirectResponse(url='/login')
 
 @app.get("/effectifs")
@@ -128,20 +113,34 @@ async def effectifs(request: Request):
     with Session(engine) as session:
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
-        
-        # Vérification du rôle actif
         active_role = request.session.get('active_role') or db_user.role.value
-        if active_role != 'ADMIN':
-            return RedirectResponse(url='/')
+        if active_role != 'ADMIN': return RedirectResponse(url='/')
 
-        promotions = session.exec(select(Promotion)).all()
+        # Chargement explicite pour éviter les erreurs de session fermée dans Jinja
+        from sqlalchemy.orm import selectinload
+        statement = select(Promotion).options(selectinload(Promotion.users), selectinload(Promotion.groups))
+        promotions = session.exec(statement).all()
+        
+        # Calcul du total en Python (plus robuste)
+        total_count = sum(len(p.users) for p in promotions)
+        
+        # Organisation par niveau pour le template
+        current_year = 2026
+        promos_by_level = {
+            1: next((p for p in promotions if p.entry_year == current_year), None),
+            2: next((p for p in promotions if p.entry_year == current_year - 1), None),
+            3: next((p for p in promotions if p.entry_year == current_year - 2), None),
+        }
+        
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
+        
         return templates.TemplateResponse(request, "effectifs.html", {
             "user": db_user, 
-            "active_role": active_role,
-            "promotions": promotions, 
-            "resources": resources,
+            "active_role": active_role, 
+            "promos_by_level": promos_by_level,
+            "total_users": total_count,
+            "resources": resources, 
             "teachers": teachers
         })
 
@@ -149,26 +148,13 @@ async def effectifs(request: Request):
 async def get_teacher_details(ldap_uid: str):
     with Session(engine) as session:
         teacher = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
-        if not teacher:
-            return {"error": "Enseignant non trouvé"}
-        
-        # On cherche les ressources dont il est responsable via son UID LDAP
-        resources = session.exec(
-            select(Resource).where(Resource.responsible_uid == teacher.ldap_uid)
-        ).all()
-        
-        # Fallback : si on ne trouve rien par UID, on tente par nom complet (pour la transition)
+        if not teacher: return {"error": "Enseignant non trouvé"}
+        resources = session.exec(select(Resource).where(Resource.responsible_uid == teacher.ldap_uid)).all()
         if not resources:
-            resources = session.exec(
-                select(Resource).where(Resource.responsible == teacher.full_name)
-            ).all()
-        
+            resources = session.exec(select(Resource).where(Resource.responsible == teacher.full_name)).all()
         return {
-            "ldap_uid": teacher.ldap_uid,
-            "full_name": teacher.full_name,
-            "email": teacher.email,
-            "phone": teacher.phone,
-            "roles": teacher.roles_list,
+            "ldap_uid": teacher.ldap_uid, "full_name": teacher.full_name, "email": teacher.email,
+            "phone": teacher.phone, "roles": teacher.roles_list,
             "resources": [{"code": r.code, "label": r.label} for r in resources]
         }
 
@@ -179,12 +165,8 @@ async def synchro_scodoc(request: Request):
     with Session(engine) as session:
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
-
-        # Vérification du rôle actif
         active_role = request.session.get('active_role') or db_user.role.value
-        if active_role != 'ADMIN':
-            return RedirectResponse(url='/')
-
+        if active_role != 'ADMIN': return RedirectResponse(url='/')
         scodoc_data = {"hierarchy": {}, "resources": []}
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
@@ -193,16 +175,9 @@ async def synchro_scodoc(request: Request):
                 if h_resp.status_code == 200: scodoc_data["hierarchy"] = h_resp.json() or {}
                 if r_resp.status_code == 200: scodoc_data["resources"] = r_resp.json() or []
         except: pass
-        return templates.TemplateResponse(request, "dispatch_students.html", {"user": db_user, "scodoc": scodoc_data})
-
-@app.get("/winston/audit")
-async def winston_audit(request: Request):
-    with Session(engine) as session:
-        db_user = session.exec(select(User).where(User.role == UserRole.ADMIN)).first()
-        promotions = session.exec(select(Promotion)).all()
-        resources = session.exec(select(Resource)).all()
-        eff_html = templates.TemplateResponse(request, "effectifs.html", {"user": db_user, "promotions": promotions, "resources": resources}).body.decode()
-        return {"status": "ok", "has_but1": "BUT 1" in eff_html, "has_but2": "BUT 2" in eff_html, "has_but3": "BUT 3" in eff_html}
+        return templates.TemplateResponse(request, "dispatch_students.html", {
+            "user": db_user, "active_role": active_role, "scodoc": scodoc_data
+        })
 
 @app.get("/admin/users")
 async def admin_users(request: Request):
@@ -211,21 +186,55 @@ async def admin_users(request: Request):
     with Session(engine) as session:
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
-
-        # Vérification du rôle actif
         active_role = request.session.get('active_role') or db_user.role.value
-        if active_role != 'ADMIN':
-            return RedirectResponse(url='/')
-        
-        # On ne récupère que les profs et admins (on exclut les étudiants de cette vue)
-        all_users = session.exec(
-            select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)
-        ).all()
+        if active_role != 'ADMIN': return RedirectResponse(url='/')
+        all_users = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
         return templates.TemplateResponse(request, "admin_users.html", {
-            "user": db_user, 
-            "active_role": active_role,
-            "all_users": all_users
+            "user": db_user, "active_role": active_role, "all_users": all_users
         })
+
+@app.get("/admin/matrix")
+async def admin_matrix(request: Request):
+    user_session = request.session.get('user')
+    if not user_session: return RedirectResponse(url='/login')
+    with Session(engine) as session:
+        db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
+        if not db_user: return RedirectResponse(url='/login')
+        active_role = request.session.get('active_role') or db_user.role.value
+        if active_role != 'ADMIN': return RedirectResponse(url='/')
+        return templates.TemplateResponse(request, "admin_matrix.html", {"user": db_user, "active_role": active_role})
+
+@app.post("/api/v1/admin/matrix/announce")
+async def matrix_announce(data: dict, request: Request):
+    user_session = request.session.get('user')
+    if not user_session: raise HTTPException(status_code=401)
+    success = await matrix_service.broadcast_announcement(
+        title=data.get("title"), content=data.get("content"),
+        room_type=data.get("room"), priority=data.get("priority")
+    )
+    if success: return {"status": "success", "message": "Annonce diffusée sur Matrix"}
+    raise HTTPException(status_code=500, detail="Erreur lors de l'envoi sur Matrix")
+
+@app.post("/api/v1/admin/matrix/sync-rooms")
+async def sync_matrix_rooms(request: Request):
+    user_session = request.session.get('user')
+    if not user_session: raise HTTPException(status_code=401)
+    created_count = 0
+    with Session(engine) as session:
+        promos = session.exec(select(Promotion).where(Promotion.matrix_room_id == None)).all()
+        for p in promos:
+            room_id = await matrix_service.create_room(name=f"PROMO {p.name}")
+            if room_id:
+                p.matrix_room_id = room_id
+                session.add(p); created_count += 1
+        groups = session.exec(select(Group).where(Group.matrix_room_id == None)).all()
+        for g in groups:
+            room_id = await matrix_service.create_room(name=f"GROUPE {g.name}")
+            if room_id:
+                g.matrix_room_id = room_id
+                session.add(g); created_count += 1
+        session.commit()
+    return {"status": "success", "created": created_count}
 
 @app.get("/logout")
 async def logout(request: Request):

@@ -15,6 +15,7 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 overflow-hidden">
+    {% set current_role = active_role | default(user.role.value if user else 'GUEST') %}
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
         <aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-full shadow-sm z-30">
@@ -40,14 +41,14 @@
                         </button>
                         <div id="menu-pilotage" class="menu-content space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
                             <a href="/" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/' %}text-blue-600{% endif %}">Tableau de Bord</a>
-                            {% if active_role == 'ADMIN' %}
+                            {% if current_role == 'ADMIN' %}
                             <a href="/effectifs" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/effectifs' %}text-blue-600{% endif %}">Effectifs</a>
                             <a href="/synchro-scodoc" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/synchro-scodoc' %}text-blue-600{% endif %}">Synchro ScoDoc</a>
                             {% endif %}
                         </div>
                     </div>
 
-                    {% if active_role == 'ADMIN' or active_role == 'PROFESSOR' %}
+                    {% if current_role == 'ADMIN' or current_role == 'PROFESSOR' %}
                     <!-- SECTION OUTILS -->
                     <div class="space-y-1">
                         <button onclick="toggleMenu('menu-tools', 'icon-tools')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
@@ -66,7 +67,7 @@
                     </div>
                     {% endif %}
 
-                    {% if active_role == 'ADMIN' %}
+                    {% if current_role == 'ADMIN' %}
                     <!-- SECTION ADMIN -->
                     <div class="space-y-1">
                         <button onclick="toggleMenu('menu-admin', 'icon-admin')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
@@ -80,6 +81,7 @@
                         </button>
                         <div id="menu-admin" class="menu-content space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
                             <a href="/admin/users" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/admin/users' %}text-blue-600{% endif %}">Utilisateurs</a>
+                            <a href="/admin/matrix" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/admin/matrix' %}text-blue-600{% endif %}">Annonces Matrix</a>
                             <a href="/referentiel" class="block px-4 py-2 hover:text-blue-600 transition-all">Référentiel</a>
                         </div>
                     </div>
@@ -106,7 +108,7 @@
                         } %}
                         <select onchange="window.location.href='/switch-role/'+this.value" class="w-full bg-white border-none rounded-xl px-3 py-2 text-[10px] font-black text-slate-600 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
                             {% for r in user.roles_list %}
-                            <option value="{{ r.value }}" {% if active_role == r.value %}selected{% endif %}>
+                            <option value="{{ r.value }}" {% if current_role == r.value %}selected{% endif %}>
                                 {{ role_labels[r.value] if r.value in role_labels else r.value }}
                             </option>
                             {% endfor %}
@@ -121,7 +123,7 @@
                     </div>
                     <div>
                         <p class="text-sm font-black text-slate-800 uppercase tracking-tighter">{{ user.full_name if user else 'Invité' }}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ active_role }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ current_role }}</p>
                     </div>
                 </div>
                 <a href="/logout" class="flex items-center gap-3 text-red-400 hover:text-red-600 transition-colors font-black text-xs uppercase tracking-widest">
@@ -134,11 +136,11 @@
         <main class="flex-1 overflow-y-auto p-12 bg-slate-50 relative">
             <div class="max-w-7xl mx-auto">
                 {% block content %}
-                    {% if active_role == 'ADMIN' %}
+                    {% if current_role == 'ADMIN' %}
                         {% include 'dashboards/admin.html' %}
-                    {% elif active_role == 'PROFESSOR' %}
+                    {% elif current_role == 'PROFESSOR' %}
                         {% include 'dashboards/professor.html' %}
-                    {% elif active_role == 'STUDENT' %}
+                    {% elif current_role == 'STUDENT' %}
                         {% include 'dashboards/student.html' %}
                     {% else %}
                         <div class="p-20 text-center">
