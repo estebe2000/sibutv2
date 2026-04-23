@@ -40,12 +40,14 @@
                         </button>
                         <div id="menu-pilotage" class="menu-content space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
                             <a href="/" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/' %}text-blue-600{% endif %}">Tableau de Bord</a>
+                            {% if active_role == 'ADMIN' %}
                             <a href="/effectifs" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/effectifs' %}text-blue-600{% endif %}">Effectifs</a>
                             <a href="/synchro-scodoc" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/synchro-scodoc' %}text-blue-600{% endif %}">Synchro ScoDoc</a>
+                            {% endif %}
                         </div>
                     </div>
 
-                    {% if user.role.value == 'ADMIN' or user.role.value == 'PROFESSOR' %}
+                    {% if active_role == 'ADMIN' or active_role == 'PROFESSOR' %}
                     <!-- SECTION OUTILS -->
                     <div class="space-y-1">
                         <button onclick="toggleMenu('menu-tools', 'icon-tools')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
@@ -64,7 +66,7 @@
                     </div>
                     {% endif %}
 
-                    {% if user.role.value == 'ADMIN' %}
+                    {% if active_role == 'ADMIN' %}
                     <!-- SECTION ADMIN -->
                     <div class="space-y-1">
                         <button onclick="toggleMenu('menu-admin', 'icon-admin')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
@@ -87,13 +89,39 @@
 
             <!-- Profile and Logout -->
             <div class="mt-auto p-8 border-t border-slate-100">
+                
+                <!-- Sélecteur de rôle (Uniquement si multi-rôle) -->
+                {% if user.roles_list|length > 1 %}
+                <div class="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2 text-center">Changer de vue</label>
+                    <div class="flex flex-col gap-1">
+                        {% set role_labels = {
+                            "ADMIN": "Administrateur",
+                            "DEPT_HEAD": "Chef de département",
+                            "STUDY_DIRECTOR": "Directeur des études",
+                            "PROFESSOR": "Enseignant",
+                            "PROF_RESP_SAE": "Responsable de Sæ",
+                            "ADMIN_STAFF": "Personnel administratif",
+                            "STUDENT": "Étudiant"
+                        } %}
+                        <select onchange="window.location.href='/switch-role/'+this.value" class="w-full bg-white border-none rounded-xl px-3 py-2 text-[10px] font-black text-slate-600 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                            {% for r in user.roles_list %}
+                            <option value="{{ r.value }}" {% if active_role == r.value %}selected{% endif %}>
+                                {{ role_labels[r.value] if r.value in role_labels else r.value }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="flex items-center gap-4 mb-6">
                     <div class="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-xs text-slate-400">
                         {{ user.full_name[:2] | upper if user else '??' }}
                     </div>
                     <div>
                         <p class="text-sm font-black text-slate-800 uppercase tracking-tighter">{{ user.full_name if user else 'Invité' }}</p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ user.role.value if user else 'GUEST' }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ active_role }}</p>
                     </div>
                 </div>
                 <a href="/logout" class="flex items-center gap-3 text-red-400 hover:text-red-600 transition-colors font-black text-xs uppercase tracking-widest">
@@ -103,10 +131,22 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="flex-1 overflow-y-auto p-12 bg-slate-50 relative">
             <div class="max-w-7xl mx-auto">
-                {% block content %}{% endblock %}
+                {% block content %}
+                    {% if active_role == 'ADMIN' %}
+                        {% include 'dashboards/admin.html' %}
+                    {% elif active_role == 'PROFESSOR' %}
+                        {% include 'dashboards/professor.html' %}
+                    {% elif active_role == 'STUDENT' %}
+                        {% include 'dashboards/student.html' %}
+                    {% else %}
+                        <div class="p-20 text-center">
+                            <h2 class="text-2xl font-black text-slate-300 italic">Bienvenue sur Skills Hub</h2>
+                            <p class="text-slate-400">Votre compte est en attente de configuration.</p>
+                        </div>
+                    {% endif %}
+                {% endblock %}
             </div>
         </main>
     </div>

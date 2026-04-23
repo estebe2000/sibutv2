@@ -60,7 +60,50 @@ async def dashboard(request: Request):
     with Session(engine) as session:
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
-        return templates.TemplateResponse(request, "dashboard.html", {"user": db_user, "stats": {}, "data": {}, "news": []})
+        
+        # Sélection du rôle actif (Session > Base)
+        active_role = request.session.get('active_role') or db_user.role.value
+        
+        stats = {}
+        data = {}
+        
+        if active_role == 'ADMIN':
+            stats = {
+                "user_count": session.exec(select(func.count(User.id))).one(),
+                "comp_count": session.exec(select(func.count(Competency.id))).one(),
+                "sae_count": session.exec(select(func.count(Activity.id))).one(),
+            }
+            data["recent_activities"] = session.exec(select(Activity).limit(5)).all()
+            
+        elif active_role == 'PROFESSOR':
+            # RÉEL : Mes ressources (Enseignements dont je suis responsable)
+            data["my_resources"] = session.exec(
+                select(Resource).where(Resource.responsible_uid == db_user.ldap_uid)
+            ).all()
+            
+            # SIMULATION : SAÉ (En attendant l'intégration du référentiel complet)
+            data["my_saes"] = session.exec(select(Activity).where(Activity.type == "SAE").limit(3)).all()
+            
+        elif active_role == 'STUDENT':
+            data["competencies"] = session.exec(select(Competency).limit(3)).all()
+            
+        return templates.TemplateResponse(request, "dashboard.html", {
+            "user": db_user, 
+            "active_role": active_role,
+            "stats": stats, 
+            "data": data, 
+            "news": []
+        })
+
+@app.get("/switch-role/{role}")
+async def switch_role(request: Request, role: str):
+    user_session = request.session.get('user')
+    if not user_session: return RedirectResponse(url='/login')
+    with Session(engine) as session:
+        db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
+        if db_user and any(r.value == role for r in db_user.roles_list):
+            request.session['active_role'] = role
+    return RedirectResponse(url='/')
 
 @app.get("/login")
 async def login(request: Request):
@@ -85,11 +128,18 @@ async def effectifs(request: Request):
     with Session(engine) as session:
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
+        
+        # Vérification du rôle actif
+        active_role = request.session.get('active_role') or db_user.role.value
+        if active_role != 'ADMIN':
+            return RedirectResponse(url='/')
+
         promotions = session.exec(select(Promotion)).all()
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
         return templates.TemplateResponse(request, "effectifs.html", {
             "user": db_user, 
+            "active_role": active_role,
             "promotions": promotions, 
             "resources": resources,
             "teachers": teachers
@@ -129,6 +179,12 @@ async def synchro_scodoc(request: Request):
     with Session(engine) as session:
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
+
+        # Vérification du rôle actif
+        active_role = request.session.get('active_role') or db_user.role.value
+        if active_role != 'ADMIN':
+            return RedirectResponse(url='/')
+
         scodoc_data = {"hierarchy": {}, "resources": []}
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
@@ -162,7 +218,9 @@ async def admin_users(request: Request):
             select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)
         ).all()
         return templates.TemplateResponse(request, "admin_users.html", {"user": db_user, "all_users": all_users})
+
+@app.get("/logout")
 async def logout(request: Request):
     request.session.clear()
-    logout_url = f"https://auth.{DOMAIN}/realms/{REALM}/protocol/openid-connect/logout?client_id={os.getenv('KEYCLOAK_CLIENT_ID')}&post_logout_redirect_uri=https://hub.{DOMAIN}/"
+    logout_url = f"https://auth.{settings.DOMAIN}/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/logout?client_id={settings.KEYCLOAK_CLIENT_ID}&post_logout_redirect_uri=https://hub.{settings.DOMAIN}/"
     return RedirectResponse(url=logout_url)
