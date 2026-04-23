@@ -5,6 +5,9 @@
     .but-badge-1 { border-left: 6px solid #3b82f6; }
     .but-badge-2 { border-left: 6px solid #a855f7; }
     .but-badge-3 { border-left: 6px solid #14b8a6; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 </style>
 
 <div class="space-y-8 animate-in fade-in duration-500">
@@ -41,7 +44,8 @@
                     {% if promo %}
                         <div class="space-y-2 p-2">
                             {% for group in promo.groups %}
-                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100 but-badge-{{ level_idx }}">
+                            <div class="group-card p-5 bg-slate-50 rounded-2xl border border-slate-100 but-badge-{{ level_idx }} hover:bg-white hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer group"
+                                 onclick="openGroupManagement({{ group.id }}, '{{ group.name }}')">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <div class="text-sm font-black text-slate-800">{{ group.name }}</div>
@@ -49,11 +53,11 @@
                                     </div>
                                     <div class="flex flex-col items-end gap-2">
                                         <span class="px-2 py-1 bg-white rounded-lg border border-slate-200 text-[10px] font-black">{{ group.users|length }} pers.</span>
-                                        <div class="flex gap-1">
-                                            <button onclick="renameGroup({{ group.id }}, '{{ group.name }}')" class="p-1.5 bg-white border border-slate-100 rounded-lg text-slate-400 hover:text-blue-600 transition-colors shadow-sm">
+                                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                            <button onclick="event.stopPropagation(); renameGroup({{ group.id }}, '{{ group.name }}')" class="p-1.5 bg-white border border-slate-100 rounded-lg text-slate-400 hover:text-blue-600 transition-colors shadow-sm">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                                             </button>
-                                            <button onclick="deleteGroup({{ group.id }})" class="p-1.5 bg-white border border-slate-100 rounded-lg text-slate-400 hover:text-red-600 transition-colors shadow-sm">
+                                            <button onclick="event.stopPropagation(); deleteGroup({{ group.id }})" class="p-1.5 bg-white border border-slate-100 rounded-lg text-slate-400 hover:text-red-600 transition-colors shadow-sm">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                             </button>
                                         </div>
@@ -72,6 +76,131 @@
         {% endfor %}
     </div>
 
+    <!-- ÉQUIPE PÉDAGOGIQUE -->
+    <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-xl font-black italic flex items-center gap-3 text-slate-800">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Équipe Pédagogique TC
+            </h3>
+            <button onclick="window.location.href='/admin/users'" class="px-5 py-2 bg-slate-100 text-slate-500 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                Gérer l'équipe
+            </button>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {% for teacher in teachers %}
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-blue-200 transition-all cursor-pointer" 
+                 onclick="openTeacherProfile('{{ teacher.ldap_uid }}')">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-[10px] font-black text-white shadow-sm shadow-blue-100">
+                        {{ teacher.full_name[0] | upper }}
+                    </div>
+                    <div class="overflow-hidden">
+                        <div class="text-[11px] font-black text-slate-800 truncate" title="{{ teacher.full_name }}">{{ teacher.full_name }}</div>
+                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">{{ teacher.ldap_uid }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- MODAL FICHE ENSEIGNANT -->
+    <div id="teacherModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex justify-end">
+        <div class="w-full max-w-md bg-white h-full shadow-2xl p-10 flex flex-col animate-slide-in">
+            <div class="flex justify-between items-start mb-10">
+                <div id="teacherInitial" class="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center text-2xl font-black text-white shadow-xl shadow-blue-100">
+                    ?
+                </div>
+                <button onclick="closeTeacherModal()" class="p-2 hover:bg-slate-100 rounded-full transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="space-y-1 mb-8">
+                <h2 id="teacherName" class="text-3xl font-black italic text-slate-900">Nom Enseignant</h2>
+                <p id="teacherUid" class="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]"></p>
+            </div>
+
+            <div class="space-y-6 flex-1 overflow-y-auto pr-2">
+                <!-- RÔLES -->
+                <div class="space-y-3">
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Fonctions & Rôles</h4>
+                    <div id="teacherRoles" class="flex flex-wrap gap-2">
+                        <!-- Rôles injectés ici -->
+                    </div>
+                </div>
+
+                <!-- CONTACT -->
+                <div class="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        <span id="teacherEmail" class="text-xs font-bold text-slate-700"></span>
+                    </div>
+                </div>
+
+                <!-- RESSOURCES -->
+                <div class="space-y-4">
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Enseignements (Responsable)</h4>
+                    <div id="teacherResources" class="space-y-2">
+                        <!-- Ressources injectées ici -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 mt-8 border-t border-slate-100">
+                <button onclick="window.location.href='/admin/users'" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all shadow-lg">
+                    Modifier les permissions
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .animate-slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    </style>
+
+    <script>
+    async function openTeacherProfile(uid) {
+        const modal = document.getElementById('teacherModal');
+        modal.classList.remove('hidden');
+        
+        try {
+            const resp = await fetch(`/api/teacher/${uid}`);
+            const data = await resp.json();
+            
+            document.getElementById('teacherName').innerText = data.full_name;
+            document.getElementById('teacherUid').innerText = data.ldap_uid;
+            document.getElementById('teacherEmail').innerText = data.email;
+            document.getElementById('teacherInitial').innerText = data.full_name[0].toUpperCase();
+            
+            // Rôles
+            const rolesDiv = document.getElementById('teacherRoles');
+            rolesDiv.innerHTML = data.roles.map(role => `
+                <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-tight border border-blue-100">${role.replace('_', ' ')}</span>
+            `).join('');
+            
+            // Ressources
+            const resDiv = document.getElementById('teacherResources');
+            resDiv.innerHTML = data.resources.length > 0 ? data.resources.map(res => `
+                <div class="p-3 bg-white border border-slate-100 rounded-xl flex items-center justify-between shadow-sm">
+                    <span class="text-[10px] font-black text-slate-900">${res.code}</span>
+                    <span class="text-[10px] font-bold text-slate-500 truncate ml-4">${res.label}</span>
+                </div>
+            `).join('') : '<p class="text-xs italic text-slate-400">Aucune ressource assignée</p>';
+            
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    function closeTeacherModal() {
+        document.getElementById('teacherModal').classList.add('hidden');
+    }
+    </script>
+
     <!-- MATRICE DES RESSOURCES -->
     <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
         <h3 class="text-xl font-black mb-8 italic flex items-center gap-3">
@@ -80,15 +209,27 @@
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {% for res in resources %}
-            <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 group hover:border-indigo-500/50 transition-all">
                 <div class="flex justify-between mb-2">
                     <span class="text-[10px] font-black text-indigo-400">{{ res.code }}</span>
-                    <span class="text-[8px] font-black bg-white/10 px-1.5 rounded">{{ res.pathway }}</span>
+                    <span class="text-[8px] font-black bg-white/10 px-1.5 rounded text-slate-400">{{ res.pathway }}</span>
                 </div>
-                <div class="text-[11px] font-bold text-slate-200 truncate">{{ res.label }}</div>
-                <div class="mt-4 flex items-center gap-2 border-t border-white/5 pt-3">
-                    <div class="w-5 h-5 rounded-md bg-indigo-500 flex items-center justify-center text-[8px] font-black">{{ res.responsible[0] if res.responsible else '?' }}</div>
-                    <span class="text-[9px] font-black text-slate-500 uppercase">{{ res.responsible }}</span>
+                <div class="text-[11px] font-bold text-slate-200 truncate group-hover:text-white transition-colors">{{ res.label }}</div>
+                <div class="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
+                    <div class="flex items-center gap-2">
+                        {% if res.responsible and res.responsible != '(inconnu)' and res.responsible != 'N/A' %}
+                            <div class="w-5 h-5 rounded-md bg-indigo-500 flex items-center justify-center text-[8px] font-black text-white">
+                                {{ res.responsible[0] | upper }}
+                            </div>
+                            <span class="text-[9px] font-black text-indigo-200 uppercase tracking-tighter">{{ res.responsible }}</span>
+                        {% else %}
+                            <div class="w-5 h-5 rounded-md bg-slate-700 flex items-center justify-center text-[8px] font-black text-slate-400">?</div>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-tighter">À assigner</span>
+                        {% endif %}
+                    </div>
+                    <button onclick="changeResponsible({{ res.id }}, '{{ res.code }}', '{{ res.responsible }}')" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-indigo-400 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                    </button>
                 </div>
             </div>
             {% endfor %}
@@ -96,7 +237,309 @@
     </div>
 </div>
 
+<!-- Modal Changement Responsable -->
+<div id="modal-resp" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-md p-10 shadow-2xl">
+        <h3 class="text-2xl font-black italic text-slate-800 mb-2">Assigner un Responsable</h3>
+        <p id="modal-res-code" class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-8"></p>
+        
+        <div class="space-y-6">
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Rechercher un enseignant</label>
+                <div class="relative group">
+                    <input type="text" id="prof-search" oninput="debounceSearch()" placeholder="Nom ou email..." class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all mb-4">
+                    <div class="absolute right-6 top-4 text-slate-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </div>
+                </div>
+
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Sélectionner dans la liste</label>
+                <select id="prof-select" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all appearance-none">
+                    <option value="">-- Utiliser la recherche ci-dessus --</option>
+                </select>
+                <p class="mt-2 text-[10px] font-bold text-slate-400 italic">Note : L'identifiant (trigramme) sera utilisé si le nom n'est pas disponible.</p>
+            </div>
+            
+            <div class="flex gap-4 pt-4">
+                <button onclick="closeModal()" class="flex-1 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-slate-400 hover:bg-slate-50 transition-all">Annuler</button>
+                <button onclick="saveResponsible()" class="flex-1 px-6 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Gestion Élèves -->
+<div id="modal-group" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-[3rem] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+        <div class="p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+            <div>
+                <h3 id="modal-group-title" class="text-3xl font-black italic text-slate-800">Gestion du Groupe</h3>
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Liste des élèves et affectations</p>
+            </div>
+            <button onclick="closeGroupModal()" class="p-4 hover:bg-white rounded-2xl shadow-sm transition-all group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300 group-hover:text-slate-600"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-10 space-y-8 custom-scrollbar">
+            <!-- Zone Recherche / Ajout -->
+            <div class="bg-indigo-50 p-6 rounded-[2rem] border border-indigo-100 space-y-4">
+                <div class="flex gap-4 items-center">
+                    <div class="flex-1 relative">
+                        <input type="text" id="student-search" oninput="debounceStudentSearch()" placeholder="Rechercher un élève par nom, NIP ou email..." 
+                               class="w-full bg-white border-none rounded-2xl px-6 py-4 text-sm font-bold shadow-sm focus:ring-2 focus:ring-indigo-500 transition-all">
+                        
+                        <!-- Liste de suggestions -->
+                        <div id="student-search-results" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 z-[70] max-h-64 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                            <!-- Rempli par JS -->
+                        </div>
+                    </div>
+                </div>
+                <p class="text-[10px] font-bold text-indigo-400/60 ml-2 uppercase tracking-widest">Saisissez 3 caractères pour lancer la recherche</p>
+            </div>
+
+            <!-- Liste des élèves -->
+            <div class="space-y-4">
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Élèves actuellement dans ce groupe</h4>
+                <div id="students-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Rempli par JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Déplacement -->
+<div id="modal-move" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-[2px] z-[60] flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-sm p-10 shadow-2xl border border-slate-100">
+        <h3 class="text-xl font-black italic text-slate-800 mb-6 text-center">Déplacer l'élève</h3>
+        <div class="space-y-4">
+            <select id="target-group-select" class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-bold appearance-none">
+                <!-- Rempli par JS -->
+            </select>
+            <div class="flex gap-3">
+                <button onclick="closeMoveModal()" class="flex-1 py-4 font-black text-xs uppercase text-slate-400 hover:bg-slate-50 rounded-2xl transition-all">Annuler</button>
+                <button id="confirm-move-btn" class="flex-1 py-4 bg-slate-900 text-white font-black text-xs uppercase rounded-2xl hover:bg-black transition-all">Confirmer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+let currentResId = null;
+let currentGroupId = null;
+let searchTimeout = null;
+
+function debounceSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        loadProfessors(document.getElementById('prof-search').value);
+    }, 300);
+}
+
+async function loadProfessors(query = '') {
+    const select = document.getElementById('prof-select');
+    select.innerHTML = '<option value="">Chargement...</option>';
+    try {
+        const url = query ? `/api/v1/admin/users/professors?q=${encodeURIComponent(query)}` : '/api/v1/admin/users/professors';
+        const resp = await fetch(url);
+        const profs = await resp.json();
+        select.innerHTML = '<option value="">-- Choisir un professeur --</option>';
+        if (profs.length === 0) select.innerHTML = '<option value="">Aucun résultat</option>';
+        profs.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.full_name || p.username;
+            opt.innerText = `${p.full_name || 'Sans Nom'} (${p.username})`;
+            select.appendChild(opt);
+        });
+    } catch (e) { select.innerHTML = '<option value="">Erreur de chargement</option>'; }
+}
+
+async function changeResponsible(id, code, current) {
+    currentResId = id;
+    document.getElementById('modal-res-code').innerText = `Ressource ${code}`;
+    document.getElementById('prof-search').value = '';
+    document.getElementById('modal-resp').classList.remove('hidden');
+    loadProfessors();
+}
+
+function closeModal() {
+    document.getElementById('modal-resp').classList.add('hidden');
+}
+
+async function saveResponsible() {
+    const select = document.getElementById('prof-select');
+    const value = select.value;
+    if (!value) return alert("Veuillez sélectionner un enseignant");
+    try {
+        const response = await fetch(`/api/v1/dispatch/resources/${currentResId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ responsible: value })
+        });
+        if (response.ok) window.location.href = window.location.pathname + '?sync=' + Date.now();
+        else { const err = await response.json(); alert("Erreur : " + (err.detail || "Inconnue")); }
+    } catch (e) { alert("Erreur réseau"); }
+}
+
+async function openGroupManagement(id, name) {
+    currentGroupId = id;
+    document.getElementById('modal-group-title').innerText = name;
+    document.getElementById('modal-group').classList.remove('hidden');
+    loadGroupStudents(id);
+}
+
+function closeGroupModal() {
+    document.getElementById('modal-group').classList.add('hidden');
+}
+
+async function loadGroupStudents(groupId) {
+    const list = document.getElementById('students-list');
+    list.innerHTML = '<div class="col-span-full py-10 text-center text-slate-400 font-bold italic">Chargement...</div>';
+    try {
+        const resp = await fetch(`/api/v1/dispatch/groups/${groupId}/students`);
+        const students = await resp.json();
+        list.innerHTML = '';
+        if (students.length === 0) list.innerHTML = '<div class="col-span-full py-10 text-center text-slate-400 font-bold italic">Aucun élève.</div>';
+        students.forEach(s => {
+            const card = document.createElement('div');
+            card.className = "p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between group/item hover:border-indigo-200 transition-all";
+            card.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-xs font-black text-slate-400 border border-slate-100">${(s.full_name || 'ST')[0]}</div>
+                    <div>
+                        <div class="text-[11px] font-black text-slate-800">${s.full_name}</div>
+                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${s.nip || 'Pas de NIP'}</div>
+                    </div>
+                </div>
+                <div class="flex gap-1 opacity-0 group-hover/item:opacity-100 transition-all">
+                    <button onclick="initMoveStudent(${s.id}, '${s.full_name}')" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-indigo-600 shadow-sm transition-all" title="Déplacer"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 8 4 4-4 4"/><path d="M2 12h20"/><path d="m6 8-4 4 4 4"/></svg></button>
+                    <button onclick="removeStudentFromGroup(${s.id})" class="p-2 hover:bg-white rounded-lg text-slate-400 hover:text-red-600 shadow-sm transition-all" title="Retirer"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                </div>`;
+            list.appendChild(card);
+        });
+    } catch (e) { list.innerHTML = 'Erreur serveur'; }
+}
+
+async function initMoveStudent(userId, name) {
+    const select = document.getElementById('target-group-select');
+    select.innerHTML = '<option value="">Choisir le groupe cible...</option>';
+    document.querySelectorAll('.group-card').forEach(c => {
+        const idStr = c.getAttribute('onclick').match(/openGroupManagement\((\d+)/)[1];
+        const gName = c.querySelector('.text-sm').innerText;
+        if (parseInt(idStr) !== currentGroupId) {
+            const opt = document.createElement('option');
+            opt.value = idStr; opt.innerText = gName;
+            select.appendChild(opt);
+        }
+    });
+    document.getElementById('modal-move').classList.remove('hidden');
+    document.getElementById('confirm-move-btn').onclick = () => performMove(userId);
+}
+
+function closeMoveModal() { document.getElementById('modal-move').classList.add('hidden'); }
+
+async function performMove(userId) {
+    const targetGroupId = document.getElementById('target-group-select').value;
+    if (!targetGroupId) return alert("Sélectionnez un groupe");
+    try {
+        const response = await fetch(`/api/v1/dispatch/students/${userId}/move`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ group_id: parseInt(targetGroupId) })
+        });
+        if (response.ok) { closeMoveModal(); loadGroupStudents(currentGroupId); }
+    } catch (e) { alert("Erreur serveur"); }
+}
+
+async function removeStudentFromGroup(userId) {
+    if (!confirm("Retirer cet élève du groupe ?")) return;
+    try {
+        const response = await fetch(`/api/v1/dispatch/students/${userId}/move`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ group_id: null })
+        });
+        if (response.ok) loadGroupStudents(currentGroupId);
+    } catch (e) { alert("Erreur serveur"); }
+}
+
+let studentSearchTimeout = null;
+
+function debounceStudentSearch() {
+    clearTimeout(studentSearchTimeout);
+    const q = document.getElementById('student-search').value;
+    if (q.length < 3) {
+        document.getElementById('student-search-results').classList.add('hidden');
+        return;
+    }
+    studentSearchTimeout = setTimeout(() => {
+        searchStudents(q);
+    }, 300);
+}
+
+async function searchStudents(q) {
+    const resultsDiv = document.getElementById('student-search-results');
+    resultsDiv.innerHTML = '<div class="p-4 text-xs font-bold text-slate-400 italic">Recherche...</div>';
+    resultsDiv.classList.remove('hidden');
+    
+    try {
+        const resp = await fetch(`/api/v1/admin/users/search?q=${encodeURIComponent(q)}`);
+        const users = await resp.json();
+        
+        if (users.length === 0) {
+            resultsDiv.innerHTML = '<div class="p-4 text-xs font-bold text-slate-400 italic">Aucun résultat</div>';
+            return;
+        }
+        
+        resultsDiv.innerHTML = '';
+        users.forEach(u => {
+            const item = document.createElement('div');
+            item.className = "flex items-center justify-between p-3 hover:bg-indigo-50 rounded-xl cursor-pointer transition-all group";
+            item.onclick = () => addStudentToGroup(u);
+            
+            const isLocal = u.source === "local";
+            const inCurrent = u.group_id === currentGroupId;
+            
+            item.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400">${(u.full_name || 'ST')[0]}</div>
+                    <div>
+                        <div class="text-[11px] font-black text-slate-800">${u.full_name}</div>
+                        <div class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${u.username} ${inCurrent ? '• (Déjà ici)' : ''}</div>
+                    </div>
+                </div>
+                <div class="px-3 py-1 bg-white border border-slate-100 rounded-lg text-[8px] font-black uppercase tracking-widest text-slate-400 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
+                    ${inCurrent ? 'En poste' : (isLocal ? 'Transférer' : 'Importer')}
+                </div>
+            `;
+            resultsDiv.appendChild(item);
+        });
+    } catch (e) { resultsDiv.innerHTML = '<div class="p-4 text-xs text-red-500">Erreur</div>'; }
+}
+
+async function addStudentToGroup(student) {
+    if (student.group_id === currentGroupId) return;
+    
+    if (student.source !== "local") {
+        return alert("Cet utilisateur doit d'abord être synchronisé via ScoDoc ou se connecter au Hub.");
+    }
+
+    try {
+        const response = await fetch(`/api/v1/dispatch/students/${student.id}/move`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ group_id: currentGroupId })
+        });
+        
+        if (response.ok) {
+            document.getElementById('student-search').value = '';
+            document.getElementById('student-search-results').classList.add('hidden');
+            loadGroupStudents(currentGroupId);
+        }
+    } catch (e) { alert("Erreur lors de l'ajout"); }
+}
+
 async function renameGroup(id, currentName) {
     const newName = prompt("Nouveau nom pour ce groupe :", currentName);
     if (!newName || newName === currentName) return;

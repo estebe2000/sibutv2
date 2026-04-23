@@ -107,7 +107,8 @@ class User(SQLModel, TimestampMixin, table=True):
     email: str = Field(index=True)
     full_name: str
     phone: Optional[str] = None
-    role: UserRole = Field(default=UserRole.GUEST)
+    role: UserRole = Field(default=UserRole.GUEST) # Rôle principal (legacy/display)
+    roles_json: str = Field(default="[\"GUEST\"]") # Liste des rôles en JSON
     
     promotion_id: Optional[int] = Field(default=None, foreign_key="promotion.id")
     promotion: Optional[Promotion] = Relationship(back_populates="users")
@@ -116,6 +117,14 @@ class User(SQLModel, TimestampMixin, table=True):
     group: Optional[Group] = Relationship(back_populates="users")
     
     activity_groups: List["ActivityGroup"] = Relationship(back_populates="students", link_model=ActivityGroupStudentLink)
+
+    @property
+    def roles_list(self) -> List[UserRole]:
+        import json
+        try:
+            return [UserRole(r) for r in json.loads(self.roles_json)]
+        except:
+            return [self.role]
 
 class ActivityGroup(SQLModel, AcademicYearMixin, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -173,6 +182,7 @@ class Resource(SQLModel, table=True):
     hours_details: Optional[str] = None
     pathway: str = Field(default="Tronc Commun")
     responsible: Optional[str] = Field(default="(inconnu)")
+    responsible_uid: Optional[str] = Field(default=None, index=True) # Le vrai UID LDAP
     
     learning_outcomes: List[LearningOutcome] = Relationship(back_populates="resources", link_model=ResourceACLink)
 

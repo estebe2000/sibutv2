@@ -101,75 +101,258 @@
     </div>
 </div>
 
+<!-- MODALE ÉDITION PERMISSIONS -->
+<div id="modal-edit-roles" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-[3rem] w-full max-w-lg p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+        <h3 id="edit-user-name" class="text-2xl font-black italic text-slate-800 mb-2">Modifier les rôles</h3>
+        <p id="edit-user-uid" class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-8">UID: ...</p>
+        
+        <input type="hidden" id="edit-ldap-uid">
+        
+        <div class="space-y-3" id="roles-checkboxes">
+            {% set role_labels = {
+                "ADMIN": "Administrateur",
+                "DEPT_HEAD": "Chef de département",
+                "STUDY_DIRECTOR": "Directeur des études",
+                "PROFESSOR": "Enseignant",
+                "PROF_RESP_SAE": "Responsable de Sæ",
+                "ADMIN_STAFF": "Personnel administratif"
+            } %}
+            {% for role, label in role_labels.items() %}
+            <label class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-blue-200 cursor-pointer transition-all group">
+                <input type="checkbox" name="user-roles" value="{{ role }}" class="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500">
+                <div class="flex flex-col">
+                    <span class="text-sm font-black text-slate-700 group-hover:text-blue-600">{{ label }}</span>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="flex gap-4 mt-10">
+            <button onclick="closeModal('modal-edit-roles')" class="flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">Annuler</button>
+            <button onclick="submitUpdateRoles()" class="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 shadow-lg transition-all">Enregistrer</button>
+        </div>
+    </div>
+</div>
+
 <script>
+let localUsers = [
+    {% for u in all_users %}
+    {
+        id: {{ u.id }},
+        ldap_uid: "{{ u.ldap_uid }}",
+        full_name: "{{ u.full_name }}",
+        email: "{{ u.email }}",
+        nip: "{{ u.nip if u.nip else '' }}",
+        role: "{{ u.role }}",
+        roles_json: '{{ u.roles_json | safe if u.roles_json else "[]" }}'
+    },
+    {% endfor %}
+];
+
 let currentView = 'LOCAL';
 let searchTimeout = null;
+
+const roleTranslations = {
+    "ADMIN": "Administrateur",
+    "DEPT_HEAD": "Chef de département",
+    "STUDY_DIRECTOR": "Directeur des études",
+    "PROFESSOR": "Enseignant",
+    "PROF_RESP_SAE": "Responsable de Sæ",
+    "ADMIN_STAFF": "Personnel administratif",
+    "GUEST": "Invité"
+};
+
+function renderUserRow(u, isLdap = false) {
+    let roles = [];
+    try {
+        roles = JSON.parse(u.roles_json || '["GUEST"]');
+    } catch (e) {
+        roles = ["GUEST"];
+    }
+    
+    const roleBadges = roles.map(r => `
+        <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[8px] font-black uppercase border border-blue-100">${roleTranslations[r] || r.replace(/_/g, ' ')}</span>
+    `).join('');
+
+    if (isLdap) {
+        const userData = JSON.stringify({
+            full_name: u.full_name,
+            username: u.username || u.ldap_uid,
+            email: u.email
+        });
+        return `
+            <tr class="hover:bg-slate-50/50 transition-colors">
+                <td class="p-6">
+                    <div class="font-black text-slate-800 uppercase text-sm">${u.full_name}</div>
+                    <div class="text-[11px] font-bold text-slate-400 italic">${u.email || 'Pas d\'email'}</div>
+                </td>
+                <td class="p-6"><code class="px-2 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-600">${u.username || u.ldap_uid}</code></td>
+                <td class="p-6 text-center">
+                    <span class="px-3 py-1 bg-indigo-50 text-indigo-500 rounded-full text-[9px] font-black uppercase border border-indigo-100 italic">Annuaire univ</span>
+                </td>
+                <td class="p-6 text-right">
+                    <button onclick='importUser(${userData})' class="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase hover:bg-blue-600 transition-all">Importer</button>
+                </td>
+            </tr>
+        `;
+    } else {
+        return `
+            <tr class="user-row-local hover:bg-slate-50/50 transition-colors">
+                <td class="p-6">
+                    <div class="font-black text-slate-800 uppercase text-sm">${u.full_name}</div>
+                    <div class="flex gap-1 mt-1">${roleBadges}</div>
+                </td>
+                <td class="p-6"><code class="px-2 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-600">${u.ldap_uid}</code></td>
+                <td class="p-6 text-center">
+                    <span class="px-3 py-1 ${u.nip ? 'bg-indigo-50 text-indigo-500 border-indigo-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'} rounded-full text-[9px] font-black uppercase border italic">${u.nip ? 'Sync LDAP' : 'Local'}</span>
+                </td>
+                <td class="p-6 text-right space-x-2">
+                    <button onclick="editUser('${u.ldap_uid}')" class="p-2 text-slate-300 hover:text-blue-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button>
+                    <button onclick="deleteUser('${u.ldap_uid}')" class="p-2 text-slate-300 hover:text-red-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+                </td>
+            </tr>
+        `;
+    }
+}
 
 function handleSearch(q) {
     if (searchTimeout) clearTimeout(searchTimeout);
     
+    if (q.length === 0) {
+        renderList(localUsers);
+        updateViewButtons('LOCAL');
+        return;
+    }
+
     if (q.length < 3) {
-        if (currentView === 'LOCAL') showLocalUsers();
+        const filtered = localUsers.filter(u => 
+            u.full_name.toLowerCase().includes(q.toLowerCase()) || 
+            u.ldap_uid.toLowerCase().includes(q.toLowerCase())
+        );
+        renderList(filtered);
         return;
     }
 
     searchTimeout = setTimeout(() => executeSearch(q), 400);
 }
 
+function renderList(users, isLdap = false) {
+    const body = document.getElementById('users-body');
+    const emptyState = document.getElementById('empty-state');
+    if (!body) return;
+    
+    body.innerHTML = users.map(u => renderUserRow(u, isLdap)).join('');
+    
+    if (users.length === 0) emptyState.classList.remove('hidden');
+    else emptyState.classList.add('hidden');
+
+    document.getElementById('results-count').innerText = isLdap ? 
+        `${users.length} résultats trouvés dans l'annuaire` : 
+        `${users.length} utilisateurs dans le Hub`;
+}
+
 async function executeSearch(q) {
     const spinner = document.getElementById('search-spinner');
-    const body = document.getElementById('users-body');
-    const count = document.getElementById('results-count');
-    
     spinner.classList.remove('hidden');
     
     try {
         const res = await fetch(`/api/v1/admin/users/search?q=${q}`);
         const users = await res.json();
-        
-        body.innerHTML = '';
-        switchView('LDAP', false); // Bascule visuelle vers LDAP
-        
-        users.forEach(u => {
-            // Filtrage des étudiants par mail (le Havre @etu.)
-            if (u.email && u.email.includes('@etu.')) return;
-
-            const row = document.createElement('tr');
-            row.className = "hover:bg-slate-50/50 transition-colors";
-            row.innerHTML = `
-                <td class="p-6">
-                    <div class="font-black text-slate-800 uppercase text-sm">${u.full_name}</div>
-                    <div class="text-[11px] font-bold text-slate-400 italic">${u.email || 'Pas d\'email'}</div>
-                </td>
-                <td class="p-6"><code class="px-2 py-1 bg-slate-100 rounded-lg text-xs font-bold text-slate-600">${u.username}</code></td>
-                <td class="p-6 text-center">
-                    <span class="px-3 py-1 bg-indigo-50 text-indigo-500 rounded-full text-[9px] font-black uppercase border border-indigo-100 italic">Trouvé sur LDAP</span>
-                </td>
-                <td class="p-6 text-right">
-                    <button class="px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase hover:bg-blue-600 transition-all">Importer dans le Hub</button>
-                </td>
-            `;
-            body.appendChild(row);
-        });
-        
-        count.innerText = `${body.children.length} résultats trouvés dans l'annuaire`;
-        
+        const filtered = users.filter(u => !u.email || !u.email.includes('@etu.'));
+        updateViewButtons('LDAP');
+        renderList(filtered, true);
     } catch (e) { console.error(e); }
     finally { spinner.classList.add('hidden'); }
 }
 
-function showLocalUsers() {
-    window.location.reload(); // Simplifié pour la démo, on peut faire mieux en JS
-}
-
-function switchView(view, reload = true) {
+function updateViewButtons(view) {
     currentView = view;
     document.querySelectorAll('.view-btn').forEach(btn => {
         btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
         btn.classList.add('text-slate-500');
     });
-    document.getElementById(`btn-view-${view}`).classList.add('bg-white', 'text-blue-600', 'shadow-sm');
-    if (reload && view === 'LOCAL') showLocalUsers();
+    const activeBtn = document.getElementById(`btn-view-${view}`);
+    if (activeBtn) activeBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+}
+
+function switchView(view) {
+    if (view === 'LOCAL') {
+        document.getElementById('global-search').value = '';
+        renderList(localUsers);
+    }
+    updateViewButtons(view);
+}
+
+function editUser(uid) {
+    const user = localUsers.find(u => u.ldap_uid === uid);
+    if (!user) return;
+
+    document.getElementById('edit-user-name').innerText = user.full_name;
+    document.getElementById('edit-user-uid').innerText = `UID: ${user.ldap_uid}`;
+    document.getElementById('edit-ldap-uid').value = user.ldap_uid;
+
+    let currentRoles = [];
+    try {
+        currentRoles = JSON.parse(user.roles_json || '[]');
+    } catch (e) {
+        currentRoles = [];
+    }
+    
+    document.querySelectorAll('input[name="user-roles"]').forEach(cb => {
+        cb.checked = currentRoles.includes(cb.value);
+    });
+
+    openModal('modal-edit-roles');
+}
+
+async function submitUpdateRoles() {
+    const uid = document.getElementById('edit-ldap-uid').value;
+    const selectedRoles = Array.from(document.querySelectorAll('input[name="user-roles"]:checked')).map(cb => cb.value);
+
+    try {
+        const res = await fetch(`/api/v1/admin/users/${uid}/roles`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(selectedRoles)
+        });
+
+        if (res.ok) {
+            const userIndex = localUsers.findIndex(u => u.ldap_uid === uid);
+            if (userIndex !== -1) {
+                localUsers[userIndex].roles_json = JSON.stringify(selectedRoles);
+            }
+            renderList(localUsers);
+            closeModal('modal-edit-roles');
+        } else {
+            alert("Erreur lors de la mise à jour");
+        }
+    } catch (e) { alert("Erreur réseau"); }
+}
+
+async function importUser(data) {
+    try {
+        const res = await fetch('/api/v1/admin/users', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        if (res.ok) {
+            alert(`${data.full_name} a été importé !`);
+            window.location.reload();
+        } else {
+            const err = await res.json();
+            alert("Erreur: " + (err.detail || "Déjà présent"));
+        }
+    } catch (e) { alert("Erreur réseau"); }
+}
+
+async function deleteUser(uid) {
+    if (!confirm("Supprimer cet utilisateur ?")) return;
+    try {
+        const res = await fetch(`/api/v1/admin/users/${uid}`, { method: 'DELETE' });
+        if (res.ok) window.location.reload();
+    } catch (e) { alert("Erreur réseau"); }
 }
 
 function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -179,8 +362,7 @@ async function submitCreate() {
     const data = {
         full_name: document.getElementById('new-name').value,
         username: document.getElementById('new-uid').value,
-        email: document.getElementById('new-email').value,
-        role: "PROFESSOR"
+        email: document.getElementById('new-email').value
     };
     const res = await fetch('/api/v1/admin/users', {
         method: 'POST',
@@ -189,5 +371,9 @@ async function submitCreate() {
     });
     if (res.ok) window.location.reload();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderList(localUsers);
+});
 </script>
 {% endblock %}

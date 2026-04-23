@@ -29,23 +29,35 @@ async def search_users_in_keycloak(query: str):
     token = await get_admin_token()
     url = f"{settings.KEYCLOAK_URL}/admin/realms/{settings.KEYCLOAK_REALM}/users"
     headers = {"Authorization": f"Bearer {token}"}
-    params = {"search": query, "max": 20}
+    
+    # Stratégie radicale : On récupère les 100 premiers utilisateurs du realm
+    # et on filtre nous-mêmes par email ou username
+    params = {"max": 100}
     
     async with httpx.AsyncClient(timeout=10.0) as client:
-        resp = await client.get(url, headers=headers, params=params)
-        resp.raise_for_status()
-        users = resp.json()
-        
-        # Formatage pour le Hub
-        results = []
-        for u in users:
-            # Un étudiant a souvent un email @etu. ou un pattern spécifique
-            # On peut aussi filtrer par groupe Keycloak si nécessaire
-            results.append({
-                "username": u.get("username"),
-                "full_name": f"{u.get('firstName', '')} {u.get('lastName', '')}".strip() or u.get("username"),
-                "email": u.get("email"),
-                "is_ldap": "federationLink" in u or "univ-lehavre" in u.get("email", ""),
-                "id": u.get("id")
-            })
-        return results
+        try:
+            resp = await client.get(url, headers=headers, params=params)
+            if resp.status_code == 200:
+                all_users = resp.json()
+                results = []
+                for u in all_users:
+                    # Filtrage manuel par la query (ex: @univ-lehavre.fr)
+                    match = False
+                    email = u.get("email", "")
+                    username = u.get("username", "")
+                    
+                    if query.lower() in email.lower() or query.lower() in username.lower():
+                        match = True
+                        
+                    if match:
+                        results.append({
+                            "username": username,
+                            "full_name": f"{u.get('firstName', '')} {u.get('lastName', '')}".strip() or username,
+                            "email": email,
+                            "id": u.get("id")
+                        })
+                return results
+        except Exception as e:
+            print(f"Keycloak Total Fetch Error: {e}")
+            return []
+    return []

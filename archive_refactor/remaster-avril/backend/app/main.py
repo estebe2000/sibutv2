@@ -86,8 +86,41 @@ async def effectifs(request: Request):
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
         if not db_user: return RedirectResponse(url='/login')
         promotions = session.exec(select(Promotion)).all()
-        resources = session.exec(select(Resource)).all()
-        return templates.TemplateResponse(request, "effectifs.html", {"user": db_user, "promotions": promotions, "resources": resources})
+        resources = session.exec(select(Resource).order_by(Resource.code)).all()
+        teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
+        return templates.TemplateResponse(request, "effectifs.html", {
+            "user": db_user, 
+            "promotions": promotions, 
+            "resources": resources,
+            "teachers": teachers
+        })
+
+@app.get("/api/teacher/{ldap_uid}")
+async def get_teacher_details(ldap_uid: str):
+    with Session(engine) as session:
+        teacher = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
+        if not teacher:
+            return {"error": "Enseignant non trouvé"}
+        
+        # On cherche les ressources dont il est responsable via son UID LDAP
+        resources = session.exec(
+            select(Resource).where(Resource.responsible_uid == teacher.ldap_uid)
+        ).all()
+        
+        # Fallback : si on ne trouve rien par UID, on tente par nom complet (pour la transition)
+        if not resources:
+            resources = session.exec(
+                select(Resource).where(Resource.responsible == teacher.full_name)
+            ).all()
+        
+        return {
+            "ldap_uid": teacher.ldap_uid,
+            "full_name": teacher.full_name,
+            "email": teacher.email,
+            "phone": teacher.phone,
+            "roles": teacher.roles_list,
+            "resources": [{"code": r.code, "label": r.label} for r in resources]
+        }
 
 @app.get("/synchro-scodoc")
 async def synchro_scodoc(request: Request):

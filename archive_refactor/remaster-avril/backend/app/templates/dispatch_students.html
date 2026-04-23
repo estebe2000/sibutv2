@@ -33,18 +33,83 @@
     </div>
 </div>
 
+        <div id="sync-results" class="hidden col-span-full bg-white rounded-[3rem] p-10 border-2 border-blue-100 shadow-xl animate-in zoom-in duration-500">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-2xl font-black italic text-slate-800">Résultats de la synchronisation</h3>
+                <button onclick="window.location.href='/effectifs'" class="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold text-xs">Accéder aux Effectifs</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                    <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">Étudiants</p>
+                    <p id="res-users" class="text-3xl font-black text-blue-600">0</p>
+                </div>
+                <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                    <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Groupes</p>
+                    <p id="res-groups" class="text-3xl font-black text-indigo-600">0</p>
+                </div>
+                <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+                    <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Mises à jour référents</p>
+                    <p id="res-updates" class="text-3xl font-black text-emerald-600">0</p>
+                </div>
+            </div>
+
+            <div id="changes-list-container" class="hidden space-y-4">
+                <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-orange-400"><path d="m3 2 1.9 19a2 2 0 0 0 2 1.8h10.2a2 2 0 0 0 2-1.8L21 2"/><path d="M18 5c-3.3 0-6 2.7-6 6"/><path d="M8.2 20.2 12 11"/></svg>
+                    Changements de référents détectés
+                </h4>
+                <div id="changes-list" class="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                    <!-- Rempli par JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 async function startAutoSync() {
     const btn = document.getElementById('btn-sync');
+    const resultsArea = document.getElementById('sync-results');
     btn.disabled = true;
-    btn.innerHTML = "<span class='animate-spin'>⚙️</span> Synchronisation en cours...";
+    btn.innerHTML = "<span class='inline-block animate-spin mr-2'>⚙️</span> Synchronisation...";
     
     try {
         const response = await fetch('/api/v1/dispatch/auto-sync', { method: 'POST' });
         const result = await response.json();
+        
         if (response.ok) {
-            alert(`Succès !\nGroupes créés : ${result.stats.groups}\nÉtudiants synchronisés : ${result.stats.users}`);
-            window.location.href = "/effectifs";
+            resultsArea.classList.remove('hidden');
+            document.getElementById('res-users').innerText = result.stats.users;
+            document.getElementById('res-groups').innerText = result.stats.groups;
+            document.getElementById('res-updates').innerText = result.stats.resources_updated;
+
+            if (result.stats.changes && result.stats.changes.length > 0) {
+                const list = document.getElementById('changes-list');
+                const container = document.getElementById('changes-list-container');
+                container.classList.remove('hidden');
+                list.innerHTML = '';
+                
+                result.stats.changes.forEach(c => {
+                    const div = document.createElement('div');
+                    div.className = "flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100";
+                    div.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <span class="text-xs font-black text-indigo-500">${c.code}</span>
+                            <span class="text-[11px] font-bold text-slate-600 truncate max-w-[200px]">${c.label}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] font-black text-slate-400 line-through">${c.old}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            <span class="text-[10px] font-black text-emerald-600">${c.new}</span>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+            
+            // On scroll vers les résultats
+            resultsArea.scrollIntoView({ behavior: 'smooth' });
         } else {
             alert("Erreur: " + result.detail);
         }
@@ -52,7 +117,7 @@ async function startAutoSync() {
         alert("Échec de la connexion au serveur");
     } finally {
         btn.disabled = false;
-        btn.innerHTML = "Tout synchroniser";
+        btn.innerHTML = "Lancer une nouvelle synchro";
     }
 }
 </script>

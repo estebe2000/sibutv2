@@ -143,6 +143,44 @@ def get_enriched_hierarchy():
 @app.get("/api/hierarchie")
 def api_hierarchie(): return get_enriched_hierarchy()
 
+@app.get("/api/ressources")
+def api_ressources():
+    # On se concentre uniquement sur ce qui est disponible maintenant (S2, S4, S6)
+    semestres = fetch_scodoc_api("/departement/TC/formsemestres_courants")
+    if not semestres: return []
+    
+    resources_map = {}
+    for sem in semestres:
+        fid = sem.get('formsemestre_id')
+        prog = fetch_scodoc_api(f"/formsemestre/{fid}/programme")
+        if not prog or not isinstance(prog, dict): continue
+        
+        for r in prog.get('ressources', []):
+            mod = r.get('module')
+            if not mod: continue
+            
+            raw_code = mod.get('code')
+            if not raw_code: continue
+            
+            # Normalisation stricte (BTCR101 -> R1.01)
+            code = raw_code.replace('BTC', '')
+            # Si on a R101, on transforme en R1.01
+            if len(code) >= 3 and code[0] in ['R', 'S'] and code[1].isdigit() and '.' not in code:
+                code = f"{code[0]}{code[1]}.{code[2:]}"
+            
+            # On ne garde que les codes bien formés (ex: R1.01)
+            if not (len(code) >= 5 and code[0] in ['R', 'S'] and '.' in code):
+                continue
+            
+            resources_map[code] = {
+                "code": code,
+                "raw_code": raw_code,
+                "titre": mod.get('titre'),
+                "responsable": r.get('responsable_id')
+            }
+            
+    return list(resources_map.values())
+
 @app.get("/demo", response_class=HTMLResponse)
 def demo_view():
     data = get_enriched_hierarchy()
