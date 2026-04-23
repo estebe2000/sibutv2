@@ -210,14 +210,22 @@ async def admin_users(request: Request):
     if not user_session: return RedirectResponse(url='/login')
     with Session(engine) as session:
         db_user = session.exec(select(User).where(User.ldap_uid == user_session['preferred_username'])).first()
-        if not db_user or db_user.role != UserRole.ADMIN:
+        if not db_user: return RedirectResponse(url='/login')
+
+        # Vérification du rôle actif
+        active_role = request.session.get('active_role') or db_user.role.value
+        if active_role != 'ADMIN':
             return RedirectResponse(url='/')
         
         # On ne récupère que les profs et admins (on exclut les étudiants de cette vue)
         all_users = session.exec(
             select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)
         ).all()
-        return templates.TemplateResponse(request, "admin_users.html", {"user": db_user, "all_users": all_users})
+        return templates.TemplateResponse(request, "admin_users.html", {
+            "user": db_user, 
+            "active_role": active_role,
+            "all_users": all_users
+        })
 
 @app.get("/logout")
 async def logout(request: Request):
