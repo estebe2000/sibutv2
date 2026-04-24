@@ -125,18 +125,26 @@ async function refreshStudents() {
     try {
         const resp = await fetch(`/api/v1/dispatch/groups/${activeGroupId}/students`);
         const students = await resp.json();
-        container.innerHTML = students.map(s => `
-            <div class="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 flex items-center justify-between group hover:bg-white hover:border-blue-200 transition-all cursor-pointer" onclick="openStudentDetail('${s.ldap_uid}')">
+        container.innerHTML = students.map(s => {
+            const isMapped = !s.ldap_uid.startsWith('nip_');
+            return `
+            <div class="p-6 rounded-[2rem] border transition-all cursor-pointer group flex items-center justify-between
+                        ${isMapped ? 'bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/50 hover:bg-white' : 'bg-orange-500/5 border-orange-500/20 hover:border-orange-500/50 hover:bg-white'}" 
+                 onclick="openStudentDetail('${s.ldap_uid}')">
                 <div class="flex items-center gap-4 overflow-hidden">
-                    <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-sm font-black text-slate-400 uppercase border border-slate-100">${s.full_name[0]}</div>
+                    <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-sm font-black 
+                                ${isMapped ? 'text-emerald-500' : 'text-orange-500'} uppercase border border-slate-100">${s.full_name[0]}</div>
                     <div class="overflow-hidden">
                         <div class="text-sm font-black text-slate-800 truncate">${s.full_name}</div>
                         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${s.ldap_uid}</div>
                     </div>
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-slate-200 group-hover:text-blue-500 transition-colors"><path d="m9 18 6-6-6-6"/></svg>
+                <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full ${isMapped ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-slate-200 group-hover:text-blue-500 transition-colors"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
             </div>
-        `).join('') || '<div class="col-span-full py-20 text-center font-black text-slate-300 uppercase italic tracking-widest">Groupe vide</div>';
+        `;}).join('') || '<div class="col-span-full py-20 text-center font-black text-slate-300 uppercase italic tracking-widest">Groupe vide</div>';
     } catch (e) { container.innerHTML = "Erreur de chargement"; }
 }
 

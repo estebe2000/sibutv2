@@ -60,8 +60,8 @@ async def index(request: Request):
     active_role = request.session.get('active_role') or db_user.role.value
     with Session(engine) as session:
         stats = {"users": session.exec(select(func.count(User.id))).one(), "activities": session.exec(select(func.count(Activity.id))).one(), "resources": session.exec(select(func.count(Resource.id))).one()}
-        announcements = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(5)).all()
         dashboard_data = {"recent_activities": session.exec(select(Activity).order_by(Activity.id.desc()).limit(5)).all(), "users_count": stats["users"], "sae_count": stats["activities"], "resources_count": stats["resources"]}
+        announcements = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(5)).all()
         news = [{"sender": a.author_uid, "content": f"**{a.title}**<br>{a.content}", "timestamp": a.created_at} for a in announcements]
         return templates.TemplateResponse(request, "dashboard.html", {"request": request, "user": db_user, "active_role": active_role, "stats": stats, "data": dashboard_data, "news": news})
 
@@ -95,17 +95,13 @@ async def admin_activities(request: Request):
         activities = session.exec(select(Activity).options(selectinload(Activity.responsible_user)).order_by(Activity.code)).all()
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
-        return templates.TemplateResponse(request, "admin_activities.html", {
-            "request": request, "user": db_user, "active_role": active_role, 
-            "activities": activities, "resources": resources, "teachers": teachers
-        })
+        return templates.TemplateResponse(request, "admin_activities.html", {"request": request, "user": db_user, "active_role": active_role, "activities": activities, "resources": resources, "teachers": teachers})
 
 @app.get("/ai-assistant")
 async def ai_assistant_view(request: Request):
     db_user = await get_current_db_user(request)
     if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
-    return templates.TemplateResponse(request, "ai_assistant.html", {"request": request, "user": db_user, "active_role": active_role})
+    return templates.TemplateResponse(request, "ai_assistant.html", {"request": request, "user": db_user, "active_role": request.session.get('active_role') or db_user.role.value})
 
 @app.get("/admin/users")
 async def admin_users(request: Request):
@@ -120,29 +116,76 @@ async def admin_users(request: Request):
 async def settings_view(request: Request):
     db_user = await get_current_db_user(request)
     if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
-    return templates.TemplateResponse(request, "settings.html", {"request": request, "user": db_user, "active_role": active_role})
+    return templates.TemplateResponse(request, "settings.html", {"request": request, "user": db_user, "active_role": request.session.get('active_role') or db_user.role.value})
 
 @app.get("/synchro-scodoc")
 async def synchro_scodoc(request: Request):
     db_user = await get_current_db_user(request)
     if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
-    return templates.TemplateResponse(request, "dispatch_students.html", {"request": request, "user": db_user, "active_role": active_role})
-
-@app.get("/admin/activities/{act_id}")
-async def admin_activity_detail(request: Request, act_id: int):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
-    with Session(engine) as session:
-        act = session.exec(select(Activity).options(selectinload(Activity.learning_outcomes).selectinload(LearningOutcome.resources), selectinload(Activity.activity_groups).selectinload(ActivityGroup.students), selectinload(Activity.activity_groups).selectinload(ActivityGroup.tutor)).where(Activity.id == act_id)).first()
-        pedigree = [{"code": ac.code, "label": ac.label, "resources": [{"code": r.code, "label": r.label, "responsible": r.responsible} for r in ac.resources]} for ac in act.learning_outcomes]
-        lt = sorted(list(set([r["responsible"] for p in pedigree for r in p["resources"] if r["responsible"] and r["responsible"] != "(inconnu)"])))
-        students = session.exec(select(User).join(Promotion).where(User.role == 'STUDENT', Promotion.entry_year == (2026 - act.level + 1))).all()
-        return templates.TemplateResponse(request, "admin_activity_detail.html", {"request": request, "user": db_user, "active_role": active_role, "activity": act, "pedigree": pedigree, "linked_teachers": lt, "students": students})
+    return templates.TemplateResponse(request, "dispatch_students.html", {"request": request, "user": db_user, "active_role": "ADMIN"})
 
 # --- API ENDPOINTS ---
+
+@app.post("/api/v1/dispatch/auto-sync")
+async def auto_sync_scodoc():
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            h_resp = await client.get("http://host.docker.internal:8092/api/hierarchie")
+            scodoc_data = h_resp.json()
+            with Session(engine) as session:
+                import psycopg2
+                kc_conn = psycopg2.connect(host="remaster_db_keycloak", database="keycloak", user="keycloak", password="keycloak_password")
+                kc_cur = kc_conn.cursor()
+                
+                for f_name, types in scodoc_data.items():
+                    year = 2026 if "2026" in f_name or "BUT1" in f_name else 2025 if "2025" in f_name or "BUT2" in f_name else 2024
+                    promo = session.exec(select(Promotion).where(Promotion.entry_year == year)).first()
+                    if not promo: continue
+                    
+                    for t_name, groups in types.items():
+                        for g_name, students in groups.items():
+                            group = session.exec(select(Group).where(Group.name == g_name, Group.promotion_id == promo.id)).first()
+                            if not group:
+                                group = Group(name=g_name, promotion_id=promo.id, year=year, academic_year="2025-2026", formation_type=t_name)
+                                session.add(group); session.commit(); session.refresh(group)
+                            
+                            for s in students:
+                                email = s.get("email", "").lower()
+                                uid = s.get("username")
+                                
+                                # RÉSOLUTION LDAP PROACTIVE (Insensible à la casse)
+                                if email:
+                                    kc_cur.execute("SELECT username FROM user_entity WHERE LOWER(email) = %s LIMIT 1", (email,))
+                                else:
+                                    # On cherche par nom/prénom en forçant la casse
+                                    kc_cur.execute("SELECT username FROM user_entity WHERE LOWER(first_name) = %s AND LOWER(last_name) = %s LIMIT 1", (s.get("prenom", "").lower(), s.get("nom", "").lower()))
+                                
+                                kc_row = kc_cur.fetchone()
+                                if kc_row: 
+                                    uid = kc_row[0]
+                                else:
+                                    uid = f"nip_{s.get('nip')}" # Marqueur de maillage incomplet
+
+                                user = session.exec(select(User).where(User.ldap_uid == uid)).first()
+                                if not user:
+                                    user = User(
+                                        ldap_uid=uid, nip=str(s.get("nip")), 
+                                        full_name=f"{s.get('prenom')} {s.get('nom')}", 
+                                        email=email or f"{uid}@univ-lehavre.fr", 
+                                        role=UserRole.STUDENT, promotion_id=promo.id, group_id=group.id
+                                    )
+                                    session.add(user)
+                                else:
+                                    user.group_id = group.id; user.promotion_id = promo.id; user.nip = str(s.get("nip")); session.add(user)
+                session.commit(); kc_cur.close(); kc_conn.close()
+        return {"status": "success"}
+    except Exception as e: return {"status": "error", "detail": str(e)}
+
+@app.get("/api/student/{ldap_uid}")
+async def get_student_details(ldap_uid: str):
+    with Session(engine) as session:
+        s = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
+        return {"ldap_uid": s.ldap_uid, "full_name": s.full_name, "email": s.email, "nip": s.nip} if s else {"error": "Non trouvé"}
 
 @app.get("/api/v1/admin/users/professors")
 @app.get("/api/v1/admin/users/search")
@@ -169,20 +212,6 @@ async def update_user_roles(uid: str, roles: list[str]):
         if user and roles: user.role = UserRole(roles[0]); user.roles_json = json.dumps(roles); session.add(user); session.commit()
     return {"status": "success"}
 
-@app.get("/api/student/{ldap_uid}")
-async def get_student_details(ldap_uid: str):
-    with Session(engine) as session:
-        s = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
-        if not s: return {"error": "Étudiant non trouvé"}
-        return {
-            "ldap_uid": s.ldap_uid,
-            "full_name": s.full_name,
-            "email": s.email,
-            "nip": s.nip,
-            "promotion_id": s.promotion_id,
-            "group_id": s.group_id
-        }
-
 @app.get("/api/teacher/{ldap_uid}")
 async def get_teacher_details(ldap_uid: str):
     with Session(engine) as session:
@@ -200,40 +229,9 @@ async def dispatch_resource_save(res_id: int, request: Request):
         res = session.get(Resource, res_id)
         if res:
             teacher = session.exec(select(User).where(User.ldap_uid == uid)).first()
-            if not teacher and uid:
-                teacher = User(ldap_uid=uid, full_name=name or uid, role=UserRole.PROFESSOR, email=f"{uid}@univ-lehavre.fr"); session.add(teacher); session.commit(); session.refresh(teacher)
+            if not teacher and uid: teacher = User(ldap_uid=uid, full_name=name or uid, role=UserRole.PROFESSOR, email=f"{uid}@univ-lehavre.fr"); session.add(teacher); session.commit(); session.refresh(teacher)
             if teacher: res.responsible_uid = teacher.ldap_uid; res.responsible = teacher.full_name; session.add(res); session.commit()
     return {"status": "success"}
-
-@app.post("/api/v1/dispatch/auto-sync")
-async def auto_sync_scodoc():
-    try:
-        async with httpx.AsyncClient(timeout=20.0) as client:
-            h_resp = await client.get("http://host.docker.internal:8092/api/hierarchie")
-            scodoc_data = h_resp.json()
-            with Session(engine) as session:
-                import psycopg2
-                kc_conn = psycopg2.connect(host="remaster_db_keycloak", database="keycloak", user="keycloak", password="keycloak_password")
-                kc_cur = kc_conn.cursor()
-                for f_name, groups in scodoc_data.items():
-                    year = 2026 if "2026" in f_name else 2025 if "2025" in f_name else 2024
-                    promo = session.exec(select(Promotion).where(Promotion.entry_year == year)).first()
-                    if not promo: continue
-                    for g_name, students in groups.items():
-                        group = session.exec(select(Group).where(Group.name == g_name, Group.promotion_id == promo.id)).first()
-                        if not group: group = Group(name=g_name, promotion_id=promo.id); session.add(group); session.commit(); session.refresh(group)
-                        for s in students:
-                            email = s.get("email", "").lower(); uid = s.get("username")
-                            if email:
-                                kc_cur.execute("SELECT username FROM user_entity WHERE email = %s LIMIT 1", (email,))
-                                row = kc_cur.fetchone()
-                                if row: uid = row[0]
-                            if uid:
-                                user = session.exec(select(User).where(User.ldap_uid == uid)).first()
-                                if not user: user = User(ldap_uid=uid, nip=str(s.get("nip")), full_name=f"{s.get('prenom')} {s.get('nom')}", email=email, role=UserRole.STUDENT, promotion_id=promo.id, group_id=group.id); session.add(user)
-                session.commit(); kc_cur.close(); kc_conn.close()
-        return {"status": "success"}
-    except: return {"status": "error"}
 
 @app.post("/admin/activities/{act_id}/responsible")
 async def admin_activity_responsible(request: Request, act_id: int):
@@ -291,59 +289,22 @@ async def remove_student_from_group(student_uid: str):
         if user: user.group_id = None; session.add(user); session.commit()
     return {"status": "success"}
 
-@app.post("/ai/chat")
-async def ai_chat(request: Request):
-    db_user = await get_current_db_user(request)
-    form_data = await request.form(); user_message = form_data.get("message")
-    chat_id = await ai_service.create_chat(name=f"Chat {db_user.full_name}", dataset_ids=[ai_service.common_dataset_id], preprompt=db_user.ai_preprompt_general) or ai_service.default_chat_id
-    sess_id = await ai_service.create_session(f"Sess {db_user.full_name}")
-    ai_data = await ai_service.chat(chat_id, sess_id, user_message)
-    return HTMLResponse(content=f'<div class="bg-white/10 p-6 rounded-3xl">{ai_data["answer"]}</div>')
-
-@app.get("/ai/ged/list")
-async def ai_ged_list(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user or not db_user.ragflow_dataset_id: return HTMLResponse(content='Aucun document.')
-    docs = await ai_service.list_documents(db_user.ragflow_dataset_id)
-    html = "".join([f'<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 mb-2">{d["name"]}</div>' for d in docs])
-    return HTMLResponse(content=html or 'Aucun document.')
-
-@app.post("/ai/ged/upload")
-async def ai_ged_upload(request: Request):
-    db_user = await get_current_db_user(request)
-    form_data = await request.form(); upload_file = form_data.get("file")
-    if not db_user.ragflow_dataset_id:
-        db_user.ragflow_dataset_id = await ai_service.get_or_create_dataset(db_user.ldap_uid)
-        with Session(engine) as session: session.add(db_user); session.commit(); session.refresh(db_user)
-    content = await upload_file.read(); await ai_service.upload_document(db_user.ldap_uid, content, upload_file.filename)
-    return HTMLResponse(content="OK")
-
-@app.post("/settings/ai")
-async def settings_ai_save(request: Request):
-    db_user = await get_current_db_user(request)
-    form_data = await request.form()
+@app.delete("/api/v1/dispatch/groups/{group_id}")
+async def delete_promo_group(group_id: int):
     with Session(engine) as session:
-        user = session.get(User, db_user.id)
-        user.ai_preprompt_general = form_data.get("ai_preprompt_general"); user.ai_preprompt_exercises = form_data.get("ai_preprompt_exercises"); user.ai_preprompt_course = form_data.get("ai_preprompt_course"); session.add(user); session.commit()
-    return HTMLResponse(content="OK")
+        group = session.get(Group, group_id)
+        if group:
+            session.exec(func.update(User).where(User.group_id == group_id).values(group_id=None))
+            session.delete(group); session.commit()
+    return {"status": "success"}
 
-@app.get("/admin/ac-editor")
-async def admin_ac_editor(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
-    if active_role != 'ADMIN': return RedirectResponse(url='/')
+@app.post("/api/v1/dispatch/promotions/{promo_id}/groups/add")
+async def add_promo_group(promo_id: int):
     with Session(engine) as session:
-        acs = session.exec(select(LearningOutcome).options(selectinload(LearningOutcome.competency)).order_by(LearningOutcome.code)).all()
-        return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": db_user, "active_role": active_role, "learning_outcomes": acs})
-
-@app.post("/admin/ac-editor-save")
-async def admin_ac_save(request: Request):
-    f = await request.form(); ac_id = int(f.get("ac_id"))
-    with Session(engine) as session:
-        ac = session.get(LearningOutcome, ac_id)
-        if ac: ac.description = f.get("description"); session.add(ac); session.commit()
-    return HTMLResponse(content="OK")
+        count = session.exec(select(func.count(Group.id)).where(Group.promotion_id == promo_id)).one()
+        session.add(Group(name=f"GR.{count+1} (FI)", promotion_id=promo_id, pathway="Tronc Commun", year=2026, academic_year="2025-2026", formation_type="FI"))
+        session.commit()
+    return RedirectResponse(url="/effectifs", status_code=303)
 
 @app.get("/login")
 async def login(request: Request):
