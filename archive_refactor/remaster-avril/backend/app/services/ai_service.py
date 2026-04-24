@@ -37,7 +37,21 @@ class AIService:
         try:
             chat = await self.get_chat_by_name_or_id(name=chat_name)
             if chat: return chat.create_session().id
+            logger.warning(f"Chat name '{chat_name}' not found, falling back to default_chat_id")
+            return await self.create_session_by_id(self.default_chat_id)
         except Exception as e: logger.error(f"create_session error: {e}"); return None
+
+    async def create_session_by_id(self, chat_id: str) -> Optional[str]:
+        try:
+            chat = await self.get_chat_by_name_or_id(chat_id=chat_id)
+            if chat:
+                session = chat.create_session()
+                return session.id
+            logger.error(f"Chat ID {chat_id} not found in RAGFlow")
+            return None
+        except Exception as e:
+            logger.error(f"create_session_by_id error for {chat_id}: {e}")
+            return None
 
     async def chat(self, chat_id: str, session_id: str, message: str) -> Dict:
         try:
