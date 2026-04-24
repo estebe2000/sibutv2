@@ -424,6 +424,59 @@ async def ai_ged_upload(request: Request):
     content = await upload_file.read(); await ai_service.upload_document(db_user.ldap_uid, content, upload_file.filename)
     return HTMLResponse(content="OK")
 
+@app.post("/ai/chat")
+async def ai_chat_endpoint(request: Request):
+    db_user = await get_current_db_user(request)
+    if not db_user: raise HTTPException(status_code=401)
+    
+    # Gestion HTMX (Form) ou Fetch (JSON)
+    if "application/json" in request.headers.get("content-type", ""):
+        data = await request.json()
+        message = data.get("message")
+    else:
+        form_data = await request.form()
+        message = form_data.get("message")
+
+    if not message: return HTMLResponse("")
+    
+    # On récupère ou crée une session RAGFlow persistante
+    session_id = request.session.get("rag_session_id")
+    if not session_id:
+        session_id = await ai_service.create_session("HUB_ASSISTANT")
+        if session_id: request.session["rag_session_id"] = session_id
+        else: return HTMLResponse("<div class='text-red-400 p-4'>Erreur de session IA.</div>")
+    
+    # Appel au service de chat
+    result = await ai_service.chat(ai_service.default_chat_id, session_id, message)
+    answer = result.get("answer", "Zéro réponse.")
+    
+    # Génération du HTML pour HTMX
+    user_msg_id = f"msg_{uuid.uuid4().hex[:8]}"
+    ai_msg_id = f"msg_{uuid.uuid4().hex[:8]}"
+    
+    html = f"""
+    <div class="flex gap-4 justify-end">
+        <div class="bg-blue-600/20 p-6 rounded-[2.5rem] max-w-2xl font-medium text-sm border border-blue-500/20 text-blue-100">{message}</div>
+    </div>
+    <div class="flex gap-4 animate-in slide-in-from-left duration-500">
+        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/></svg>
+        </div>
+        <div id="{ai_msg_id}" class="bg-white/10 p-6 rounded-[2.5rem] max-w-2xl font-medium text-sm border border-white/5 ai-response prose prose-invert prose-sm">
+            {answer}
+        </div>
+    </div>
+    <script>
+        // On formate le Markdown de la réponse si markdown-it est dispo
+        if (window.markdownit) {{
+            const el = document.getElementById('{ai_msg_id}');
+            el.innerHTML = window.markdownit({{html:true}}).render(el.innerHTML.trim());
+        }}
+        document.getElementById('chat-window').scrollTo({{ top: document.getElementById('chat-window').scrollHeight, behavior: 'smooth' }});
+    </script>
+    """
+    return HTMLResponse(content=html)
+
 @app.get("/logout")
 async def logout(request: Request):
     request.session.clear()
