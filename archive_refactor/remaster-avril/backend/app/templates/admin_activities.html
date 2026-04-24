@@ -166,7 +166,7 @@ async function openTeacherProfile(uid) {
     const modal = document.getElementById('teacherModal');
     modal.classList.remove('hidden');
     try {
-        const resp = await fetch(`/api/teacher/${uid}`);
+        const resp = await fetch(`/api/v1/teacher/${uid}`);
         const data = await resp.json();
         document.getElementById('teacherName').innerText = data.full_name;
         document.getElementById('teacherUid').innerText = data.ldap_uid;
