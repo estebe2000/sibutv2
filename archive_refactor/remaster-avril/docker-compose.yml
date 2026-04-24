@@ -56,6 +56,7 @@ services:
       - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_INTERNAL_URL=http://keycloak:8080
+      - KEYCLOAK_URL=http://keycloak:8080
     volumes:
       - ./backend/app:/app/app
       - ../apps/api/app/data:/app/app/data_source

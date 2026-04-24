@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ settings.PROJECT_NAME if settings else 'Skills Hub' }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -20,11 +22,10 @@
         <!-- Sidebar -->
         <aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-full shadow-sm z-30">
             <div class="p-8">
-                <div class="flex items-center gap-3 mb-10 group cursor-pointer" onclick="window.location.href='/'">
-                    <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100 group-hover:scale-110 transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <div class="flex items-center justify-center mb-10 group cursor-pointer" onclick="openPresentationModal()">
+                    <div class="w-full h-16 flex items-center justify-center transition-all group-hover:scale-105">
+                        <img src="/static/medias/logo-sh.svg" alt="Skills Hub" class="max-w-full max-h-full object-contain">
                     </div>
-                    <span class="text-xl font-black italic tracking-tighter">Skills Hub</span>
                 </div>
 
                 <nav class="space-y-6 font-bold text-slate-500">
@@ -80,8 +81,10 @@
                             <svg id="icon-admin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300 active"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                         <div id="menu-admin" class="menu-content space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
-                            <a href="/admin/users" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/admin/users' %}text-blue-600{% endif %}">Utilisateurs</a>
-                            <a href="/admin/matrix" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/admin/matrix' %}text-blue-600{% endif %}">Annonces Matrix</a>
+                            <a href="/admin/users" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/users' %}text-blue-600{% endif %}">Utilisateurs</a>
+                            <a href="/admin/matrix" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/matrix' %}text-blue-600{% endif %}">Annonces Matrix</a>
+                            <a href="/admin/ac-editor" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/ac-editor' %}text-blue-600{% endif %}">Éditeur d'AC</a>
+                            <a href="/admin/activities" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/activities' %}text-blue-600{% endif %}">Gestion des Activités</a>
                             <a href="/referentiel" class="block px-4 py-2 hover:text-blue-600 transition-all">Référentiel</a>
                         </div>
                     </div>
@@ -153,12 +156,61 @@
         </main>
     </div>
 
+    <!-- Presentation Modal -->
+    <div id="presentation-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden transform transition-all">
+            <div class="relative">
+                <button onclick="closePresentationModal()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div class="aspect-video bg-slate-900">
+                    <video id="presentation-video" class="w-full h-full object-cover" controls>
+                        <source src="/static/medias/presentation.mp4" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                </div>
+            </div>
+            <div class="p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="/static/medias/logo-sh.svg" alt="Logo" class="w-12 h-12">
+                    <div>
+                        <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">À propos de Skills Hub</h3>
+                        <p class="text-sm font-bold text-blue-600 uppercase tracking-widest">Innovation Pédagogique</p>
+                    </div>
+                </div>
+                <div class="prose prose-slate max-w-none">
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        Skills Hub est une plateforme innovante de gestion des compétences et des apprentissages, conçue pour accompagner les étudiants et les enseignants dans le suivi du référentiel de formation. Elle permet de centraliser les preuves de compétences, de gérer les SAÉ et de faciliter les échanges au sein de la communauté pédagogique.
+                    </p>
+                </div>
+                <div class="mt-8 flex justify-end">
+                    <button onclick="closePresentationModal()" class="px-8 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-sm uppercase tracking-widest transition-all">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function toggleMenu(menuId, iconId) {
             const menu = document.getElementById(menuId);
             const icon = document.getElementById(iconId);
             menu.classList.toggle('collapsed');
             icon.classList.toggle('active');
+        }
+
+        function openPresentationModal() {
+            const modal = document.getElementById('presentation-modal');
+            const video = document.getElementById('presentation-video');
+            modal.classList.remove('hidden');
+            video.play().catch(e => console.log("Auto-play blocked or failed"));
+        }
+
+        function closePresentationModal() {
+            const modal = document.getElementById('presentation-modal');
+            const video = document.getElementById('presentation-video');
+            modal.classList.add('hidden');
+            video.pause();
+            video.currentTime = 0;
         }
     </script>
 </body>

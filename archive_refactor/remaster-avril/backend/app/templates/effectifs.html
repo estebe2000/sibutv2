@@ -209,25 +209,27 @@
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {% for res in resources %}
-            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 group hover:border-indigo-500/50 transition-all">
+            {% set is_orphan = not res.responsible or res.responsible == '(inconnu)' or res.responsible == 'N/A' %}
+            <div class="p-4 rounded-2xl border transition-all group relative 
+                        {% if is_orphan %} bg-red-500/5 border-red-500/30 hover:border-red-500 {% else %} bg-white/5 border-white/10 hover:border-indigo-500/50 {% endif %}">
                 <div class="flex justify-between mb-2">
-                    <span class="text-[10px] font-black text-indigo-400">{{ res.code }}</span>
+                    <span class="text-[10px] font-black {% if is_orphan %} text-red-400 {% else %} text-indigo-400 {% endif %}">{{ res.code }}</span>
                     <span class="text-[8px] font-black bg-white/10 px-1.5 rounded text-slate-400">{{ res.pathway }}</span>
                 </div>
                 <div class="text-[11px] font-bold text-slate-200 truncate group-hover:text-white transition-colors">{{ res.label }}</div>
                 <div class="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
                     <div class="flex items-center gap-2">
-                        {% if res.responsible and res.responsible != '(inconnu)' and res.responsible != 'N/A' %}
-                            <div class="w-5 h-5 rounded-md bg-indigo-500 flex items-center justify-center text-[8px] font-black text-white">
+                        {% if not is_orphan %}
+                            <div class="w-5 h-5 rounded-md bg-indigo-500 flex items-center justify-center text-[8px] font-black text-white shadow-sm">
                                 {{ res.responsible[0] | upper }}
                             </div>
                             <span class="text-[9px] font-black text-indigo-200 uppercase tracking-tighter">{{ res.responsible }}</span>
                         {% else %}
-                            <div class="w-5 h-5 rounded-md bg-slate-700 flex items-center justify-center text-[8px] font-black text-slate-400">?</div>
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-tighter">À assigner</span>
+                            <div class="w-5 h-5 rounded-md bg-red-600 flex items-center justify-center text-[8px] font-black text-white animate-pulse shadow-lg shadow-red-900/50">?</div>
+                            <span class="text-[9px] font-black text-red-400 uppercase tracking-tighter">À assigner</span>
                         {% endif %}
                     </div>
-                    <button onclick="changeResponsible({{ res.id }}, '{{ res.code }}', '{{ res.responsible }}')" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-indigo-400 transition-all">
+                    <button onclick="changeResponsible({{ res.id }}, '{{ res.code }}', '{{ res.responsible }}')" class="{% if is_orphan %} opacity-100 text-red-400 {% else %} opacity-0 group-hover:opacity-100 text-slate-400 {% endif %} p-1 hover:scale-125 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
                     </button>
                 </div>
