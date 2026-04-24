@@ -5,9 +5,9 @@ from app.models.models import Announcement, User, Promotion, Group
 from app.services.matrix_service import matrix_service
 import uuid
 
-router = APIRouter(prefix="/matrix", tags=["matrix"])
+router = APIRouter(tags=["matrix"])
 
-@router.post("/announce", dependencies=[Depends(admin_only)])
+@router.post("/matrix/announce", dependencies=[Depends(admin_only)])
 async def api_matrix_announce(request: Request, user: User = Depends(get_current_db_user)):
     data = await request.json()
     title = data.get("title")
@@ -31,7 +31,7 @@ async def api_matrix_announce(request: Request, user: User = Depends(get_current
         return {"status": "success", "event_id": event_id}
     raise HTTPException(status_code=500, detail="Échec de l'envoi Matrix")
 
-@router.post("/sync-rooms", dependencies=[Depends(admin_only)])
+@router.post("/matrix/sync-rooms", dependencies=[Depends(admin_only)])
 async def api_matrix_sync_rooms():
     created = 0
     with Session(engine) as session:
@@ -48,7 +48,7 @@ async def api_matrix_sync_rooms():
             
     return {"status": "success", "created": created}
 
-@router.delete("/announcements/{id}", dependencies=[Depends(admin_only)])
+@router.delete("/matrix/announcements/{id}", dependencies=[Depends(admin_only)])
 async def api_matrix_delete_announcement(id: int):
     with Session(engine) as session:
         ann = session.get(Announcement, id)

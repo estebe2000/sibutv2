@@ -11,21 +11,20 @@
             <div class="px-6 py-3 bg-blue-50 text-blue-600 rounded-2xl font-black text-xs uppercase border border-blue-100 shadow-sm">
                 {{ total_users }} Étudiants
             </div>
-            <button onclick="window.location.href='/synchro-scodoc'" class="px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase hover:scale-105 transition-all flex items-center gap-3">
+            <button onclick="window.location.href='/admin/synchro-scodoc'" class="px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase hover:scale-105 transition-all flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
                 Sync ScoDoc
             </button>
         </div>
     </header>
 
-    <!-- GRILLE DES PROMOTIONS -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {% for level in [1, 2, 3] %}
             {% set promo = promos_by_level[level] %}
             <div class="space-y-6">
                 <div class="flex items-center justify-between px-4">
                     <h3 class="text-xs font-black uppercase tracking-[0.3em] text-slate-400 italic">BUT {{ level }}</h3>
-                    <button hx-post="/api/v1/dispatch/promotions/{{ promo.id if promo else 0 }}/groups/add" hx-target="body" hx-swap="outerHTML" class="text-[9px] font-black text-blue-600 uppercase">+ Groupe</button>
+                    <button onclick="addGroup({{ promo.id if promo else 0 }})" class="text-[9px] font-black text-blue-600 uppercase hover:underline">+ Groupe</button>
                 </div>
 
                 <div class="bg-white rounded-[3rem] p-8 border border-slate-100 shadow-sm min-h-[400px] flex flex-col">
@@ -66,51 +65,90 @@
         <div class="p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
             <div>
                 <h3 id="modal-group-title" class="text-3xl font-black italic text-slate-800 uppercase tracking-tighter">Gestion du Groupe</h3>
-                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Cliquez sur un élève pour voir son maillage ScoDoc/LDAP</p>
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Déplacez ou retirez des élèves de ce groupe</p>
             </div>
             <button onclick="closeGroupModal()" class="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center hover:bg-slate-100 transition-all">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
         </div>
-        <div id="students-container" class="p-10 overflow-y-auto custom-scrollbar flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Rempli en JS -->
+        <div id="students-container" class="p-10 overflow-y-auto custom-scrollbar flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+</div>
+
+<!-- MODALE TRANSFERT ÉTUDIANT -->
+<div id="modal-move" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[80] flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-sm p-10 shadow-2xl space-y-6">
+        <h3 class="text-xl font-black italic text-slate-800">Transférer l'élève</h3>
+        <p id="move-student-name" class="text-sm font-bold text-blue-600 uppercase tracking-widest"></p>
+        
+        <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Choisir le groupe cible</label>
+            <select id="target-group-select" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold text-sm focus:ring-2 focus:ring-blue-500"></select>
+        </div>
+
+        <div class="flex gap-4 pt-4">
+            <button onclick="closeMoveModal()" class="flex-1 py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase">Annuler</button>
+            <button onclick="submitMove()" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase shadow-lg">Confirmer</button>
         </div>
     </div>
 </div>
 
-<!-- MODALE DÉTAIL ÉTUDIANT (DEBUG MAILLAGE) -->
-<div id="modal-student-detail" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[70] flex items-center justify-center p-4">
-    <div class="bg-white rounded-[3rem] w-full max-w-md p-10 shadow-2xl space-y-8 animate-in slide-in-from-bottom-10 duration-300">
-        <div class="text-center space-y-4">
-            <div id="stu-initial" class="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-3xl font-black text-white mx-auto shadow-xl">?</div>
+<!-- MODALE CRÉATION GROUPE -->
+<div id="modal-create-group" class="hidden fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[80] flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-sm p-10 shadow-2xl space-y-6">
+        <h3 class="text-xl font-black italic text-slate-800 uppercase tracking-tighter">Nouveau Groupe</h3>
+        
+        <div class="space-y-4">
             <div>
-                <h3 id="stu-full-name" class="text-2xl font-black text-slate-800 italic uppercase">...</h3>
-                <p id="stu-email" class="text-xs font-bold text-blue-500 uppercase tracking-widest"></p>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Nom du groupe</label>
+                <input type="text" id="new-group-name" placeholder="ex: GR.1" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold text-sm focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Type de formation</label>
+                <select id="new-group-type" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold text-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="FI">Formation Initiale (FI)</option>
+                    <option value="FA">Alternance (FA)</option>
+                </select>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Identifiant LDAP</p>
-                <code id="stu-ldap-uid" class="text-sm font-black text-slate-800">---</code>
-            </div>
-            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Numéro NIP (ScoDoc)</p>
-                <code id="stu-nip" class="text-sm font-black text-blue-600">---</code>
-            </div>
+        <div class="flex gap-4 pt-4">
+            <button onclick="closeCreateGroupModal()" class="flex-1 py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase">Annuler</button>
+            <button onclick="submitCreateGroup()" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase shadow-lg shadow-blue-200">Créer</button>
         </div>
-
-        <div class="p-5 bg-slate-900 rounded-3xl space-y-4">
-            <h4 class="text-[9px] font-black text-white/40 uppercase tracking-widest">État du Maillage</h4>
-            <div id="stu-status-badge" class="px-4 py-2 rounded-xl text-center font-black text-[10px] uppercase">...</div>
-        </div>
-
-        <button onclick="closeStudentDetail()" class="w-full py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase tracking-widest">Fermer la fiche</button>
     </div>
 </div>
 
 <script>
 let activeGroupId = null;
+let activePromoId = null;
+let movingStudentUid = null;
+
+function addGroup(promoId) {
+    activePromoId = promoId;
+    document.getElementById('modal-create-group').classList.remove('hidden');
+}
+
+function closeCreateGroupModal() { document.getElementById('modal-create-group').classList.add('hidden'); }
+
+async function submitCreateGroup() {
+    const name = document.getElementById('new-group-name').value;
+    const type = document.getElementById('new-group-type').value;
+    if(!name) return alert("Nom requis");
+
+    const resp = await fetch(`/api/v1/admin/dispatch/promotions/${activePromoId}/groups/add`, { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, type: type })
+    });
+    if (resp.ok) window.location.reload();
+}
+
+async function deleteGroup(id) {
+    if (!confirm("Supprimer ce groupe ? Les étudiants seront détachés.")) return;
+    const resp = await fetch(`/api/v1/admin/dispatch/groups/${id}`, { method: 'DELETE' });
+    if (resp.ok) window.location.reload();
+}
 
 async function openGroupManagement(id, name) {
     activeGroupId = id;
@@ -121,59 +159,66 @@ async function openGroupManagement(id, name) {
 
 async function refreshStudents() {
     const container = document.getElementById('students-container');
-    container.innerHTML = '<div class="col-span-full py-20 text-center animate-pulse font-black text-slate-300 uppercase">Synchronisation...</div>';
+    container.innerHTML = '<div class="col-span-full py-20 text-center animate-pulse font-black text-slate-300 uppercase">Chargement...</div>';
     try {
-        const resp = await fetch(`/api/v1/dispatch/groups/${activeGroupId}/students`);
+        const resp = await fetch(`/api/v1/admin/dispatch/groups/${activeGroupId}/students`);
         const students = await resp.json();
         container.innerHTML = students.map(s => {
             const isMapped = !s.ldap_uid.startsWith('nip_');
             return `
-            <div class="p-6 rounded-[2rem] border transition-all cursor-pointer group flex items-center justify-between
-                        ${isMapped ? 'bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/50 hover:bg-white' : 'bg-orange-500/5 border-orange-500/20 hover:border-orange-500/50 hover:bg-white'}" 
-                 onclick="openStudentDetail('${s.ldap_uid}')">
+            <div class="p-6 rounded-[2rem] border bg-slate-50/50 border-slate-100 hover:border-blue-200 hover:bg-white transition-all group flex items-center justify-between">
                 <div class="flex items-center gap-4 overflow-hidden">
-                    <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-sm font-black 
-                                ${isMapped ? 'text-emerald-500' : 'text-orange-500'} uppercase border border-slate-100">${s.full_name[0]}</div>
+                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-sm font-black 
+                                ${isMapped ? 'text-emerald-500' : 'text-orange-500'} uppercase border border-slate-50">${s.full_name[0]}</div>
                     <div class="overflow-hidden">
                         <div class="text-sm font-black text-slate-800 truncate">${s.full_name}</div>
                         <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${s.ldap_uid}</div>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="w-2 h-2 rounded-full ${isMapped ? 'bg-emerald-500' : 'bg-orange-500 animate-pulse'}"></span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-slate-200 group-hover:text-blue-500 transition-colors"><path d="m9 18 6-6-6-6"/></svg>
+                <div class="flex items-center gap-2">
+                    <button onclick="openMoveModal('${s.ldap_uid}', '${s.full_name}')" class="p-2 bg-white text-slate-300 hover:text-blue-600 rounded-lg shadow-sm border border-slate-50 transition-all" title="Déplacer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18 3-3-3-3"/><path d="M6 15h12"/><path d="m9 6-3 3 3 3"/><path d="M6 9h12"/></svg>
+                    </button>
+                    <button onclick="removeStudentFromGroup('${s.ldap_uid}')" class="p-2 bg-white text-slate-300 hover:text-red-500 rounded-lg shadow-sm border border-slate-50 transition-all" title="Retirer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
                 </div>
             </div>
         `;}).join('') || '<div class="col-span-full py-20 text-center font-black text-slate-300 uppercase italic tracking-widest">Groupe vide</div>';
     } catch (e) { container.innerHTML = "Erreur de chargement"; }
 }
 
-async function openStudentDetail(uid) {
-    const res = await fetch(`/api/student/${uid}`);
-    const data = await res.json();
-    if (data.error) return alert("Étudiant non trouvé");
-
-    document.getElementById('stu-full-name').innerText = data.full_name;
-    document.getElementById('stu-email').innerText = data.email;
-    document.getElementById('stu-ldap-uid').innerText = data.ldap_uid;
-    document.getElementById('stu-nip').innerText = data.nip || 'NON RENSEIGNÉ';
-    document.getElementById('stu-initial').innerText = data.full_name[0].toUpperCase();
-
-    const badge = document.getElementById('stu-status-badge');
-    if (data.ldap_uid && data.nip) {
-        badge.innerText = "Maillage 100% OK";
-        badge.className = "px-4 py-2 rounded-xl text-center font-black text-[10px] uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/20";
-    } else {
-        badge.innerText = "Maillage Incomplet";
-        badge.className = "px-4 py-2 rounded-xl text-center font-black text-[10px] uppercase bg-red-500/20 text-red-400 border border-red-500/20";
-    }
-
-    document.getElementById('modal-student-detail').classList.remove('hidden');
+async function removeStudentFromGroup(uid) {
+    if (!confirm("Détacher cet étudiant ?")) return;
+    const resp = await fetch(`/api/v1/admin/dispatch/students/${uid}/remove-group`, { method: 'DELETE' });
+    if (resp.ok) window.location.reload(); // On reload pour mettre à jour les compteurs globaux
 }
 
-function closeStudentDetail() { document.getElementById('modal-student-detail').classList.add('hidden'); }
+async function openMoveModal(uid, name) {
+    movingStudentUid = uid;
+    document.getElementById('move-student-name').innerText = name;
+    
+    // Charger tous les groupes pour le select
+    const resp = await fetch('/api/v1/admin/dispatch/groups/all');
+    const groups = await resp.json();
+    const select = document.getElementById('target-group-select');
+    select.innerHTML = groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+    
+    document.getElementById('modal-move').classList.remove('hidden');
+}
+
+async function submitMove() {
+    const targetId = document.getElementById('target-group-select').value;
+    const resp = await fetch(`/api/v1/admin/dispatch/students/${movingStudentUid}/move`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target_group_id: targetId })
+    });
+    if (resp.ok) window.location.reload();
+}
+
+function closeMoveModal() { document.getElementById('modal-move').classList.add('hidden'); }
 function closeGroupModal() { document.getElementById('modal-group').classList.add('hidden'); }
-async function deleteGroup(id) { if(confirm("Supprimer ce groupe ?")) { const resp = await fetch(`/api/v1/dispatch/groups/${id}`, { method: 'DELETE' }); if(resp.ok) window.location.reload(); } }
 </script>
 
 <style>

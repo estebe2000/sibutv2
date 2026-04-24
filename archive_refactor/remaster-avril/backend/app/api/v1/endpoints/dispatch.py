@@ -73,26 +73,44 @@ async def remove_student_from_group(student_uid: str):
 
 @router.delete("/groups/{group_id}", dependencies=[Depends(admin_only)])
 async def delete_promo_group(group_id: int):
+    print(f"🗑️ TENTATIVE SUPPRESSION GROUPE ID: {group_id}")
     with Session(engine) as session:
         group = session.get(Group, group_id)
         if group:
-            # On détache les étudiants
-            session.exec(func.update(User).where(User.group_id == group_id).values(group_id=None))
+            print(f"🔗 Détachement des étudiants du groupe {group.name}...")
+            # On détache les étudiants via une requête directe pour plus de fiabilité
+            from sqlalchemy import update
+            session.execute(update(User).where(User.group_id == group_id).values(group_id=None))
+            
+            print(f"🔥 Suppression du groupe {group.name}...")
             session.delete(group)
             session.commit()
-    return {"status": "success"}
+            print("✅ GROUPE SUPPRIMÉ.")
+            return {"status": "success"}
+    print(f"❌ Échec: Groupe {group_id} non trouvé.")
+    raise HTTPException(status_code=404, detail="Groupe non trouvé")
 
 @router.post("/promotions/{promo_id}/groups/add", dependencies=[Depends(admin_only)])
-async def add_promo_group(promo_id: int):
+async def add_promo_group(promo_id: int, request: Request):
+    data = await request.json()
+    name = data.get("name")
+    f_type = data.get("type", "FI")
+    
+    print(f"➕ TENTATIVE AJOUT GROUPE '{name}' ({f_type}) POUR PROMO ID: {promo_id}")
     with Session(engine) as session:
-        count = session.exec(select(func.count(Group.id)).where(Group.promotion_id == promo_id)).one()
-        session.add(Group(
-            name=f"GR.{count+1} (FI)", 
+        promo = session.get(Promotion, promo_id)
+        if not promo:
+            raise HTTPException(status_code=404, detail="Promotion non trouvée")
+            
+        new_group = Group(
+            name=name or f"Nouveau Groupe", 
             promotion_id=promo_id, 
             pathway="Tronc Commun", 
-            year=2026, 
+            year=promo.entry_year, 
             academic_year="2025-2026", 
-            formation_type="FI"
-        ))
+            formation_type=f_type
+        )
+        session.add(new_group)
         session.commit()
+        print(f"✅ GROUPE CRÉÉ: {new_group.name} (ID: {new_group.id})")
     return {"status": "success"}

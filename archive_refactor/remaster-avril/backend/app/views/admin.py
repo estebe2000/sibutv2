@@ -93,20 +93,27 @@ async def admin_ac_editor(request: Request, user: User = Depends(admin_only)):
         acs = session.exec(select(LearningOutcome).options(selectinload(LearningOutcome.competency)).order_by(LearningOutcome.code)).all()
         return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": user, "active_role": active_role, "learning_outcomes": acs})
 
-@router.post("/ac-editor-save")
+@router.post("/ac-save-v2")
 async def admin_ac_save(request: Request, user: User = Depends(admin_only)):
     f = await request.form()
-    ac_id = int(f.get("ac_id"))
+    ac_id = f.get("ac_id")
     new_desc = f.get("description")
     
+    print(f"DEBUG: Sauvegarde demandée pour AC_ID={ac_id}")
+    print(f"DEBUG: Contenu reçu (100 chars): {str(new_desc)[:100]}")
+    
+    if not ac_id or not new_desc:
+        print("DEBUG: Données manquantes !")
+        return HTMLResponse(content="ERREUR: Données manquantes")
+
     with Session(engine) as session:
-        ac = session.get(LearningOutcome, ac_id)
+        ac = session.get(LearningOutcome, int(ac_id))
         if ac: 
             ac.description = new_desc
             session.add(ac)
             session.commit()
             session.refresh(ac)
             print(f"✅ AC {ac.code} mis à jour par {user.ldap_uid}")
-            return HTMLResponse(content="OK")
+            return RedirectResponse(url="/admin/ac-editor", status_code=303)
     
     raise HTTPException(status_code=404, detail="AC non trouvé")

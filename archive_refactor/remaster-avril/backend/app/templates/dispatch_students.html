@@ -75,7 +75,7 @@ async function startAutoSync() {
     btn.innerHTML = "<span class='inline-block animate-spin mr-2'>⚙️</span> Synchronisation...";
     
     try {
-        const response = await fetch('/api/v1/dispatch/auto-sync', { method: 'POST' });
+        const response = await fetch('/api/v1/admin/dispatch/auto-sync', { method: 'POST' });
         const result = await response.json();
         
         if (response.ok) {

@@ -44,7 +44,7 @@
                             <a href="/" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/' %}text-blue-600{% endif %}">Tableau de Bord</a>
                             {% if current_role == 'ADMIN' %}
                             <a href="/effectifs" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/effectifs' %}text-blue-600{% endif %}">Effectifs</a>
-                            <a href="/synchro-scodoc" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/synchro-scodoc' %}text-blue-600{% endif %}">Synchro ScoDoc</a>
+                            <a href="/admin/synchro-scodoc" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/admin/synchro-scodoc' %}text-blue-600{% endif %}">Synchro ScoDoc</a>
                             {% endif %}
                         </div>
                     </div>

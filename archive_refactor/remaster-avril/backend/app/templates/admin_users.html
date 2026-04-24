@@ -142,7 +142,7 @@ function renderList(users) {
 }
 
 async function showTeacherDetails(uid) {
-    const res = await fetch(`/api/teacher/${uid}`);
+    const res = await fetch(`/api/v1/teacher/${uid}`);
     const data = await res.json();
     if (data.error) return alert("Détails non trouvés.");
     document.getElementById('det-full-name').innerText = data.full_name;
