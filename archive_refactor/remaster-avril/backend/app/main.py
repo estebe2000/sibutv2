@@ -124,6 +124,24 @@ async def admin_users(request: Request):
         all_users = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
         return templates.TemplateResponse(request, "admin_users.html", {"request": request, "user": db_user, "active_role": active_role, "all_users": all_users})
 
+@app.get("/admin/ac-editor")
+async def admin_ac_editor(request: Request):
+    db_user = await get_current_db_user(request)
+    if not db_user: return RedirectResponse(url='/login')
+    active_role = request.session.get('active_role') or db_user.role.value
+    if active_role != 'ADMIN': return RedirectResponse(url='/')
+    with Session(engine) as session:
+        acs = session.exec(select(LearningOutcome).options(selectinload(LearningOutcome.competency)).order_by(LearningOutcome.code)).all()
+        return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": db_user, "active_role": active_role, "learning_outcomes": acs})
+
+@app.post("/admin/ac-editor-save")
+async def admin_ac_save(request: Request):
+    f = await request.form(); ac_id = int(f.get("ac_id"))
+    with Session(engine) as session:
+        ac = session.get(LearningOutcome, ac_id)
+        if ac: ac.description = f.get("description"); session.add(ac); session.commit()
+    return HTMLResponse(content="OK")
+
 @app.get("/settings")
 async def settings_view(request: Request):
     db_user = await get_current_db_user(request)

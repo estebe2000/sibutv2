@@ -1,47 +1,190 @@
 {% extends "dashboard.html" %}
 
 {% block content %}
-<div class="space-y-8 animate-in fade-in duration-500">
-    <header class="flex justify-between items-center">
-        <h2 class="text-3xl font-black tracking-tight">Référentiel de Compétences</h2>
-        <div class="flex gap-2">
-            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold shadow-lg shadow-blue-200 uppercase">Exporter JSON</button>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<div class="space-y-8 animate-in fade-in duration-500" x-data="{ 
+    viewMode: 'matrix', // 'matrix' or 'detail'
+    selectedPathway: 'Tronc Commun',
+    selectedCompCode: 'C1',
+    selectedLevel: 1,
+    selectedAC: null,
+    
+    // Fonction utilitaire pour extraire le code (C1, C2...)
+    extractBase(fullCode) {
+        return fullCode.split('-')[0];
+    },
+
+    // Titres dynamiques selon le parcours
+    getCompTitle(code) {
+        const titles = {
+            'C1': 'Marketing',
+            'C2': 'Vente',
+            'C3': 'Communication',
+            'C4': (this.selectedPathway === 'SME' ? 'Branding' : this.selectedPathway === 'MMPV' ? 'Management' : this.selectedPathway === 'MDEE' ? 'Marketing Digital' : this.selectedPathway === 'BI' ? 'Stratégie Inter' : 'Business Dév'),
+            'C5': (this.selectedPathway === 'SME' ? 'Evénementiel' : this.selectedPathway === 'MMPV' ? 'Retail' : this.selectedPathway === 'MDEE' ? 'E-Business' : this.selectedPathway === 'BI' ? 'Opérations Inter' : 'Relation Client')
+        };
+        return titles[code] || code;
+    },
+
+    // Sélection d'une compétence
+    selectComp(code, level = null) {
+        this.selectedCompCode = code;
+        this.selectedAC = null;
+        
+        if (level) {
+            this.selectedLevel = level;
+        } else {
+            if (['C4', 'C5'].includes(code)) {
+                this.selectedLevel = 2;
+            } else {
+                this.selectedLevel = 1;
+            }
+        }
+        this.viewMode = 'detail';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}">
+
+    <!-- VUE 1 : MATRICE (ROADMAP) -->
+    <div x-show="viewMode === 'matrix'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-8">
+        <header class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+                    </div>
+                    <h2 class="text-4xl font-black tracking-tighter text-slate-800 uppercase italic">Referentiel <span class="text-blue-600">SITC</span></h2>
+                </div>
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Système d'Information Technique et Commercial</p>
+            </div>
+            
+            <div class="bg-slate-50 p-2 rounded-2xl border border-slate-100 flex items-center gap-4">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest pl-3">Parcours :</span>
+                <select x-model="selectedPathway" class="bg-white border-none rounded-xl px-4 py-2 text-xs font-black text-blue-600 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                    {% for p in pathways %}
+                    <option value="{{ p }}">{{ p }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </header>
+
+        <div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm overflow-hidden">
+            <div class="grid grid-cols-12 gap-6">
+                <div class="col-span-12 lg:col-span-3"></div>
+                {% for y in [1, 2, 3] %}
+                <div class="col-span-12 lg:col-span-3 text-center bg-slate-900 rounded-3xl py-4 shadow-xl">
+                    <span class="text-white font-black text-sm uppercase tracking-[0.3em]">BUT {{ y }}</span>
+                </div>
+                {% endfor %}
+
+                {% for code in ['C1', 'C2', 'C3', 'C4', 'C5'] %}
+                <div class="col-span-12 grid grid-cols-12 gap-6 items-stretch mt-2">
+                    <div class="col-span-12 lg:col-span-3">
+                        <div @click="selectComp('{{ code }}')" class="h-full p-6 rounded-3xl border-2 border-slate-100 bg-white text-slate-600 hover:bg-slate-50 hover:border-blue-200 transition-all cursor-pointer flex items-center gap-5">
+                            <span class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-lg">{{ code }}</span>
+                            <span class="font-black text-sm uppercase tracking-tight" x-text="getCompTitle('{{ code }}')"></span>
+                        </div>
+                    </div>
+                    {% for y in [1, 2, 3] %}
+                    <div class="col-span-12 lg:col-span-3">
+                        {% for comp in competencies %}
+                            {% if comp.level == y and comp.code.startswith(code) %}
+                            <template x-if="(('{{ code }}' === 'C1' || '{{ code }}' === 'C2' || '{{ code }}' === 'C3' || {{ y }} === 1) && '{{ comp.pathway }}' === 'Tronc Commun') || ({{ y }} > 1 && '{{ comp.pathway }}' === selectedPathway && '{{ comp.code }}'.startsWith('{{ code }}'))">
+                                <div @click="selectComp('{{ code }}', {{ y }})" class="h-full p-6 rounded-3xl border-l-8 border-slate-100 bg-white shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-pointer flex flex-col justify-center">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase mb-4">Focus Niveau {{ y }}</span>
+                                    <p class="text-xs font-black text-slate-800 leading-tight italic">"{{ comp.label.split(' (')[0] }}"</p>
+                                </div>
+                            </template>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
         </div>
-    </header>
+    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <!-- Liste des compétences -->
-        <section class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm">
-            <h3 class="text-xl font-black mb-6 text-blue-600 italic">Macro-Compétences</h3>
-            <div class="space-y-4">
-                {% for comp in competencies %}
-                <div class="p-6 bg-slate-50 rounded-2xl border border-transparent hover:border-blue-200 transition-all cursor-pointer group">
-                    <div class="flex items-center gap-4 mb-2">
-                        <span class="px-2 py-1 bg-blue-600 text-white text-[10px] font-black rounded uppercase">{{ comp.code }}</span>
-                        <span class="font-bold text-slate-800">{{ comp.label }}</span>
-                    </div>
-                    <p class="text-xs text-slate-400 line-clamp-2">{{ comp.description or "Aucune description" }}</p>
-                </div>
-                {% endfor %}
+    <!-- VUE 2 : EXPLORATEUR DÉTAILLÉ -->
+    <div x-show="viewMode === 'detail'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8" x-transition:enter-end="opacity-100 translate-y-0" x-cloak class="space-y-6">
+        <div class="sticky top-0 z-40 bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-slate-100 shadow-xl flex flex-col xl:flex-row items-center gap-6">
+            <button @click="viewMode = 'matrix'" class="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Roadmap
+            </button>
+            <div class="h-8 w-[2px] bg-slate-100 hidden xl:block"></div>
+            <div class="flex gap-2 overflow-x-auto pb-2 xl:pb-0 custom-scrollbar shrink-0">
+                <template x-for="code in ['C1', 'C2', 'C3', 'C4', 'C5']">
+                    <button @click="selectComp(code, (['C4','C5'].includes(code) && selectedLevel === 1 ? 2 : selectedLevel))" :class="selectedCompCode === code ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'" class="w-12 h-12 rounded-xl flex items-center justify-center font-black text-xs transition-all" x-text="code"></button>
+                </template>
             </div>
-        </section>
+            <div class="h-8 w-[2px] bg-slate-100 hidden xl:block"></div>
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl gap-1 shrink-0">
+                <template x-for="lvl in [1, 2, 3]">
+                    <button @click="selectedLevel = lvl; selectedAC = null" x-show="!(['C4','C5'].includes(selectedCompCode) && lvl === 1)" :class="selectedLevel === lvl ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'" class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" x-text="'BUT ' + lvl"></button>
+                </template>
+            </div>
+            <div class="h-8 w-[2px] bg-slate-100 hidden xl:block"></div>
+            <div class="flex items-center gap-3 bg-slate-100 px-4 py-2 rounded-2xl border border-slate-100 w-full xl:w-auto">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Parcours</span>
+                <select x-model="selectedPathway" @change="selectedAC = null" class="bg-transparent border-none p-0 text-xs font-black text-blue-600 focus:ring-0 cursor-pointer">
+                    {% for p in pathways %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+                </select>
+            </div>
+        </div>
 
-        <!-- Liste des activités -->
-        <section class="bg-white rounded-[2.5rem] p-10 border border-slate-200 shadow-sm">
-            <h3 class="text-xl font-black mb-6 text-indigo-600 italic">Activités (SAÉ & Stages)</h3>
-            <div class="space-y-4">
-                {% for act in activities %}
-                <div class="p-6 bg-indigo-50/30 rounded-2xl border border-transparent hover:border-indigo-200 transition-all cursor-pointer">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-indigo-600 font-black text-sm">{{ act.code }}</span>
-                        <span class="text-[10px] font-black bg-indigo-600 text-white px-2 py-0.5 rounded uppercase">{{ act.type.value }}</span>
+        <div id="fiche-detail-container">
+            {% for comp in competencies %}
+            <div x-show="selectedCompCode === extractBase('{{ comp.code }}') && selectedLevel === {{ comp.level }} && ('{{ comp.pathway }}' === 'Tronc Commun' || '{{ comp.pathway }}' === selectedPathway)" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 space-y-8">
+                    <div class="bg-slate-900 text-white p-10 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-4 mb-8">
+                                <span class="px-3 py-1 bg-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest" x-text="'BUT ' + selectedLevel"></span>
+                                <span class="px-3 py-1 bg-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest" x-text="selectedPathway"></span>
+                            </div>
+                            <h3 class="text-4xl font-black uppercase italic tracking-tighter mb-4">{{ comp.label }}</h3>
+                            <div class="h-1 w-20 bg-blue-600 mb-6"></div>
+                            <p class="text-slate-400 text-sm leading-relaxed font-medium">{{ comp.description or "Référentiel détaillé." }}</p>
+                        </div>
                     </div>
-                    <p class="font-bold text-slate-800 text-sm">{{ act.label }}</p>
-                    <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase">Semestre {{ act.semester }}</p>
+                    <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm">
+                        <div class="flex items-center gap-3 mb-8"><div class="w-10 h-10 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg></div><h4 class="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Composantes E.</h4></div>
+                        <div class="space-y-4">
+                            {% for ce in comp.essential_components %}
+                            <div class="flex gap-4 p-4 hover:bg-slate-50 rounded-2xl transition-colors"><span class="text-[10px] font-black text-emerald-600 bg-emerald-50 w-10 h-10 shrink-0 flex items-center justify-center rounded-xl">{{ ce.code }}</span><p class="text-xs font-bold text-slate-700 leading-snug">{{ ce.label }}</p></div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-                {% endfor %}
+                <div class="lg:col-span-7 bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm h-fit">
+                    <div class="flex items-center justify-between mb-10"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><h4 class="text-sm font-black uppercase tracking-[0.2em] text-slate-800">Apprentissages Critiques</h4></div><span class="text-[10px] font-black text-slate-400 bg-slate-100 px-4 py-2 rounded-full uppercase tracking-widest">{{ comp.learning_outcomes|length }} AC</span></div>
+                    <div class="space-y-4">
+                        {% for ac in comp.learning_outcomes|sort(attribute='code') %}
+                        <div @click="selectedAC = (selectedAC === {{ ac.id }} ? null : {{ ac.id }})" :class="selectedAC === {{ ac.id }} ? 'bg-slate-900 text-white shadow-2xl scale-[1.01]' : 'bg-slate-50 hover:bg-slate-100 text-slate-800'" class="rounded-[2rem] p-6 transition-all cursor-pointer">
+                            <div class="flex items-center justify-between"><div class="flex items-center gap-5"><span :class="selectedAC === {{ ac.id }} ? 'bg-blue-600' : 'bg-white text-slate-400'" class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xs shadow-sm">{{ ac.code }}</span><p class="font-black italic text-sm">{{ ac.label }}</p></div><svg :class="selectedAC === {{ ac.id }} ? 'rotate-180 text-blue-600' : 'text-slate-300'" class="transition-transform" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+                            <div x-show="selectedAC === {{ ac.id }}" x-collapse x-cloak class="mt-8 pt-8 border-t border-white/10 space-y-6">
+                                <div class="bg-white/5 p-6 rounded-3xl border border-white/5"><p class="text-xs font-medium leading-relaxed opacity-80">{{ ac.description or "Aucun descriptif." }}</p></div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div><h5 class="text-[9px] font-black uppercase tracking-widest text-blue-400 mb-4 px-2">SAÉ</h5><div class="space-y-3">{% for act in ac.activities %}<div class="bg-white/5 p-4 rounded-3xl border border-white/5"><div class="flex items-center gap-3 mb-2"><span class="px-2 py-0.5 bg-blue-600 text-white text-[8px] font-black rounded uppercase">{{ act.code }}</span><p class="text-[11px] font-black">{{ act.label }}</p></div></div>{% endfor %}</div></div>
+                                    <div><h5 class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-4 px-2">Ressources</h5><div class="space-y-3">{% for res in ac.resources %}<div class="bg-white/5 p-4 rounded-3xl border border-white/5"><div class="flex items-center gap-3 mb-2"><span class="px-2 py-0.5 bg-emerald-600 text-white text-[8px] font-black rounded uppercase">{{ res.code }}</span><p class="text-[11px] font-black">{{ res.label }}</p></div></div>{% endfor %}</div></div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-        </section>
+            {% endfor %}
+        </div>
     </div>
 </div>
+
+<style>
+    [x-cloak] { display: none !important; }
+    .custom-scrollbar::-webkit-scrollbar { height: 4px; width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+</style>
 {% endblock %}

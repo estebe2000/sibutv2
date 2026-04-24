@@ -1,39 +1,119 @@
 {% extends "dashboard.html" %}
 
 {% block content %}
-<div class="space-y-8 animate-in slide-in-from-bottom duration-500">
-    <header>
-        <h2 class="text-3xl font-black tracking-tight italic">Éditeur d'Apprentissages Critiques (AC)</h2>
-        <p class="text-slate-400 font-bold">Modification rapide des libellés du référentiel</p>
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@14.0.0/dist/markdown-it.min.js"></script>
+
+<div class="space-y-8 animate-in fade-in duration-500" x-data="{ 
+    search: '',
+    selectedAC: null,
+    acs: [
+        {% for ac in learning_outcomes %}
+        {
+            id: {{ ac.id }},
+            code: '{{ ac.code }}',
+            label: '{{ ac.label | replace("'", "\\'") }}',
+            description: `{{ ac.description | default('') | replace("`", "\\`") }}`,
+            comp: '{{ ac.competency.code }}'
+        },
+        {% endfor %}
+    ],
+    get filteredACS() {
+        if (!this.search) return this.acs;
+        return this.acs.filter(i => i.code.toLowerCase().includes(this.search.toLowerCase()) || i.label.toLowerCase().includes(this.search.toLowerCase()));
+    },
+    selectAC(ac) {
+        this.selectedAC = JSON.parse(JSON.stringify(ac));
+    }
+}">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+        <div>
+            <h2 class="text-3xl font-black tracking-tight text-slate-800 uppercase italic">Éditeur du <span class="text-blue-600">Référentiel</span></h2>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Gérez les descriptions pédagogiques des AC</p>
+        </div>
+        
+        <div class="relative w-full md:w-96">
+            <input type="text" x-model="search" placeholder="Rechercher un code (ex: C11.01)..." class="w-full p-4 pl-12 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 shadow-inner outline-none focus:ring-2 focus:ring-blue-100 transition-all">
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
     </header>
 
-    <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm overflow-hidden">
-        <table class="w-full text-left">
-            <thead>
-                <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                    <th class="pb-4 px-4">Code AC</th>
-                    <th class="pb-4 px-4">Libellé actuel</th>
-                    <th class="pb-4 px-4 text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50">
-                {% for ac in learning_outcomes %}
-                <tr class="group hover:bg-slate-50 transition-all">
-                    <td class="py-6 px-4">
-                        <span class="font-black text-blue-600 tracking-tighter">{{ ac.code }}</span>
-                    </td>
-                    <td class="py-6 px-4">
-                        <input type="text" value="{{ ac.label }}" class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-2 focus:ring-blue-100 rounded-lg px-2 py-1 transition-all">
-                    </td>
-                    <td class="py-6 px-4 text-right">
-                        <button class="p-2 bg-blue-50 text-blue-600 rounded-xl opacity-0 group-hover:opacity-100 transition-all">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                        </button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-280px)]">
+        
+        <!-- LISTE DES AC (Lg:4) -->
+        <div class="lg:col-span-4 bg-white rounded-[2.5rem] p-6 border border-slate-100 shadow-sm overflow-y-auto custom-scrollbar">
+            <div class="space-y-2">
+                <template x-for="ac in filteredACS" :key="ac.id">
+                    <div @click="selectAC(ac)" 
+                         :class="selectedAC && selectedAC.id === ac.id ? 'bg-blue-600 text-white shadow-xl scale-[1.02]' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'"
+                         class="p-5 rounded-2xl transition-all cursor-pointer group flex flex-col gap-1 border border-transparent">
+                        <div class="flex justify-between items-center">
+                            <span :class="selectedAC && selectedAC.id === ac.id ? 'bg-white text-blue-600' : 'bg-blue-600 text-white'" class="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-tighter" x-text="ac.code"></span>
+                            <span class="text-[8px] font-black opacity-40 uppercase" x-text="ac.comp"></span>
+                        </div>
+                        <p class="font-black text-xs leading-tight italic mt-2" x-text="ac.label"></p>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ZONE ÉDITION (Lg:8) -->
+        <div class="lg:col-span-8 bg-white rounded-[3.5rem] border border-slate-100 shadow-xl overflow-hidden flex flex-col relative">
+            <template x-if="selectedAC">
+                <div class="h-full flex flex-col animate-in slide-in-from-right-8 duration-500">
+                    <div class="p-8 bg-slate-900 text-white flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-sm shadow-lg" x-text="selectedAC.code"></div>
+                            <div>
+                                <h3 class="font-black text-sm uppercase tracking-tighter" x-text="selectedAC.label"></h3>
+                                <p class="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Modification du descriptif pédagogique</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="flex-1 flex flex-col p-8 space-y-6" 
+                          hx-post="/admin/ac-editor-save" 
+                          hx-trigger="submit"
+                          @htmx:after-request="alert('Apprentissage Critique sauvegardé !'); window.location.reload();">
+                        
+                        <input type="hidden" name="ac_id" :value="selectedAC.id">
+                        
+                        <div class="flex-1 flex flex-col">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 px-2">Descriptif Structuré (Markdown)</label>
+                            <textarea name="description" 
+                                      x-model="selectedAC.description"
+                                      class="flex-1 w-full p-8 bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] font-medium text-sm text-slate-700 shadow-inner outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white transition-all leading-relaxed"
+                                      placeholder="### Contexte... ### Ressources mobilisées..."></textarea>
+                        </div>
+
+                        <div class="flex justify-end gap-4 pt-4">
+                            <button type="button" @click="selectedAC = null" class="px-8 py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">Annuler</button>
+                            <button type="submit" class="px-12 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-100 hover:scale-105 transition-all flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                Enregistrer l'AC
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </template>
+
+            <template x-if="!selectedAC">
+                <div class="h-full flex flex-col items-center justify-center text-center p-20 space-y-6">
+                    <div class="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center text-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-300 uppercase tracking-tighter italic">Sélectionnez un AC pour commencer</h3>
+                        <p class="text-sm text-slate-400 font-bold">Utilisez la liste de gauche pour choisir l'apprentissage à documenter.</p>
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
 </div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+</style>
 {% endblock %}
