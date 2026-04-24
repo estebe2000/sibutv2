@@ -95,7 +95,10 @@ async def admin_activities(request: Request):
         activities = session.exec(select(Activity).options(selectinload(Activity.responsible_user)).order_by(Activity.code)).all()
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
-        return templates.TemplateResponse(request, "admin_activities.html", {"request": request, "user": db_user, "active_role": active_role, "activities": activities, "resources": resources, "teachers": teachers})
+        return templates.TemplateResponse(request, "admin_activities.html", {
+            "request": request, "user": db_user, "active_role": active_role, 
+            "activities": activities, "resources": resources, "teachers": teachers
+        })
 
 @app.get("/ai-assistant")
 async def ai_assistant_view(request: Request):
@@ -165,6 +168,20 @@ async def update_user_roles(uid: str, roles: list[str]):
         user = session.exec(select(User).where(User.ldap_uid == uid)).first()
         if user and roles: user.role = UserRole(roles[0]); user.roles_json = json.dumps(roles); session.add(user); session.commit()
     return {"status": "success"}
+
+@app.get("/api/student/{ldap_uid}")
+async def get_student_details(ldap_uid: str):
+    with Session(engine) as session:
+        s = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
+        if not s: return {"error": "Étudiant non trouvé"}
+        return {
+            "ldap_uid": s.ldap_uid,
+            "full_name": s.full_name,
+            "email": s.email,
+            "nip": s.nip,
+            "promotion_id": s.promotion_id,
+            "group_id": s.group_id
+        }
 
 @app.get("/api/teacher/{ldap_uid}")
 async def get_teacher_details(ldap_uid: str):
