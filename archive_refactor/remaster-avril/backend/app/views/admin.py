@@ -90,8 +90,8 @@ async def synchro_scodoc(request: Request, user: User = Depends(admin_only)):
 async def admin_ac_editor(request: Request, user: User = Depends(admin_only)):
     active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
-        acs = session.exec(select(LearningOutcome).order_by(LearningOutcome.code)).all()
-        return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": user, "active_role": active_role, "acs": acs})
+        acs = session.exec(select(LearningOutcome).options(selectinload(LearningOutcome.competency)).order_by(LearningOutcome.code)).all()
+        return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": user, "active_role": active_role, "learning_outcomes": acs})
 
 @router.post("/ac-editor-save")
 async def admin_ac_save(request: Request, user: User = Depends(admin_only)):
