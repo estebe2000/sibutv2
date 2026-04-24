@@ -100,6 +100,7 @@ class Activity(SQLModel, table=True):
     responsible_user: Optional[User] = Relationship()
     activity_groups: List["ActivityGroup"] = Relationship(back_populates="activity")
     learning_outcomes: List["LearningOutcome"] = Relationship(back_populates="activities", link_model=ACActivityLink)
+    rubrics: List["EvaluationRubric"] = Relationship(back_populates="activity")
 
 class ActivityGroup(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -144,3 +145,25 @@ class Announcement(SQLModel, table=True):
     matrix_event_id: Optional[str] = None
     matrix_room_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.now)
+
+class EvaluationRubric(SQLModel, table=True):
+    """La grille d'évaluation liée à une activité (SAÉ, Stage, Portfolio)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    activity_id: int = Field(foreign_key="activity.id", index=True)
+    name: str
+    created_at: datetime = Field(default_factory=datetime.now)
+    
+    activity: "Activity" = Relationship(back_populates="rubrics")
+    criteria: List["RubricCriterion"] = Relationship(back_populates="rubric")
+
+class RubricCriterion(SQLModel, table=True):
+    """Un critère de la grille, basé par défaut sur un Apprentissage Critique (AC)"""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    rubric_id: int = Field(foreign_key="evaluationrubric.id", index=True)
+    learning_outcome_id: Optional[int] = Field(foreign_key="learningoutcome.id")
+    label: str
+    coefficient: float = Field(default=1.0)
+    max_points: float = Field(default=20.0)
+    
+    rubric: Optional[EvaluationRubric] = Relationship(back_populates="criteria")
+    learning_outcome: Optional["LearningOutcome"] = Relationship()

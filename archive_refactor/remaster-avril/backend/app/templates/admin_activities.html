@@ -36,6 +36,7 @@
                 <button @click="typeFilter = 'all'" :class="typeFilter === 'all' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all">Tous types</button>
                 <button @click="typeFilter = 'SAE'" :class="typeFilter === 'SAE' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all">SAÉ</button>
                 <button @click="typeFilter = 'STAGE'" :class="typeFilter === 'STAGE' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all">Stages</button>
+                <button @click="typeFilter = 'PORTFOLIO'" :class="typeFilter === 'PORTFOLIO' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all">Portfolios</button>
             </div>
             <select x-model="levelFilter" class="bg-slate-50 border border-slate-100 rounded-2xl px-6 py-2 text-xs font-black text-slate-600 outline-none focus:ring-2 focus:ring-blue-100 cursor-pointer">
                 <option value="all">Tous niveaux BUT</option>
@@ -46,7 +47,7 @@
         </div>
     </header>
 
-    <!-- VUE 1 : ACTIVITÉS -->
+    <!-- VUE 1 : ACTIVITÉS (SAÉ, STAGE, PORTFOLIO) -->
     <div x-show="currentTab === 'activities'" class="space-y-6 animate-in fade-in zoom-in-95 duration-500">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {% for act in activities %}
@@ -55,7 +56,7 @@
                  onclick="window.location.href='/admin/activities/{{ act.id }}'">
                 <div class="flex justify-between items-start mb-6">
                     <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 {% if act.type.value == 'SAE' %}bg-blue-600{% else %}bg-emerald-600{% endif %} text-white rounded-xl flex items-center justify-center font-black text-xs shadow-lg">{{ act.code[:3] }}</span>
+                        <span class="w-10 h-10 {% if act.type.value == 'SAE' %}bg-blue-600{% elif act.type.value == 'PORTFOLIO' %}bg-purple-600{% else %}bg-emerald-600{% endif %} text-white rounded-xl flex items-center justify-center font-black text-xs shadow-lg">{{ act.code[:3] }}</span>
                         <div>
                             <div class="flex items-center gap-2">
                                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ act.type.value }} • BUT {{ act.level }}</p>

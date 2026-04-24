@@ -5,7 +5,7 @@ from sqlmodel import Session, select, func
 from sqlalchemy.orm import selectinload
 import os, json
 from app.core.security import admin_only, prof_or_admin, engine
-from app.models.models import User, UserRole, Activity, Resource, Announcement, LearningOutcome, Promotion, Group, ActivityGroup
+from app.models.models import User, UserRole, Activity, Resource, Announcement, LearningOutcome, Promotion, Group, ActivityGroup, EvaluationRubric, RubricCriterion
 
 router = APIRouter(prefix="/admin", tags=["admin_views"])
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates"))
@@ -14,10 +14,32 @@ templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.dirna
 async def admin_activities(request: Request, user: User = Depends(prof_or_admin)):
     active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
+        # On charge TOUTES les activités (SAÉ, STAGE, PORTFOLIO)
         activities = session.exec(select(Activity).options(selectinload(Activity.responsible_user)).order_by(Activity.code)).all()
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
         return templates.TemplateResponse(request, "admin_activities.html", {"request": request, "user": user, "active_role": active_role, "activities": activities, "resources": resources, "teachers": teachers})
+
+@router.get("/evaluations")
+async def admin_evaluations(request: Request, user: User = Depends(admin_only)):
+    active_role = request.session.get('active_role') or user.role.value
+    with Session(engine) as session:
+        # On récupère les activités avec leurs grilles déjà créées
+        activities = session.exec(select(Activity).options(selectinload(Activity.rubrics)).order_by(Activity.code)).all()
+        return templates.TemplateResponse(request, "admin_evaluations.html", {"request": request, "user": user, "active_role": active_role, "activities": activities})
+
+@router.get("/evaluations/{act_id}/builder")
+async def admin_evaluations_builder(request: Request, act_id: int, user: User = Depends(admin_only)):
+    active_role = request.session.get('active_role') or user.role.value
+    with Session(engine) as session:
+        activity = session.exec(select(Activity).options(
+            selectinload(Activity.rubrics).selectinload(EvaluationRubric.criteria)
+        ).where(Activity.id == act_id)).first()
+        
+        if not activity or not activity.rubrics:
+            return RedirectResponse(url="/admin/evaluations")
+            
+        return templates.TemplateResponse(request, "eval_builder.html", {"request": request, "user": user, "active_role": active_role, "activity": activity, "rubric": activity.rubrics[0]})
 
 @router.get("/activities/{act_id}")
 async def admin_activity_detail(request: Request, act_id: int, user: User = Depends(prof_or_admin)):

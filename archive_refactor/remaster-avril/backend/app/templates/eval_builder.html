@@ -1,0 +1,81 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="space-y-8 animate-in fade-in duration-500 pb-20" x-data="{
+    criteria: [
+        {% for crit in rubric.criteria %}
+        { id: {{ crit.id }}, label: '{{ crit.label | replace("'", "\\'") }}', coefficient: {{ crit.coefficient }}, max_points: {{ crit.max_points }} },
+        {% endfor %}
+    ],
+    get totalCoef() {
+        return this.criteria.reduce((sum, c) => sum + parseFloat(c.coefficient), 0).toFixed(1);
+    },
+    async saveChanges() {
+        // Logique de sauvegarde future
+        alert('Persistence des critères en cours de développement...');
+    }
+}">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+        <div class="flex items-center gap-6">
+            <button onclick="window.location.href='/admin/evaluations'" class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center hover:bg-slate-100 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <div>
+                <h2 class="text-3xl font-black tracking-tight text-slate-800 uppercase italic">Édition de la <span class="text-blue-600">Grille</span></h2>
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">{{ activity.code }} - {{ activity.label }}</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
+        <div class="relative z-10 space-y-8">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-black italic">Critères d'évaluation</h3>
+                <div class="px-6 py-3 bg-white/10 rounded-2xl border border-white/10 text-xs font-black uppercase tracking-widest">
+                    Total Coeffs : <span x-text="totalCoef" class="text-blue-400"></span>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <template x-for="(crit, index) in criteria" :key="index">
+                    <div class="p-6 bg-white/5 border border-white/10 rounded-2xl flex justify-between items-center group hover:bg-white/10 transition-all">
+                        <div class="flex-1">
+                            <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1" x-text="'Critère #' + (index + 1)"></p>
+                            <input type="text" x-model="crit.label" class="bg-transparent border-none p-0 text-sm font-bold text-slate-100 w-full focus:ring-0">
+                        </div>
+                        <div class="flex items-center gap-8">
+                            <div class="flex flex-col items-center">
+                                <label class="text-[8px] font-black text-white/40 uppercase mb-2">Coefficient</label>
+                                <input type="number" step="0.5" x-model="crit.coefficient" class="w-16 bg-slate-800 border-none rounded-lg p-2 text-center font-black text-xs text-blue-400 focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <label class="text-[8px] font-black text-white/40 uppercase mb-2">Barème</label>
+                                <input type="number" x-model="crit.max_points" class="w-16 bg-slate-800 border-none rounded-lg p-2 text-center font-black text-xs text-emerald-400 focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <button @click="criteria.splice(index, 1)" class="p-2 text-white/20 hover:text-red-400 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </template>
+
+                <div x-show="criteria.length === 0" class="p-20 text-center border-2 border-dashed border-white/5 rounded-[2.5rem]">
+                    <p class="text-slate-500 font-black uppercase italic tracking-widest">Aucun critère dans cette grille</p>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-6 border-t border-white/5">
+                <button @click="criteria.push({ id: null, label: 'Nouveau critère', coefficient: 1.0, max_points: 20.0 })" class="px-6 py-3 bg-white/5 text-white rounded-xl font-black text-[10px] uppercase hover:bg-white/10 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Ajouter un critère
+                </button>
+                <div class="flex gap-4">
+                    <button onclick="window.location.href='/admin/evaluations'" class="px-8 py-4 bg-white/5 text-slate-400 rounded-2xl font-black text-xs uppercase hover:bg-white/10 transition-all">Annuler</button>
+                    <button @click="saveChanges()" class="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase shadow-xl hover:bg-blue-700 transition-all">Sauvegarder</button>
+                </div>
+            </div>
+        </div>
+        <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl"></div>
+    </div>
+</div>
+{% endblock %}
