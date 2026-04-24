@@ -319,6 +319,42 @@ async def auth(request: Request):
         return RedirectResponse(url='/')
     except: return RedirectResponse(url='/login')
 
+@app.get("/admin/ac-editor")
+async def admin_ac_editor(request: Request):
+    db_user = await get_current_db_user(request)
+    if not db_user: return RedirectResponse(url='/login')
+    active_role = request.session.get('active_role') or db_user.role.value
+    if active_role != 'ADMIN': return RedirectResponse(url='/')
+    with Session(engine) as session:
+        acs = session.exec(select(LearningOutcome).options(selectinload(LearningOutcome.competency)).order_by(LearningOutcome.code)).all()
+        return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": db_user, "active_role": active_role, "learning_outcomes": acs})
+
+@app.post("/admin/ac-editor-save")
+async def admin_ac_save(request: Request):
+    f = await request.form(); ac_id = int(f.get("ac_id"))
+    with Session(engine) as session:
+        ac = session.get(LearningOutcome, ac_id)
+        if ac: ac.description = f.get("description"); session.add(ac); session.commit()
+    return HTMLResponse(content="OK")
+
+@app.get("/ai/ged/list")
+async def ai_ged_list(request: Request):
+    db_user = await get_current_db_user(request)
+    if not db_user or not db_user.ragflow_dataset_id: return HTMLResponse(content='Aucun document.')
+    docs = await ai_service.list_documents(db_user.ragflow_dataset_id)
+    html = "".join([f'<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 mb-2">{d["name"]}</div>' for d in docs])
+    return HTMLResponse(content=html or 'Aucun document.')
+
+@app.post("/ai/ged/upload")
+async def ai_ged_upload(request: Request):
+    db_user = await get_current_db_user(request)
+    form_data = await request.form(); upload_file = form_data.get("file")
+    if not db_user.ragflow_dataset_id:
+        db_user.ragflow_dataset_id = await ai_service.get_or_create_dataset(db_user.ldap_uid)
+        with Session(engine) as session: session.add(db_user); session.commit(); session.refresh(db_user)
+    content = await upload_file.read(); await ai_service.upload_document(db_user.ldap_uid, content, upload_file.filename)
+    return HTMLResponse(content="OK")
+
 @app.get("/logout")
 async def logout(request: Request):
     request.session.clear()
