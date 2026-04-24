@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     MATRIX_ACCESS_TOKEN: Optional[str] = os.getenv("MATRIX_ACCESS_TOKEN", "syt_aHViLWJvdA_nNGubvTIVVsdNaiHggWT_1DifrJ")
     MATRIX_ROOM_GENERAL: str = os.getenv("MATRIX_ROOM_GENERAL", "!quqZTgwiQKIQAkORxE:educ-ai.fr")
 
+    # Keycloak DB (for smart sync)
+    KC_DB_HOST: str = os.getenv("KC_DB_HOST", "remaster_db_keycloak")
+    KC_DB_NAME: str = os.getenv("KC_DB_NAME", "keycloak")
+    KC_DB_USER: str = os.getenv("KC_DB_USER", "keycloak")
+    KC_DB_PASS: str = os.getenv("KC_DB_PASS", "keycloak_password")
+
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True

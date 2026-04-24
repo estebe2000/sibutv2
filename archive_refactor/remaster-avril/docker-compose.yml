@@ -28,12 +28,11 @@ services:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://db_keycloak:5432/keycloak
       KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: keycloak_password
+      KC_DB_PASSWORD: ${KC_DB_PASS:-keycloak_password}
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HOSTNAME: auth.${DOMAIN}
       KC_HOSTNAME_PORT: "443"
-      KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: xforwarded
     volumes:
       - ./infrastructure/keycloak/import:/opt/keycloak/data/import
@@ -58,6 +57,7 @@ services:
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_INTERNAL_URL=http://keycloak:8080
       - KEYCLOAK_URL=http://keycloak:8080
+      - KC_DB_PASS=${KC_DB_PASS:-keycloak_password}
     volumes:
       - ./backend/app:/app/app
       - ../apps/api/app/data:/app/app/data_source
@@ -161,10 +161,8 @@ services:
     command: --config /livekit.yaml
     volumes:
       - ./infrastructure/livekit/livekit.yaml:/livekit.yaml
-    ports:
-      - "7880:7880"
-      - "7881:7881"
-      - "7882:7882/udp"
+    expose:
+      - "7880"
 
   coturn:
     image: coturn/coturn:latest

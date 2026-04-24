@@ -14,6 +14,14 @@ from .services.ai_service import ai_service
 import os, httpx, json, asyncio, uuid
 
 app = FastAPI(title="Skills Hub Remaster")
+
+class AuthRequiredException(Exception):
+    pass
+
+@app.exception_handler(AuthRequiredException)
+async def auth_exception_handler(request: Request, exc: AuthRequiredException):
+    return RedirectResponse(url='/login')
+
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
@@ -51,82 +59,143 @@ async def get_current_db_user(request: Request):
             session.add(db_user); session.commit(); session.refresh(db_user)
         return db_user
 
+async def require_auth(request: Request, user: User = Depends(get_current_db_user)):
+    if not user:
+        raise AuthRequiredException()
+    return user
+
+class RoleChecker:
+    def __init__(self, allowed_roles: list[str]):
+        self.allowed_roles = allowed_roles
+    
+    def __call__(self, request: Request, user: User = Depends(get_current_db_user)):
+        if not user:
+            raise AuthRequiredException()
+        active_role = request.session.get('active_role') or user.role.value
+        if active_role not in self.allowed_roles and "ADMIN" not in (user.roles_list or []):
+            raise HTTPException(status_code=403, detail="Accès refusé : privilèges insuffisants")
+        return user
+
+# Dépendances réutilisables
+admin_only = RoleChecker(["ADMIN"])
+prof_or_admin = RoleChecker(["ADMIN", "PROFESSOR"])
+any_auth = require_auth
+
 # --- VIEWS ---
 
 @app.get("/")
-async def index(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
+async def index(request: Request, user: User = Depends(require_auth)):
+    active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         stats = {"users": session.exec(select(func.count(User.id))).one(), "activities": session.exec(select(func.count(Activity.id))).one(), "resources": session.exec(select(func.count(Resource.id))).one()}
         dashboard_data = {"recent_activities": session.exec(select(Activity).order_by(Activity.id.desc()).limit(5)).all(), "users_count": stats["users"], "sae_count": stats["activities"], "resources_count": stats["resources"]}
         announcements = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(5)).all()
         news = [{"sender": a.author_uid, "content": f"**{a.title}**<br>{a.content}", "timestamp": a.created_at} for a in announcements]
-        return templates.TemplateResponse(request, "dashboard.html", {"request": request, "user": db_user, "active_role": active_role, "stats": stats, "data": dashboard_data, "news": news})
+        return templates.TemplateResponse(request, "dashboard.html", {"request": request, "user": user, "active_role": active_role, "stats": stats, "data": dashboard_data, "news": news})
 
 @app.get("/referentiel")
-async def referentiel(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
+async def referentiel(request: Request, user: User = Depends(require_auth)):
+    active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         competencies = session.exec(select(Competency).options(selectinload(Competency.learning_outcomes).selectinload(LearningOutcome.activities), selectinload(Competency.learning_outcomes).selectinload(LearningOutcome.resources), selectinload(Competency.essential_components)).order_by(Competency.code)).all()
         activities = session.exec(select(Activity).options(selectinload(Activity.learning_outcomes)).order_by(Activity.code)).all()
         resources = session.exec(select(Resource).options(selectinload(Resource.learning_outcomes)).order_by(Resource.code)).all()
         pathways = session.exec(select(Competency.pathway).distinct()).all()
-        return templates.TemplateResponse(request, "referentiel.html", {"request": request, "user": db_user, "active_role": active_role, "competencies": competencies, "activities": activities, "resources": resources, "pathways": pathways})
+        return templates.TemplateResponse(request, "referentiel.html", {"request": request, "user": user, "active_role": active_role, "competencies": competencies, "activities": activities, "resources": resources, "pathways": pathways})
 
 @app.get("/effectifs")
-async def effectifs(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
+async def effectifs(request: Request, user: User = Depends(require_auth)):
+    active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         promotions = session.exec(select(Promotion).options(selectinload(Promotion.users), selectinload(Promotion.groups))).all()
-        return templates.TemplateResponse(request, "effectifs.html", {"request": request, "user": db_user, "active_role": active_role, "promos_by_level": {1: next((p for p in promotions if p.entry_year == 2026), None), 2: next((p for p in promotions if p.entry_year == 2025), None), 3: next((p for p in promotions if p.entry_year == 2024), None)}, "total_users": sum(len(p.users) for p in promotions)})
+        return templates.TemplateResponse(request, "effectifs.html", {"request": request, "user": user, "active_role": active_role, "promos_by_level": {1: next((p for p in promotions if p.entry_year == 2026), None), 2: next((p for p in promotions if p.entry_year == 2025), None), 3: next((p for p in promotions if p.entry_year == 2024), None)}, "total_users": sum(len(p.users) for p in promotions)})
 
 @app.get("/admin/activities")
-async def admin_activities(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
+async def admin_activities(request: Request, user: User = Depends(prof_or_admin)):
+    active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         activities = session.exec(select(Activity).options(selectinload(Activity.responsible_user)).order_by(Activity.code)).all()
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
-        return templates.TemplateResponse(request, "admin_activities.html", {"request": request, "user": db_user, "active_role": active_role, "activities": activities, "resources": resources, "teachers": teachers})
+        return templates.TemplateResponse(request, "admin_activities.html", {"request": request, "user": user, "active_role": active_role, "activities": activities, "resources": resources, "teachers": teachers})
 
 @app.get("/ai-assistant")
-async def ai_assistant_view(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    return templates.TemplateResponse(request, "ai_assistant.html", {"request": request, "user": db_user, "active_role": request.session.get('active_role') or db_user.role.value})
+async def ai_assistant_view(request: Request, user: User = Depends(require_auth)):
+    return templates.TemplateResponse(request, "ai_assistant.html", {"request": request, "user": user, "active_role": request.session.get('active_role') or user.role.value})
 
 @app.get("/admin/users")
-async def admin_users(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
+async def admin_users(request: Request, user: User = Depends(admin_only)):
+    active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         all_users = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
-        return templates.TemplateResponse(request, "admin_users.html", {"request": request, "user": db_user, "active_role": active_role, "all_users": all_users})
+        return templates.TemplateResponse(request, "admin_users.html", {"request": request, "user": user, "active_role": active_role, "all_users": all_users})
 
 @app.get("/settings")
-async def settings_view(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    return templates.TemplateResponse(request, "settings.html", {"request": request, "user": db_user, "active_role": request.session.get('active_role') or db_user.role.value})
+async def settings_view(request: Request, user: User = Depends(require_auth)):
+    return templates.TemplateResponse(request, "settings.html", {"request": request, "user": user, "active_role": request.session.get('active_role') or user.role.value})
 
 @app.get("/synchro-scodoc")
-async def synchro_scodoc(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    return templates.TemplateResponse(request, "dispatch_students.html", {"request": request, "user": db_user, "active_role": "ADMIN"})
+async def synchro_scodoc(request: Request, user: User = Depends(admin_only)):
+    return templates.TemplateResponse(request, "dispatch_students.html", {"request": request, "user": user, "active_role": "ADMIN"})
+
+@app.get("/admin/matrix")
+async def admin_matrix(request: Request, user: User = Depends(admin_only)):
+    active_role = request.session.get('active_role') or user.role.value
+    with Session(engine) as session:
+        announcements = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(10)).all()
+        return templates.TemplateResponse(request, "admin_matrix.html", {"request": request, "user": user, "active_role": active_role, "announcements": announcements})
+
+@app.post("/api/v1/admin/matrix/announce", dependencies=[Depends(admin_only)])
+async def api_matrix_announce(request: Request, user: User = Depends(get_current_db_user)):
+    data = await request.json()
+    title = data.get("title")
+    content = data.get("content")
+    room_type = data.get("room", "general")
+    priority = data.get("priority", "normal")
+    
+    room_id, event_id = await matrix_service.broadcast_announcement(title, content, room_type, priority)
+    
+    if event_id:
+        with Session(engine) as session:
+            ann = Announcement(title=title, content=content, author_uid=user.ldap_uid, matrix_event_id=event_id, matrix_room_id=room_id)
+            session.add(ann)
+            session.commit()
+        return {"status": "success", "event_id": event_id}
+    raise HTTPException(status_code=500, detail="Échec de l'envoi Matrix")
+
+@app.post("/api/v1/admin/matrix/sync-rooms", dependencies=[Depends(admin_only)])
+async def api_matrix_sync_rooms():
+    created = 0
+    with Session(engine) as session:
+        promos = session.exec(select(Promotion)).all()
+        for p in promos:
+            room_name = f"BUT TC - Promo {p.entry_year}"
+            # Logique simplifiée : on pourrait stocker le room_id dans la table Promotion
+            room_id = await matrix_service.create_room(room_name, topic=f"Salon officiel de la promo {p.entry_year}")
+            if room_id: created += 1
+            
+        groups = session.exec(select(Group)).all()
+        for g in groups:
+            room_id = await matrix_service.create_room(f"Groupe {g.name}", topic=f"Travaux dirigés - {g.name}")
+            if room_id: created += 1
+            
+    return {"status": "success", "created": created}
+
+@app.delete("/api/v1/admin/matrix/announcements/{id}", dependencies=[Depends(admin_only)])
+async def api_matrix_delete_announcement(id: int):
+    with Session(engine) as session:
+        ann = session.get(Announcement, id)
+        if ann:
+            if ann.matrix_event_id and ann.matrix_room_id:
+                await matrix_service.redact_event(ann.matrix_room_id, ann.matrix_event_id)
+            session.delete(ann)
+            session.commit()
+            return {"status": "success"}
+    raise HTTPException(status_code=404, detail="Annonce non trouvée")
 
 # --- API ENDPOINTS ---
 
-@app.post("/api/v1/dispatch/auto-sync")
+@app.post("/api/v1/dispatch/auto-sync", dependencies=[Depends(admin_only)])
 async def auto_sync_scodoc():
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -134,7 +203,7 @@ async def auto_sync_scodoc():
             scodoc_data = h_resp.json()
             with Session(engine) as session:
                 import psycopg2
-                kc_conn = psycopg2.connect(host="remaster_db_keycloak", database="keycloak", user="keycloak", password="keycloak_password")
+                kc_conn = psycopg2.connect(host=settings.KC_DB_HOST, database=settings.KC_DB_NAME, user=settings.KC_DB_USER, password=settings.KC_DB_PASS)
                 kc_cur = kc_conn.cursor()
                 
                 for f_name, types in scodoc_data.items():
@@ -181,14 +250,14 @@ async def auto_sync_scodoc():
         return {"status": "success"}
     except Exception as e: return {"status": "error", "detail": str(e)}
 
-@app.get("/api/student/{ldap_uid}")
+@app.get("/api/student/{ldap_uid}", dependencies=[Depends(prof_or_admin)])
 async def get_student_details(ldap_uid: str):
     with Session(engine) as session:
         s = session.exec(select(User).where(User.ldap_uid == ldap_uid)).first()
         return {"ldap_uid": s.ldap_uid, "full_name": s.full_name, "email": s.email, "nip": s.nip} if s else {"error": "Non trouvé"}
 
-@app.get("/api/v1/admin/users/professors")
-@app.get("/api/v1/admin/users/search")
+@app.get("/api/v1/admin/users/professors", dependencies=[Depends(prof_or_admin)])
+@app.get("/api/v1/admin/users/search", dependencies=[Depends(prof_or_admin)])
 async def admin_users_search(q: str = ""):
     results = []
     with Session(engine) as session:
@@ -196,7 +265,7 @@ async def admin_users_search(q: str = ""):
         for u in locals: results.append({"ldap_uid": u.ldap_uid, "full_name": u.full_name, "id": u.id})
     try:
         import psycopg2
-        conn = psycopg2.connect(host="remaster_db_keycloak", database="keycloak", user="keycloak", password="keycloak_password")
+        conn = psycopg2.connect(host=settings.KC_DB_HOST, database=settings.KC_DB_NAME, user=settings.KC_DB_USER, password=settings.KC_DB_PASS)
         cur = conn.cursor(); cur.execute("SELECT username, first_name, last_name, email FROM user_entity WHERE (username ILIKE %s OR first_name ILIKE %s OR last_name ILIKE %s) LIMIT 10", (f"%{q}%", f"%{q}%", f"%{q}%"))
         for row in cur.fetchall():
             if not any(r["ldap_uid"] == row[0] for r in results):

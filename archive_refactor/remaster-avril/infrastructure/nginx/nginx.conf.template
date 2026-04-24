@@ -1,3 +1,43 @@
+# Configuration Nginx optimisée pour Cloudflare et la sécurité
+# Skills Hub Remaster - Phase 2 (Hardening)
+
+# Liste des IP Cloudflare (Octobre 2023)
+set_real_ip_from 103.21.244.0/22;
+set_real_ip_from 103.22.200.0/22;
+set_real_ip_from 103.31.4.0/22;
+set_real_ip_from 104.16.0.0/13;
+set_real_ip_from 104.24.0.0/14;
+set_real_ip_from 108.162.192.0/18;
+set_real_ip_from 131.0.72.0/22;
+set_real_ip_from 141.101.64.0/18;
+set_real_ip_from 162.158.0.0/15;
+set_real_ip_from 172.64.0.0/13;
+set_real_ip_from 173.245.48.0/20;
+set_real_ip_from 188.114.96.0/20;
+set_real_ip_from 190.93.240.0/20;
+set_real_ip_from 197.234.240.0/22;
+set_real_ip_from 198.41.128.0/17;
+set_real_ip_from 2400:cb00::/32;
+set_real_ip_from 2606:4700::/32;
+set_real_ip_from 2803:f800::/32;
+set_real_ip_from 2405:b500::/32;
+set_real_ip_from 2405:8100::/32;
+set_real_ip_from 2a06:98c0::/29;
+set_real_ip_from 2c0f:f248::/32;
+
+real_ip_header CF-Connecting-IP;
+
+# Headers de sécurité globaux
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Referrer-Policy "no-referrer-when-downgrade" always;
+add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' https://*.educ-ai.fr;" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+# Résolveur DNS interne Docker
+resolver 127.0.0.11 valid=30s;
+
 server {
     listen 80;
     server_name hub.educ-ai.fr;
@@ -9,7 +49,8 @@ server {
     }
 
     location / {
-        proxy_pass http://app:8000;
+        set $upstream_app app;
+        proxy_pass http://$upstream_app:8000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -27,7 +68,8 @@ server {
     server_name auth.educ-ai.fr;
 
     location / {
-        proxy_pass http://keycloak:8080;
+        set $upstream_keycloak keycloak;
+        proxy_pass http://$upstream_keycloak:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -45,7 +87,8 @@ server {
     server_name nextcloud.educ-ai.fr;
 
     location / {
-        proxy_pass http://nextcloud:80;
+        set $upstream_nextcloud nextcloud;
+        proxy_pass http://$upstream_nextcloud:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -65,7 +108,8 @@ server {
     server_name onlyoffice.educ-ai.fr;
 
     location / {
-        proxy_pass http://onlyoffice:80;
+        set $upstream_onlyoffice onlyoffice;
+        proxy_pass http://$upstream_onlyoffice:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
