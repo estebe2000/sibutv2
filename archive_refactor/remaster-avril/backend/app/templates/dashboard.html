@@ -38,9 +38,9 @@
                                 </div>
                                 <span class="text-sm font-black text-slate-600 uppercase tracking-tighter">Pilotage</span>
                             </div>
-                            <svg id="icon-pilotage" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300 active"><path d="m9 18 6-6-6-6"/></svg>
+                            <svg id="icon-pilotage" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
-                        <div id="menu-pilotage" class="menu-content space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
+                        <div id="menu-pilotage" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
                             <a href="/" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/' %}text-blue-600{% endif %}">Tableau de Bord</a>
                             {% if current_role == 'ADMIN' %}
                             <a href="/effectifs" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/effectifs' %}text-blue-600{% endif %}">Effectifs</a>
@@ -78,9 +78,9 @@
                                 </div>
                                 <span class="text-sm font-black text-slate-600 uppercase tracking-tighter">Administration</span>
                             </div>
-                            <svg id="icon-admin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300 active"><path d="m9 18 6-6-6-6"/></svg>
+                            <svg id="icon-admin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
-                        <div id="menu-admin" class="menu-content space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
+                        <div id="menu-admin" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
                             <a href="/admin/users" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/users' %}text-blue-600{% endif %}">Utilisateurs</a>
                             <a href="/admin/matrix" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/matrix' %}text-blue-600{% endif %}">Annonces Matrix</a>
                             <a href="/admin/ac-editor" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/ac-editor' %}text-blue-600{% endif %}">Éditeur d'AC</a>

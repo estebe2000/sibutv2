@@ -141,4 +141,6 @@ class Announcement(SQLModel, table=True):
     title: str
     content: str
     author_uid: str
+    matrix_event_id: Optional[str] = None
+    matrix_room_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.now)

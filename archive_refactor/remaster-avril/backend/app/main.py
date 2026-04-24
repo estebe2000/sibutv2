@@ -442,7 +442,7 @@ async def ai_chat_endpoint(request: Request):
     # On récupère ou crée une session RAGFlow persistante
     session_id = request.session.get("rag_session_id")
     if not session_id:
-        session_id = await ai_service.create_session("HUB_ASSISTANT")
+        session_id = await ai_service.create_session_by_id(ai_service.default_chat_id)
         if session_id: request.session["rag_session_id"] = session_id
         else: return HTMLResponse("<div class='text-red-400 p-4'>Erreur de session IA.</div>")
     
