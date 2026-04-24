@@ -87,11 +87,13 @@ class User(SQLModel, table=True):
     # Lien avec les groupes d'activités (SAE/Stage)
     # On définit explicitement le lien inverse
     activity_groups: List["ActivityGroup"] = Relationship(back_populates="students", link_model=None) # Link model defined below
-
     @property
     def roles_list(self) -> List[str]:
-        try: return json.loads(self.roles_json)
-        except: return [self.role.value]
+        import json
+        try:
+            return json.loads(self.roles_json)
+        except:
+            return [self.role.value]
 
 # --- REFERENTIEL MODELS ---
 

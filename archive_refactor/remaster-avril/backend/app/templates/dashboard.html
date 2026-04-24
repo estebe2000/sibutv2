@@ -111,8 +111,8 @@
                         } %}
                         <select onchange="window.location.href='/switch-role/'+this.value" class="w-full bg-white border-none rounded-xl px-3 py-2 text-[10px] font-black text-slate-600 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
                             {% for r in user.roles_list %}
-                            <option value="{{ r.value }}" {% if current_role == r.value %}selected{% endif %}>
-                                {{ role_labels[r.value] if r.value in role_labels else r.value }}
+                            <option value="{{ r }}" {% if current_role == r %}selected{% endif %}>
+                                {{ role_labels[r] if r in role_labels else r }}
                             </option>
                             {% endfor %}
                         </select>
