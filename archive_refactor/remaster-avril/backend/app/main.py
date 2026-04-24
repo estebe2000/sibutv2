@@ -82,7 +82,6 @@ async def effectifs(request: Request):
     db_user = await get_current_db_user(request)
     if not db_user: return RedirectResponse(url='/login')
     active_role = request.session.get('active_role') or db_user.role.value
-    if active_role != 'ADMIN': return RedirectResponse(url='/')
     with Session(engine) as session:
         promotions = session.exec(select(Promotion).options(selectinload(Promotion.users), selectinload(Promotion.groups))).all()
         return templates.TemplateResponse(request, "effectifs.html", {"request": request, "user": db_user, "active_role": active_role, "promos_by_level": {1: next((p for p in promotions if p.entry_year == 2026), None), 2: next((p for p in promotions if p.entry_year == 2025), None), 3: next((p for p in promotions if p.entry_year == 2024), None)}, "total_users": sum(len(p.users) for p in promotions)})
@@ -97,16 +96,6 @@ async def admin_activities(request: Request):
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
         return templates.TemplateResponse(request, "admin_activities.html", {"request": request, "user": db_user, "active_role": active_role, "activities": activities, "resources": resources, "teachers": teachers})
-
-@app.get("/admin/matrix")
-async def admin_matrix(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
-    if active_role != 'ADMIN': return RedirectResponse(url='/')
-    with Session(engine) as session:
-        announcements = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(10)).all()
-        return templates.TemplateResponse(request, "admin_matrix.html", {"request": request, "user": db_user, "active_role": active_role, "announcements": announcements})
 
 @app.get("/ai-assistant")
 async def ai_assistant_view(request: Request):
@@ -123,24 +112,6 @@ async def admin_users(request: Request):
     with Session(engine) as session:
         all_users = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
         return templates.TemplateResponse(request, "admin_users.html", {"request": request, "user": db_user, "active_role": active_role, "all_users": all_users})
-
-@app.get("/admin/ac-editor")
-async def admin_ac_editor(request: Request):
-    db_user = await get_current_db_user(request)
-    if not db_user: return RedirectResponse(url='/login')
-    active_role = request.session.get('active_role') or db_user.role.value
-    if active_role != 'ADMIN': return RedirectResponse(url='/')
-    with Session(engine) as session:
-        acs = session.exec(select(LearningOutcome).options(selectinload(LearningOutcome.competency)).order_by(LearningOutcome.code)).all()
-        return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": db_user, "active_role": active_role, "learning_outcomes": acs})
-
-@app.post("/admin/ac-editor-save")
-async def admin_ac_save(request: Request):
-    f = await request.form(); ac_id = int(f.get("ac_id"))
-    with Session(engine) as session:
-        ac = session.get(LearningOutcome, ac_id)
-        if ac: ac.description = f.get("description"); session.add(ac); session.commit()
-    return HTMLResponse(content="OK")
 
 @app.get("/settings")
 async def settings_view(request: Request):
@@ -192,12 +163,8 @@ async def admin_users_search(q: str = ""):
 async def update_user_roles(uid: str, roles: list[str]):
     with Session(engine) as session:
         user = session.exec(select(User).where(User.ldap_uid == uid)).first()
-        if not user: raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
-        if roles:
-            user.role = UserRole(roles[0])
-            user.roles_json = json.dumps(roles)
-            session.add(user); session.commit()
-        return {"status": "success"}
+        if user and roles: user.role = UserRole(roles[0]); user.roles_json = json.dumps(roles); session.add(user); session.commit()
+    return {"status": "success"}
 
 @app.get("/api/teacher/{ldap_uid}")
 async def get_teacher_details(ldap_uid: str):
@@ -217,8 +184,7 @@ async def dispatch_resource_save(res_id: int, request: Request):
         if res:
             teacher = session.exec(select(User).where(User.ldap_uid == uid)).first()
             if not teacher and uid:
-                teacher = User(ldap_uid=uid, full_name=name or uid, role=UserRole.PROFESSOR, email=f"{uid}@univ-lehavre.fr")
-                session.add(teacher); session.commit(); session.refresh(teacher)
+                teacher = User(ldap_uid=uid, full_name=name or uid, role=UserRole.PROFESSOR, email=f"{uid}@univ-lehavre.fr"); session.add(teacher); session.commit(); session.refresh(teacher)
             if teacher: res.responsible_uid = teacher.ldap_uid; res.responsible = teacher.full_name; session.add(res); session.commit()
     return {"status": "success"}
 
@@ -238,8 +204,7 @@ async def auto_sync_scodoc():
                     if not promo: continue
                     for g_name, students in groups.items():
                         group = session.exec(select(Group).where(Group.name == g_name, Group.promotion_id == promo.id)).first()
-                        if not group:
-                            group = Group(name=g_name, promotion_id=promo.id); session.add(group); session.commit(); session.refresh(group)
+                        if not group: group = Group(name=g_name, promotion_id=promo.id); session.add(group); session.commit(); session.refresh(group)
                         for s in students:
                             email = s.get("email", "").lower(); uid = s.get("username")
                             if email:
@@ -248,50 +213,39 @@ async def auto_sync_scodoc():
                                 if row: uid = row[0]
                             if uid:
                                 user = session.exec(select(User).where(User.ldap_uid == uid)).first()
-                                if not user:
-                                    user = User(ldap_uid=uid, nip=str(s.get("nip")), full_name=f"{s.get('prenom')} {s.get('nom')}", email=email, role=UserRole.STUDENT, promotion_id=promo.id, group_id=group.id)
-                                    session.add(user)
+                                if not user: user = User(ldap_uid=uid, nip=str(s.get("nip")), full_name=f"{s.get('prenom')} {s.get('nom')}", email=email, role=UserRole.STUDENT, promotion_id=promo.id, group_id=group.id); session.add(user)
                 session.commit(); kc_cur.close(); kc_conn.close()
         return {"status": "success"}
-    except Exception as e: return {"status": "error", "detail": str(e)}
+    except: return {"status": "error"}
 
-@app.post("/api/v1/admin/matrix/announce")
-async def matrix_announce(data: dict, request: Request):
-    user_session = request.session.get('user')
-    if not user_session: raise HTTPException(status_code=401)
-    room_id, event_id = await matrix_service.broadcast_announcement(title=data.get("title"), content=data.get("content"), room_type=data.get("room"), priority=data.get("priority"))
-    if event_id:
-        with Session(engine) as session:
-            session.add(Announcement(matrix_event_id=event_id, matrix_room_id=room_id, title=data.get("title"), content=data.get("content"), author_uid=user_session['preferred_username']))
-            session.commit()
-        return {"status": "success"}
-    raise HTTPException(status_code=500)
-
-@app.delete("/api/v1/admin/matrix/announcements/{ann_id}")
-async def delete_announcement(ann_id: int, request: Request):
+@app.post("/admin/activities/{act_id}/responsible")
+async def admin_activity_responsible(request: Request, act_id: int):
+    f = await request.form(); resp_id = f.get("responsible_id"); uid = f.get("ldap_uid"); name = f.get("full_name")
     with Session(engine) as session:
-        ann = session.get(Announcement, ann_id)
-        if ann:
-            await matrix_service.redact_event(ann.matrix_room_id, ann.matrix_event_id)
-            session.delete(ann); session.commit()
-    return {"status": "success"}
+        act = session.get(Activity, act_id)
+        if act:
+            t = session.get(User, int(resp_id)) if resp_id else session.exec(select(User).where(User.ldap_uid == uid)).first()
+            if not t and uid: t = User(ldap_uid=uid, full_name=name or uid, role=UserRole.PROFESSOR, email=f"{uid}@univ-lehavre.fr"); session.add(t); session.commit(); session.refresh(t)
+            if t: act.responsible_id = t.id; session.add(act); session.commit()
+    return HTMLResponse(content="OK")
 
-@app.post("/api/v1/admin/matrix/sync-rooms")
-async def sync_matrix_rooms(request: Request):
-    created_count = 0
+@app.post("/admin/activities/{act_id}/groups/add")
+async def admin_activity_group_add(act_id: int):
     with Session(engine) as session:
-        promos = session.exec(select(Promotion).where(Promotion.matrix_room_id == None)).all()
-        for p in promos:
-            rid = await matrix_service.create_room(name=f"PROMO {p.name}")
-            if rid: p.matrix_room_id = rid; session.add(p); created_count += 1
-            await asyncio.sleep(1)
-        groups = session.exec(select(Group).where(Group.matrix_room_id == None)).all()
-        for g in groups:
-            rid = await matrix_service.create_room(name=f"GROUPE {g.name}")
-            if rid: g.matrix_room_id = rid; session.add(g); created_count += 1
-            await asyncio.sleep(1)
-        session.commit()
-    return {"status": "success", "created": created_count}
+        c = session.exec(select(func.count(ActivityGroup.id)).where(ActivityGroup.activity_id == act_id)).one()
+        session.add(ActivityGroup(name=f"Groupe {c + 1}", activity_id=act_id)); session.commit()
+    return RedirectResponse(url=f"/admin/activities/{act_id}", status_code=303)
+
+@app.post("/admin/groups/{group_id}/tutor")
+async def admin_group_tutor(request: Request, group_id: int):
+    f = await request.form(); tid = f.get("tutor_id"); uid = f.get("ldap_uid"); name = f.get("full_name")
+    with Session(engine) as session:
+        g = session.get(ActivityGroup, group_id)
+        if g:
+            t = session.get(User, int(tid)) if tid else session.exec(select(User).where(User.ldap_uid == uid)).first()
+            if not t and uid: t = User(ldap_uid=uid, full_name=name or uid, role=UserRole.PROFESSOR, email=f"{uid}@univ-lehavre.fr"); session.add(t); session.commit(); session.refresh(t)
+            if t: g.tutor_id = t.id; session.add(g); session.commit()
+    return HTMLResponse(content="OK")
 
 @app.get("/api/v1/dispatch/groups/{group_id}/students")
 async def get_group_students(group_id: int):
@@ -320,44 +274,22 @@ async def remove_student_from_group(student_uid: str):
         if user: user.group_id = None; session.add(user); session.commit()
     return {"status": "success"}
 
-@app.delete("/api/v1/dispatch/groups/{group_id}")
-async def delete_promo_group(group_id: int):
-    with Session(engine) as session:
-        group = session.get(Group, group_id)
-        if group:
-            session.exec(func.update(User).where(User.group_id == group_id).values(group_id=None))
-            session.delete(group); session.commit()
-    return {"status": "success"}
-
-@app.post("/api/v1/dispatch/promotions/{promo_id}/groups/add")
-async def add_promo_group(promo_id: int):
-    with Session(engine) as session:
-        count = session.exec(select(func.count(Group.id)).where(Group.promotion_id == promo_id)).one()
-        session.add(Group(name=f"GR.{count+1} (FI)", promotion_id=promo_id, pathway="Tronc Commun"))
-        session.commit()
-    return RedirectResponse(url="/effectifs", status_code=303)
-
-@app.get("/login")
-async def login(request: Request):
-    request.session.clear()
-    return await oauth.keycloak.authorize_redirect(request, f"https://hub.{settings.DOMAIN}/auth")
-
-@app.get("/auth")
-async def auth(request: Request):
-    try:
-        token = await oauth.keycloak.authorize_access_token(request)
-        request.session['user'] = dict(token.get('userinfo'))
-        return RedirectResponse(url='/')
-    except Exception as e: return RedirectResponse(url='/login')
+@app.post("/ai/chat")
+async def ai_chat(request: Request):
+    db_user = await get_current_db_user(request)
+    form_data = await request.form(); user_message = form_data.get("message")
+    chat_id = await ai_service.create_chat(name=f"Chat {db_user.full_name}", dataset_ids=[ai_service.common_dataset_id], preprompt=db_user.ai_preprompt_general) or ai_service.default_chat_id
+    sess_id = await ai_service.create_session(f"Sess {db_user.full_name}")
+    ai_data = await ai_service.chat(chat_id, sess_id, user_message)
+    return HTMLResponse(content=f'<div class="bg-white/10 p-6 rounded-3xl">{ai_data["answer"]}</div>')
 
 @app.get("/ai/ged/list")
 async def ai_ged_list(request: Request):
     db_user = await get_current_db_user(request)
-    if not db_user or not db_user.ragflow_dataset_id: return HTMLResponse(content='<p class="text-[10px] text-slate-400 italic text-center p-4">Aucun document.</p>')
+    if not db_user or not db_user.ragflow_dataset_id: return HTMLResponse(content='Aucun document.')
     docs = await ai_service.list_documents(db_user.ragflow_dataset_id)
-    if not docs: return HTMLResponse(content='<p class="text-[10px] text-slate-400 italic text-center p-4">Aucun document.</p>')
-    html = "".join([f'<div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between group hover:border-blue-200 transition-all"><div class="flex items-center gap-3 overflow-hidden"><div class="w-2 h-2 {"bg-emerald-500" if (str(d.get("run")) in ["2", "SUCCESS", "DONE"]) else "bg-amber-500"} rounded-full shrink-0"></div><span class="text-[11px] font-bold text-slate-700 truncate">{d["name"]}</span></div></div>' for d in docs])
-    return HTMLResponse(content=html)
+    html = "".join([f'<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 mb-2">{d["name"]}</div>' for d in docs])
+    return HTMLResponse(content=html or 'Aucun document.')
 
 @app.post("/ai/ged/upload")
 async def ai_ged_upload(request: Request):
@@ -375,11 +307,39 @@ async def settings_ai_save(request: Request):
     form_data = await request.form()
     with Session(engine) as session:
         user = session.get(User, db_user.id)
-        user.ai_preprompt_general = form_data.get("ai_preprompt_general")
-        user.ai_preprompt_exercises = form_data.get("ai_preprompt_exercises")
-        user.ai_preprompt_course = form_data.get("ai_preprompt_course")
-        session.add(user); session.commit()
+        user.ai_preprompt_general = form_data.get("ai_preprompt_general"); user.ai_preprompt_exercises = form_data.get("ai_preprompt_exercises"); user.ai_preprompt_course = form_data.get("ai_preprompt_course"); session.add(user); session.commit()
     return HTMLResponse(content="OK")
+
+@app.get("/admin/ac-editor")
+async def admin_ac_editor(request: Request):
+    db_user = await get_current_db_user(request)
+    if not db_user: return RedirectResponse(url='/login')
+    active_role = request.session.get('active_role') or db_user.role.value
+    if active_role != 'ADMIN': return RedirectResponse(url='/')
+    with Session(engine) as session:
+        acs = session.exec(select(LearningOutcome).options(selectinload(LearningOutcome.competency)).order_by(LearningOutcome.code)).all()
+        return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": db_user, "active_role": active_role, "learning_outcomes": acs})
+
+@app.post("/admin/ac-editor-save")
+async def admin_ac_save(request: Request):
+    f = await request.form(); ac_id = int(f.get("ac_id"))
+    with Session(engine) as session:
+        ac = session.get(LearningOutcome, ac_id)
+        if ac: ac.description = f.get("description"); session.add(ac); session.commit()
+    return HTMLResponse(content="OK")
+
+@app.get("/login")
+async def login(request: Request):
+    request.session.clear()
+    return await oauth.keycloak.authorize_redirect(request, f"https://hub.{settings.DOMAIN}/auth")
+
+@app.get("/auth")
+async def auth(request: Request):
+    try:
+        token = await oauth.keycloak.authorize_access_token(request)
+        request.session['user'] = dict(token.get('userinfo'))
+        return RedirectResponse(url='/')
+    except: return RedirectResponse(url='/login')
 
 @app.get("/logout")
 async def logout(request: Request):

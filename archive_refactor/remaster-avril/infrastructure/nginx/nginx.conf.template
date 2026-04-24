@@ -2,6 +2,12 @@ server {
     listen 80;
     server_name hub.educ-ai.fr;
 
+    location /static/ {
+        alias /app/static/;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+
     location / {
         proxy_pass http://app:8000;
         proxy_set_header Host $host;
