@@ -97,10 +97,16 @@ async def admin_ac_editor(request: Request, user: User = Depends(admin_only)):
 async def admin_ac_save(request: Request, user: User = Depends(admin_only)):
     f = await request.form()
     ac_id = int(f.get("ac_id"))
+    new_desc = f.get("description")
+    
     with Session(engine) as session:
         ac = session.get(LearningOutcome, ac_id)
         if ac: 
-            ac.description = f.get("description")
+            ac.description = new_desc
             session.add(ac)
             session.commit()
-    return HTMLResponse(content="OK")
+            session.refresh(ac)
+            print(f"✅ AC {ac.code} mis à jour par {user.ldap_uid}")
+            return HTMLResponse(content="OK")
+    
+    raise HTTPException(status_code=404, detail="AC non trouvé")
