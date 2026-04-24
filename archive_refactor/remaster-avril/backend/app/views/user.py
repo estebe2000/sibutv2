@@ -27,7 +27,7 @@ async def index(request: Request, user: User = Depends(require_auth)):
         }
         announcements = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(5)).all()
         news = [{"sender": a.author_uid, "content": f"**{a.title}**<br>{a.content}", "timestamp": a.created_at} for a in announcements]
-        return templates.TemplateResponse("dashboard.html", {"request": request, "user": user, "active_role": active_role, "stats": stats, "data": dashboard_data, "news": news})
+        return templates.TemplateResponse(request, "dashboard.html", {"request": request, "user": user, "active_role": active_role, "stats": stats, "data": dashboard_data, "news": news})
 
 @router.get("/referentiel")
 async def referentiel(request: Request, user: User = Depends(require_auth)):
@@ -41,14 +41,14 @@ async def referentiel(request: Request, user: User = Depends(require_auth)):
         activities = session.exec(select(Activity).options(selectinload(Activity.learning_outcomes)).order_by(Activity.code)).all()
         resources = session.exec(select(Resource).options(selectinload(Resource.learning_outcomes)).order_by(Resource.code)).all()
         pathways = session.exec(select(Competency.pathway).distinct()).all()
-        return templates.TemplateResponse("referentiel.html", {"request": request, "user": user, "active_role": active_role, "competencies": competencies, "activities": activities, "resources": resources, "pathways": pathways})
+        return templates.TemplateResponse(request, "referentiel.html", {"request": request, "user": user, "active_role": active_role, "competencies": competencies, "activities": activities, "resources": resources, "pathways": pathways})
 
 @router.get("/effectifs")
 async def effectifs(request: Request, user: User = Depends(require_auth)):
     active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         promotions = session.exec(select(Promotion).options(selectinload(Promotion.users), selectinload(Promotion.groups))).all()
-        return templates.TemplateResponse("effectifs.html", {
+        return templates.TemplateResponse(request, "effectifs.html", {
             "request": request, "user": user, "active_role": active_role, 
             "promos_by_level": {
                 1: next((p for p in promotions if p.entry_year == 2026), None), 
@@ -60,11 +60,11 @@ async def effectifs(request: Request, user: User = Depends(require_auth)):
 
 @router.get("/ai-assistant")
 async def ai_assistant_view(request: Request, user: User = Depends(require_auth)):
-    return templates.TemplateResponse("ai_assistant.html", {"request": request, "user": user, "active_role": request.session.get('active_role') or user.role.value})
+    return templates.TemplateResponse(request, "ai_assistant.html", {"request": request, "user": user, "active_role": request.session.get('active_role') or user.role.value})
 
 @router.get("/settings")
 async def settings_view(request: Request, user: User = Depends(require_auth)):
-    return templates.TemplateResponse("settings.html", {"request": request, "user": user, "active_role": request.session.get('active_role') or user.role.value})
+    return templates.TemplateResponse(request, "settings.html", {"request": request, "user": user, "active_role": request.session.get('active_role') or user.role.value})
 
 @router.get("/switch-role/{role}")
 async def switch_role(request: Request, role: str):

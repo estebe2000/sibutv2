@@ -17,32 +17,32 @@ async def admin_activities(request: Request, user: User = Depends(prof_or_admin)
         activities = session.exec(select(Activity).options(selectinload(Activity.responsible_user)).order_by(Activity.code)).all()
         resources = session.exec(select(Resource).order_by(Resource.code)).all()
         teachers = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
-        return templates.TemplateResponse("admin_activities.html", {"request": request, "user": user, "active_role": active_role, "activities": activities, "resources": resources, "teachers": teachers})
+        return templates.TemplateResponse(request, "admin_activities.html", {"request": request, "user": user, "active_role": active_role, "activities": activities, "resources": resources, "teachers": teachers})
 
 @router.get("/users")
 async def admin_users(request: Request, user: User = Depends(admin_only)):
     active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         all_users = session.exec(select(User).where(User.role != UserRole.STUDENT).order_by(User.full_name)).all()
-        return templates.TemplateResponse("admin_users.html", {"request": request, "user": user, "active_role": active_role, "all_users": all_users})
+        return templates.TemplateResponse(request, "admin_users.html", {"request": request, "user": user, "active_role": active_role, "all_users": all_users})
 
 @router.get("/matrix")
 async def admin_matrix(request: Request, user: User = Depends(admin_only)):
     active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         announcements = session.exec(select(Announcement).order_by(Announcement.created_at.desc()).limit(10)).all()
-        return templates.TemplateResponse("admin_matrix.html", {"request": request, "user": user, "active_role": active_role, "announcements": announcements})
+        return templates.TemplateResponse(request, "admin_matrix.html", {"request": request, "user": user, "active_role": active_role, "announcements": announcements})
 
 @router.get("/synchro-scodoc")
 async def synchro_scodoc(request: Request, user: User = Depends(admin_only)):
-    return templates.TemplateResponse("dispatch_students.html", {"request": request, "user": user, "active_role": "ADMIN"})
+    return templates.TemplateResponse(request, "dispatch_students.html", {"request": request, "user": user, "active_role": "ADMIN"})
 
 @router.get("/ac-editor")
 async def admin_ac_editor(request: Request, user: User = Depends(admin_only)):
     active_role = request.session.get('active_role') or user.role.value
     with Session(engine) as session:
         acs = session.exec(select(LearningOutcome).order_by(LearningOutcome.code)).all()
-        return templates.TemplateResponse("ac_editor.html", {"request": request, "user": user, "active_role": active_role, "acs": acs})
+        return templates.TemplateResponse(request, "ac_editor.html", {"request": request, "user": user, "active_role": active_role, "acs": acs})
 
 @router.post("/ac-editor-save")
 async def admin_ac_save(request: Request, user: User = Depends(admin_only)):
