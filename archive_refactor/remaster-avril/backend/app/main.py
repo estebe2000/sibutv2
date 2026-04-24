@@ -350,6 +350,37 @@ async def auth(request: Request):
         return RedirectResponse(url='/')
     except Exception as e: return RedirectResponse(url='/login')
 
+@app.get("/ai/ged/list")
+async def ai_ged_list(request: Request):
+    db_user = await get_current_db_user(request)
+    if not db_user or not db_user.ragflow_dataset_id: return HTMLResponse(content='<p class="text-[10px] text-slate-400 italic text-center p-4">Aucun document.</p>')
+    docs = await ai_service.list_documents(db_user.ragflow_dataset_id)
+    if not docs: return HTMLResponse(content='<p class="text-[10px] text-slate-400 italic text-center p-4">Aucun document.</p>')
+    html = "".join([f'<div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between group hover:border-blue-200 transition-all"><div class="flex items-center gap-3 overflow-hidden"><div class="w-2 h-2 {"bg-emerald-500" if (str(d.get("run")) in ["2", "SUCCESS", "DONE"]) else "bg-amber-500"} rounded-full shrink-0"></div><span class="text-[11px] font-bold text-slate-700 truncate">{d["name"]}</span></div></div>' for d in docs])
+    return HTMLResponse(content=html)
+
+@app.post("/ai/ged/upload")
+async def ai_ged_upload(request: Request):
+    db_user = await get_current_db_user(request)
+    form_data = await request.form(); upload_file = form_data.get("file")
+    if not db_user.ragflow_dataset_id:
+        db_user.ragflow_dataset_id = await ai_service.get_or_create_dataset(db_user.ldap_uid)
+        with Session(engine) as session: session.add(db_user); session.commit(); session.refresh(db_user)
+    content = await upload_file.read(); await ai_service.upload_document(db_user.ldap_uid, content, upload_file.filename)
+    return HTMLResponse(content="OK")
+
+@app.post("/settings/ai")
+async def settings_ai_save(request: Request):
+    db_user = await get_current_db_user(request)
+    form_data = await request.form()
+    with Session(engine) as session:
+        user = session.get(User, db_user.id)
+        user.ai_preprompt_general = form_data.get("ai_preprompt_general")
+        user.ai_preprompt_exercises = form_data.get("ai_preprompt_exercises")
+        user.ai_preprompt_course = form_data.get("ai_preprompt_course")
+        session.add(user); session.commit()
+    return HTMLResponse(content="OK")
+
 @app.get("/logout")
 async def logout(request: Request):
     request.session.clear()

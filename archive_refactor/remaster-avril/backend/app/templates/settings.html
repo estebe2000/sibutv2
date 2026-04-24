@@ -1,35 +1,56 @@
 {% extends "dashboard.html" %}
 
 {% block content %}
-<div class="space-y-8 animate-in fade-in duration-500">
-    <header>
-        <h2 class="text-3xl font-black tracking-tight italic">Paramètres Globaux</h2>
-        <p class="text-slate-400 font-bold">Configuration du domaine, SMTP et API Keycloak</p>
+<div class="space-y-8 animate-in fade-in duration-500 pb-20">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+        <div>
+            <h2 class="text-3xl font-black tracking-tight text-slate-800 uppercase italic">Mes <span class="text-blue-600">Paramètres</span></h2>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Personnalisation de l'expérience Skills Hub</p>
+        </div>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm space-y-6">
-            <h3 class="text-xl font-black italic text-blue-600 mb-4">Infrastructure Réseau</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-2">Domaine Principal</label>
-                    <input type="text" value="educ-ai.fr" class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 focus:ring-2 focus:ring-blue-100">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <!-- PROFIL IA (MULTIMODE) -->
+        <div class="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl space-y-8 relative overflow-hidden" x-data="{ currentTab: 'general' }">
+            <div class="relative z-10">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-xl font-black italic text-blue-400">Configuration Assistant IA</h3>
+                    <div class="flex bg-white/5 p-1 rounded-xl gap-1">
+                        <button @click="currentTab = 'general'" :class="currentTab === 'general' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/40'" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all">Général</button>
+                        <button @click="currentTab = 'exercises'" :class="currentTab === 'exercises' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/40'" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all">Exercices</button>
+                        <button @click="currentTab = 'course'" :class="currentTab === 'course' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/40'" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all">Cours</button>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-2">Serveur SMTP</label>
-                    <input type="text" value="smtp.univ-lehavre.fr" class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 focus:ring-2 focus:ring-blue-100">
-                </div>
+
+                <form hx-post="/settings/ai" hx-swap="none" @htmx:after-request="alert('Profils IA mis à jour !')">
+                    <div x-show="currentTab === 'general'" class="space-y-4 animate-in fade-in duration-300">
+                        <label class="text-[9px] font-black text-white/40 uppercase tracking-widest block px-2">Instructions Mode Général</label>
+                        <textarea name="ai_preprompt_general" rows="8" class="w-full p-6 bg-white/10 border border-white/10 rounded-[2rem] font-bold text-white outline-none focus:ring-4 focus:ring-blue-500/20 transition-all text-sm">{{ user.ai_preprompt_general or "Vous êtes un assistant pédagogique expert du BUT TC." }}</textarea>
+                    </div>
+                    <div x-show="currentTab === 'exercises'" class="space-y-4 animate-in fade-in duration-300">
+                        <label class="text-[9px] font-black text-white/40 uppercase tracking-widest block px-2">Instructions Mode Exercices</label>
+                        <textarea name="ai_preprompt_exercises" rows="8" class="w-full p-6 bg-white/10 border border-white/10 rounded-[2rem] font-bold text-white outline-none focus:ring-4 focus:ring-blue-500/20 transition-all text-sm">{{ user.ai_preprompt_exercises or "Mode EXERCICES : Guidez l'utilisateur sans donner la réponse." }}</textarea>
+                    </div>
+                    <div x-show="currentTab === 'course'" class="space-y-4 animate-in fade-in duration-300">
+                        <label class="text-[9px] font-black text-white/40 uppercase tracking-widest block px-2">Instructions Mode Cours</label>
+                        <textarea name="ai_preprompt_course" rows="8" class="w-full p-6 bg-white/10 border border-white/10 rounded-[2rem] font-bold text-white outline-none focus:ring-4 focus:ring-blue-500/20 transition-all text-sm">{{ user.ai_preprompt_course or "Mode COURS : Expliquez les concepts avec pédagogie." }}</textarea>
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest mt-8 shadow-xl transition-all">Sauvegarder mes instructions IA</button>
+                </form>
             </div>
-            <button class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] mt-4">Enregistrer les réglages</button>
         </div>
 
-        <div class="bg-blue-50 rounded-[3rem] p-10 border border-blue-100 flex flex-col items-center justify-center text-center">
-            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-lg mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <!-- INFRASTRUCTURE (ADMIN) -->
+        {% if active_role == 'ADMIN' %}
+        <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm space-y-6">
+            <h3 class="text-xl font-black italic text-red-600 uppercase tracking-tight">Configuration Système</h3>
+            <div class="space-y-4 pt-4">
+                <div><label class="text-[9px] font-black text-slate-400 uppercase block mb-2 px-2">Domaine Principal</label><input type="text" value="educ-ai.fr" readonly class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-500"></div>
+                <div><label class="text-[9px] font-black text-slate-400 uppercase block mb-2 px-2">Serveur SMTP</label><input type="text" value="smtp.univ-lehavre.fr" readonly class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-500"></div>
             </div>
-            <h3 class="text-xl font-black mb-2 italic">Certificats SSL</h3>
-            <p class="text-sm text-blue-600 font-bold opacity-60">Gérés automatiquement via Cloudflare Tunnel</p>
+            <p class="text-[10px] text-slate-400 italic px-2">Ces réglages sont fixés au niveau de l'infrastructure Docker.</p>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
