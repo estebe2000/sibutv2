@@ -1,0 +1,94 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+
+\title{Rapport de Revue de Code : Analyse des Fichiers Orphelins et Obsolètes}
+\author{Cline AI}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+L'objectif de ce rapport est d'identifier les fichiers et dossiers orphelins, obsolètes ou redondants au sein du projet. L'analyse a été effectuée en comparant l'arborescence complète du système de fichiers avec les configurations actives, notamment le fichier \texttt{docker-compose.yml} et les structures d'applications.
+
+\section{Analyse des Dossiers d'Archives et de Sauvegardes}
+Plusieurs dossiers ont été identifiés comme ne faisant pas partie du flux de production et servant uniquement de stockage temporaire ou de sauvegarde.
+
+\begin{itemize}
+    \item \textbf{\texttt{archive\_refactor/}} : Contient des versions antérieures de scripts, des dumps SQL et des configurations de refactorisation.
+    \item \textbf{\texttt{backups/}} : Contient des archives compressées (\texttt{.tar.gz}) de sauvegardes locales.
+    \item \textbf{\texttt{trash/}} : Dossier de rebuts contenant explicitement des fichiers supprimés.
+    \item \textbf{\texttt{remote\_ai\_backup/}} : Sauvegardes de scripts liés à l'IA.
+\end{itemize}
+
+\section{Fichiers de Configuration Redondants}
+Le projet présente une multiplication des fichiers de configuration, ce qui peut mener à des erreurs de déploiement.
+
+\subsection{Docker Compose}
+Seul \texttt{docker-compose.yml} est utilisé comme configuration principale. Les fichiers suivants sont considérés comme obsolètes ou des variantes de test :
+\begin{itemize}
+    \item \texttt{docker-compose.ai.yml}
+    \item \texttt{docker-compose.dev.yml}
+    \item \texttt{docker-compose.planka.yml}
+    \item \texttt{docker-compose.scodoc-test.yml}
+    \item \texttt{docker-compose.yml.final\_https}
+    \item \texttt{docker-compose.yml.native\_https}
+    \item \texttt{docker-compose.yml.parallel\_test}
+    \item \texttt{docker-compose.yml.restore}
+\end{itemize}
+
+\subsection{Configuration Nginx et Environnement}
+\begin{itemize}
+    \item \texttt{nginx.conf.native\_https} et \texttt{nginx.conf.restore} : Redondants face à la configuration spécifique du dashboard.
+    \item \texttt{.env.ai} et \texttt{.env.backup\_demo\_20260205} : Versions obsolètes des variables d'environnement.
+\end{itemize}
+
+\section{Scripts de Test et Debug}
+Plusieurs scripts Python de test se trouvent à la racine sans être intégrés dans un cycle de CI/CD ou référencés dans les services :
+\begin{itemize}
+    \item \texttt{debug\_scodoc\_login.py}
+    \item \texttt{scodoc\_tester.py}
+    \item \texttt{test\_scodoc\_web\_v2.py}
+    \item \texttt{test\_scodoc\_web.py}
+    \item \texttt{test\_scodoc.py}
+\end{itemize}
+
+\section{Artefacts de Compilation}
+Le dossier \texttt{tuto-SITC/} et les documents de sauvegarde contiennent des fichiers générés par la compilation \LaTeX{} qui ne devraient pas être suivis par le contrôle de version :
+\begin{itemize}
+    \item Fichiers \texttt{.aux}, \texttt{.fdb\_latexmk}, \texttt{.fls}, \texttt{.out}, \texttt{.synctex.gz}, \texttt{.toc}.
+\end{itemize}
+
+\section{Autres Fichiers Orphelins}
+\begin{itemize}
+    \item \texttt{server.php} : Fichier isolé à la racine sans lien avec les services actuels.
+    \item \texttt{go.sh} et \texttt{gogo.sh} : Scripts de lancement redondants face à \texttt{start.sh}.
+\end{itemize}
+
+\section{Conclusion et Recommandations}
+Il est fortement recommandé de :
+\begin{enumerate}
+    \item Déplacer les dossiers \texttt{archive\_refactor}, \texttt{backups} et \texttt{trash} en dehors du répertoire de travail ou les compresser dans une archive externe.
+    \item Nettoyer les variantes de \texttt{docker-compose.yml} pour ne garder que la version active.
+    \item Créer un fichier \texttt{.gitignore} plus exhaustif pour exclure les artefacts \LaTeX{} et les logs (\texttt{.log}).
+    \item Centraliser les scripts de test dans un dossier \texttt{tests/} dédié.
+\end{enumerate}
+
+\end{document}
+</write_to_file>
+<task_progress>
+- [x] Explorer l'arborescence complète du projet
+- [x] Analyser les fichiers pour détecter les orphelins/obsolètes
+- [x] Identifier les dossiers d'archives et de backups
+- [x] Vérifier les références croisées (imports, config)
+- [x] Rédiger le rapport final en LaTeX
+</task_progress>

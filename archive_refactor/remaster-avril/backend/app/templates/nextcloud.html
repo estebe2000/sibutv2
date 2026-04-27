@@ -1,0 +1,39 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="space-y-8 animate-in slide-in-from-bottom duration-500">
+    <header class="flex justify-between items-end">
+        <div>
+            <h2 class="text-3xl font-black tracking-tight italic">Cloud & Documents (Nextcloud)</h2>
+            <p class="text-slate-400 font-bold">Stockage sécurisé et édition collaborative OnlyOffice</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="https://cloud.educ-ai.fr" target="_blank" class="px-6 py-3 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200">Accéder aux fichiers</a>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm relative overflow-hidden">
+            <h3 class="text-xl font-black mb-6 text-blue-600 italic">Derniers documents</h3>
+            <div class="space-y-4">
+                <div class="p-4 bg-slate-50 rounded-2xl flex items-center gap-4 hover:bg-blue-50 transition-all cursor-pointer group">
+                    <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">Fiche_Pedagogique_SAE21.docx</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">Modifié ce matin</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-blue-50 rounded-[3rem] p-10 border border-blue-100 relative overflow-hidden">
+            <h3 class="text-xl font-black mb-4 italic text-blue-600">OnlyOffice Actif</h3>
+            <p class="text-sm text-blue-600/60 font-medium leading-relaxed">Éditez vos documents directement dans le navigateur avec la co-édition en temps réel pour vos étudiants.</p>
+            <div class="mt-8 flex gap-2">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-[10px] font-black text-green-600 uppercase tracking-widest">Document Server Online</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

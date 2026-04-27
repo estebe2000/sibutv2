@@ -233,7 +233,7 @@ function App() {
               <Button variant={activeTab === 'stages' ? 'filled' : 'subtle'} onClick={() => setActiveTab('stages')} leftSection={<IconBriefcase size={18} />} justify="start" color="orange">Stages</Button>
               <Button variant={activeTab === 'portfolio' ? 'filled' : 'subtle'} onClick={() => setActiveTab('portfolio')} leftSection={<IconBook size={18} />} justify="start" color="blue">Portfolio</Button>
               <Button variant={activeTab === 'parcours' ? 'filled' : 'subtle'} onClick={() => setActiveTab('parcours')} leftSection={<IconSchool size={18} />} justify="start" color="grape">Parcours Scolaire</Button>
-              <Button variant={activeTab === 'odoo' ? 'filled' : 'subtle'} onClick={() => setActiveTab('odoo')} leftSection={<IconDatabase size={18} />} justify="start" color="indigo">Accès Odoo</Button>
+              {/* <Button variant={activeTab === 'odoo' ? 'filled' : 'subtle'} onClick={() => setActiveTab('odoo')} leftSection={<IconDatabase size={18} />} justify="start" color="indigo">Accès Odoo</Button> */}
             </Stack>
           </AppShell.Navbar>
         )}
@@ -244,7 +244,7 @@ function App() {
           {activeTab === 'portfolio' && <StudentPortfolioView user={user} curriculum={curriculum} groups={localGroups} setGlobalTab={setActiveTab} />}
           {activeTab === 'live-book' && <LiveBookPreviewView user={user} />}
           {activeTab === 'parcours' && <AcademicPathView />}
-          {activeTab === 'odoo' && <StudentOdooView />}
+          {/* {activeTab === 'odoo' && <StudentOdooView />} */}
         </AppShell.Main>
         {isMobile && (
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: 65, background: 'white', borderTop: '2px solid #eee', zIndex: 1000, padding: '10px' }}>
@@ -308,7 +308,7 @@ function App() {
               </Stack>
             </Paper>
 
-            <Paper p={5} radius="sm" bg="yellow.0" withBorder style={{ borderColor: 'var(--mantine-color-yellow-2)' }}>
+            {/* <Paper p={5} radius="sm" bg="yellow.0" withBorder style={{ borderColor: 'var(--mantine-color-yellow-2)' }}>
               <Text size="10px" fw={700} c="yellow.9" px="xs" mb={5} tt="uppercase">Idées & Outils</Text>
               <Stack gap={2}>
                 <Button variant={activeTab === 'idea-calendar' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-calendar')} leftSection={<IconCalendar size={18} />} justify="start" size="compact-sm" color="yellow">Calendrier</Button>
@@ -316,14 +316,14 @@ function App() {
                 <Button variant={activeTab === 'idea-chat' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-chat')} leftSection={<IconMessages size={18} />} justify="start" size="compact-sm" color="yellow">Chat</Button>
                 <Button variant={activeTab === 'idea-cloud' ? 'filled' : 'subtle'} onClick={() => setActiveTab('idea-cloud')} leftSection={<IconCloud size={18} />} justify="start" size="compact-sm" color="yellow">Cloud</Button>
               </Stack>
-            </Paper>
+            </Paper> */}
             
             {isAdmin && (
               <Paper p={5} radius="sm" bg="gray.1" withBorder style={{ borderColor: 'var(--mantine-color-gray-3)' }}>
                 <Text size="10px" fw={700} c="gray.9" px="xs" mb={5} tt="uppercase">Administration</Text>
                 <Stack gap={2}>
                   <Button variant={activeTab === 'keycloak' ? 'filled' : 'subtle'} onClick={() => setActiveTab('keycloak')} leftSection={<IconKey size={18} />} justify="start" size="compact-sm" color="gray">Comptes Locaux</Button>
-                  <Button variant={activeTab === 'odoo-admin' ? 'filled' : 'subtle'} onClick={() => setActiveTab('odoo-admin')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="gray">Gestion Odoo</Button>
+                  {/* <Button variant={activeTab === 'odoo-admin' ? 'filled' : 'subtle'} onClick={() => setActiveTab('odoo-admin')} leftSection={<IconDatabase size={18} />} justify="start" size="compact-sm" color="gray">Gestion Odoo</Button> */}
                   <Button variant={activeTab === 'new-year' ? 'filled' : 'subtle'} onClick={() => setActiveTab('new-year')} leftSection={<IconCalendarPlus size={18} />} justify="start" size="compact-sm" color="gray">Transition Année</Button>
                   <Button variant={activeTab === 'settings' ? 'filled' : 'subtle'} onClick={() => setActiveTab('settings')} leftSection={<IconSettings size={18} />} justify="start" size="compact-sm" color="gray">Configuration</Button>
                 </Stack>

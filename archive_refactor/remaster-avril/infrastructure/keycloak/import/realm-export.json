@@ -1,0 +1,107 @@
+{
+  "id": "but-tc",
+  "realm": "but-tc",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "skills-hub-app",
+      "enabled": true,
+      "publicClient": true,
+      "rootUrl": "https://hub.educ-ai.fr",
+      "adminUrl": "https://hub.educ-ai.fr",
+      "redirectUris": ["https://hub.educ-ai.fr/*"],
+      "webOrigins": ["https://hub.educ-ai.fr"],
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "nextcloud-app",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "nextcloud_secret_sso",
+      "rootUrl": "https://cloud.educ-ai.fr",
+      "redirectUris": ["https://cloud.educ-ai.fr/*"],
+      "webOrigins": ["https://cloud.educ-ai.fr"],
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "forgejo-app",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "forgejo_secret_key",
+      "rootUrl": "https://git.educ-ai.fr",
+      "redirectUris": ["https://git.educ-ai.fr/*"],
+      "webOrigins": ["https://git.educ-ai.fr"],
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "matrix-app",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "matrix_secret_key",
+      "redirectUris": ["*"],
+      "webOrigins": ["*"],
+      "protocol": "openid-connect"
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "admin", "description": "Super Administrateur" },
+      { "name": "professor", "description": "Enseignant / Tuteur" },
+      { "name": "student", "description": "Étudiant" }
+    ]
+  },
+  "users": [
+    {
+      "username": "admin-iutlh",
+      "enabled": true,
+      "firstName": "Admin",
+      "lastName": "IUT LH",
+      "credentials": [{ "type": "password", "value": "Rangetachambre76*", "temporary": false }],
+      "realmRoles": ["admin"]
+    },
+    {
+      "username": "prof-iutlh",
+      "enabled": true,
+      "firstName": "Professeur",
+      "lastName": "IUT LH",
+      "credentials": [{ "type": "password", "value": "Rangetachambre76*", "temporary": false }],
+      "realmRoles": ["professor"]
+    },
+    {
+      "username": "eleve-iutlh",
+      "enabled": true,
+      "firstName": "Élève",
+      "lastName": "IUT LH",
+      "credentials": [{ "type": "password", "value": "Rangetachambre76*", "temporary": false }],
+      "realmRoles": ["student"]
+    }
+  ],
+  "components": {
+    "org.keycloak.storage.UserStorageProvider": [
+      {
+        "name" : "univ-lehavre-ldap",
+        "providerId" : "ldap",
+        "subComponents" : {
+          "org.keycloak.storage.ldap.mappers.LDAPStorageMapper" : [ 
+            { "name" : "email", "providerId" : "user-attribute-ldap-mapper", "config" : { "ldap.attribute" : [ "mail" ], "user.model.attribute" : [ "email" ], "read.only" : [ "true" ] } },
+            { "name" : "first name", "providerId" : "user-attribute-ldap-mapper", "config" : { "ldap.attribute" : [ "givenName" ], "user.model.attribute" : [ "firstName" ], "read.only" : [ "true" ] } },
+            { "name" : "last name", "providerId" : "user-attribute-ldap-mapper", "config" : { "ldap.attribute" : [ "sn" ], "user.model.attribute" : [ "lastName" ], "read.only" : [ "true" ] } },
+            { "name" : "username", "providerId" : "user-attribute-ldap-mapper", "config" : { "ldap.attribute" : [ "uid" ], "user.model.attribute" : [ "username" ], "read.only" : [ "true" ] } }
+          ]
+        },
+        "config" : {
+          "pagination" : [ "true" ],
+          "usersDn" : [ "dc=univ-lehavre,dc=fr" ],
+          "bindDn" : [ "cn=ldapbindusr-caucri2,ou=DSA,dc=univ-lehavre,dc=fr" ],
+          "bindCredential" : [ "Fctldap-8%caucri2_30688" ],
+          "usernameLDAPAttribute" : [ "uid" ],
+          "uuidLDAPAttribute" : [ "entryUUID" ],
+          "connectionUrl" : [ "ldap://ldap.univ-lehavre.fr:389" ],
+          "userObjectClasses" : [ "inetOrgPerson, organizationalPerson" ],
+          "importEnabled" : [ "true" ],
+          "editMode" : [ "READ_ONLY" ]
+        }
+      }
+    ]
+  }
+}

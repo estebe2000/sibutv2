@@ -1,0 +1,354 @@
+Activation de l'environnement virtuel .litellm_venv...
+Démarrage du proxy LiteLLM sur le port 5545...
+INFO:     Started server process [8458]
+INFO:     Waiting for application startup.
+
+   ██╗     ██╗████████╗███████╗██╗     ██╗     ███╗   ███╗
+   ██║     ██║╚══██╔══╝██╔════╝██║     ██║     ████╗ ████║
+   ██║     ██║   ██║   █████╗  ██║     ██║     ██╔████╔██║
+   ██║     ██║   ██║   ██╔══╝  ██║     ██║     ██║╚██╔╝██║
+   ███████╗██║   ██║   ███████╗███████╗███████╗██║ ╚═╝ ██║
+   ╚══════╝╚═╝   ╚═╝   ╚══════╝╚══════╝╚══════╝╚═╝     ╚═╝
+
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5545 (Press CTRL+C to quit)
+
+[1;37m#------------------------------------------------------------#[0m
+[1;37m#                                                            #[0m
+[1;37m#           'I get frustrated when the product...'            #[0m
+[1;37m#        https://github.com/BerriAI/litellm/issues/new        #[0m
+[1;37m#                                                            #[0m
+[1;37m#------------------------------------------------------------#[0m
+
+ Thank you for using LiteLLM! - Krrish & Ishaan
+
+
+
+[1;31mGive Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new[0m
+
+
+[32mLiteLLM: Proxy initialized with Config, Set models:[0m
+[32m    *[0m
+INFO:     172.16.95.98:42576 - "GET / HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42578 - "GET /swagger/swagger-ui-bundle.js HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42576 - "GET /swagger/swagger-ui.css HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42578 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52712 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42576 - "GET /swagger/favicon.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52718 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48716 - "GET /v1/model/info HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48716 - "GET /v1/model/info HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35584 - "GET //models HTTP/1.1" 404 Not Found
+INFO:     172.16.95.98:35584 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     172.16.95.98:49894 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:58456 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     172.16.95.98:38460 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:37242 - "GET /v1/model/info HTTP/1.1" 200 OK
+INFO:     172.16.95.98:37242 - "GET /v1/model/info HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50692 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50692 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50692 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50692 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50692 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50692 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50692 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:58758 - "GET /v1/model/info HTTP/1.1" 200 OK
+INFO:     172.16.95.98:58772 - "GET /v1/model/info HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51284 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41764 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41764 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41764 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41764 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:32902 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:53098 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:36434 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:46142 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33696 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33696 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:45868 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:45868 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52970 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42170 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:58678 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47554 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47554 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39610 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39610 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:32892 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:32892 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33894 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33894 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:49124 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51588 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51588 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51588 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51588 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48164 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48164 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:49604 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:49604 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:49604 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39506 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39506 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48456 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48456 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48456 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44362 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52142 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44060 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44060 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44060 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50580 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40724 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40724 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:59828 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:59828 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57392 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57392 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57392 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57392 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57392 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57392 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33082 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33082 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:45834 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:45834 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57294 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57294 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33832 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33832 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:60966 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:60966 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:60966 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52798 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52798 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52798 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:43378 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:56936 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47774 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47774 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42256 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42256 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42256 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41474 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51750 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51750 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:45818 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:45818 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:45818 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:45818 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42066 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42066 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52040 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52040 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44184 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44184 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52714 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41140 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:57136 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:56138 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41682 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42872 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42872 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:54750 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:54750 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:53434 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48338 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:48338 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50662 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:54068 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51580 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51580 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51580 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51580 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:46734 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:43976 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:37188 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:37188 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:37188 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39080 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47784 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47784 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47784 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42660 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42660 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:59414 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:36068 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:38692 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35386 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35386 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35386 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40742 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40134 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33702 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:36312 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44432 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44432 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51372 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:47270 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35576 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35576 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35576 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35576 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35576 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35576 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35576 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:35576 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33198 - "GET /v1/models HTTP/1.1" 200 OK
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+INFO:     172.16.95.98:50310 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50310 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:38828 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50310 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:59322 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42062 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:56134 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:56134 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39706 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39706 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39706 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:39706 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51268 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51268 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:51268 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52626 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33654 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:46496 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:56970 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:56970 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:56970 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:56970 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:54836 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:53838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:53838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:40030 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+[92m00:29:37 - LiteLLM Router:ERROR[0m: router.py:1877 - Fallback also failed: litellm.MidStreamFallbackError: litellm.APIConnectionError: APIConnectionError: OpenAIException - litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}]. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None
+Error doing the fallback: litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}] Original exception: InternalServerError: litellm.InternalServerError: The model is repeating the same chunk =  la.. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None Original exception: APIConnectionError: litellm.APIConnectionError: APIConnectionError: OpenAIException - litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}]. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None
+Error doing the fallback: litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}] Original exception: InternalServerError: litellm.InternalServerError: The model is repeating the same chunk =  la.
+[92m00:29:37 - LiteLLM Proxy:ERROR[0m: proxy_server.py:5899 - litellm.proxy.proxy_server.async_data_generator(): Exception occured - litellm.MidStreamFallbackError: litellm.APIConnectionError: APIConnectionError: OpenAIException - litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}]. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None
+Error doing the fallback: litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}] Original exception: InternalServerError: litellm.InternalServerError: The model is repeating the same chunk =  la.. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None Original exception: APIConnectionError: litellm.APIConnectionError: APIConnectionError: OpenAIException - litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}]. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None
+Error doing the fallback: litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}] Original exception: InternalServerError: litellm.InternalServerError: The model is repeating the same chunk =  la.
+Traceback (most recent call last):
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2021, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/openai/_streaming.py", line 158, in __aiter__
+    async for item in self._iterator:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/openai/_streaming.py", line 205, in __stream__
+    raise APIError(
+openai.APIError: litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}]. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None
+Error doing the fallback: litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}] Original exception: InternalServerError: litellm.InternalServerError: The model is repeating the same chunk =  la.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/proxy/proxy_server.py", line 5858, in async_data_generator
+    async for chunk in proxy_logging_obj.async_post_call_streaming_iterator_hook(
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/proxy/utils.py", line 2235, in async_post_call_streaming_iterator_hook
+    async for chunk in current_response:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/integrations/custom_logger.py", line 470, in async_post_call_streaming_iterator_hook
+    async for item in response:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/integrations/custom_logger.py", line 470, in async_post_call_streaming_iterator_hook
+    async for item in response:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/integrations/custom_logger.py", line 470, in async_post_call_streaming_iterator_hook
+    async for item in response:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/proxy/hooks/responses_id_security.py", line 286, in async_post_call_streaming_iterator_hook
+    async for chunk in response:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/integrations/custom_logger.py", line 470, in async_post_call_streaming_iterator_hook
+    async for item in response:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/integrations/custom_logger.py", line 470, in async_post_call_streaming_iterator_hook
+    async for item in response:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/integrations/custom_logger.py", line 470, in async_post_call_streaming_iterator_hook
+    async for item in response:
+  [Previous line repeated 2 more times]
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/router.py", line 1795, in __anext__
+    return await self._async_generator.__anext__()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/router.py", line 1880, in stream_with_fallbacks
+    raise fallback_error
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/router.py", line 1847, in stream_with_fallbacks
+    await self.async_function_with_fallbacks_common_utils(
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/router.py", line 5530, in async_function_with_fallbacks_common_utils
+    raise original_exception
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/router.py", line 1800, in stream_with_fallbacks
+    async for item in model_response:
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2244, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/Users/steeve/Documents/test/.litellm_venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2312, in _handle_stream_fallback_error
+    raise MidStreamFallbackError(
+litellm.exceptions.MidStreamFallbackError: litellm.MidStreamFallbackError: litellm.APIConnectionError: APIConnectionError: OpenAIException - litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}]. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None
+Error doing the fallback: litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}] Original exception: InternalServerError: litellm.InternalServerError: The model is repeating the same chunk =  la.. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None Original exception: APIConnectionError: litellm.APIConnectionError: APIConnectionError: OpenAIException - litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}]. Received Model Group=gemma-4-31b
+Available Model Group Fallbacks=None
+Error doing the fallback: litellm.ServiceUnavailableError: litellm.MidStreamFallbackError: litellm.InternalServerError: The model is repeating the same chunk =  la.No fallback model group found for original model_group=gemma-4-31b. Fallbacks=[{'gpt-oss': ['gpt-oss-ilaas', 'ministral']}, {'mistral-small': ['mistral-small-ilaas', 'ministral']}, {'qwen3': ['ministral']}, {'coder': ['ministral']}, {'gemma': ['ministral']}, {'qwen-asr': ['whisper']}] Original exception: InternalServerError: litellm.InternalServerError: The model is repeating the same chunk =  la.
+INFO:     172.16.95.98:55610 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50430 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50430 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:43780 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:43780 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:43780 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:55568 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:55568 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:46494 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:60560 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:60560 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:60274 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:60274 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50882 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:50882 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42778 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42778 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:42778 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:41838 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52568 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52568 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52568 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:52568 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33230 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:33230 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44236 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44236 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44404 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+INFO:     172.16.95.98:44404 - "POST /v1/chat/completions HTTP/1.1" 200 OK

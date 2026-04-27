@@ -1,0 +1,61 @@
+STRUCTURE DE PRÉSENTATION : SKILLS HUB - BUT TC
+==================================================
+
+1. INTRODUCTION & VISION
+-----------------------
+* Titre : Skills Hub - Le pilotage intelligent du BUT TC.
+* Objectif : Centraliser, automatiser et valoriser le parcours de compétences.
+* Enjeu : Passer d'une gestion administrative lourde à un accompagnement pédagogique fluide.
+
+2. LES BESOINS (Pourquoi ce projet ?)
+-----------------------------------
+* Complexité du référentiel national : 11 000+ étudiants, des centaines d'AC (Apprentissages Critiques) et de CE (Composantes de Compétence).
+* Fragmentation : Les informations sont éparpillées entre dossiers, mails et fichiers Excel.
+* Traçabilité : Difficulté de prouver l'acquisition réelle d'une compétence sur 3 ans.
+* Mobilité : Nécessité d'un outil accessible sur le terrain (stages) et sur smartphone.
+
+3. L'ÉCOSYSTÈME TECHNIQUE (Le Triptyque)
+--------------------------------------
+* LE HUB (L'Orchestrateur) : 
+    - Interface unique pour tous les acteurs.
+    - Moteur de calcul des scores de compétences.
+* NEXTCLOUD (Le Moteur GED) : 
+    - Gestion Électronique de Documents.
+    - "Coffre-fort" sécurisé pour les preuves de compétences (rapports, livrables).
+    - Édition collaborative via OnlyOffice.
+* MATTERMOST (L'Agent de Liaison) :
+    - Messagerie instantanée intégrée.
+    - "Bot" automatique : notification immédiate sur le dashboard pour les échéances (rendu de rapport, date limite d'auto-évaluation).
+
+4. LES ACTEURS (La Chaîne de Valeur)
+----------------------------------
+* ADMINISTRATEUR : Maintenance, configuration Keycloak/LDAP, imports massifs.
+* DIRECTEUR D'ÉTUDES : Vue macro sur la cohorte, pilotage de la réussite.
+* RESPONSABLE RESSOURCE/ACTIVITÉ : Gestion des SAÉ, définition des critères d'évaluation.
+* ENSEIGNANT : Correction, feedback, validation des acquis académiques.
+* ÉLÈVE : Acteur de son parcours, saisie des preuves, auto-évaluation.
+* TUTEUR PRO : Validation des compétences métier via "Magic Link" (sans compte).
+* TUTEUR PÉDAGOGIQUE : Pivot entre l'université et l'entreprise, garant du lien théorie/pratique.
+
+5. CYCLE DE VIE DU STAGE (Validation AC & CE)
+-------------------------------------------
+* ÉTAPE 1 : Déclaration (Élève) -> Saisie des missions et lien avec les CE ciblées.
+* ÉTAPE 2 : Pilotage (Tuteur Pédagogique) -> Visite de stage et compte-rendu numérique.
+* ÉTAPE 3 : Auto-Évaluation (Élève) -> Prise de recul sur ses propres progrès.
+* ÉTAPE 4 : Évaluation Professionnelle (Tuteur Pro) -> Mesure de l'efficacité terrain.
+* ÉTAPE 5 : Soutenance & Validation (Enseignant) -> Analyse académique et validation finale des AC/CE.
+
+6. LE RESTE À FAIRE (Roadmap)
+---------------------------
+* GÉNÉRALISATION DU MOTEUR DE VALIDATION :
+    - SAÉ : Validation des AC via les projets transverses.
+    - PROJET TUTORÉ : Suivi de la collaboration de groupe.
+    - PORTFOLIO : Liaison automatique entre les réflexions et les preuves Nextcloud.
+* AUTOMATISATION :
+    - Messages Mattermost pilotés par l'IA pour le coaching étudiant.
+    - Rapports de gouvernance PDF générés en un clic pour les audits.
+
+7. CONCLUSION
+------------
+* Un outil au service de l'humain : Moins de saisie, plus de pédagogie.
+* Une plateforme prête pour l'université de demain.

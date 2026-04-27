@@ -1,0 +1,42 @@
+<div class="space-y-10 animate-in fade-in duration-700">
+    <header class="flex justify-between items-end">
+        <h2 class="text-4xl font-black tracking-tighter italic">ADMIN MASTER</h2>
+        <div class="flex gap-3">
+            <div class="px-4 py-2 bg-green-50 text-green-600 rounded-lg text-xs font-black uppercase">Système Opérationnel</div>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white p-8 rounded-[2rem] border-l-8 border-slate-900 shadow-sm">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Utilisateurs en base</p>
+            <p class="text-3xl font-black">{{ stats.user_count }}</p>
+        </div>
+        <div class="bg-white p-8 rounded-[2rem] border-l-8 border-blue-600 shadow-sm">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compétences (Référentiel)</p>
+            <p class="text-3xl font-black">{{ stats.comp_count }}</p>
+        </div>
+        <div class="bg-white p-8 rounded-[2rem] border-l-8 border-indigo-600 shadow-sm">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Activités (SAÉ/Stages)</p>
+            <p class="text-3xl font-black">{{ stats.sae_count }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm">
+            <h3 class="text-xl font-black mb-6">Référentiel : Dernières activités</h3>
+            <div class="space-y-4">
+                {% for act in data.recent_activities %}
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                    <div class="flex items-center gap-4">
+                        <span class="px-2 py-1 bg-slate-200 text-[10px] font-black rounded">{{ act.code }}</span>
+                        <span class="font-bold text-sm">{{ act.label }}</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">{{ act.type.value }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {% include 'components/news_feed.html' %}
+    </div>
+</div>

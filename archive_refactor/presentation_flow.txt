@@ -1,0 +1,65 @@
+===============================================================================
+PROPOSITION DE DÉROULÉ : PRÉSENTATION DU SKILLS HUB (BUT TC)
+===============================================================================
+
+CONTEXTE :
+Salle informatique équipée de Veyon.
+- Poste 1 (Maître) : Admin (Vous)
+- Poste 2 : Enseignant (Collègue A)
+- Poste 3 : Étudiant (Collègue B)
+
+OBJECTIF : Démontrer la fluidité de la gouvernance et de l'évaluation.
+
+-------------------------------------------------------------------------------
+PHASE 1 : INTRODUCTION & PILOTAGE STRATÉGIQUE (Votre écran)
+-------------------------------------------------------------------------------
+1. Accueil : Présentez le Skills Hub comme le "cerveau" du département.
+2. Éblouir : Connectez-vous en Admin. Affichez le NOUVEAU DASHBOARD ANALYTIQUE.
+   - Montrez les graphiques (Donut des effectifs, Barres des parcours).
+   - Soulignez la jauge de tutorat : "Ici, je vois en un coup d'œil la santé de mon département".
+3. Orchestration : Allez dans l'onglet "Dispatching".
+   - Montrez comment vous avez "promu" vos collègues en 2 clics (Bouclier bleu).
+   - "Steeve est Admin, mon collègue A est Directeur d'Études S1, le collègue B est étudiant".
+
+-------------------------------------------------------------------------------
+PHASE 2 : INGÉNIERIE PÉDAGOGIQUE (Écran Enseignant - Via Veyon)
+-------------------------------------------------------------------------------
+1. Basculez la projection sur l'écran du "Professeur".
+2. Gestion des SAÉ : Le prof montre ses activités assignées.
+3. Rubric Builder (Le "Wow" technique) :
+   - Le prof ouvre une SAÉ -> Bouton "Évaluation" (Cible teal).
+   - Il crée une grille "Soutenance Janvier".
+   - Il pioche dans les AC (Apprentissages Critiques) à droite. Montrez la vitesse : "Pas besoin de retaper le référentiel, tout est là".
+   - Il ajoute un critère libre : "Aisance orale".
+4. Simulateur :
+   - Lancez le simulateur. Bougez les sliders devant l'audience.
+   - Montrez le changement de couleur (Rouge -> Vert) et le calcul de note automatique.
+   - Expliquez : "On calibre l'exigence avant même que l'étudiant ne commence".
+
+-------------------------------------------------------------------------------
+PHASE 3 : EXPÉRIENCE ÉTUDIANT & SERVICES (Écran Étudiant - Via Veyon)
+-------------------------------------------------------------------------------
+1. Basculez la projection sur l'écran de l' "Étudiant".
+2. Provisioning Odoo (Le "Wow" infrastructure) :
+   - L'étudiant montre son widget Odoo.
+   - "En un clic, j'ai mon instance isolée pour ma SAÉ, pré-configurée".
+3. Suivi de Stage :
+   - L'étudiant va dans "Mon Stage".
+   - Il remplit le nom de son entreprise sous les yeux du public.
+4. Assistant IA :
+   - Posez une question complexe à l'IA (ex: "Quels sont mes AC pour la SAÉ 1.01 ?").
+   - L'IA répond en utilisant la base de connaissance du département.
+
+-------------------------------------------------------------------------------
+PHASE 4 : CONCLUSION & INTERCONNEXION (Votre écran)
+-------------------------------------------------------------------------------
+1. Revenez sur votre écran Admin.
+2. Montrez que l'info saisie par l'étudiant (Stage) est déjà visible dans votre interface de suivi.
+3. Conclusion : "Nous avons créé un écosystème où l'administratif, le pédagogique et la technologie (IA/ERP) fusionnent pour servir la réforme du BUT".
+
+===============================================================================
+CONSEILS POUR RÉUSSIR :
+- Faites un "Refresh" (F5) général au début.
+- Utilisez le mode plein écran (F11) sur les navigateurs.
+- Préparez une question "piège" pour l'IA pour montrer qu'elle connaît vraiment le BUT TC.
+===============================================================================

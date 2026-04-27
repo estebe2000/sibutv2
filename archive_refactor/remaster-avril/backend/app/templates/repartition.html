@@ -1,0 +1,25 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="space-y-8 animate-in slide-in-from-right duration-500">
+    <header>
+        <h2 class="text-3xl font-black tracking-tight italic">Répartition des Enseignements</h2>
+        <p class="text-slate-400 font-bold">Équilibre des volumes horaires et des crédits ECTS</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm">
+            <h3 class="text-xl font-black mb-6 italic">Parcours Vente</h3>
+            <div class="h-64 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 font-bold uppercase tracking-widest text-xs">
+                Graphique de répartition (Chart.js)
+            </div>
+        </div>
+        <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm">
+            <h3 class="text-xl font-black mb-6 italic">Parcours Marketing</h3>
+            <div class="h-64 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 font-bold uppercase tracking-widest text-xs">
+                Graphique de répartition (Chart.js)
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="space-y-8 animate-in zoom-in-95 duration-500">
+    <header>
+        <h2 class="text-3xl font-black tracking-tight italic">E-Portfolios Étudiants</h2>
+        <p class="text-slate-400 font-bold">Consultation des fiches de réflexion et validation des AC</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-white rounded-[3rem] p-10 border border-slate-200 shadow-sm">
+            <h3 class="text-xl font-black mb-6 italic text-indigo-600">Dernières soumissions</h3>
+            <div class="space-y-4">
+                <div class="p-4 bg-slate-50 rounded-2xl flex items-center justify-between border border-transparent hover:border-indigo-100 cursor-pointer">
+                    <span class="font-bold text-sm">Jean Dupont (BUT2)</span>
+                    <span class="text-[10px] font-black bg-indigo-600 text-white px-2 py-1 rounded">À évaluer</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

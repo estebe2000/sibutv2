@@ -1,0 +1,189 @@
+version: '3.8'
+
+services:
+  # --- INGRESS (REVERSE PROXY) ---
+  ingress:
+    image: nginx:alpine
+    container_name: remaster_ingress
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./infrastructure/nginx/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./backend/app/static:/app/static:ro
+    depends_on:
+      - app
+      - keycloak
+
+  # --- AUTHENTIFICATION ---
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.0
+    container_name: remaster_keycloak
+    restart: unless-stopped
+    command: start-dev --hostname-strict=false --http-enabled=true --import-realm
+    # Port 8080 supprimé pour éviter que Keycloak ne l'insère dans ses URLs de découverte
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db_keycloak:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KC_DB_PASS:-keycloak_password}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HOSTNAME: auth.${DOMAIN}
+      KC_HOSTNAME_PORT: "443"
+      KC_PROXY_HEADERS: xforwarded
+    volumes:
+      - ./infrastructure/keycloak/import:/opt/keycloak/data/import
+    depends_on:
+      - db_keycloak
+
+  # --- APPLICATION SKILLS HUB ---
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: remaster_app
+    restart: unless-stopped
+    depends_on:
+      - db
+      - keycloak
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - DOMAIN=${DOMAIN}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_INTERNAL_URL=http://keycloak:8080
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KC_DB_PASS=${KC_DB_PASS:-keycloak_password}
+    volumes:
+      - ./backend/app:/app/app
+      - ../apps/api/app/data:/app/app/data_source
+
+  # --- BASES DE DONNÉES ---
+  db:
+    image: postgres:15-alpine
+    container_name: remaster_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/db/init-keycloak.sql:/docker-entrypoint-initdb.d/init-keycloak.sql
+
+  db_keycloak:
+    image: postgres:15-alpine
+    container_name: remaster_db_keycloak
+    environment:
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak_password
+      POSTGRES_DB: keycloak
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+
+  # --- COMMUNICATION (MATRIX) ---
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: remaster_synapse
+    restart: unless-stopped
+    environment:
+      - SYNAPSE_SERVER_NAME=${DOMAIN}
+      - SYNAPSE_REPORT_STATS=no
+      - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+    volumes:
+      - ./infrastructure/synapse/data:/data
+    depends_on:
+      - db_synapse
+
+  db_synapse:
+    image: postgres:15-alpine
+    container_name: remaster_db_synapse
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: synapse_password
+      POSTGRES_DB: synapse
+    volumes:
+      - synapse_db_data:/var/lib/postgresql/data
+
+  db_nextcloud:
+    image: postgres:15-alpine
+    container_name: remaster_db_nextcloud
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: nextcloud_password
+      POSTGRES_DB: nextcloud
+    volumes:
+      - nextcloud_db_data:/var/lib/postgresql/data
+
+  # --- DOCUMENTATION & COLLABORATION ---
+  nextcloud:
+    image: nextcloud:latest
+    container_name: remaster_nextcloud
+    restart: unless-stopped
+    depends_on:
+      - db_nextcloud
+      - keycloak
+    extra_hosts:
+      - "auth.${DOMAIN}:host-gateway"
+    environment:
+      - POSTGRES_HOST=db_nextcloud
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud_password
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER:-admin}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD:-admin_password}
+      - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.${DOMAIN} auth.${DOMAIN}
+      - OVERWRITEPROTOCOL=https
+    volumes:
+      - nextcloud_data:/var/www/html
+
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    container_name: remaster_onlyoffice
+    restart: unless-stopped
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=onlyoffice_secret
+    volumes:
+      - onlyoffice_data:/var/www/onlyoffice/Data
+      - onlyoffice_logs:/var/log/onlyoffice
+
+  # --- VIDEO (LIVEKIT & COTURN) ---
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: remaster_livekit
+    restart: unless-stopped
+    command: --config /livekit.yaml
+    volumes:
+      - ./infrastructure/livekit/livekit.yaml:/livekit.yaml
+    expose:
+      - "7880"
+
+  coturn:
+    image: coturn/coturn:latest
+    container_name: remaster_coturn
+    restart: unless-stopped
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+    command:
+      - -n
+      - --lt-cred-mech
+      - --fingerprint
+      - --use-auth-secret
+      - --static-auth-secret=secret_turn_key
+      - --realm=${DOMAIN}
+
+volumes:
+  postgres_data:
+  keycloak_db_data:
+  synapse_db_data:
+  nextcloud_db_data:
+  nextcloud_data:
+  onlyoffice_data:
+  onlyoffice_logs:

@@ -1,0 +1,12 @@
+model_list:
+  - model_name: "*"
+    litellm_params:
+      model: openai/*
+      api_base: "https://litellm-pp.univ-lehavre.fr/ilaas/v1"
+      api_key: "0d1e747a-8dbe-4788-bf9a-c49c23bf1fda"
+
+router_settings:
+  routing_strategy: "simple-shuffle"
+
+general_settings:
+  master_key: "2mt17bEE"

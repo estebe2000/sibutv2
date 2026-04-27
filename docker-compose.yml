@@ -41,7 +41,7 @@ services:
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost 127.0.0.1 nextcloud projet-edu.eu ${DOMAIN} *.${DOMAIN}
-      - OVERWRITEPROTOCOL=https
+      # - OVERWRITEPROTOCOL=https # Commenté pour autoriser le trafic interne OnlyOffice
       - REDIS_HOST=redis
       - POSTGRES_HOST=db_nextcloud
       - POSTGRES_DB=nextcloud
@@ -335,10 +335,23 @@ services:
     networks:
       - app_network
 
+  scodoc-api-relay:
+    build:
+      context: ./apps/scodoc-api-relay
+    container_name: but_tc_scodoc_api_relay
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8092:8000"
+    volumes:
+      - ./apps/scodoc-api-relay:/app
+    networks:
+      - app_network
+
   tunnel:
     image: cloudflare/cloudflared
     container_name: but_tc_tunnel
-    restart: unless-stopped
+    restart: no
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TOKEN}
     command: tunnel run

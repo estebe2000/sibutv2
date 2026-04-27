@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ settings.PROJECT_NAME if settings else 'Skills Hub' }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .menu-content { transition: all 0.3s ease-in-out; }
+        .menu-content.collapsed { display: none; }
+        .rotate-icon { transition: transform 0.3s; }
+        .rotate-icon.active { transform: rotate(90deg); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 overflow-hidden">
+    {% set current_role = active_role | default(user.role.value if user else 'GUEST') %}
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-full shadow-sm z-30">
+            <div class="p-8">
+                <div class="flex items-center justify-center mb-10 group cursor-pointer" onclick="openPresentationModal()">
+                    <div class="w-full h-16 flex items-center justify-center transition-all group-hover:scale-105">
+                        <img src="/static/medias/logo-sh.svg" alt="Skills Hub" class="max-w-full max-h-full object-contain">
+                    </div>
+                </div>
+
+                <nav class="space-y-6 font-bold text-slate-500">
+                    <!-- SECTION PILOTAGE -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMenu('menu-pilotage', 'icon-pilotage')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow transition-all border border-slate-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7"/><path d="M16 5V3"/><path d="M8 5V3"/><path d="M3 9h18"/><path d="M20 22a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+                                </div>
+                                <span class="text-sm font-black text-slate-600 uppercase tracking-tighter">Pilotage</span>
+                            </div>
+                            <svg id="icon-pilotage" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <div id="menu-pilotage" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
+                            <a href="/" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/' %}text-blue-600{% endif %}">Tableau de Bord</a>
+                            {% if current_role == 'ADMIN' %}
+                            <a href="/effectifs" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/effectifs' %}text-blue-600{% endif %}">Effectifs</a>
+                            <a href="/admin/synchro-scodoc" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request.url.path == '/admin/synchro-scodoc' %}text-blue-600{% endif %}">Synchro ScoDoc</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if current_role == 'ADMIN' or current_role == 'PROFESSOR' %}
+                    <!-- SECTION OUTILS -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMenu('menu-tools', 'icon-tools')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow transition-all border border-slate-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/></svg>
+                                </div>
+                                <span class="text-sm font-black text-slate-600 uppercase tracking-tighter">Outils Enseignant</span>
+                            </div>
+                            <svg id="icon-tools" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <div id="menu-tools" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
+                            <a href="/ai-assistant" class="block px-4 py-2 hover:text-blue-600 transition-all">Assistant IA</a>
+                            <a href="/proof-library" class="block px-4 py-2 hover:text-blue-600 transition-all">Médiathèque Preuves</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if current_role == 'ADMIN' %}
+                    <!-- SECTION ADMIN -->
+                    <div class="space-y-1">
+                        <button onclick="toggleMenu('menu-admin', 'icon-admin')" class="w-full flex items-center justify-between px-4 py-3 rounded-2xl hover:bg-slate-50 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow transition-all border border-slate-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </div>
+                                <span class="text-sm font-black text-slate-600 uppercase tracking-tighter">Administration</span>
+                            </div>
+                            <svg id="icon-admin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="rotate-icon text-slate-300"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                        <div id="menu-admin" class="menu-content collapsed space-y-1 ml-4 border-l-2 border-slate-100 pl-2 mt-1">
+                            <a href="/admin/users" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/users' %}text-blue-600{% endif %}">Utilisateurs</a>
+                            <a href="/admin/matrix" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/matrix' %}text-blue-600{% endif %}">Annonces Matrix</a>
+                            <a href="/admin/ac-editor" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/ac-editor' %}text-blue-600{% endif %}">Éditeur d'AC</a>
+                            <a href="/admin/evaluations" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/evaluations' %}text-blue-600{% endif %}">Gestion des Grilles</a>
+                            <a href="/admin/activities" class="block px-4 py-2 hover:text-blue-600 transition-all {% if request and request.url and request.url.path == '/admin/activities' %}text-blue-600{% endif %}">Gestion des Activités</a>
+                            <a href="/referentiel" class="block px-4 py-2 hover:text-blue-600 transition-all">Référentiel</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </nav>
+            </div>
+
+            <!-- Profile and Logout -->
+            <div class="mt-auto p-8 border-t border-slate-100">
+                
+                <!-- Sélecteur de rôle (Uniquement si multi-rôle) -->
+                {% if user.roles_list|length > 1 %}
+                <div class="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2 text-center">Changer de vue</label>
+                    <div class="flex flex-col gap-1">
+                        {% set role_labels = {
+                            "ADMIN": "Administrateur",
+                            "DEPT_HEAD": "Chef de département",
+                            "STUDY_DIRECTOR": "Directeur des études",
+                            "PROFESSOR": "Enseignant",
+                            "PROF_RESP_SAE": "Responsable de Sæ",
+                            "ADMIN_STAFF": "Personnel administratif",
+                            "STUDENT": "Étudiant"
+                        } %}
+                        <select onchange="window.location.href='/switch-role/'+this.value" class="w-full bg-white border-none rounded-xl px-3 py-2 text-[10px] font-black text-slate-600 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
+                            {% for r in user.roles_list %}
+                            <option value="{{ r }}" {% if current_role == r %}selected{% endif %}>
+                                {{ role_labels[r] if r in role_labels else r }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-10 h-10 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-xs text-slate-400">
+                        {{ user.full_name[:2] | upper if user else '??' }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-black text-slate-800 uppercase tracking-tighter">{{ user.full_name if user else 'Invité' }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ current_role }}</p>
+                    </div>
+                </div>
+                <a href="/logout" class="flex items-center gap-3 text-red-400 hover:text-red-600 transition-colors font-black text-xs uppercase tracking-widest">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Quitter
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto p-12 bg-slate-50 relative">
+            <div class="max-w-7xl mx-auto">
+                {% block content %}
+                    {% if current_role == 'ADMIN' %}
+                        {% include 'dashboards/admin.html' %}
+                    {% elif current_role == 'PROFESSOR' %}
+                        {% include 'dashboards/professor.html' %}
+                    {% elif current_role == 'STUDENT' %}
+                        {% include 'dashboards/student.html' %}
+                    {% else %}
+                        <div class="p-20 text-center">
+                            <h2 class="text-2xl font-black text-slate-300 italic">Bienvenue sur Skills Hub</h2>
+                            <p class="text-slate-400">Votre compte est en attente de configuration.</p>
+                        </div>
+                    {% endif %}
+                {% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Presentation Modal -->
+    <div id="presentation-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden transform transition-all">
+            <div class="relative">
+                <button onclick="closePresentationModal()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/40 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div class="aspect-video bg-slate-900">
+                    <video id="presentation-video" class="w-full h-full object-cover" controls preload="auto" muted>
+                        <source src="/static/medias/presentation.mp4" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                </div>
+            </div>
+            <div class="p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="/static/medias/logo-sh.svg" alt="Logo" class="w-12 h-12">
+                    <div>
+                        <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">À propos de Skills Hub</h3>
+                        <p class="text-sm font-bold text-blue-600 uppercase tracking-widest">Innovation Pédagogique</p>
+                    </div>
+                </div>
+                <div class="prose prose-slate max-w-none">
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        Skills Hub est une plateforme innovante de gestion des compétences et des apprentissages, conçue pour accompagner les étudiants et les enseignants dans le suivi du référentiel de formation. Elle permet de centraliser les preuves de compétences, de gérer les SAÉ et de faciliter les échanges au sein de la communauté pédagogique.
+                    </p>
+                </div>
+                <div class="mt-8 flex justify-end">
+                    <button onclick="closePresentationModal()" class="px-8 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-sm uppercase tracking-widest transition-all">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu(menuId, iconId) {
+            const menu = document.getElementById(menuId);
+            const icon = document.getElementById(iconId);
+            menu.classList.toggle('collapsed');
+            icon.classList.toggle('active');
+        }
+
+        function openPresentationModal() {
+            const modal = document.getElementById('presentation-modal');
+            const video = document.getElementById('presentation-video');
+            modal.classList.remove('hidden');
+            video.play().catch(e => console.log("Auto-play blocked or failed"));
+        }
+
+        function closePresentationModal() {
+            const modal = document.getElementById('presentation-modal');
+            const video = document.getElementById('presentation-video');
+            modal.classList.add('hidden');
+            video.pause();
+            video.currentTime = 0;
+        }
+    </script>
+</body>
+</html>

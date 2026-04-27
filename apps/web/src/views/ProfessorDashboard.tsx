@@ -86,7 +86,7 @@ export function ProfessorDashboard({ user, curriculum, setActiveTab }: any) {
                         )}
                     </Paper>
 
-                    {!isMobile && (
+                    {/* {!isMobile && (
                         <Paper withBorder p="md" radius="md">
                             <Title order={5} mb="md">Accès Services</Title>
                             <Stack gap="xs">
@@ -95,7 +95,7 @@ export function ProfessorDashboard({ user, curriculum, setActiveTab }: any) {
                                 <Button variant="light" color="cyan" justify="space-between" rightSection={<IconArrowRight size={16} />} fullWidth component="a" href={`https://nextcloud.${window.location.hostname.split('.').slice(-2).join('.')}`} target="_blank">Nextcloud</Button>
                             </Stack>
                         </Paper>
-                    )}
+                    )} */}
                 </Stack>
             </Grid.Col>
 
