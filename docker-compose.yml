@@ -351,7 +351,7 @@ services:
   tunnel:
     image: cloudflare/cloudflared
     container_name: but_tc_tunnel
-    restart: unless-stopped
+    restart: no
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TOKEN}
     command: tunnel run
