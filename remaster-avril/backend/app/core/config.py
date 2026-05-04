@@ -22,6 +22,17 @@ class Settings(BaseSettings):
     DOMAIN: str = os.getenv("DOMAIN", "localhost")
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here") # For JWT fallback
     
+    # AI Service
+    AI_SERVICE_URL: str = os.getenv("AI_SERVICE_URL", "http://172.16.87.140:8080/v1/chat/completions")
+    AI_MODEL_NAME: str = os.getenv("AI_MODEL_NAME", "llama-3.2-3b")
+
+    # SMTP
+    SMTP_SERVER: str = os.getenv("SMTP_SERVER", "smtp.educ-ai.fr")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", 587))
+    SMTP_USER: str = os.getenv("SMTP_USER", "")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
+    SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL", "noreply@educ-ai.fr")
+
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True
