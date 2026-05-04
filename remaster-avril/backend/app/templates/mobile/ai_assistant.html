@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Skills Hub Mobile - Assistant IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased h-screen flex flex-col">
+
+    <header class="bg-blue-600 text-white p-4 sticky top-0 z-50 flex items-center shadow-md">
+        <a href="/mobile/dashboard" class="mr-4 text-xl">←</a>
+        <h1 class="text-xl font-bold">Assistant IA 🤖</h1>
+    </header>
+
+    <!-- Zone de chat -->
+    <main class="flex-1 p-4 overflow-y-auto space-y-4" id="chat-container">
+        <!-- Message IA (Accueil) -->
+        <div class="flex items-start max-w-[85%]">
+            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2 flex-shrink-0">🤖</div>
+            <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-sm">
+                Bonjour ! Je suis l'assistant pédagogique du Skills Hub. Avez-vous besoin d'aide avec vos compétences, votre stage ou vos évaluations ?
+            </div>
+        </div>
+    </main>
+
+    <!-- Zone de saisie -->
+    <div class="bg-white border-t border-gray-200 p-3 flex items-center gap-2 pb-safe">
+        <input type="text" id="ai-input" placeholder="Posez votre question..."
+            class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button onclick="sendMessage()" class="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center active:bg-blue-700 flex-shrink-0">
+            ↑
+        </button>
+    </div>
+
+    <script>
+        // Logique très basique pour la maquette visuelle
+        function sendMessage() {
+            const input = document.getElementById('ai-input');
+            const container = document.getElementById('chat-container');
+            if(!input.value.trim()) return;
+
+            // Message Utilisateur
+            const userMsg = document.createElement('div');
+            userMsg.className = "flex items-start justify-end w-full";
+            userMsg.innerHTML = `
+                <div class="max-w-[85%] bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm text-sm">
+                    ${input.value}
+                </div>
+            `;
+            container.appendChild(userMsg);
+
+            const userText = input.value;
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            // Simulation Réponse IA
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = "flex items-start max-w-[85%]";
+                aiMsg.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2 flex-shrink-0">🤖</div>
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-sm">
+                        Je cherche la réponse à "${userText}" dans le référentiel de compétences... (L'API sera connectée dans la prochaine version).
+                    </div>
+                `;
+                container.appendChild(aiMsg);
+                container.scrollTop = container.scrollHeight;
+            }, 1000);
+        }
+
+        document.getElementById('ai-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
