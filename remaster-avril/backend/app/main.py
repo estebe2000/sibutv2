@@ -7,7 +7,7 @@ from authlib.integrations.starlette_client import OAuth
 from sqlmodel import Session, select, create_engine, func
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from .core.config import settings
-from .models.models import User, UserRole, Activity, Competency
+from .models import SQLModel, User, UserRole, Activity, Competency
 import os
 
 app = FastAPI(title="Skills Hub Remaster")
@@ -29,7 +29,6 @@ engine = create_engine(settings.DATABASE_URL)
 
 @app.on_event("startup")
 def on_startup():
-    from .models.models import SQLModel
     SQLModel.metadata.create_all(engine)
 
 # Configuration OIDC
@@ -54,6 +53,11 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
 from .services.matrix_service import get_room_messages
+from .api.v1.api import api_router
+from .routers.mobile import router as mobile_router
+
+app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(mobile_router, prefix="/mobile", tags=["mobile"])
 
 @app.get("/", response_class=HTMLResponse)
 async def dashboard(request: Request):

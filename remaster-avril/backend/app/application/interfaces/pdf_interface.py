@@ -7,3 +7,10 @@ class PdfGeneratorInterface(ABC):
         Génère un certificat de fin de stage au format PDF (bytes).
         """
         pass
+
+    @abstractmethod
+    def generate_fiche_pdf(self, item_data: dict, requestor_name: str) -> bytes:
+        """
+        Génère une fiche PDF pour une activité ou une ressource.
+        """
+        pass

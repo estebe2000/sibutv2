@@ -40,3 +40,54 @@ class ReportLabPdfGenerator(PdfGeneratorInterface):
 
         buffer.seek(0)
         return buffer.getvalue()
+
+    def generate_fiche_pdf(self, item_data: dict, requestor_name: str) -> bytes:
+        """
+        Génère un PDF basique pour une Activité ou une Ressource.
+        La mise en page sera améliorée dans un second temps.
+        """
+        buffer = io.BytesIO()
+        c = canvas.Canvas(buffer, pagesize=letter)
+
+        c.setFont("Helvetica-Bold", 20)
+        title = item_data.get("label", "Fiche Élément")
+        code = item_data.get("code", "")
+        c.drawString(50, 750, f"{code} - {title}")
+
+        c.setFont("Helvetica", 12)
+        y = 700
+
+        c.drawString(50, y, "Description :")
+        y -= 20
+        c.setFont("Helvetica", 10)
+
+        # Simple wrap for description (très basique pour l'instant)
+        desc = item_data.get("description", "Aucune description")
+        if not desc:
+            desc = "Aucune description"
+        c.drawString(50, y, desc[:100]) # On coupe à 100 char pour la maquette basique
+        if len(desc) > 100:
+            y -= 15
+            c.drawString(50, y, desc[100:200] + ("..." if len(desc) > 200 else ""))
+
+        y -= 40
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(50, y, "Détails Techniques :")
+        y -= 20
+        c.setFont("Helvetica", 10)
+
+        for key, value in item_data.items():
+            if key not in ["label", "code", "description"] and value is not None:
+                c.drawString(50, y, f"{key}: {value}")
+                y -= 15
+
+        # Bas de page : Demandeur
+        c.setFont("Helvetica-Oblique", 10)
+        c.drawString(50, 50, f"Document généré par le Skills Hub IUT.")
+        c.drawString(50, 35, f"Demandé par : {requestor_name}")
+
+        c.showPage()
+        c.save()
+
+        buffer.seek(0)
+        return buffer.getvalue()

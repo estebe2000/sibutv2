@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Skills Hub Mobile - Évaluations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased pb-20">
+
+    <header class="bg-blue-600 text-white p-4 sticky top-0 z-50 flex items-center">
+        <a href="/mobile/dashboard" class="mr-4 text-xl">←</a>
+        <h1 class="text-xl font-bold">Mes Évaluations</h1>
+    </header>
+
+    <main class="p-4">
+        {% if evaluations_pending %}
+            <div class="space-y-4">
+                {% for eval in evaluations_pending %}
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-lg mb-1">{{ eval.title }}</h3>
+                    <p class="text-sm text-gray-500 mb-3">{{ eval.date }}</p>
+                    <button class="w-full bg-blue-500 text-white py-2 rounded-lg font-medium active:bg-blue-600 transition">
+                        Commencer l'évaluation
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center text-gray-500 mt-4">
+                <span class="text-4xl block mb-2">✅</span>
+                <p>Vous êtes à jour ! Aucune évaluation en attente.</p>
+            </div>
+        {% endif %}
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 pb-safe z-50">
+        <a href="/mobile/dashboard" class="flex flex-col items-center text-gray-400 hover:text-blue-500">
+            <span class="text-xl">🏠</span>
+            <span class="text-xs mt-1">Accueil</span>
+        </a>
+        <a href="/mobile/evaluations" class="flex flex-col items-center text-blue-600">
+            <span class="text-xl">📝</span>
+            <span class="text-xs mt-1 font-medium">Éval</span>
+        </a>
+        <a href="/mobile/ai" class="flex flex-col items-center text-gray-400 hover:text-blue-500">
+            <span class="text-xl">🤖</span>
+            <span class="text-xs mt-1">IA</span>
+        </a>
+    </nav>
+</body>
+</html>
