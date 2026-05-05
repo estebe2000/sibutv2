@@ -12,25 +12,41 @@ L'application **Skills Hub Remaster** est conçue pour fonctionner comme un poin
 
 ```mermaid
 graph TD
-    Client[Navigateur / Mobile] -->|HTTPS| Proxy[Reverse Proxy / Cloudflare Tunnel]
-    Proxy --> API[Skills Hub Backend - FastAPI]
+    %% Définition des styles
+    classDef client fill:#f5f5f5,stroke:#333,stroke-width:1px;
+    classDef gateway fill:#ffebee,stroke:#c62828,stroke-width:2px;
+    classDef backend fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    classDef db fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px;
+    classDef external fill:#fafafa,stroke:#9e9e9e,stroke-dasharray: 5 5;
 
-    subgraph "VM Skills Hub (À provisionner)"
-        API
-        DB[(PostgreSQL)]
-        Redis[(Redis - Sessions/Cache)]
-    end
+    %% Colonne principale
+    Client["Client (Navigateur / Mobile)"]:::client
+    Proxy["Reverse Proxy (NGINX)"]:::gateway
+    API["API FastAPI"]:::backend
+    DB[("PostgreSQL (Données)")]:::db
+    Redis[("Redis (Cache/Session)")]:::db
 
-    subgraph "Services Institutionnels / Externes"
-        API -->|OIDC / SAML| KC[Serveur Keycloak]
-        API -->|API HTTP| IA[Serveur IA LocalAI/Ollama]
-        API -->|Matrix API| Matrix[Serveur Messagerie Element/Synapse]
-        API -->|SMTP| Mail[Serveur Mail SMTP]
-        API -->|S3 / SMB| Stockage[Serveur de Stockage / Nextcloud]
-    end
+    Client -->|HTTPS| Proxy
+    Proxy -->|REST / JSON| API
+    API -->|SQL| DB
+    API -->|Key/Value| Redis
 
-    API <--> DB
-    API <--> Redis
+    %% Services externes alignés sous forme de colonne séparée
+    KC(["Keycloak (SSO)"]):::external
+    IA(["IA (LocalAI / Ollama)"]):::external
+    Matrix(["Matrix Synapse"]):::external
+    Mail(["Serveur SMTP"]):::external
+    Cloud(["Nextcloud (Stockage)"]):::external
+
+    %% Alignement vertical des externes
+    KC --> IA --> Matrix --> Mail --> Cloud
+
+    %% Connexions (sans casser la colonne principale)
+    API -.->|Auth OIDC| KC
+    API -.->|Inférence| IA
+    API -.->|Webhooks| Matrix
+    API -.->|SMTP| Mail
+    API -.->|Stockage| Cloud
 ```
 
 ### 1.2 Interactions avec les systèmes tiers
