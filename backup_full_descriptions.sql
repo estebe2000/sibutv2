@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict RnDm5Uz84RkbCucYZiNCDSpjOgbF7WOzsK1VrHf58phh5P6UqnxQ7jcExG9brC8
+\restrict [REDACTED]
 
 -- Dumped from database version 15.15
 -- Dumped by pg_dump version 15.15
@@ -3326,8 +3326,8 @@ COPY public.systemconfig (id, key, value, category) FROM stdin;
 6	APP_LOGO_URL	https://www-iut.univ-lehavre.fr/wp-content/uploads/2024/12/cropped-logo-IUT_WEB-5-3.png	branding
 7	APP_PRIMARY_COLOR	#1971c2	branding
 8	APP_WELCOME_MESSAGE	Bienvenue sur Skills Hub	branding
-5	mistral_api_key	3a218ppqAlBzjegiqPSu3JF0c8krF5fo	ai
-12	ai_api_key	3a218ppqAlBzjegiqPSu3JF0c8krF5fo	ai
+5	mistral_api_key	[REDACTED]	ai
+12	ai_api_key	[REDACTED]	ai
 9	ai_provider	codestral	ai
 10	ai_model	codestral-latest	ai
 11	ai_endpoint	https://codestral.mistral.ai/v1	ai
@@ -4217,7 +4217,7 @@ REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 -- PostgreSQL database dump complete
 --
 
-\unrestrict RnDm5Uz84RkbCucYZiNCDSpjOgbF7WOzsK1VrHf58phh5P6UqnxQ7jcExG9brC8
+\unrestrict [REDACTED]
 
 ALTER TABLE public."user" ADD COLUMN IF NOT EXISTS phone character varying;
 

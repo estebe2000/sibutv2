@@ -1,3 +1,4 @@
+import os
 import requests
 import time
 import sys
@@ -8,8 +9,8 @@ REALM = "but-tc"
 CLIENT_ID = "skills-hub-app"
 API_URL = "http://localhost:8000/api/v1"
 
-USERNAME = "pytels"
-PASSWORD = "Monpetitponey76**"
+USERNAME = os.getenv("TEST_USERNAME")
+PASSWORD = os.getenv("TEST_PASSWORD", "")
 
 def wait_for_service(url, name, timeout=60):
     """Attendre qu'un service soit disponible"""

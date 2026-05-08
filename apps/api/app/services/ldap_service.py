@@ -4,7 +4,7 @@ import os
 LDAP_URL = os.getenv("LDAP_URL", "ldap://localhost:389")
 LDAP_BASE_DN = os.getenv("LDAP_BASE_DN", "dc=univ-lehavre,dc=fr")
 LDAP_BIND_DN = os.getenv("LDAP_BIND_DN", "cn=admin," + LDAP_BASE_DN)
-LDAP_BIND_PASSWORD = os.getenv("LDAP_BIND_PASSWORD", "Rangetachambre76*")
+LDAP_BIND_PASSWORD = os.getenv("LDAP_BIND_PASSWORD", "")
 
 def get_ldap_connection(user_dn=None, password=None):
     server = Server(LDAP_URL, get_info=ALL)

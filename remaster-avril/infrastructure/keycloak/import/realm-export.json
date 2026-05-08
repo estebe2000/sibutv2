@@ -56,7 +56,7 @@
       "enabled": true,
       "firstName": "Admin",
       "lastName": "IUT LH",
-      "credentials": [{ "type": "password", "value": "Rangetachambre76*", "temporary": false }],
+      "credentials": [{ "type": "password", "value": "[REDACTED]", "temporary": false }],
       "realmRoles": ["admin"]
     },
     {
@@ -64,7 +64,7 @@
       "enabled": true,
       "firstName": "Professeur",
       "lastName": "IUT LH",
-      "credentials": [{ "type": "password", "value": "Rangetachambre76*", "temporary": false }],
+      "credentials": [{ "type": "password", "value": "[REDACTED]", "temporary": false }],
       "realmRoles": ["professor"]
     },
     {
@@ -72,7 +72,7 @@
       "enabled": true,
       "firstName": "Élève",
       "lastName": "IUT LH",
-      "credentials": [{ "type": "password", "value": "Rangetachambre76*", "temporary": false }],
+      "credentials": [{ "type": "password", "value": "[REDACTED]", "temporary": false }],
       "realmRoles": ["student"]
     }
   ],

@@ -7,7 +7,7 @@ import hashlib
 
 # Configuration
 ODOO_URL = os.getenv("ODOO_URL", "http://odoo:8069") # Interne Docker
-ODOO_MASTER_PASSWORD = os.getenv("ODOO_MASTER_PASSWORD", "Rangetachambre76*")
+ODOO_MASTER_PASSWORD = os.getenv("ODOO_MASTER_PASSWORD", "")
 ODOO_DB_URL = os.getenv("ODOO_DB_URL") # Pour accès SQL direct
 
 logger = logging.getLogger(__name__)

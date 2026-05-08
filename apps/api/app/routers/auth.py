@@ -37,9 +37,9 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Sessi
     if form_data.username == "admin":
         # Fetch password from DB or use default
         admin_pw_config = session.exec(select(SystemConfig).where(SystemConfig.key == "ADMIN_PASSWORD")).first()
-        expected_pw = admin_pw_config.value if admin_pw_config else "Rangetachambre76*"
+        expected_pw = admin_pw_config.value if admin_pw_config else None
 
-        if form_data.password == expected_pw:
+        if expected_pw is not None and form_data.password == expected_pw:
             return {"access_token": create_access_token({"sub": "admin"}), "token_type": "bearer"}
     
     # 2. Check demo accounts (login == password)

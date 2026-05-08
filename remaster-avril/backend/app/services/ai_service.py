@@ -1,8 +1,9 @@
+import os
 import httpx
 import json
 from ..core.config import settings
 
-LOCALAI_URL = "http://172.16.87.140:8080/v1/chat/completions"
+LOCALAI_URL = os.getenv("AI_SERVICE_URL", "http://localhost:8080/v1/chat/completions")
 DEFAULT_MODEL = "llama-3.2-3b" # Modèle rapide et efficace
 
 async def ask_assistant(prompt: str, context: str = ""):

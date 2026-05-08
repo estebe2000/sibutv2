@@ -193,7 +193,7 @@ async def proxy_chat_completions(request: Request):
     is_stream = mistral_payload.get("stream", False)
     
     # Mistral API key
-    api_key = os.getenv("MISTRAL_API_KEY", "3a218ppqAlBzjegiqPSu3JF0c8krF5fo")
+    api_key = os.getenv("MISTRAL_API_KEY", "")
     
     headers = {
         "Authorization": f"Bearer {api_key}",
