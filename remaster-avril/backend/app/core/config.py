@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     
     # Project Settings
     DOMAIN: str = os.getenv("DOMAIN", "localhost")
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here") # For JWT fallback
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "") # For JWT fallback
     
     # AI Service
     AI_SERVICE_URL: str = os.getenv("AI_SERVICE_URL", "http://172.16.87.140:8080/v1/chat/completions")

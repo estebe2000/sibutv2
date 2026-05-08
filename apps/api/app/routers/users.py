@@ -125,7 +125,7 @@ def set_user_quota(ldap_uid: str, quota: str = "100 GB", session: Session = Depe
 
     nc_url = os.getenv("NEXTCLOUD_URL", "http://nextcloud")
     nc_admin = os.getenv("NEXTCLOUD_ADMIN", "admin")
-    nc_pass = os.getenv("NEXTCLOUD_PASS", "Rangetachambre76*")
+    nc_pass = os.getenv("NEXTCLOUD_PASS", "")
 
     url = f"{nc_url}/ocs/v1.php/cloud/users/{ldap_uid}"
     headers = {"OCS-APIRequest": "true"}

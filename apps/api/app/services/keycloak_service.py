@@ -5,7 +5,7 @@ from fastapi import HTTPException
 KC_URL = os.getenv("KEYCLOAK_URL", "http://but_tc_keycloak:8080")
 KC_REALM = os.getenv("KEYCLOAK_REALM", "but-tc")
 KC_ADMIN_USER = os.getenv("KEYCLOAK_ADMIN", "admin")
-KC_ADMIN_PASS = os.getenv("KEYCLOAK_ADMIN_PASSWORD", "Rangetachambre76*")
+KC_ADMIN_PASS = os.getenv("KEYCLOAK_ADMIN_PASSWORD", "")
 
 def get_admin_token():
     """Récupère un token d'administration pour Keycloak."""

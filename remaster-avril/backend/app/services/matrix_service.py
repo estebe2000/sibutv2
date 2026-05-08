@@ -1,11 +1,12 @@
+import os
 import asyncio
 import time
 from nio import AsyncClient, RoomMessageText
 from datetime import datetime
 
-MATRIX_URL = "http://synapse:8008"
-ROOM_ID = "!ERNwyyxESqTcJRNbqp:localhost"
-ACCESS_TOKEN = "syt_YWRtaW4taXV0bGg_vXhgHSPoMHDcGoXcuKXn_2Vzpc7"
+MATRIX_URL = os.getenv("MATRIX_URL", "http://synapse:8008")
+ROOM_ID = os.getenv("MATRIX_ROOM_ID", "")
+ACCESS_TOKEN = os.getenv("MATRIX_ACCESS_TOKEN", "")
 
 def format_age(timestamp_ms):
     """Calcule l'âge d'un message de manière lisible."""

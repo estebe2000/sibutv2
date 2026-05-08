@@ -13,7 +13,7 @@ logger.setLevel(logging.INFO)
 # Configuration depuis l'environnement
 NC_URL = os.getenv("NEXTCLOUD_URL", "https://nextcloud.educ-ai.fr")
 NC_USER = os.getenv("NEXTCLOUD_SERVICE_USER", "hub-service")
-NC_PASS = os.getenv("NEXTCLOUD_SERVICE_PASS", "Rangetachambre76*")
+NC_PASS = os.getenv("NEXTCLOUD_SERVICE_PASS", "")
 
 # L'URL WebDAV pour Nextcloud
 WEBDAV_URL = f"{NC_URL}/remote.php/dav/files/{NC_USER}"

@@ -19,7 +19,7 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 # --- PROTECTION SESSION ---
 app.add_middleware(
     SessionMiddleware, 
-    secret_key="skills-hub-secret-key-2026",
+    secret_key=settings.SECRET_KEY,
     session_cookie="skills_hub_session",
     same_site="lax",
     https_only=False # On laisse à False car Nginx/Cloudflare gèrent la terminaison SSL
